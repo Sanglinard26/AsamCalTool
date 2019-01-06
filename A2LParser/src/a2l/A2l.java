@@ -8,6 +8,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class A2l {
 
@@ -37,6 +39,9 @@ public final class A2l {
         String C46 = "ConfidentielPSA_c139646al00.a2l";
         String DW10B = "P6A84B00.a2l";
 
+        Pattern regexQuote = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"|'([^']*)'");
+        // Pattern regexQuote = Pattern.compile("[^\\s\"']+|\"([^\"]*)\"");
+
         // content = new StringBuilder();
 
         characteristics = new ArrayList<Characteristic>();
@@ -46,83 +51,84 @@ public final class A2l {
         compuVTabRanges = new ArrayList<CompuVTabRange>();
         measurements = new ArrayList<Measurement>();
 
-        try (BufferedReader buf = new BufferedReader(new FileReader("C:/Users/U354706/Desktop/Tmp/" + DW10B))) {
+        try (BufferedReader buf = new BufferedReader(new FileReader("C:/Users/U354706/Desktop/Tmp/" + C46))) {
 
             long start = System.currentTimeMillis();
 
             String line;
-            String[] splitSpace;
-            String objectName;
 
             List<String> objectParameters = new ArrayList<String>();
 
             while ((line = buf.readLine()) != null) {
 
-                if (line.contains(BEGIN)) {
+                line = line.trim();
+
+                if (line.startsWith(BEGIN)) {
 
                     objectParameters.clear();
 
-                    splitSpace = line.trim().split(SPACE);
+                    if (line.contains("CHARACTERISTIC") && !line.contains("DEF_CHARACTERISTIC") && !line.contains("REF_CHARACTERISTIC")) {
+                        do {
+                            objectParameters.addAll(parseLineWithRegex(regexQuote, line));
+                        } while ((line = buf.readLine()) != null && !line.contains("/END") && !line.contains("CHARACTERISTIC"));
 
-                    int nbSplit = splitSpace.length;
-
-                    if (nbSplit == 2) {
-                        objectName = null;
-                    } else {
-                        objectName = splitSpace[2];
+                        characteristics.add(new Characteristic(objectParameters));
+                        // System.out.println(characteristics.get(characteristics.size() - 1).getInfo());
                     }
 
-                    switch (splitSpace[1]) {
-                    case "CHARACTERISTIC":
-                        if (characteristics.size() == 1) {
-                            System.out.println("Parse Characteristics...");
-                        }
-                        characteristics.add(new Characteristic(walkInObject(buf, objectName)));
-                        // System.out.println(characteristics.get(characteristics.size() - 1).getInfo());
-                        break;
-                    case "COMPU_METHOD":
-                        if (compuMethods.size() == 1) {
-                            System.out.println("Parse CompuMethods...");
-                        }
-                        compuMethods.add(new CompuMethod(walkInObject(buf, objectName)));
+                    if (line.contains("COMPU_METHOD")) {
+                        do {
+                            objectParameters.addAll(parseLineWithRegex(regexQuote, line));
+                        } while ((line = buf.readLine()) != null && !line.contains("/END") && !line.contains("COMPU_METHOD"));
+
+                        compuMethods.add(new CompuMethod(objectParameters));
                         // System.out.println(compuMethods.get(compuMethods.size() - 1).getInfo());
-                        break;
-                    case "COMPU_TAB":
-                        if (compuTabs.size() == 1) {
-                            System.out.println("Parse CompuTabs...");
-                        }
-                        compuTabs.add(new CompuTab(walkInObject(buf, objectName)));
+                    }
+
+                    if (line.contains("COMPU_TAB")) {
+                        do {
+                            objectParameters.addAll(parseLineWithRegex(regexQuote, line));
+                        } while ((line = buf.readLine()) != null && !line.contains("/END") && !line.contains("COMPU_TAB"));
+
+                        compuTabs.add(new CompuTab(objectParameters));
                         // System.out.println(compuTabs.get(compuTabs.size() - 1).getInfo());
-                        break;
-                    case "COMPU_VTAB":
-                        if (compuVTabs.size() == 1) {
-                            System.out.println("Parse CompuVTabs...");
-                        }
-                        compuVTabs.add(new CompuVTab(walkInObject(buf, objectName)));
+                    }
+
+                    if (line.contains("COMPU_VTAB") && !line.contains("COMPU_VTAB_RANGE")) {
+                        do {
+                            objectParameters.addAll(parseLineWithRegex(regexQuote, line));
+                        } while ((line = buf.readLine()) != null && !line.contains("/END") && !line.contains("COMPU_VTAB"));
+
+                        compuVTabs.add(new CompuVTab(objectParameters));
                         // System.out.println(compuVTabs.get(compuVTabs.size() - 1).getInfo());
-                        break;
-                    case "COMPU_VTAB_RANGE":
-                        if (compuVTabRanges.size() == 1) {
-                            System.out.println("Parse CompuTabRanges...");
-                        }
-                        compuVTabRanges.add(new CompuVTabRange(walkInObject(buf, objectName)));
+                    }
+
+                    if (line.contains("COMPU_VTAB_RANGE")) {
+                        do {
+                            objectParameters.addAll(parseLineWithRegex(regexQuote, line));
+                        } while ((line = buf.readLine()) != null && !line.contains("/END") && !line.contains("COMPU_VTAB_RANGE"));
+
+                        compuVTabRanges.add(new CompuVTabRange(objectParameters));
                         // System.out.println(compuVTabRanges.get(compuVTabRanges.size() - 1).getInfo());
-                        break;
-                    case "MEASUREMENT":
-                        if (measurements.size() == 1) {
-                            System.out.println("Parse Measurements...");
-                        }
-                        measurements.add(new Measurement(walkInObject(buf, objectName)));
+                    }
+
+                    if (line.contains("MEASUREMENT") && !line.contains("OUT_MEASUREMENT") && !line.contains("LOC_MEASUREMENT")
+                            && !line.contains("IN_MEASUREMENT") && !line.contains("REF_MEASUREMENT")) {
+                        do {
+                            if (line.contains("Ext_bBrkReq")) {
+                                int i = 0;
+                            }
+                            objectParameters.addAll(parseLineWithRegex(regexQuote, line));
+                        } while ((line = buf.readLine()) != null && !line.contains("/END") && !line.contains("MEASUREMENT"));
+
+                        measurements.add(new Measurement(objectParameters));
                         // System.out.println(measurements.get(measurements.size() - 1).getInfo());
-                        break;
-                    default:
-                        break;
                     }
 
                 }
             }
 
-            assignLinkedObject();
+            // assignLinkedObject();
 
             System.out.println("\nFini en : " + (System.currentTimeMillis() - start) + "ms\n");
             System.out.println("Characteristic : " + characteristics.size());
@@ -134,98 +140,32 @@ public final class A2l {
         }
     }
 
-    private final List<String> walkInObject(BufferedReader buf, String objectName) throws IOException {
+    private final List<String> parseLineWithRegex(Pattern regexQuote, String line) {
 
-        final String END = "/end";
+        final List<String> listWord = new ArrayList<String>();
 
-        final List<String> parameters = new ArrayList<String>();
+        line = line.trim().replaceAll("/\\*.*?\\*/", "");// single line comments
 
-        if (objectName != null) {
-            parameters.add(objectName);
+        if (line.matches("\".*\"")) {
+            // this string starts and end with a double quote
+            listWord.add(line.substring(1, line.length() - 1));
+            return listWord;
         }
 
-        String line;
-        String[] splitSpace;
+        final Matcher regexMatcher = regexQuote.matcher(line);
 
-        while ((line = buf.readLine()) != null && !line.contains(END)) {
-
-            line = line.trim();
-
-            if (line.contains("ACM_AMF_ACTUATOR_CUTTED_TIME_APV")
-                    || (objectName != null && objectName.contains("ACM_AMF_ACTUATOR_CUTTED_TIME_APV"))) {
-                int z = 0;
+        while (regexMatcher.find()) {
+            if (regexMatcher.group(1) != null) {
+                // Add double-quoted string without the quotes
+                listWord.add(regexMatcher.group(1));
+            } else if (regexMatcher.group(2) != null) {
+                // Add single-quoted string without the quotes
+                System.out.println("group2");
+                listWord.add(regexMatcher.group(2));
+            } else {
+                // Add unquoted word
+                listWord.add(regexMatcher.group());
             }
-
-            if (!line.isEmpty()) {
-
-                int idxCom = line.indexOf("/*"); // Si idxCom >-1 alors il y a un commentaire sur le parametre
-                int idxQuote = line.indexOf('"');
-
-                if (idxCom > -1) {
-                    line = line.substring(0, idxCom).trim();
-                }
-
-                /*
-                 * if (idxQuote == -1) { splitSpace = line.split(" "); } else { splitSpace = line.split("\""); }
-                 * 
-                 * if (line.charAt(0) != '"' && splitSpace.length > 1) {
-                 * 
-                 * for (String s : splitSpace) { s = s.trim(); if (!s.isEmpty()) { parameters.add(s); } }
-                 * 
-                 * } else { parameters.add(line.replace("\"", "")); }
-                 */
-
-                parameters.addAll(parseLine(line));
-            }
-        }
-
-        return parameters;
-    }
-
-    private final List<String> parseLine(String line) {
-
-        List<String> listWord = new ArrayList<String>();
-
-        int lengthLine = line.length();
-        int begin = 0;
-        int end = 0;
-
-        for (int i = 0; i < lengthLine; i++) {
-
-            if (line.charAt(i) == '"') { // Cas d'un string
-
-                if (i == 0) {
-                    begin = i + 1;
-                    end = lengthLine - 1;
-                    listWord.add(line.substring(begin, end));
-                    break;
-                }
-
-                begin = ++i;
-
-                while (i < lengthLine && line.charAt(i) != '"') {
-                    i++;
-                }
-
-                end = i;
-                listWord.add(line.substring(begin, end));
-
-                begin = end;
-            }
-
-            if (line.charAt(i) != ' ' && line.charAt(i) != '"') {
-
-                begin = i;
-
-                while (i < lengthLine && line.charAt(i) != ' ') {
-                    i++;
-                }
-                end = i;
-                listWord.add(line.substring(begin, end));
-
-                begin = end;
-            }
-
         }
 
         return listWord;

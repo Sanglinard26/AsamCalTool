@@ -29,6 +29,9 @@ public final class Measurement {
 
     public Measurement(List<String> parameters) {
 
+        parameters.remove(0); // Remove /begin
+        parameters.remove(0); // Remove CHARACTERISTIC
+
         if (parameters.size() >= 8) {
             for (int n = 0; n < parameters.size(); n++) {
                 switch (n) {

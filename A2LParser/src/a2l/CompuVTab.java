@@ -18,6 +18,9 @@ public final class CompuVTab {
 
     public CompuVTab(List<String> parameters) {
 
+        parameters.remove(0); // Remove /begin
+        parameters.remove(0); // Remove CHARACTERISTIC
+
         if (parameters.size() == 1 || parameters.size() >= 5) {
             for (int n = 0; n < parameters.size(); n++) {
                 switch (n) {
