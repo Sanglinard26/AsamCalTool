@@ -51,7 +51,7 @@ public final class A2l {
         compuVTabRanges = new ArrayList<CompuVTabRange>();
         measurements = new ArrayList<Measurement>();
 
-        try (BufferedReader buf = new BufferedReader(new FileReader("C:/Users/U354706/Desktop/Tmp/" + C46))) {
+        try (BufferedReader buf = new BufferedReader(new FileReader("C:/Users/U354706/Desktop/Tmp/" + B060C))) {
 
             long start = System.currentTimeMillis();
 
