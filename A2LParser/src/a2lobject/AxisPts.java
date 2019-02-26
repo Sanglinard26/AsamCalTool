@@ -1,0 +1,210 @@
+/*
+ * Creation : 2 mars 2018
+ */
+package a2lobject;
+
+import static constante.SecondaryKeywords.ANNOTATION;
+import static constante.SecondaryKeywords.BYTE_ORDER;
+import static constante.SecondaryKeywords.CALIBRATION_ACCESS;
+import static constante.SecondaryKeywords.COMPARISON_QUANTITY;
+import static constante.SecondaryKeywords.DEPOSIT;
+import static constante.SecondaryKeywords.DISPLAY_IDENTIFIER;
+import static constante.SecondaryKeywords.ECU_ADDRESS_EXTENSION;
+import static constante.SecondaryKeywords.EXTENDED_LIMITS;
+import static constante.SecondaryKeywords.FORMAT;
+import static constante.SecondaryKeywords.MAX_REFRESH;
+import static constante.SecondaryKeywords.MONOTONY;
+import static constante.SecondaryKeywords.PHYS_UNIT;
+import static constante.SecondaryKeywords.READ_ONLY;
+import static constante.SecondaryKeywords.REF_MEMORY_SEGMENT;
+import static constante.SecondaryKeywords.STEP_SIZE;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import constante.SecondaryKeywords;
+
+/**
+ * Parametre calibrable avec les proprietes suivantes : -nom - description - type : VALUE, ASCII, VAL_BLK, CURVE, MAP, CUBOID, CUBE_4, CUBE_5 - adress
+ * - record layout - computation method - upper and lower calibration limits - format
+ */
+
+public final class AxisPts {
+
+    private String name;
+    private String longIdentifier;
+    private long adress; // 4-byte unsigned integer
+    private String inputQuantity; // Reference to INPUT_QUANTITY
+    private String deposit; // Reference to RECORLAYOUT
+    private float maxDiff;
+    private String conversion; // Reference to COMPUTMETHOD
+    private int maxAxisPoints;
+    private float lowerLimit;
+    private float upperLimit;
+
+    private CompuMethod compuMethod;
+    private RecordLayout recordLayout;
+
+    private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
+        {
+            put(ANNOTATION, null);
+            put(BYTE_ORDER, null); // ToDo
+            put(CALIBRATION_ACCESS, null); // ToDo
+            put(COMPARISON_QUANTITY, null); // ToDo
+            put(DEPOSIT, null); // ToDo
+            put(DISPLAY_IDENTIFIER, null);
+            put(ECU_ADDRESS_EXTENSION, null); // ToDo
+            put(EXTENDED_LIMITS, null); // ToDo
+            put(FORMAT, null);
+            put(MAX_REFRESH, null);
+            put(MONOTONY, null);
+            put(PHYS_UNIT, null);
+            put(READ_ONLY, null); // Par defaut
+            put(REF_MEMORY_SEGMENT, null);
+            put(STEP_SIZE, null);
+        }
+    };
+
+    public AxisPts(List<String> parameters) {
+
+        parameters.remove(0); // Remove /begin
+        parameters.remove(0); // Remove CHARACTERISTIC
+
+        if (parameters.size() == 1 || parameters.size() >= 9) {
+            for (int n = 0; n < parameters.size(); n++) {
+                switch (n) {
+                case 0:
+                    this.name = parameters.get(n);
+                    // System.out.println(this.name);
+                    break;
+                case 1:
+                    this.longIdentifier = parameters.get(n);
+                    break;
+                case 2:
+                    this.adress = Long.decode(parameters.get(n)) & 0xffffffffL;
+                    break;
+                case 3:
+                    this.inputQuantity = parameters.get(n);
+                    break;
+                case 4:
+                    this.deposit = parameters.get(n);
+                    break;
+                case 5:
+                    this.maxDiff = Float.parseFloat(parameters.get(n));
+                    break;
+                case 6:
+                    this.conversion = parameters.get(n);
+                    break;
+                case 7:
+                    this.maxAxisPoints = Integer.parseInt(parameters.get(n));
+                    break;
+                case 8:
+                    this.lowerLimit = Float.parseFloat(parameters.get(n));
+                    break;
+                case 9:
+                    this.upperLimit = Float.parseFloat(parameters.get(n));
+                    break;
+
+                default: // Cas de parametres optionels
+
+                    Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+                    for (int nPar = n; nPar < parameters.size(); nPar++) {
+                        if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
+                            switch (parameters.get(nPar)) {
+                            case "ANNOTATION":
+                                n = nPar + 1;
+                                do {
+                                } while (!parameters.get(++nPar).equals("ANNOTATION"));
+                                optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3)));
+                                n = nPar + 1;
+                                break;
+                            case "DISPLAY_IDENTIFIER":
+                                optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1));
+                                break;
+                            case "FORMAT":
+                                optionalsParameters.put(FORMAT, new Format(parameters.get(nPar + 1).toString()));
+                                break;
+                            case "PHYS_UNIT":
+
+                                break;
+                            case "READ_ONLY":
+                                optionalsParameters.put(READ_ONLY, true);
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // On vide la MAP de parametre non utilise
+            Iterator<Map.Entry<SecondaryKeywords, Object>> iter = optionalsParameters.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry<SecondaryKeywords, Object> entry = iter.next();
+                if (entry.getValue() == null) {
+                    iter.remove();
+                }
+            }
+
+        } else {
+            throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
+        }
+
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
+    public String getConversion() {
+        return conversion;
+    }
+
+    public final void assignComputMethod(List<CompuMethod> compuMethods) {
+
+        int idx = Collections.binarySearch(compuMethods, CompuMethod.createEmptyCompuMethod(conversion));
+
+        if (idx > -1) {
+            this.compuMethod = compuMethods.get(idx);
+        }
+    }
+
+    public final void assignRecordLayout(List<RecordLayout> recordLayouts) {
+
+        int idx = Collections.binarySearch(recordLayouts, RecordLayout.createEmptyRecordLayout(deposit));
+
+        if (idx > -1) {
+            this.recordLayout = recordLayouts.get(idx);
+        }
+    }
+
+    public final String getInfo() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("Name : " + name + "\n");
+        sb.append("LongIdentifier : " + longIdentifier + "\n");
+        sb.append("Adress : " + adress + "\n");
+        sb.append("InputQuantity : " + inputQuantity + "\n");
+        sb.append("Deposit : " + deposit + "\n");
+        sb.append("Conversion : " + conversion + "\n");
+        sb.append("MaxDiff : " + maxDiff + "\n");
+        sb.append("LowerLimit : " + lowerLimit + "\n");
+        sb.append("UpperLimit : " + upperLimit + "\n");
+
+        for (Entry<SecondaryKeywords, Object> entry : optionalsParameters.entrySet()) {
+            if (entry.getValue() != null) {
+                sb.append(entry.getKey() + " : " + entry.getValue() + "\n");
+            }
+        }
+
+        return sb.toString();
+    }
+
+}

@@ -1,27 +1,26 @@
 /*
  * Creation : 5 janv. 2019
  */
-package a2l;
+package a2lobject;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class CompuVTab {
+public final class CompuVTabRange {
 
     private String name;
     private String longIdentifier;
-    private String conversionType;
-    private int numberValuePairs;
-    private Map<Float, String> valuePairs;
+    private int numberValueTriples;
+    private Map<Range, String> valueTriples;
     private String defaultValue; // DEFAULT_VALUE
 
-    public CompuVTab(List<String> parameters) {
+    public CompuVTabRange(List<String> parameters) {
 
         parameters.remove(0); // Remove /begin
         parameters.remove(0); // Remove CHARACTERISTIC
 
-        if (parameters.size() == 1 || parameters.size() >= 5) {
+        if (parameters.size() >= 4) {
             for (int n = 0; n < parameters.size(); n++) {
                 switch (n) {
                 case 0:
@@ -32,13 +31,10 @@ public final class CompuVTab {
                     this.longIdentifier = parameters.get(n);
                     break;
                 case 2:
-                    this.conversionType = parameters.get(n);
+                    this.numberValueTriples = Integer.parseInt(parameters.get(n));
                     break;
                 case 3:
-                    this.numberValuePairs = Integer.parseInt(parameters.get(n));
-                    break;
-                case 4:
-                    this.valuePairs = new LinkedHashMap<Float, String>();
+                    this.valueTriples = new LinkedHashMap<Range, String>();
 
                     int lastIdx = parameters.indexOf("DEFAULT_VALUE");
 
@@ -51,8 +47,9 @@ public final class CompuVTab {
                     }
 
                     for (int i = 0; i < listValuePairs.size(); i++) {
-                        if (i % 2 == 0) {
-                            valuePairs.put(Float.parseFloat(listValuePairs.get(i)), listValuePairs.get(i + 1));
+                        if (i % 3 == 0) {
+                            valueTriples.put(new Range(Float.parseFloat(listValuePairs.get(i)), Float.parseFloat(listValuePairs.get(i + 1))),
+                                    listValuePairs.get(i + 2));
                         }
                     }
 
@@ -73,11 +70,27 @@ public final class CompuVTab {
 
         sb.append("Name : " + name + "\n");
         sb.append("LongIdentifier : " + longIdentifier + "\n");
-        sb.append("ConversionType : " + conversionType + "\n");
-        sb.append("NumberValuePairs : " + numberValuePairs + "\n");
-        sb.append("ValuePairs : " + valuePairs + "\n");
+        sb.append("NumberValuePairs : " + numberValueTriples + "\n");
+        sb.append("ValuePairs : " + valueTriples + "\n");
 
         return sb.toString();
+    }
+}
+
+final class Range {
+
+    private float min;
+    private float max;
+
+    public Range(float min, float max) {
+        this.min = min;
+        this.max = max;
+    }
+
+    @Override
+    public String toString() {
+        // TODO Auto-generated method stub
+        return min + "," + max;
     }
 
 }

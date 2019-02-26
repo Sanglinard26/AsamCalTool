@@ -4,12 +4,15 @@
 package constante;
 
 public enum PrimaryKeywords {
-    CHARACTERISTIC("CHARACTERISTIC"), COMPU_METHOD("COMPU_METHOD"), COMPU_TAB("COMPU_TAB"), COMPU_VTAB("COMPU_VTAB");
+    AXIS_PTS, CHARACTERISTIC, COMPU_METHOD, COMPU_TAB, COMPU_VTAB, COMPU_VTAB_RANGE, MEASUREMENT, RECORD_LAYOUT;
 
-    private final String name;
-
-    private PrimaryKeywords(String name) {
-        this.name = name;
+    public static final PrimaryKeywords getPrimaryKeywords(String name) {
+        for (PrimaryKeywords enumKeyword : PrimaryKeywords.values()) {
+            if (enumKeyword.name().equals(name)) {
+                return enumKeyword;
+            }
+        }
+        return null;
     }
 
 }

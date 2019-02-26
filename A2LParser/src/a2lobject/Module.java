@@ -1,7 +1,7 @@
 /*
  * Creation : 2 mars 2018
  */
-package a2l;
+package a2lobject;
 
 public class Module {
 
