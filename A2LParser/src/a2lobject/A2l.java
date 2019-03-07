@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,14 +17,18 @@ import utils.RegexHolder;
 
 public final class A2l {
 
+    private ModPar modPar;
+    private ModCommon modCommon;
     private List<AxisPts> axisPts;
     private List<Characteristic> characteristics;
-    private List<CompuMethod> compuMethods;
+    // private List<CompuMethod> compuMethods;
+    private HashMap<String, CompuMethod> compuMethods;
     private List<CompuTab> compuTabs;
     private List<CompuVTab> compuVTabs;
     private List<CompuVTabRange> compuVTabRanges;
     private List<Measurement> measurements;
-    private List<RecordLayout> recordLayouts;
+    // private List<RecordLayout> recordLayouts;
+    private HashMap<String, RecordLayout> recordLayouts;
 
     public A2l(File a2lFile) {
         parse(a2lFile);
@@ -35,18 +40,16 @@ public final class A2l {
 
     private final void parse(File a2lFile) {
         final String BEGIN = "/begin";
-        final String END = "/end ";
-
-        // Pattern regexQuote = RegexHolder.QUOTE;
 
         axisPts = new ArrayList<AxisPts>();
         characteristics = new ArrayList<Characteristic>();
-        compuMethods = new ArrayList<CompuMethod>();
+        // compuMethods = new ArrayList<CompuMethod>();
+        compuMethods = new HashMap<String, CompuMethod>();
         compuTabs = new ArrayList<CompuTab>();
         compuVTabs = new ArrayList<CompuVTab>();
         compuVTabRanges = new ArrayList<CompuVTabRange>();
         measurements = new ArrayList<Measurement>();
-        recordLayouts = new ArrayList<RecordLayout>();
+        recordLayouts = new HashMap<String, RecordLayout>();
 
         int numLine = 0;
 
@@ -76,6 +79,16 @@ public final class A2l {
                     String keyword = RegexHolder.MULTI_SPACE.split(line, 0)[1];
 
                     switch (keyword) {
+                    case "MOD_PAR":
+                        fillParameters(buf, line, objectParameters, keyword);
+                        modPar = new ModPar(objectParameters);
+                        System.out.println(modPar.getInfo());
+                        break;
+                    case "MOD_COMMON":
+                        fillParameters(buf, line, objectParameters, keyword);
+                        modCommon = new ModCommon(objectParameters);
+                        System.out.println(modCommon.getInfo());
+                        break;
                     case "AXIS_PTS":
                         fillParameters(buf, line, objectParameters, keyword);
                         axisPts.add(new AxisPts(objectParameters));
@@ -86,7 +99,9 @@ public final class A2l {
                         break;
                     case "COMPU_METHOD":
                         fillParameters(buf, line, objectParameters, keyword);
-                        compuMethods.add(new CompuMethod(objectParameters));
+                        CompuMethod compuMethod = new CompuMethod(objectParameters);
+                        compuMethods.put(compuMethod.toString(), compuMethod);
+                        // compuMethods.add(new CompuMethod(objectParameters));
                         break;
                     case "COMPU_TAB":
                         fillParameters(buf, line, objectParameters, keyword);
@@ -106,7 +121,8 @@ public final class A2l {
                         break;
                     case "RECORD_LAYOUT":
                         fillParameters(buf, line, objectParameters, keyword);
-                        recordLayouts.add(new RecordLayout(objectParameters));
+                        RecordLayout recordLayout = new RecordLayout(objectParameters);
+                        recordLayouts.put(recordLayout.toString(), recordLayout);
                         break;
 
                     default:
@@ -188,9 +204,13 @@ public final class A2l {
             characteristic.assignRecordLayout(recordLayouts);
         }
 
-        for (Measurement measurement : measurements) {
-            measurement.assignComputMethod(compuMethods);
-        }
+        // for (Measurement measurement : measurements) {
+        // measurement.assignComputMethod(compuMethods);
+        // }
+    }
+
+    public ModPar getModPar() {
+        return modPar;
     }
 
 }

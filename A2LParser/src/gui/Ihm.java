@@ -8,7 +8,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -26,10 +26,8 @@ import javax.swing.event.ListSelectionListener;
 
 import a2lobject.A2l;
 import a2lobject.Characteristic;
-import hex.Hex;
-import hex.IntelHexException;
-import hex.ParserHex;
-import hex.listeners.RangeDetector;
+import association.Association;
+import hex.IntelHex;
 
 public final class Ihm extends JFrame {
 
@@ -86,7 +84,7 @@ public final class Ihm extends JFrame {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    JFileChooser chooser = new JFileChooser();
+                    JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
                     int rep = chooser.showOpenDialog(null);
 
                     if (rep == JFileChooser.APPROVE_OPTION) {
@@ -104,36 +102,46 @@ public final class Ihm extends JFrame {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    JFileChooser chooser = new JFileChooser();
+                    JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
                     int rep = chooser.showOpenDialog(null);
 
                     if (rep == JFileChooser.APPROVE_OPTION) {
 
-                        new Hex(chooser.getSelectedFile());
+                        // new Hex(chooser.getSelectedFile());
 
-                        ParserHex pHex;
-                        // start
+                        /*
+                         * ParserHex pHex = null; // start long lStartTime = System.nanoTime();
+                         * 
+                         * // Parsing of the IntelHex file (and transfer of the data record with their respective start // addresses in the HashMap
+                         * pHex.addressMap) try (FileInputStream isHex = new FileInputStream(chooser.getSelectedFile())) {
+                         * System.out.println("Start parsing the IntelHex file: "); pHex = new ParserHex(isHex); RangeDetector rangeDetector = new
+                         * RangeDetector(); pHex.setDataListener(rangeDetector); pHex.parse(); System.out.println("End parsing of the IntelHex: "); }
+                         * catch (IOException | IntelHexException e1) { e1.printStackTrace(); }
+                         * 
+                         * // end long lEndTime = System.nanoTime();
+                         * 
+                         * // time elapsed long output = lEndTime - lStartTime; System.out.println("Hex parsing time in miliseconds: " + output /
+                         * 1000000);
+                         */
+
                         long lStartTime = System.nanoTime();
-
-                        // Parsing of the IntelHex file (and transfer of the data record with their respective start
-                        // addresses in the HashMap pHex.addressMap)
-                        try (FileInputStream isHex = new FileInputStream(chooser.getSelectedFile())) {
-                            System.out.println("Start parsing the IntelHex file: ");
-                            pHex = new ParserHex(isHex);
-                            RangeDetector rangeDetector = new RangeDetector();
-                            pHex.setDataListener(rangeDetector);
-                            pHex.parse();
-                            System.out.println("End parsing of the IntelHex: ");
-                        } catch (IOException | IntelHexException e1) {
+                        System.out.println("Start parsing the IntelHex file: ");
+                        IntelHex pHex = null;
+                        try {
+                            pHex = new IntelHex(chooser.getSelectedFile().getAbsolutePath());
+                        } catch (FileNotFoundException e1) {
+                            // TODO Auto-generated catch block
+                            e1.printStackTrace();
+                        } catch (IOException e1) {
+                            // TODO Auto-generated catch block
                             e1.printStackTrace();
                         }
 
-                        // end
                         long lEndTime = System.nanoTime();
-
-                        // time elapsed
                         long output = lEndTime - lStartTime;
                         System.out.println("Hex parsing time in miliseconds: " + output / 1000000);
+
+                        Association.combine(a2l, pHex);
                     }
 
                 }

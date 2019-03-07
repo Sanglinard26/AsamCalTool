@@ -25,7 +25,6 @@ import static constante.SecondaryKeywords.STEP_SIZE;
 import static constante.SecondaryKeywords.VIRTUAL_CHARACTERISTIC;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,7 +44,7 @@ public final class Characteristic implements Comparable<Characteristic> {
     private String name;
     private String longIdentifier;
     private CharacteristicType type;
-    private long adress; // 4-byte unsigned integer
+    private String adress; // 4-byte unsigned integer
     private String deposit; // Reference to RECORLAYOUT
     private float maxDiff;
     private String conversion; // Reference to COMPUTMETHOD
@@ -94,6 +93,7 @@ public final class Characteristic implements Comparable<Characteristic> {
                 case 0:
                     this.name = parameters.get(n);
                     // System.out.println(this.name);
+
                     break;
                 case 1:
                     this.longIdentifier = parameters.get(n);
@@ -102,7 +102,7 @@ public final class Characteristic implements Comparable<Characteristic> {
                     this.type = CharacteristicType.getCharacteristicType(parameters.get(n));
                     break;
                 case 3:
-                    this.adress = Long.decode(parameters.get(n)) & 0xffffffffL;
+                    this.adress = parameters.get(n);
                     break;
                 case 4:
                     this.deposit = parameters.get(n);
@@ -168,6 +168,8 @@ public final class Characteristic implements Comparable<Characteristic> {
                             }
                         }
                     }
+                    n = parameters.size();
+                    break;
                 }
             }
 
@@ -195,22 +197,30 @@ public final class Characteristic implements Comparable<Characteristic> {
         return conversion;
     }
 
-    public final void assignComputMethod(List<CompuMethod> compuMethods) {
-
-        int idx = Collections.binarySearch(compuMethods, CompuMethod.createEmptyCompuMethod(conversion));
-
-        if (idx > -1) {
-            this.compuMethod = compuMethods.get(idx);
-        }
+    public CompuMethod getCompuMethod() {
+        return compuMethod;
     }
 
-    public final void assignRecordLayout(List<RecordLayout> recordLayouts) {
+    public RecordLayout getRecordLayout() {
+        return recordLayout;
+    }
 
-        int idx = Collections.binarySearch(recordLayouts, RecordLayout.createEmptyRecordLayout(deposit));
+    public Map<SecondaryKeywords, Object> getOptionalsParameters() {
+        return optionalsParameters;
+    }
 
-        if (idx > -1) {
-            this.recordLayout = recordLayouts.get(idx);
-        }
+    public CharacteristicType getType() {
+        return type;
+    }
+
+    public final void assignComputMethod(HashMap<String, CompuMethod> compuMethods) {
+
+        this.compuMethod = compuMethods.get(this.conversion);
+    }
+
+    public final void assignRecordLayout(HashMap<String, RecordLayout> recordLayouts) {
+
+        this.recordLayout = recordLayouts.get(this.deposit);
     }
 
     public final String getInfo() {
@@ -233,6 +243,10 @@ public final class Characteristic implements Comparable<Characteristic> {
         }
 
         return sb.toString();
+    }
+
+    public String getAdress() {
+        return adress;
     }
 
     public enum CharacteristicType {

@@ -38,7 +38,7 @@ public final class AxisPts {
 
     private String name;
     private String longIdentifier;
-    private long adress; // 4-byte unsigned integer
+    private String adress; // 4-byte unsigned integer
     private String inputQuantity; // Reference to INPUT_QUANTITY
     private String deposit; // Reference to RECORLAYOUT
     private float maxDiff;
@@ -86,7 +86,7 @@ public final class AxisPts {
                     this.longIdentifier = parameters.get(n);
                     break;
                 case 2:
-                    this.adress = Long.decode(parameters.get(n)) & 0xffffffffL;
+                    this.adress = parameters.get(n);
                     break;
                 case 3:
                     this.inputQuantity = parameters.get(n);

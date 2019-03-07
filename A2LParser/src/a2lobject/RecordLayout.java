@@ -92,6 +92,11 @@ public final class RecordLayout implements Comparable<RecordLayout> {
         return this.name.equals(obj.toString());
     }
 
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
     public final String getInfo() {
         StringBuilder sb = new StringBuilder();
 
@@ -105,7 +110,11 @@ public final class RecordLayout implements Comparable<RecordLayout> {
         return this.name.compareTo(o.name);
     }
 
-    private final class FncValues {
+    public Map<SecondaryKeywords, Object> getOptionalsParameters() {
+        return optionalsParameters;
+    }
+
+    public final class FncValues {
 
         private int position;
         private DataType dataType;
@@ -117,6 +126,10 @@ public final class RecordLayout implements Comparable<RecordLayout> {
             this.dataType = DataType.getDataType(parameters.get(1));
             this.indexMode = IndexMode.getIndexMode(parameters.get(2));
             this.adressType = AdressType.getAdressType(parameters.get(3));
+        }
+
+        public DataType getDataType() {
+            return dataType;
         }
     }
 

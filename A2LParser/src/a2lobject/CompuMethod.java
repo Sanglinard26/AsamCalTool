@@ -118,21 +118,33 @@ public final class CompuMethod implements Comparable<CompuMethod> {
 
     public final double compute(double hex) {
 
+        float[] _coeffs;
+
         switch (this.conversionType) {
         case IDENTICAL:
             return hex;
         case FORM:
             return hex;
         case LINEAR:
-            CoeffsLinear coeffsLinear = (CoeffsLinear) this.optionalsParameters.get("COEFFS_LINEAR");
-            float[] coeffs = coeffsLinear.getCoeffs();
-            return (coeffs[0] * hex) - coeffs[1];
+            CoeffsLinear coeffsLinear = (CoeffsLinear) this.optionalsParameters.get(COEFFS_LINEAR);
+            _coeffs = coeffsLinear.getCoeffs();
+            return (_coeffs[0] * hex) - _coeffs[1];
         case RAT_FUNC:
-            return hex;
+            Coeffs coeffs = (Coeffs) this.optionalsParameters.get(COEFFS);
+            _coeffs = coeffs.getCoeffs();
+            if (_coeffs[1] * _coeffs[5] == 1) {
+                return hex;
+            }
+            return Double.NaN;
+
         default:
             return hex;
         }
 
+    }
+
+    public ConversionType getConversionType() {
+        return conversionType;
     }
 
     public static CompuMethod createEmptyCompuMethod(String name) {
@@ -163,7 +175,7 @@ public final class CompuMethod implements Comparable<CompuMethod> {
         return this.name.compareTo(o.name);
     }
 
-    private final class Coeffs {
+    public final class Coeffs {
 
         // INT = f(PHYS), f(x) = (axx + bx + c) / (dxx + ex + f)
 
