@@ -70,6 +70,15 @@ public final class CompuVTab {
 
     }
 
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
+    public Map<Float, String> getValuePairs() {
+        return valuePairs;
+    }
+
     public final String getInfo() {
         StringBuilder sb = new StringBuilder();
 

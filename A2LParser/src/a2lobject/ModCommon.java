@@ -38,7 +38,7 @@ public final class ModCommon {
             put(ALIGNMENT_INT64, null);
             put(ALIGNMENT_LONG, null);
             put(ALIGNMENT_WORD, null);
-            put(BYTE_ORDER, null);
+            put(BYTE_ORDER, null); // MSB_LAST ==> LITTLE_ENDIAN
             put(DATA_SIZE, null);
             put(DEPOSIT, null);
         }
@@ -117,6 +117,10 @@ public final class ModCommon {
 
     public static int getNbMandatoryfields() {
         return nbMandatoryFields;
+    }
+
+    public Map<SecondaryKeywords, Object> getOptionalsParameters() {
+        return optionalsParameters;
     }
 
     public final String getInfo() {

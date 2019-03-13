@@ -116,6 +116,12 @@ public final class CompuMethod implements Comparable<CompuMethod> {
         return this.name;
     }
 
+    public final void assignCompuVTab(HashMap<String, CompuVTab> compuVTabs) {
+
+        String compuTabRef = (String) this.optionalsParameters.get(COMPU_TAB_REF);
+        this.optionalsParameters.put(COMPU_TAB_REF, compuVTabs.get(compuTabRef));
+    }
+
     public final double compute(double hex) {
 
         float[] _coeffs;
@@ -132,19 +138,34 @@ public final class CompuMethod implements Comparable<CompuMethod> {
         case RAT_FUNC:
             Coeffs coeffs = (Coeffs) this.optionalsParameters.get(COEFFS);
             _coeffs = coeffs.getCoeffs();
-            if (_coeffs[1] * _coeffs[5] == 1) {
-                return hex;
+            if (_coeffs[0] + _coeffs[2] + _coeffs[3] + _coeffs[4] == 0) {
+                return (hex * _coeffs[5]) / _coeffs[1];
             }
             return Double.NaN;
-
         default:
             return hex;
         }
+    }
 
+    public final String computeString(double hex) {
+
+        Object compuTabRef = this.optionalsParameters.get(COMPU_TAB_REF);
+
+        switch (this.conversionType) {
+        case TAB_VERB:
+            CompuVTab compuVTab = (CompuVTab) compuTabRef;
+            return compuVTab.getValuePairs().get(hex);
+        default:
+            return "";
+        }
     }
 
     public ConversionType getConversionType() {
         return conversionType;
+    }
+
+    public Map<SecondaryKeywords, Object> getOptionalsParameters() {
+        return optionalsParameters;
     }
 
     public static CompuMethod createEmptyCompuMethod(String name) {

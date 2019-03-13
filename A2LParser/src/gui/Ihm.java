@@ -18,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
@@ -107,23 +108,6 @@ public final class Ihm extends JFrame {
 
                     if (rep == JFileChooser.APPROVE_OPTION) {
 
-                        // new Hex(chooser.getSelectedFile());
-
-                        /*
-                         * ParserHex pHex = null; // start long lStartTime = System.nanoTime();
-                         * 
-                         * // Parsing of the IntelHex file (and transfer of the data record with their respective start // addresses in the HashMap
-                         * pHex.addressMap) try (FileInputStream isHex = new FileInputStream(chooser.getSelectedFile())) {
-                         * System.out.println("Start parsing the IntelHex file: "); pHex = new ParserHex(isHex); RangeDetector rangeDetector = new
-                         * RangeDetector(); pHex.setDataListener(rangeDetector); pHex.parse(); System.out.println("End parsing of the IntelHex: "); }
-                         * catch (IOException | IntelHexException e1) { e1.printStackTrace(); }
-                         * 
-                         * // end long lEndTime = System.nanoTime();
-                         * 
-                         * // time elapsed long output = lEndTime - lStartTime; System.out.println("Hex parsing time in miliseconds: " + output /
-                         * 1000000);
-                         */
-
                         long lStartTime = System.nanoTime();
                         System.out.println("Start parsing the IntelHex file: ");
                         IntelHex pHex = null;
@@ -141,7 +125,10 @@ public final class Ihm extends JFrame {
                         long output = lEndTime - lStartTime;
                         System.out.println("Hex parsing time in miliseconds: " + output / 1000000);
 
-                        Association.combine(a2l, pHex);
+                        if (Association.combine(a2l, pHex)) {
+                            JOptionPane.showMessageDialog(Ihm.this, "Association OK");
+                        }
+
                     }
 
                 }

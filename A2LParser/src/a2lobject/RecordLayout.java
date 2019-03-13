@@ -10,6 +10,7 @@ import static constante.SecondaryKeywords.ALIGNMENT_FLOAT64_IEEE;
 import static constante.SecondaryKeywords.ALIGNMENT_INT64;
 import static constante.SecondaryKeywords.ALIGNMENT_LONG;
 import static constante.SecondaryKeywords.ALIGNMENT_WORD;
+import static constante.SecondaryKeywords.AXIS_PTS_X;
 import static constante.SecondaryKeywords.FNC_VALUES;
 import static constante.SecondaryKeywords.STATIC_RECORD_LAYOUT;
 
@@ -22,6 +23,7 @@ import java.util.Map;
 import constante.AdressType;
 import constante.DataType;
 import constante.IndexMode;
+import constante.IndexOrder;
 import constante.SecondaryKeywords;
 
 public final class RecordLayout implements Comparable<RecordLayout> {
@@ -37,7 +39,9 @@ public final class RecordLayout implements Comparable<RecordLayout> {
             put(ALIGNMENT_INT64, null);
             put(ALIGNMENT_LONG, null);
             put(ALIGNMENT_WORD, null);
+            put(AXIS_PTS_X, null);
             put(FNC_VALUES, null);
+            put(SecondaryKeywords.NO_AXIS_PTS_X, null);
             put(STATIC_RECORD_LAYOUT, null);
         }
     };
@@ -61,6 +65,21 @@ public final class RecordLayout implements Comparable<RecordLayout> {
                         optionalsParameters.put(FNC_VALUES, new FncValues(subList));
                         n += 4;
                         break;
+
+                    case "AXIS_PTS_X":
+
+                        List<String> subList2 = parameters.subList(n + 1, n + 5);
+                        optionalsParameters.put(AXIS_PTS_X, new AxisPtsX(subList2));
+                        n += 4;
+                        break;
+
+                    case "NO_AXIS_PTS_X":
+
+                        List<String> subList3 = parameters.subList(n + 1, n + 3);
+                        optionalsParameters.put(SecondaryKeywords.NO_AXIS_PTS_X, new NoAxisPtsX(subList3));
+                        n += 2;
+                        break;
+
                     }
                     break;
                 }
@@ -128,9 +147,55 @@ public final class RecordLayout implements Comparable<RecordLayout> {
             this.adressType = AdressType.getAdressType(parameters.get(3));
         }
 
+        public int getPosition() {
+            return position;
+        }
+
         public DataType getDataType() {
             return dataType;
         }
+    }
+
+    public final class AxisPtsX {
+
+        private int position;
+        private DataType dataType;
+        private IndexOrder indexOrder;
+        private AdressType adressType;
+
+        public AxisPtsX(List<String> parameters) {
+            this.position = Integer.parseInt(parameters.get(0));
+            this.dataType = DataType.getDataType(parameters.get(1));
+            this.indexOrder = IndexOrder.getIndexOrder(parameters.get(2));
+            this.adressType = AdressType.getAdressType(parameters.get(3));
+        }
+
+        public int getPosition() {
+            return position;
+        }
+
+        public DataType getDataType() {
+            return dataType;
+        }
+    }
+
+    public final class NoAxisPtsX {
+        private int position;
+        private DataType dataType;
+
+        public NoAxisPtsX(List<String> parameters) {
+            this.position = Integer.parseInt(parameters.get(0));
+            this.dataType = DataType.getDataType(parameters.get(1));
+        }
+
+        public int getPosition() {
+            return position;
+        }
+
+        public DataType getDataType() {
+            return dataType;
+        }
+
     }
 
 }

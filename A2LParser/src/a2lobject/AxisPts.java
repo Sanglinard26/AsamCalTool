@@ -19,7 +19,6 @@ import static constante.SecondaryKeywords.READ_ONLY;
 import static constante.SecondaryKeywords.REF_MEMORY_SEGMENT;
 import static constante.SecondaryKeywords.STEP_SIZE;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -167,22 +166,26 @@ public final class AxisPts {
         return conversion;
     }
 
-    public final void assignComputMethod(List<CompuMethod> compuMethods) {
-
-        int idx = Collections.binarySearch(compuMethods, CompuMethod.createEmptyCompuMethod(conversion));
-
-        if (idx > -1) {
-            this.compuMethod = compuMethods.get(idx);
-        }
+    public CompuMethod getCompuMethod() {
+        return compuMethod;
     }
 
-    public final void assignRecordLayout(List<RecordLayout> recordLayouts) {
+    public RecordLayout getRecordLayout() {
+        return recordLayout;
+    }
 
-        int idx = Collections.binarySearch(recordLayouts, RecordLayout.createEmptyRecordLayout(deposit));
+    public String getAdress() {
+        return adress;
+    }
 
-        if (idx > -1) {
-            this.recordLayout = recordLayouts.get(idx);
-        }
+    public final void assignComputMethod(HashMap<String, CompuMethod> compuMethods) {
+
+        this.compuMethod = compuMethods.get(this.conversion);
+    }
+
+    public final void assignRecordLayout(HashMap<String, RecordLayout> recordLayouts) {
+
+        this.recordLayout = recordLayouts.get(this.deposit);
     }
 
     public final String getInfo() {

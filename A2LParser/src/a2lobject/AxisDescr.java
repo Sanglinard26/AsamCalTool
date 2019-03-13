@@ -3,7 +3,18 @@
  */
 package a2lobject;
 
+import static constante.SecondaryKeywords.BYTE_ORDER;
+import static constante.SecondaryKeywords.FIX_AXIS_PAR;
+import static constante.SecondaryKeywords.FIX_AXIS_PAR_DIST;
+import static constante.SecondaryKeywords.FIX_AXIS_PAR_LIST;
+
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import constante.SecondaryKeywords;
 
 public final class AxisDescr {
 
@@ -14,7 +25,23 @@ public final class AxisDescr {
     private float lowerLimit;
     private float upperLimit;
 
+    private CompuMethod compuMethod;
+    private RecordLayout recordLayout;
+    private AxisPts axisPts;
+
     private static final int nbMandatoryFields = 6;
+
+    private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
+        private static final long serialVersionUID = 1L;
+
+        {
+            put(SecondaryKeywords.AXIS_PTS_REF, null);
+            put(BYTE_ORDER, null);
+            put(FIX_AXIS_PAR, null);
+            put(FIX_AXIS_PAR_DIST, null);
+            put(FIX_AXIS_PAR_LIST, null);
+        }
+    };
 
     public AxisDescr(List<String> parameters) {
 
@@ -41,9 +68,48 @@ public final class AxisDescr {
                     this.upperLimit = Float.parseFloat(parameters.get(n));
                     break;
                 default:
+
+                    Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+                    for (int nPar = n; nPar < parameters.size(); nPar++) {
+                        if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
+                            switch (parameters.get(nPar)) {
+                            case "AXIS_PTS_REF":
+                                optionalsParameters.put(SecondaryKeywords.AXIS_PTS_REF, parameters.get(nPar + 1));
+                                break;
+                            case "FIX_AXIS_PAR":
+                                n = nPar + 1;
+                                optionalsParameters.put(FIX_AXIS_PAR, new FixAxisPar(parameters.subList(n, n + 3)));
+                                n = nPar + 3;
+                                break;
+                            case "FIX_AXIS_PAR_DIST":
+                                n = nPar + 1;
+                                optionalsParameters.put(FIX_AXIS_PAR_DIST, new FixAxisParDist(parameters.subList(n, n + 3)));
+                                n += 3;
+                                break;
+                            case "FIX_AXIS_PAR_LIST":
+                                n = nPar + 1;
+                                optionalsParameters.put(FIX_AXIS_PAR_LIST, parameters.subList(n, n + 3));
+                                n += 3;
+                                break;
+                            }
+
+                        }
+                    }
+                    n = parameters.size();
                     break;
                 }
+
             }
+
+            // On vide la MAP de parametre non utilise
+            Iterator<Map.Entry<SecondaryKeywords, Object>> iter = optionalsParameters.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry<SecondaryKeywords, Object> entry = iter.next();
+                if (entry.getValue() == null) {
+                    iter.remove();
+                }
+            }
+
         } else {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }
@@ -51,6 +117,10 @@ public final class AxisDescr {
 
     public static int getNbMandatoryfields() {
         return nbMandatoryFields;
+    }
+
+    public Attribute getAttribute() {
+        return attribute;
     }
 
     public final String getInfo() {
@@ -66,9 +136,41 @@ public final class AxisDescr {
         return sb.toString();
     }
 
+    public void setCompuMethod(CompuMethod compuMethod) {
+        this.compuMethod = compuMethod;
+    }
+
+    public void setAxisPts(AxisPts axisPts) {
+        this.axisPts = axisPts;
+    }
+
+    public AxisPts getAxisPts() {
+        return axisPts;
+    }
+
+    public String getConversion() {
+        return conversion;
+    }
+
+    public CompuMethod getCompuMethod() {
+        return compuMethod;
+    }
+
+    public RecordLayout getRecordLayout() {
+        return recordLayout;
+    }
+
     @Override
     public String toString() {
         return getInfo();
+    }
+
+    public int getMaxAxisPoints() {
+        return maxAxisPoints;
+    }
+
+    public Map<SecondaryKeywords, Object> getOptionalsParameters() {
+        return optionalsParameters;
     }
 
     public enum Attribute {
@@ -91,5 +193,4 @@ public final class AxisDescr {
             }
         }
     }
-
 }

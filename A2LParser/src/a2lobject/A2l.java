@@ -13,18 +13,19 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import constante.SecondaryKeywords;
 import utils.RegexHolder;
 
 public final class A2l {
 
     private ModPar modPar;
     private ModCommon modCommon;
-    private List<AxisPts> axisPts;
+    private HashMap<String, AxisPts> axisPts;
     private List<Characteristic> characteristics;
     // private List<CompuMethod> compuMethods;
     private HashMap<String, CompuMethod> compuMethods;
     private List<CompuTab> compuTabs;
-    private List<CompuVTab> compuVTabs;
+    private HashMap<String, CompuVTab> compuVTabs;
     private List<CompuVTabRange> compuVTabRanges;
     private List<Measurement> measurements;
     // private List<RecordLayout> recordLayouts;
@@ -41,12 +42,12 @@ public final class A2l {
     private final void parse(File a2lFile) {
         final String BEGIN = "/begin";
 
-        axisPts = new ArrayList<AxisPts>();
+        axisPts = new HashMap<String, AxisPts>();
         characteristics = new ArrayList<Characteristic>();
         // compuMethods = new ArrayList<CompuMethod>();
         compuMethods = new HashMap<String, CompuMethod>();
         compuTabs = new ArrayList<CompuTab>();
-        compuVTabs = new ArrayList<CompuVTab>();
+        compuVTabs = new HashMap<String, CompuVTab>();
         compuVTabRanges = new ArrayList<CompuVTabRange>();
         measurements = new ArrayList<Measurement>();
         recordLayouts = new HashMap<String, RecordLayout>();
@@ -91,7 +92,9 @@ public final class A2l {
                         break;
                     case "AXIS_PTS":
                         fillParameters(buf, line, objectParameters, keyword);
-                        axisPts.add(new AxisPts(objectParameters));
+                        AxisPts axisPt = new AxisPts(objectParameters);
+                        axisPts.put(axisPt.toString(), axisPt);
+                        // axisPts.add(new AxisPts(objectParameters));
                         break;
                     case "CHARACTERISTIC":
                         fillParameters(buf, line, objectParameters, keyword);
@@ -109,7 +112,8 @@ public final class A2l {
                         break;
                     case "COMPU_VTAB":
                         fillParameters(buf, line, objectParameters, keyword);
-                        compuVTabs.add(new CompuVTab(objectParameters));
+                        CompuVTab compuVTab = new CompuVTab(objectParameters);
+                        compuVTabs.put(compuVTab.toString(), compuVTab);
                         break;
                     case "COMPU_VTAB_RANGE":
                         fillParameters(buf, line, objectParameters, keyword);
@@ -199,9 +203,23 @@ public final class A2l {
 
         System.out.println("Assign LinkedObject...");
 
+        for (String axisPt : axisPts.keySet()) {
+            axisPts.get(axisPt).assignComputMethod(compuMethods);
+            axisPts.get(axisPt).assignRecordLayout(recordLayouts);
+        }
+
         for (Characteristic characteristic : characteristics) {
             characteristic.assignComputMethod(compuMethods);
             characteristic.assignRecordLayout(recordLayouts);
+            characteristic.assignAxisPts(axisPts);
+        }
+
+        for (String compuMethod : compuMethods.keySet()) {
+            CompuMethod compuMethod2 = compuMethods.get(compuMethod);
+            Object compuTabRef = compuMethod2.getOptionalsParameters().get(SecondaryKeywords.COMPU_TAB_REF);
+            if (compuTabRef != null) {
+                compuMethod2.assignCompuVTab(compuVTabs);
+            }
         }
 
         // for (Measurement measurement : measurements) {
@@ -211,6 +229,10 @@ public final class A2l {
 
     public ModPar getModPar() {
         return modPar;
+    }
+
+    public ModCommon getModCommon() {
+        return modCommon;
     }
 
 }

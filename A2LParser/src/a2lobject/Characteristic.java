@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import a2lobject.AxisDescr.Attribute;
 import constante.SecondaryKeywords;
 
 /**
@@ -152,10 +153,22 @@ public final class Characteristic implements Comparable<Characteristic> {
                                 break;
 
                             case "MATRIX_DIM":
+                                List<Integer> dim = new ArrayList<Integer>();
 
+                                try {
+                                    n = nPar + 1;
+                                    do {
+                                        dim.add(Integer.parseInt(parameters.get(n)));
+                                        n++;
+                                    } while (n < parameters.size());
+                                } catch (NumberFormatException nfe) {
+                                    n++;
+                                }
+                                optionalsParameters.put(MATRIX_DIM, dim.toArray());
+                                dim.clear();
                                 break;
                             case "NUMBER":
-
+                                optionalsParameters.put(NUMBER, Integer.parseInt(parameters.get(nPar + 1)));
                                 break;
                             case "PHYS_UNIT":
 
@@ -209,6 +222,10 @@ public final class Characteristic implements Comparable<Characteristic> {
         return optionalsParameters;
     }
 
+    public List<AxisDescr> getAxisDescrs() {
+        return axisDescrs;
+    }
+
     public CharacteristicType getType() {
         return type;
     }
@@ -216,6 +233,21 @@ public final class Characteristic implements Comparable<Characteristic> {
     public final void assignComputMethod(HashMap<String, CompuMethod> compuMethods) {
 
         this.compuMethod = compuMethods.get(this.conversion);
+        if (axisDescrs != null) {
+            for (AxisDescr axisDescr : axisDescrs) {
+                axisDescr.setCompuMethod(compuMethods.get(axisDescr.getConversion()));
+            }
+        }
+    }
+
+    public final void assignAxisPts(HashMap<String, AxisPts> axisPts) {
+        if (axisDescrs != null) {
+            for (AxisDescr axisDescr : axisDescrs) {
+                if (axisDescr.getAttribute().compareTo(Attribute.COM_AXIS) == 0) {
+                    axisDescr.setAxisPts(axisPts.get(axisDescr.getOptionalsParameters().get(SecondaryKeywords.AXIS_PTS_REF)));
+                }
+            }
+        }
     }
 
     public final void assignRecordLayout(HashMap<String, RecordLayout> recordLayouts) {
