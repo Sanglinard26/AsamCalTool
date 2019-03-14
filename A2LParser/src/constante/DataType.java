@@ -5,23 +5,17 @@ package constante;
 
 public enum DataType {
 
-    UBYTE("unsigned 8 Bit", 8), SBYTE("signed 8 Bit", 8), UWORD("unsigned integer 16 Bit", 16), SWORD("signed integer 16 Bit",
-            16), ULONG("unsigned integer 32 Bit", 32), SLONG("signed integer 32 Bit", 32), FLOAT32_IEEE("float 32 Bit", 32);
+    UBYTE(1), SBYTE(1), UWORD(2), SWORD(2), ULONG(4), SLONG(4), FLOAT32_IEEE(4);
 
-    private int nbbits;
+    private int nbByte;
 
     // Constructeur
-    DataType(String name, int nbbits) {
-        this.setNbbits(nbbits);
-
+    DataType(int nbByte) {
+        this.nbByte = nbByte;
     }
 
-    public int getNbbits() {
-        return nbbits;
-    }
-
-    public void setNbbits(int nbbits) {
-        this.nbbits = nbbits;
+    public final int getNbByte() {
+        return nbByte;
     }
 
     public static DataType getDataType(String type) {

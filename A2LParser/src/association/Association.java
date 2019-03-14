@@ -3,7 +3,6 @@
  */
 package association;
 
-import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,6 +23,7 @@ import a2lobject.RecordLayout.AxisPtsX;
 import a2lobject.RecordLayout.FncValues;
 import a2lobject.RecordLayout.NoAxisPtsX;
 import constante.DataType;
+import constante.IndexMode;
 import constante.SecondaryKeywords;
 import hex.IntelHex;
 import utils.Converter;
@@ -65,60 +65,11 @@ public final class Association {
 
             long adress = Long.decode(characteristic.getAdress());
 
-            byte[] byteValues;
-
             switch (characteristic.getType()) {
             case VALUE:
 
-                switch (fncValues.getDataType()) {
-                case UBYTE:
-                    byteValues = hex.readBytes((int) adress, 1);
-                    if (byteValues.length > 0) {
-                        System.out.println(characteristic + " = " + compuMethod.compute(Converter.readUBYTE(ByteBuffer.wrap(byteValues))));
-                    }
-                    break;
-                case SBYTE:
-                    byteValues = hex.readBytes((int) adress, 1);
-                    if (byteValues.length > 0) {
-                        System.out.println(characteristic + " = " + compuMethod.compute(Converter.readSBYTE(ByteBuffer.wrap(byteValues))));
-                    }
-                    break;
-                case UWORD:
-                    byteValues = hex.readBytes((int) adress, 2);
-                    if (byteValues.length > 0) {
-                        System.out.println(characteristic + " = " + compuMethod.compute(Converter.readUWORD(ByteBuffer.wrap(byteValues), byteOrder)));
-                    }
-                    break;
-                case SWORD:
-                    byteValues = hex.readBytes((int) adress, 2);
-                    if (byteValues.length > 0) {
-                        System.out.println(characteristic + " = " + compuMethod.compute(Converter.readSWORD(ByteBuffer.wrap(byteValues), byteOrder)));
-                    }
-                    break;
-
-                case ULONG:
-                    byteValues = hex.readBytes((int) adress, 4);
-                    if (byteValues.length > 0) {
-                        System.out.println(characteristic + " = " + compuMethod.compute(Converter.readULONG(ByteBuffer.wrap(byteValues), byteOrder)));
-                    }
-                    break;
-                case SLONG:
-                    byteValues = hex.readBytes((int) adress, 4);
-                    if (byteValues.length > 0) {
-                        System.out.println(characteristic + " = " + compuMethod.compute(Converter.readSLONG(ByteBuffer.wrap(byteValues), byteOrder)));
-                    }
-                    break;
-                case FLOAT32_IEEE:
-                    byteValues = hex.readBytes((int) adress, 4);
-                    if (byteValues.length > 0) {
-                        System.out.println(
-                                characteristic + " = " + compuMethod.compute(Converter.readFLOAT32IEEE(ByteBuffer.wrap(byteValues), byteOrder)));
-                    }
-                    break;
-
-                default:
-                    break;
-                }
+                System.out.println(
+                        characteristic + " = " + compuMethod.compute(Converter.readHexValue(hex, adress, fncValues.getDataType(), byteOrder)));
 
                 break;
             case ASCII:
@@ -150,8 +101,6 @@ public final class Association {
                 AxisDescr axisDescr = characteristic.getAxisDescrs().get(0);
                 int nbValue = axisDescr.getMaxAxisPoints();
 
-                boolean isStdAxis = false;
-
                 switch (axisDescr.getAttribute()) {
                 case FIX_AXIS:
                     Set<Entry<SecondaryKeywords, Object>> entrySet = axisDescr.getOptionalsParameters().entrySet();
@@ -179,165 +128,25 @@ public final class Association {
                     break;
 
                 case STD_AXIS:
-                    isStdAxis = true;
                     AxisPtsX axisPtsXStdAxis = (AxisPtsX) characteristic.getRecordLayout().getOptionalsParameters().get(SecondaryKeywords.AXIS_PTS_X);
                     NoAxisPtsX noAxisPtsX = (NoAxisPtsX) characteristic.getRecordLayout().getOptionalsParameters()
                             .get(SecondaryKeywords.NO_AXIS_PTS_X);
 
-                    int posNoAxisPtsX = noAxisPtsX.getPosition();
-                    int posAxisPtsX = axisPtsXStdAxis.getPosition();
-                    int posFncValues = fncValues.getPosition();
-
-                    int nbAxisPts = 0;
-
-                    switch (noAxisPtsX.getDataType()) {
-                    case UBYTE:
-                        byteValues = hex.readBytes((int) adress, 1);
-                        if (byteValues.length > 0) {
-                            nbAxisPts = Converter.readUBYTE(ByteBuffer.wrap(byteValues));
-                            adress += 1;
-                        }
-                        break;
-                    case SBYTE:
-                        byteValues = hex.readBytes((int) adress, 1);
-                        if (byteValues.length > 0) {
-                            nbAxisPts = Converter.readSBYTE(ByteBuffer.wrap(byteValues));
-                            adress += 1;
-                        }
-                        break;
-                    case UWORD:
-                        byteValues = hex.readBytes((int) adress, 2);
-                        if (byteValues.length > 0) {
-                            nbAxisPts = Converter.readUWORD(ByteBuffer.wrap(byteValues), byteOrder);
-                            adress += 2;
-                        }
-                        break;
-                    case SWORD:
-                        byteValues = hex.readBytes((int) adress, 2);
-                        if (byteValues.length > 0) {
-                            nbAxisPts = Converter.readSWORD(ByteBuffer.wrap(byteValues), byteOrder);
-                            adress += 2;
-                        }
-                        break;
-
-                    case ULONG:
-                        byteValues = hex.readBytes((int) adress, 4);
-                        if (byteValues.length > 0) {
-                            nbAxisPts = Converter.readULONG(ByteBuffer.wrap(byteValues), byteOrder);
-                            adress += 4;
-                        }
-                        break;
-                    case SLONG:
-                        byteValues = hex.readBytes((int) adress, 4);
-                        if (byteValues.length > 0) {
-                            nbAxisPts = Converter.readSLONG(ByteBuffer.wrap(byteValues), byteOrder);
-                            adress += 4;
-                        }
-                        break;
-                    case FLOAT32_IEEE:
-                        byteValues = hex.readBytes((int) adress, 4);
-                        if (byteValues.length > 0) {
-                            nbAxisPts = (int) Converter.readFLOAT32IEEE(ByteBuffer.wrap(byteValues), byteOrder);
-                            adress += 4;
-                        }
-                        break;
-
-                    default:
-                        break;
-                    }
-
-                    nbValue = nbAxisPts;
+                    nbValue = (int) Converter.readHexValue(hex, adress, noAxisPtsX.getDataType(), byteOrder);
+                    adress += noAxisPtsX.getDataType().getNbByte();
 
                     System.out.print(Attribute.STD_AXIS.name() + "_X = ");
 
                     AxisDescr axisDescrStdAxis = characteristic.getAxisDescrs().get(0);
                     CompuMethod compuMethodStdAxis = axisDescrStdAxis.getCompuMethod();
 
-                    switch (axisPtsXStdAxis.getDataType()) {
-                    case UBYTE:
+                    double[] hexValues = Converter.readHexValues(hex, adress, axisPtsXStdAxis.getDataType(), byteOrder, nbValue);
+                    adress += axisPtsXStdAxis.getDataType().getNbByte() * nbValue;
 
-                        for (int nValue = 0; nValue < nbValue; nValue++) {
-                            byteValues = hex.readBytes((int) adress + nValue, 1);
-                            if (byteValues.length > 0) {
-                                System.out.print(compuMethodStdAxis.compute(Converter.readUBYTE(ByteBuffer.wrap(byteValues))) + " | ");
-                                //
-                            }
-                        }
-                        adress += nbValue * 1;
-                        System.out.print("\n");
-
-                        break;
-                    case SBYTE:
-
-                        for (int nValue = 0; nValue < nbValue; nValue++) {
-                            byteValues = hex.readBytes((int) adress + nValue, 1);
-                            if (byteValues.length > 0) {
-                                System.out.print(compuMethodStdAxis.compute(Converter.readSBYTE(ByteBuffer.wrap(byteValues))) + " | ");
-                                //
-                            }
-                        }
-                        adress += nbValue * 1;
-                        System.out.print("\n");
-                        break;
-                    case UWORD:
-                        for (int nValue = 0; nValue < nbValue; nValue++) {
-                            byteValues = hex.readBytes((int) adress + (nValue * 2), 2);
-                            if (byteValues.length > 0) {
-                                System.out.print(compuMethodStdAxis.compute(Converter.readUWORD(ByteBuffer.wrap(byteValues), byteOrder)) + " | ");
-                                //
-                            }
-                        }
-                        adress += nbValue * 2;
-                        System.out.print("\n");
-                        break;
-                    case SWORD:
-                        for (int nValue = 0; nValue < nbValue; nValue++) {
-                            byteValues = hex.readBytes((int) adress + (nValue * 2), 2);
-                            if (byteValues.length > 0) {
-                                System.out.print(compuMethodStdAxis.compute(Converter.readSWORD(ByteBuffer.wrap(byteValues), byteOrder)) + " | ");
-                                //
-                            }
-                        }
-                        adress += nbValue * 2;
-                        System.out.print("\n");
-                        break;
-                    case ULONG:
-                        for (int nValue = 0; nValue < nbValue; nValue++) {
-                            byteValues = hex.readBytes((int) adress + (nValue * 4), 4);
-                            if (byteValues.length > 0) {
-                                System.out.print(compuMethodStdAxis.compute(Converter.readULONG(ByteBuffer.wrap(byteValues), byteOrder)) + " | ");
-                                //
-                            }
-                        }
-                        adress += nbValue * 4;
-                        System.out.print("\n");
-                        break;
-                    case SLONG:
-                        for (int nValue = 0; nValue < nbValue; nValue++) {
-                            byteValues = hex.readBytes((int) adress + (nValue * 4), 4);
-                            if (byteValues.length > 0) {
-                                System.out.print(compuMethodStdAxis.compute(Converter.readSLONG(ByteBuffer.wrap(byteValues), byteOrder)) + " | ");
-                                //
-                            }
-                        }
-                        adress += nbValue * 4;
-                        System.out.print("\n");
-                        break;
-                    case FLOAT32_IEEE:
-                        for (int nValue = 0; nValue < nbValue; nValue++) {
-                            byteValues = hex.readBytes((int) adress + (nValue * 4), 4);
-                            if (byteValues.length > 0) {
-                                System.out
-                                        .print(compuMethodStdAxis.compute(Converter.readFLOAT32IEEE(ByteBuffer.wrap(byteValues), byteOrder)) + " | ");
-                                //
-                            }
-                        }
-                        adress += nbValue * 4;
-                        System.out.print("\n");
-                        break;
-                    default:
-                        break;
+                    for (double val : hexValues) {
+                        System.out.print(compuMethodStdAxis.compute(val) + " | ");
                     }
+                    System.out.print("\n");
 
                     break;
 
@@ -350,76 +159,12 @@ public final class Association {
 
                     System.out.print(Attribute.COM_AXIS.name() + "_X = ");
 
-                    switch (axisPtsX.getDataType()) {
-                    case UBYTE:
+                    double[] hexValuesComAxis = Converter.readHexValues(hex, adressAxis, axisPtsX.getDataType(), byteOrder, nbValue);
 
-                        for (int nValue = 0; nValue < nbValue; nValue++) {
-                            byteValues = hex.readBytes((int) adressAxis + nValue, 1);
-                            if (byteValues.length > 0) {
-                                System.out.print(compuMethodAxis.compute(Converter.readUBYTE(ByteBuffer.wrap(byteValues))) + " | ");
-                            }
-                        }
-                        System.out.print("\n");
-
-                        break;
-                    case SBYTE:
-
-                        for (int nValue = 0; nValue < nbValue; nValue++) {
-                            byteValues = hex.readBytes((int) adressAxis + nValue, 1);
-                            if (byteValues.length > 0) {
-                                System.out.print(compuMethodAxis.compute(Converter.readSBYTE(ByteBuffer.wrap(byteValues))) + " | ");
-                            }
-                        }
-                        System.out.print("\n");
-                        break;
-                    case UWORD:
-                        for (int nValue = 0; nValue < nbValue; nValue++) {
-                            byteValues = hex.readBytes((int) adressAxis + (nValue * 2), 2);
-                            if (byteValues.length > 0) {
-                                System.out.print(compuMethodAxis.compute(Converter.readUWORD(ByteBuffer.wrap(byteValues), byteOrder)) + " | ");
-                            }
-                        }
-                        System.out.print("\n");
-                        break;
-                    case SWORD:
-                        for (int nValue = 0; nValue < nbValue; nValue++) {
-                            byteValues = hex.readBytes((int) adressAxis + (nValue * 2), 2);
-                            if (byteValues.length > 0) {
-                                System.out.print(compuMethodAxis.compute(Converter.readSWORD(ByteBuffer.wrap(byteValues), byteOrder)) + " | ");
-                            }
-                        }
-                        System.out.print("\n");
-                        break;
-                    case ULONG:
-                        for (int nValue = 0; nValue < nbValue; nValue++) {
-                            byteValues = hex.readBytes((int) adressAxis + (nValue * 4), 4);
-                            if (byteValues.length > 0) {
-                                System.out.print(compuMethodAxis.compute(Converter.readULONG(ByteBuffer.wrap(byteValues), byteOrder)) + " | ");
-                            }
-                        }
-                        System.out.print("\n");
-                        break;
-                    case SLONG:
-                        for (int nValue = 0; nValue < nbValue; nValue++) {
-                            byteValues = hex.readBytes((int) adressAxis + (nValue * 4), 4);
-                            if (byteValues.length > 0) {
-                                System.out.print(compuMethodAxis.compute(Converter.readSLONG(ByteBuffer.wrap(byteValues), byteOrder)) + " | ");
-                            }
-                        }
-                        System.out.print("\n");
-                        break;
-                    case FLOAT32_IEEE:
-                        for (int nValue = 0; nValue < nbValue; nValue++) {
-                            byteValues = hex.readBytes((int) adressAxis + (nValue * 4), 4);
-                            if (byteValues.length > 0) {
-                                System.out.print(compuMethodAxis.compute(Converter.readFLOAT32IEEE(ByteBuffer.wrap(byteValues), byteOrder)) + " | ");
-                            }
-                        }
-                        System.out.print("\n");
-                        break;
-                    default:
-                        break;
+                    for (double val : hexValuesComAxis) {
+                        System.out.print(compuMethodAxis.compute(val) + " | ");
                     }
+                    System.out.print("\n");
 
                     break;
 
@@ -429,80 +174,171 @@ public final class Association {
 
                 System.out.print("         Z = ");
 
-                switch (fncValues.getDataType()) {
-                case UBYTE:
+                double[] hexValues = Converter.readHexValues(hex, adress, fncValues.getDataType(), byteOrder, nbValue);
 
-                    for (int nValue = 0; nValue < nbValue; nValue++) {
-                        byteValues = hex.readBytes((int) adress + nValue, 1);
-                        if (byteValues.length > 0) {
-                            System.out.print(compuMethod.compute(Converter.readUBYTE(ByteBuffer.wrap(byteValues))) + " | ");
-                        }
-                    }
-                    System.out.print("\n");
-
-                    break;
-                case SBYTE:
-
-                    for (int nValue = 0; nValue < nbValue; nValue++) {
-                        byteValues = hex.readBytes((int) adress + nValue, 1);
-                        if (byteValues.length > 0) {
-                            System.out.print(compuMethod.compute(Converter.readSBYTE(ByteBuffer.wrap(byteValues))) + " | ");
-                        }
-                    }
-                    System.out.print("\n");
-                    break;
-                case UWORD:
-                    for (int nValue = 0; nValue < nbValue; nValue++) {
-                        byteValues = hex.readBytes((int) adress + (nValue * 2), 2);
-                        if (byteValues.length > 0) {
-                            System.out.print(compuMethod.compute(Converter.readUWORD(ByteBuffer.wrap(byteValues), byteOrder)) + " | ");
-                        }
-                    }
-                    System.out.print("\n");
-                    break;
-                case SWORD:
-                    for (int nValue = 0; nValue < nbValue; nValue++) {
-                        byteValues = hex.readBytes((int) adress + (nValue * 2), 2);
-                        if (byteValues.length > 0) {
-                            System.out.print(compuMethod.compute(Converter.readSWORD(ByteBuffer.wrap(byteValues), byteOrder)) + " | ");
-                        }
-                    }
-                    System.out.print("\n");
-                    break;
-                case ULONG:
-                    for (int nValue = 0; nValue < nbValue; nValue++) {
-                        byteValues = hex.readBytes((int) adress + (nValue * 4), 4);
-                        if (byteValues.length > 0) {
-                            System.out.print(compuMethod.compute(Converter.readULONG(ByteBuffer.wrap(byteValues), byteOrder)) + " | ");
-                        }
-                    }
-                    System.out.print("\n");
-                    break;
-                case SLONG:
-                    for (int nValue = 0; nValue < nbValue; nValue++) {
-                        byteValues = hex.readBytes((int) adress + (nValue * 4), 4);
-                        if (byteValues.length > 0) {
-                            System.out.print(compuMethod.compute(Converter.readSLONG(ByteBuffer.wrap(byteValues), byteOrder)) + " | ");
-                        }
-                    }
-                    System.out.print("\n");
-                    break;
-                case FLOAT32_IEEE:
-                    for (int nValue = 0; nValue < nbValue; nValue++) {
-                        byteValues = hex.readBytes((int) adress + (nValue * 4), 4);
-                        if (byteValues.length > 0) {
-                            System.out.print(compuMethod.compute(Converter.readFLOAT32IEEE(ByteBuffer.wrap(byteValues), byteOrder)) + " | ");
-                        }
-                    }
-                    System.out.print("\n");
-                    break;
-                default:
-                    break;
+                for (double val : hexValues) {
+                    System.out.print(compuMethod.compute(val) + " | ");
                 }
+                System.out.print("\n");
+
+                break;
+
+            case VAL_BLK:
+
+                System.out.println(characteristic + " = ");
+
+                Object numberParam = characteristic.getOptionalsParameters().get(SecondaryKeywords.NUMBER);
+                Object matrixDimParam = characteristic.getOptionalsParameters().get(SecondaryKeywords.MATRIX_DIM);
+
+                IndexMode indexModeValBlk = fncValues.getIndexMode();
+
+                int[] dim;
+
+                if (matrixDimParam != null) {
+                    Object[] arrMatrixDim = (Object[]) matrixDimParam;
+                    dim = new int[] { (int) arrMatrixDim[0], (int) arrMatrixDim[1], (int) arrMatrixDim[2] };
+                } else {
+                    dim = new int[] { (int) numberParam };
+                }
+
+                System.out.print("X = ");
+                for (int x = 0; x < dim[0]; x++) {
+                    System.out.print(x + " | ");
+                }
+
+                double[] hexValuesValBlk;
+
+                if (dim.length < 2 || dim[1] == 1) {
+                    System.out.print("\n");
+                    System.out.print("Z = ");
+
+                    hexValuesValBlk = Converter.readHexValues(hex, adress, fncValues.getDataType(), byteOrder, dim[0]);
+
+                    for (double val : hexValuesValBlk) {
+                        System.out.print(compuMethod.compute(val) + " | ");
+                    }
+
+                } else {
+
+                    nbValue = dim[0] * dim[1];
+
+                    hexValuesValBlk = Converter.readHexValues(hex, adress, fncValues.getDataType(), byteOrder, nbValue);
+
+                    int cnt = 0;
+
+                    for (double val : hexValuesValBlk) {
+
+                        if (cnt % dim[0] == 0) {
+                            System.out.print("\nZ" + (cnt / dim[0]) + " = ");
+                        }
+                        System.out.print(compuMethod.compute(val) + " | ");
+                        cnt++;
+                    }
+                }
+
+                System.out.print("\n");
 
                 break;
 
             case MAP:
+
+                System.out.println(characteristic + " = ");
+
+                int nbValueMap = 0;
+                int[] dimMap = new int[2];
+
+                IndexMode indexModeMap = fncValues.getIndexMode();
+
+                int cnt = 0;
+
+                for (AxisDescr axis : characteristic.getAxisDescrs()) {
+                    switch (axis.getAttribute()) {
+                    case FIX_AXIS:
+                        dimMap[cnt] = axis.getMaxAxisPoints();
+
+                        Set<Entry<SecondaryKeywords, Object>> entrySet = axis.getOptionalsParameters().entrySet();
+                        Iterator<Entry<SecondaryKeywords, Object>> it = entrySet.iterator();
+
+                        if (cnt == 0) {
+                            System.out.print(Attribute.FIX_AXIS.name() + "_X = ");
+                        } else {
+                            System.out.print(Attribute.FIX_AXIS.name() + "_Y = ");
+                        }
+
+                        while (it.hasNext()) {
+                            Map.Entry<SecondaryKeywords, Object> entry = it.next();
+                            if (entry.getValue() instanceof FixAxisParDist) {
+                                FixAxisParDist axisDist = (FixAxisParDist) entry.getValue();
+                                for (int n = 0; n < axisDist.getNumberapo(); n++) {
+                                    System.out.print(axisDist.compute(n) + " | ");
+                                }
+                                System.out.print("\n");
+                                break;
+                            } else if (entry.getValue() instanceof FixAxisPar) {
+                                FixAxisPar axisDist = (FixAxisPar) entry.getValue();
+                                for (int n = 0; n < axisDist.getNumberapo(); n++) {
+                                    System.out.print(axisDist.compute(n) + " | ");
+                                }
+                                System.out.print("\n");
+                            }
+                        }
+
+                        break;
+                    case STD_AXIS:
+
+                        break;
+                    case COM_AXIS:
+
+                        AxisPts axisPts = axis.getAxisPts();
+                        AxisPtsX axisPtsX = (AxisPtsX) axisPts.getRecordLayout().getOptionalsParameters().get(SecondaryKeywords.AXIS_PTS_X);
+                        CompuMethod compuMethodAxis = axisPts.getCompuMethod();
+                        long adressAxis = Long.decode(axisPts.getAdress());
+
+                        int nbValueAxis = axisPts.getMaxAxisPoints();
+
+                        dimMap[cnt] = axis.getMaxAxisPoints();
+
+                        if (cnt == 0) {
+                            System.out.print(Attribute.COM_AXIS.name() + "_X = ");
+                        } else {
+                            System.out.print(Attribute.COM_AXIS.name() + "_Y = ");
+                        }
+
+                        double[] hexValuesComAxis = Converter.readHexValues(hex, adressAxis, axisPtsX.getDataType(), byteOrder, nbValueAxis);
+
+                        for (double val : hexValuesComAxis) {
+                            System.out.print(compuMethodAxis.compute(val) + " | ");
+                        }
+                        System.out.print("\n");
+
+                        break;
+
+                    default:
+                        break;
+                    }
+
+                    cnt++;
+                }
+
+                nbValueMap = dimMap[0] * dimMap[1];
+
+                if (nbValueMap > 0) {
+
+                    hexValuesValBlk = Converter.readHexValues(hex, adress, fncValues.getDataType(), byteOrder, nbValueMap);
+
+                    cnt = 0;
+
+                    for (double val : hexValuesValBlk) {
+
+                        if (cnt % dimMap[0] == 0) {
+                            System.out.print("\nZ" + (cnt / dimMap[0]) + " = ");
+                        }
+                        System.out.print(compuMethod.compute(val) + " | ");
+                        cnt++;
+                    }
+
+                    System.out.print("\n");
+                }
 
                 break;
 

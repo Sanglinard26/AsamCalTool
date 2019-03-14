@@ -31,6 +31,8 @@ public final class RecordLayout implements Comparable<RecordLayout> {
     private String name;
 
     private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
+        private static final long serialVersionUID = 1L;
+
         {
             put(ALIGNMENT_BYTE, null);
             put(ALIGNMENT_FLOAT16_IEEE, null);
@@ -154,6 +156,14 @@ public final class RecordLayout implements Comparable<RecordLayout> {
         public DataType getDataType() {
             return dataType;
         }
+
+        public IndexMode getIndexMode() {
+            return indexMode;
+        }
+
+        public AdressType getAdressType() {
+            return adressType;
+        }
     }
 
     public final class AxisPtsX {
@@ -176,6 +186,14 @@ public final class RecordLayout implements Comparable<RecordLayout> {
 
         public DataType getDataType() {
             return dataType;
+        }
+
+        public IndexOrder getIndexOrder() {
+            return indexOrder;
+        }
+
+        public AdressType getAdressType() {
+            return adressType;
         }
     }
 

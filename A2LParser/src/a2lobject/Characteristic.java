@@ -58,6 +58,8 @@ public final class Characteristic implements Comparable<Characteristic> {
     private List<AxisDescr> axisDescrs;
 
     private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
+        private static final long serialVersionUID = 1L;
+
         {
             put(ANNOTATION, null);
             put(AXIS_DESCR, null);

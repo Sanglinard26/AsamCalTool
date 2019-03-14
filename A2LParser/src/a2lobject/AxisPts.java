@@ -50,6 +50,8 @@ public final class AxisPts {
     private RecordLayout recordLayout;
 
     private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
+        private static final long serialVersionUID = 1L;
+
         {
             put(ANNOTATION, null);
             put(BYTE_ORDER, null); // ToDo
@@ -176,6 +178,10 @@ public final class AxisPts {
 
     public String getAdress() {
         return adress;
+    }
+
+    public int getMaxAxisPoints() {
+        return maxAxisPoints;
     }
 
     public final void assignComputMethod(HashMap<String, CompuMethod> compuMethods) {
