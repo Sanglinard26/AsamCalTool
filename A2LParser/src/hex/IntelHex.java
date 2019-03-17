@@ -15,11 +15,11 @@ import java.util.List;
  */
 public final class IntelHex {
 
-    public final List<Memory> memorySegments = new ArrayList<Memory>();
-    Long startAddress = null;
-    Memory last = null;
-    long extendedAddress = 0;
-    boolean endOfFile = false;
+    private final List<Memory> memorySegments = new ArrayList<Memory>();
+    private Long startAddress = null;
+    private Memory last = null;
+    private long extendedAddress = 0;
+    private boolean endOfFile = false;
 
     public static byte parseHexByte(String str) {
         return (byte) Integer.parseInt(str, 16);
@@ -61,14 +61,14 @@ public final class IntelHex {
 
     }
 
-    public void processLine(String line) {
+    private final void processLine(String line) {
         if (endOfFile) {
             return;
         }
         String recordType = line.substring(7, 9);
         switch (recordType) {
         case "00":
-            Memory memoryOfLine = ProcessDataRecordLine(line, extendedAddress);
+            Memory memoryOfLine = processDataRecordLine(line, extendedAddress);
             if (last == null) {
                 memorySegments.add(memoryOfLine);
                 last = memoryOfLine;
@@ -88,11 +88,11 @@ public final class IntelHex {
             endOfFile = true;
             break;
         case "04":
-            extendedAddress = ProcessExtendedLinearAddressRecord(line);
+            extendedAddress = processExtendedLinearAddressRecord(line);
             break;
 
         case "05":
-            startAddress = ProcessStartAddressRecord(line);
+            startAddress = processStartAddressRecord(line);
             break;
 
         default:
@@ -114,7 +114,7 @@ public final class IntelHex {
         sr.close();
     }
 
-    public static long ProcessExtendedLinearAddressRecord(String line) {
+    private static final long processExtendedLinearAddressRecord(String line) {
         if (!line.startsWith(":02000004")) {
             throw new IllegalArgumentException("Illegal Extended Linear Address Record line received: " + line);
         }
@@ -125,7 +125,7 @@ public final class IntelHex {
         return address << 16;
     }
 
-    public static long ProcessStartAddressRecord(String line) {
+    private static final long processStartAddressRecord(String line) {
         if (!line.startsWith(":04000005")) {
             throw new IllegalArgumentException("Illegal Extended Linear Address Record line received: " + line);
         }
@@ -136,14 +136,13 @@ public final class IntelHex {
         return address;
     }
 
-    public static Memory ProcessDataRecordLine(String line, long address) {
-        Memory memory = ProcessDataRecordLine(line);
+    private static final Memory processDataRecordLine(String line, long address) {
+        Memory memory = processDataRecordLine(line);
         memory.address = memory.address + address;
         return memory;
     }
 
-    public static Memory ProcessDataRecordLine(String line) {
-        // System.out.println(line);
+    private static final Memory processDataRecordLine(String line) {
         if (line.length() > 75) {
             throw new IllegalArgumentException("Longer than 75 characters line received: " + line);
         }

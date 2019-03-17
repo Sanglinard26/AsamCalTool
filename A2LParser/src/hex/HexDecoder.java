@@ -71,7 +71,7 @@ public final class HexDecoder {
                 readValue(byteOrder, characteristic, adress, compuMethod, fncValues);
                 break;
             case ASCII:
-                readAscii(characteristic, adress, fncValues);
+                readAscii(characteristic, adress);
                 break;
             case CURVE:
                 readCurve(byteOrder, characteristic, adress, compuMethod, fncValues);
@@ -96,6 +96,10 @@ public final class HexDecoder {
         double hexValue = Converter.readHexValue(hex, adress, fncValues.getDataType(), byteOrder);
         double physValue;
 
+        if (characteristic.hasBitMask()) {
+            hexValue = characteristic.applyBitMask((long) hexValue);
+        }
+
         String displayFormat = characteristic.getFormat();
 
         if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
@@ -105,12 +109,12 @@ public final class HexDecoder {
             physValue = compuMethod.compute(hexValue);
             characteristic.setValues(String.format(displayFormat, physValue).trim());
         } else {
+
             characteristic.setValues(compuMethod.computeString(hexValue));
         }
     }
 
-    private final void readAscii(Characteristic characteristic, long adress, FncValues fncValues) {
-        // if (fncValues.getDataType().compareTo(DataType.UBYTE) == 0) {
+    private final void readAscii(Characteristic characteristic, long adress) {
 
         int nByte = characteristic.getDim();
 
@@ -118,8 +122,6 @@ public final class HexDecoder {
         if (ascii != null) {
             characteristic.setValues(ascii);
         }
-
-        // }
     }
 
     private final void readCurve(ByteOrder byteOrder, Characteristic characteristic, long adress, CompuMethod compuMethod, FncValues fncValues) {

@@ -74,16 +74,9 @@ public final class CompuTab {
 
     }
 
-    public final String getInfo() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("Name : " + name + "\n");
-        sb.append("LongIdentifier : " + longIdentifier + "\n");
-        sb.append("ConversionType : " + conversionType + "\n");
-        sb.append("NumberValuePairs : " + numberValuePairs + "\n");
-        sb.append("ValuePairs : " + valuePairs + "\n");
-
-        return sb.toString();
+    @Override
+    public String toString() {
+        return this.name;
     }
 
 }

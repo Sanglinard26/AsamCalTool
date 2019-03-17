@@ -23,9 +23,9 @@ public final class A2l {
     private HashMap<String, AxisPts> axisPts;
     private List<Characteristic> characteristics;
     private HashMap<String, CompuMethod> compuMethods;
-    private List<CompuTab> compuTabs;
+    private HashMap<String, CompuTab> compuTabs;
     private HashMap<String, CompuVTab> compuVTabs;
-    private List<CompuVTabRange> compuVTabRanges;
+    private HashMap<String, CompuVTabRange> compuVTabRanges;
     private List<Measurement> measurements;
     private HashMap<String, RecordLayout> recordLayouts;
 
@@ -43,9 +43,9 @@ public final class A2l {
         axisPts = new HashMap<String, AxisPts>();
         characteristics = new ArrayList<Characteristic>();
         compuMethods = new HashMap<String, CompuMethod>();
-        compuTabs = new ArrayList<CompuTab>();
+        compuTabs = new HashMap<String, CompuTab>();
         compuVTabs = new HashMap<String, CompuVTab>();
-        compuVTabRanges = new ArrayList<CompuVTabRange>();
+        compuVTabRanges = new HashMap<String, CompuVTabRange>();
         measurements = new ArrayList<Measurement>();
         recordLayouts = new HashMap<String, RecordLayout>();
 
@@ -92,7 +92,8 @@ public final class A2l {
                         break;
                     case "COMPU_TAB":
                         fillParameters(buf, line, objectParameters, keyword);
-                        compuTabs.add(new CompuTab(objectParameters));
+                        CompuTab compuTab = new CompuTab(objectParameters);
+                        compuTabs.put(compuTab.toString(), compuTab);
                         break;
                     case "COMPU_VTAB":
                         fillParameters(buf, line, objectParameters, keyword);
@@ -101,7 +102,8 @@ public final class A2l {
                         break;
                     case "COMPU_VTAB_RANGE":
                         fillParameters(buf, line, objectParameters, keyword);
-                        compuVTabRanges.add(new CompuVTabRange(objectParameters));
+                        CompuVTabRange compuVTabRange = new CompuVTabRange(objectParameters);
+                        compuVTabRanges.put(compuVTabRange.toString(), compuVTabRange);
                         break;
                     case "MEASUREMENT":
                         fillParameters(buf, line, objectParameters, keyword);
@@ -126,20 +128,17 @@ public final class A2l {
         }
     }
 
-    private final List<String> fillParameters(BufferedReader buf, String line, List<String> objectParameters, String keyword) {
+    private final List<String> fillParameters(BufferedReader buf, String line, List<String> objectParameters, String keyword) throws IOException {
 
         final String END = "/end ";
         final Pattern regexQuote = RegexHolder.QUOTE;
 
         objectParameters.clear();
 
-        try {
-            do {
-                objectParameters.addAll(parseLineWithRegex(regexQuote, line));
-            } while ((line = buf.readLine()) != null && !line.trim().equals(END + keyword));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        do {
+            objectParameters.addAll(parseLineWithRegex(regexQuote, line));
+        } while ((line = buf.readLine()) != null && !line.trim().equals(END + keyword));
+
         return objectParameters;
 
     }
@@ -148,15 +147,15 @@ public final class A2l {
 
         final List<String> listWord = new ArrayList<String>();
 
-        lineToParse = RegexHolder.LINE_COMMENT.matcher(lineToParse.trim()).replaceAll("");
+        final String lineWoutComment = RegexHolder.LINE_COMMENT.matcher(lineToParse.trim()).replaceAll("");
 
-        if (RegexHolder.isString(lineToParse)) {
+        if (RegexHolder.isString(lineWoutComment)) {
             // this string starts and end with a double quote
-            listWord.add(lineToParse.substring(1, lineToParse.length() - 1));
+            listWord.add(lineWoutComment.substring(1, lineWoutComment.length() - 1));
             return listWord;
         }
 
-        final Matcher regexMatcher = regexQuote.matcher(lineToParse);
+        final Matcher regexMatcher = regexQuote.matcher(lineWoutComment);
 
         while (regexMatcher.find()) {
             if (regexMatcher.group(1) != null) {

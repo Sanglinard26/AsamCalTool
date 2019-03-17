@@ -65,7 +65,7 @@ public final class Characteristic implements Comparable<Characteristic> {
         {
             put(ANNOTATION, null);
             put(AXIS_DESCR, null);
-            put(BIT_MASK, null); // ToDo
+            put(BIT_MASK, null); // Utilise seulement pour les TAB_VERB
             put(BYTE_ORDER, null); // ToDo
             put(CALIBRATION_ACCESS, null); // ToDo
             put(COMPARISON_QUANTITY, null); // ToDo
@@ -148,6 +148,14 @@ public final class Characteristic implements Comparable<Characteristic> {
                                 } while (!parameters.get(++nPar).equals("AXIS_DESCR"));
                                 axisDescrs.add(new AxisDescr(parameters.subList(n, nPar - 1)));
                                 n = nPar + 1;
+                                break;
+                            case "BIT_MASK":
+                                String bitMask = parameters.get(nPar + 1);
+                                if (bitMask.startsWith("0x")) {
+                                    optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask.substring(2), 16));
+                                } else {
+                                    optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask));
+                                }
                                 break;
                             case "DISPLAY_IDENTIFIER":
                                 optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1));
@@ -262,6 +270,29 @@ public final class Characteristic implements Comparable<Characteristic> {
             return (int) ((Object[]) oByte)[0];
         }
         return (int) oByte;
+    }
+
+    public final boolean hasBitMask() {
+        return optionalsParameters.get(BIT_MASK) != null;
+    }
+
+    public final double applyBitMask(long value) {
+        long bitMask = (long) optionalsParameters.get(BIT_MASK);
+
+        long maskedValue = value & bitMask;
+
+        String bits = Long.toBinaryString(maskedValue);
+
+        int idxLSB = bits.lastIndexOf("1");
+
+        int shift = 0;
+
+        if (idxLSB > 0) {
+            shift = bits.length() - idxLSB;
+        }
+
+        return maskedValue >> shift;
+
     }
 
     public final void assignComputMethod(HashMap<String, CompuMethod> compuMethods) {

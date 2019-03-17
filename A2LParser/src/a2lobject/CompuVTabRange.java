@@ -65,15 +65,9 @@ public final class CompuVTabRange {
 
     }
 
-    public final String getInfo() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("Name : " + name + "\n");
-        sb.append("LongIdentifier : " + longIdentifier + "\n");
-        sb.append("NumberValuePairs : " + numberValueTriples + "\n");
-        sb.append("ValuePairs : " + valueTriples + "\n");
-
-        return sb.toString();
+    @Override
+    public String toString() {
+        return this.name;
     }
 }
 
