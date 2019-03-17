@@ -22,13 +22,11 @@ public final class A2l {
     private ModCommon modCommon;
     private HashMap<String, AxisPts> axisPts;
     private List<Characteristic> characteristics;
-    // private List<CompuMethod> compuMethods;
     private HashMap<String, CompuMethod> compuMethods;
     private List<CompuTab> compuTabs;
     private HashMap<String, CompuVTab> compuVTabs;
     private List<CompuVTabRange> compuVTabRanges;
     private List<Measurement> measurements;
-    // private List<RecordLayout> recordLayouts;
     private HashMap<String, RecordLayout> recordLayouts;
 
     public A2l(File a2lFile) {
@@ -44,7 +42,6 @@ public final class A2l {
 
         axisPts = new HashMap<String, AxisPts>();
         characteristics = new ArrayList<Characteristic>();
-        // compuMethods = new ArrayList<CompuMethod>();
         compuMethods = new HashMap<String, CompuMethod>();
         compuTabs = new ArrayList<CompuTab>();
         compuVTabs = new HashMap<String, CompuVTab>();
@@ -52,22 +49,13 @@ public final class A2l {
         measurements = new ArrayList<Measurement>();
         recordLayouts = new HashMap<String, RecordLayout>();
 
-        int numLine = 0;
-
         try (BufferedReader buf = new BufferedReader(new FileReader(a2lFile))) {
-
-            long start = System.currentTimeMillis();
-            long fileSize = a2lFile.length();
-
-            System.out.println("File size : " + fileSize + " byte\n");
 
             String line;
 
             List<String> objectParameters = new ArrayList<String>();
 
             while ((line = buf.readLine()) != null) {
-
-                numLine++;
 
                 if (line.isEmpty()) {
                     continue;
@@ -83,18 +71,15 @@ public final class A2l {
                     case "MOD_PAR":
                         fillParameters(buf, line, objectParameters, keyword);
                         modPar = new ModPar(objectParameters);
-                        System.out.println(modPar.getInfo());
                         break;
                     case "MOD_COMMON":
                         fillParameters(buf, line, objectParameters, keyword);
                         modCommon = new ModCommon(objectParameters);
-                        System.out.println(modCommon.getInfo());
                         break;
                     case "AXIS_PTS":
                         fillParameters(buf, line, objectParameters, keyword);
                         AxisPts axisPt = new AxisPts(objectParameters);
                         axisPts.put(axisPt.toString(), axisPt);
-                        // axisPts.add(new AxisPts(objectParameters));
                         break;
                     case "CHARACTERISTIC":
                         fillParameters(buf, line, objectParameters, keyword);
@@ -104,7 +89,6 @@ public final class A2l {
                         fillParameters(buf, line, objectParameters, keyword);
                         CompuMethod compuMethod = new CompuMethod(objectParameters);
                         compuMethods.put(compuMethod.toString(), compuMethod);
-                        // compuMethods.add(new CompuMethod(objectParameters));
                         break;
                     case "COMPU_TAB":
                         fillParameters(buf, line, objectParameters, keyword);
@@ -133,18 +117,9 @@ public final class A2l {
                         break;
                     }
                 }
-
-                // System.out.println("Parsed line : " + numLine);
             }
 
             assignLinkedObject();
-
-            System.out.println("\nFini en : " + (System.currentTimeMillis() - start) + "ms\n");
-            System.out.println("AxisPts : " + axisPts.size());
-            System.out.println("Characteristic : " + characteristics.size());
-            System.out.println("Measurement : " + measurements.size());
-            System.out.println("CompuMethod : " + compuMethods.size());
-            System.out.println("RecordLayout : " + recordLayouts.size());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -169,19 +144,19 @@ public final class A2l {
 
     }
 
-    private final List<String> parseLineWithRegex(Pattern regexQuote, String line) {
+    private final List<String> parseLineWithRegex(Pattern regexQuote, String lineToParse) {
 
         final List<String> listWord = new ArrayList<String>();
 
-        line = RegexHolder.LINE_COMMENT.matcher(line.trim()).replaceAll("");
+        lineToParse = RegexHolder.LINE_COMMENT.matcher(lineToParse.trim()).replaceAll("");
 
-        if (RegexHolder.isString(line)) {
+        if (RegexHolder.isString(lineToParse)) {
             // this string starts and end with a double quote
-            listWord.add(line.substring(1, line.length() - 1));
+            listWord.add(lineToParse.substring(1, lineToParse.length() - 1));
             return listWord;
         }
 
-        final Matcher regexMatcher = regexQuote.matcher(line);
+        final Matcher regexMatcher = regexQuote.matcher(lineToParse);
 
         while (regexMatcher.find()) {
             if (regexMatcher.group(1) != null) {
@@ -201,8 +176,6 @@ public final class A2l {
 
     private final void assignLinkedObject() {
 
-        System.out.println("Assign LinkedObject...");
-
         for (String axisPt : axisPts.keySet()) {
             axisPts.get(axisPt).assignComputMethod(compuMethods);
             axisPts.get(axisPt).assignRecordLayout(recordLayouts);
@@ -221,10 +194,6 @@ public final class A2l {
                 compuMethod2.assignCompuVTab(compuVTabs);
             }
         }
-
-        // for (Measurement measurement : measurements) {
-        // measurement.assignComputMethod(compuMethods);
-        // }
     }
 
     public ModPar getModPar() {

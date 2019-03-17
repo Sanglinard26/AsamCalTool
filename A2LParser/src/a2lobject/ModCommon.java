@@ -14,6 +14,7 @@ import static constante.SecondaryKeywords.BYTE_ORDER;
 import static constante.SecondaryKeywords.DATA_SIZE;
 import static constante.SecondaryKeywords.DEPOSIT;
 
+import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +31,8 @@ public final class ModCommon {
     private String comment;
 
     private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
+        private static final long serialVersionUID = 1L;
+
         {
             put(ALIGNMENT_BYTE, null);
             put(ALIGNMENT_FLOAT16_IEEE, null);
@@ -121,6 +124,14 @@ public final class ModCommon {
 
     public Map<SecondaryKeywords, Object> getOptionalsParameters() {
         return optionalsParameters;
+    }
+
+    public ByteOrder getByteOrder() {
+        String sByteOrder = (String) optionalsParameters.get(SecondaryKeywords.BYTE_ORDER);
+        if ("MSB_LAST".equals(sByteOrder) || "BIG_ENDIAN".equals(sByteOrder)) {
+            return ByteOrder.LITTLE_ENDIAN;
+        }
+        return ByteOrder.BIG_ENDIAN;
     }
 
     public final String getInfo() {

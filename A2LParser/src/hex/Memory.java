@@ -12,10 +12,10 @@ import java.util.List;
  */
 public class Memory {
 
-    public int address;
+    public long address;
     public List<Byte> listByte;
 
-    public Memory(int address, byte[] data) {
+    public Memory(long address, byte[] data) {
         this.address = address;
         listByte = new ArrayList<Byte>();
         for (byte b : data) {

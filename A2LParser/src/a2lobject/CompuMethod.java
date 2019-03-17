@@ -34,6 +34,8 @@ public final class CompuMethod implements Comparable<CompuMethod> {
     private String unit;
 
     private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
+        private static final long serialVersionUID = 1L;
+
         {
             put(COEFFS, null);
             put(COEFFS_LINEAR, null);
@@ -141,6 +143,9 @@ public final class CompuMethod implements Comparable<CompuMethod> {
             if (_coeffs[0] + _coeffs[2] + _coeffs[3] + _coeffs[4] == 0) {
                 return (hex * _coeffs[5]) / _coeffs[1];
             }
+            if (_coeffs[0] + _coeffs[3] + _coeffs[4] == 0) {
+                return (hex * _coeffs[5] - _coeffs[2]) / _coeffs[1];
+            }
             return Double.NaN;
         default:
             return hex;
@@ -154,7 +159,8 @@ public final class CompuMethod implements Comparable<CompuMethod> {
         switch (this.conversionType) {
         case TAB_VERB:
             CompuVTab compuVTab = (CompuVTab) compuTabRef;
-            return compuVTab.getValuePairs().get(hex);
+            Float key = new Float(hex);
+            return compuVTab.getValuePairs().get(key);
         default:
             return "";
         }
@@ -177,6 +183,10 @@ public final class CompuMethod implements Comparable<CompuMethod> {
     @Override
     public boolean equals(Object obj) {
         return this.name.equals(obj.toString());
+    }
+
+    public String getFormat() {
+        return format;
     }
 
     public final String getInfo() {

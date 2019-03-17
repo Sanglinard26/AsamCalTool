@@ -14,7 +14,6 @@ import static constante.SecondaryKeywords.AXIS_PTS_X;
 import static constante.SecondaryKeywords.FNC_VALUES;
 import static constante.SecondaryKeywords.STATIC_RECORD_LAYOUT;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -26,7 +25,7 @@ import constante.IndexMode;
 import constante.IndexOrder;
 import constante.SecondaryKeywords;
 
-public final class RecordLayout implements Comparable<RecordLayout> {
+public final class RecordLayout {
 
     private String name;
 
@@ -102,37 +101,17 @@ public final class RecordLayout implements Comparable<RecordLayout> {
 
     }
 
-    public static RecordLayout createEmptyRecordLayout(String name) {
-        List<String> parameters = new ArrayList<String>();
-        parameters.add(name);
-        return new RecordLayout(parameters);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return this.name.equals(obj.toString());
-    }
-
     @Override
     public String toString() {
         return this.name;
     }
 
-    public final String getInfo() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("Name : " + name + "\n");
-
-        return sb.toString();
-    }
-
-    @Override
-    public int compareTo(RecordLayout o) {
-        return this.name.compareTo(o.name);
-    }
-
     public Map<SecondaryKeywords, Object> getOptionalsParameters() {
         return optionalsParameters;
+    }
+
+    public FncValues getFncValues() {
+        return (FncValues) optionalsParameters.get(SecondaryKeywords.FNC_VALUES);
     }
 
     public final class FncValues {

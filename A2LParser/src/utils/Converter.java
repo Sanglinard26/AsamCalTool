@@ -57,7 +57,7 @@ public final class Converter {
         switch (dataType) {
         case UBYTE:
             for (int nValue = 0; nValue < nbValue; nValue++) {
-                byteValues = hex.readBytes((int) adress + nValue, nbByte);
+                byteValues = hex.readBytes(adress + nValue, nbByte);
                 if (byteValues.length > 0) {
                     hexValues[nValue] = Converter.readUBYTE(ByteBuffer.wrap(byteValues));
                 }
@@ -65,7 +65,7 @@ public final class Converter {
             break;
         case SBYTE:
             for (int nValue = 0; nValue < nbValue; nValue++) {
-                byteValues = hex.readBytes((int) adress + nValue, nbByte);
+                byteValues = hex.readBytes(adress + nValue, nbByte);
                 if (byteValues.length > 0) {
                     hexValues[nValue] = Converter.readSBYTE(ByteBuffer.wrap(byteValues));
                 }
@@ -73,7 +73,7 @@ public final class Converter {
             break;
         case UWORD:
             for (int nValue = 0; nValue < nbValue; nValue++) {
-                byteValues = hex.readBytes((int) adress + (nValue * nbByte), nbByte);
+                byteValues = hex.readBytes(adress + (nValue * nbByte), nbByte);
                 if (byteValues.length > 0) {
                     hexValues[nValue] = Converter.readUWORD(ByteBuffer.wrap(byteValues), byteOrder);
                 }
@@ -81,7 +81,7 @@ public final class Converter {
             break;
         case SWORD:
             for (int nValue = 0; nValue < nbValue; nValue++) {
-                byteValues = hex.readBytes((int) adress + (nValue * nbByte), nbByte);
+                byteValues = hex.readBytes(adress + (nValue * nbByte), nbByte);
                 if (byteValues.length > 0) {
                     hexValues[nValue] = Converter.readSWORD(ByteBuffer.wrap(byteValues), byteOrder);
                 }
@@ -89,7 +89,7 @@ public final class Converter {
             break;
         case ULONG:
             for (int nValue = 0; nValue < nbValue; nValue++) {
-                byteValues = hex.readBytes((int) adress + (nValue * nbByte), nbByte);
+                byteValues = hex.readBytes(adress + (nValue * nbByte), nbByte);
                 if (byteValues.length > 0) {
                     hexValues[nValue] = Converter.readULONG(ByteBuffer.wrap(byteValues), byteOrder);
                 }
@@ -97,7 +97,7 @@ public final class Converter {
             break;
         case SLONG:
             for (int nValue = 0; nValue < nbValue; nValue++) {
-                byteValues = hex.readBytes((int) adress + (nValue * nbByte), nbByte);
+                byteValues = hex.readBytes(adress + (nValue * nbByte), nbByte);
                 if (byteValues.length > 0) {
                     hexValues[nValue] = Converter.readSLONG(ByteBuffer.wrap(byteValues), byteOrder);
                 }
@@ -105,7 +105,7 @@ public final class Converter {
             break;
         case FLOAT32_IEEE:
             for (int nValue = 0; nValue < nbValue; nValue++) {
-                byteValues = hex.readBytes((int) adress + (nValue * nbByte), nbByte);
+                byteValues = hex.readBytes(adress + (nValue * nbByte), nbByte);
                 if (byteValues.length > 0) {
                     hexValues[nValue] = Converter.readFLOAT32IEEE(ByteBuffer.wrap(byteValues), byteOrder);
                 }

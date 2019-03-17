@@ -29,10 +29,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import a2lobject.AxisDescr.Attribute;
+import constante.ConversionType;
 import constante.SecondaryKeywords;
 
 /**
@@ -51,6 +51,8 @@ public final class Characteristic implements Comparable<Characteristic> {
     private String conversion; // Reference to COMPUTMETHOD
     private float lowerLimit;
     private float upperLimit;
+
+    private String values;
 
     private CompuMethod compuMethod;
     private RecordLayout recordLayout;
@@ -232,6 +234,36 @@ public final class Characteristic implements Comparable<Characteristic> {
         return type;
     }
 
+    public final String getFormat() {
+        Object oCharactDisplayFormat = optionalsParameters.get(SecondaryKeywords.FORMAT);
+        String displayFormat;
+
+        if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
+                || compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
+                || compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
+            if (oCharactDisplayFormat == null) {
+                displayFormat = compuMethod.getFormat() + "f";
+            } else {
+                displayFormat = oCharactDisplayFormat.toString() + "f";
+            }
+            if (displayFormat.charAt(1) == '0') {
+                displayFormat = displayFormat.replaceFirst("0", "");
+            }
+            return displayFormat;
+        }
+        return "%16.16";
+    }
+
+    public final int getDim() {
+        Object oByte = optionalsParameters.get(SecondaryKeywords.NUMBER);
+
+        if (oByte == null) {
+            oByte = optionalsParameters.get(SecondaryKeywords.MATRIX_DIM);
+            return (int) ((Object[]) oByte)[0];
+        }
+        return (int) oByte;
+    }
+
     public final void assignComputMethod(HashMap<String, CompuMethod> compuMethods) {
 
         this.compuMethod = compuMethods.get(this.conversion);
@@ -257,30 +289,16 @@ public final class Characteristic implements Comparable<Characteristic> {
         this.recordLayout = recordLayouts.get(this.deposit);
     }
 
-    public final String getInfo() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("Name : " + name + "\n");
-        sb.append("LongIdentifier : " + longIdentifier + "\n");
-        sb.append("Type : " + type + "\n");
-        sb.append("Adress : " + adress + "\n");
-        sb.append("Deposit : " + deposit + "\n");
-        sb.append("Conversion : " + conversion + "\n");
-        sb.append("MaxDiff : " + maxDiff + "\n");
-        sb.append("LowerLimit : " + lowerLimit + "\n");
-        sb.append("UpperLimit : " + upperLimit + "\n");
-
-        for (Entry<SecondaryKeywords, Object> entry : optionalsParameters.entrySet()) {
-            if (entry.getValue() != null) {
-                sb.append(entry.getKey() + " : " + entry.getValue() + "\n");
-            }
-        }
-
-        return sb.toString();
+    public String getValues() {
+        return values;
     }
 
-    public String getAdress() {
-        return adress;
+    public void setValues(String d) {
+        this.values = d;
+    }
+
+    public long getAdress() {
+        return Long.parseLong(adress.substring(2), 16);
     }
 
     public enum CharacteristicType {

@@ -27,7 +27,7 @@ import javax.swing.event.ListSelectionListener;
 
 import a2lobject.A2l;
 import a2lobject.Characteristic;
-import association.Association;
+import hex.HexDecoder;
 import hex.IntelHex;
 
 public final class Ihm extends JFrame {
@@ -47,8 +47,6 @@ public final class Ihm extends JFrame {
 
         container.setLayout(new BorderLayout());
 
-        // System.out.println(a2l.getContent().toString());
-
         list = new JList<Characteristic>();
         textPane = new JTextPane();
         textPane.setPreferredSize(new Dimension(500, 500));
@@ -58,7 +56,7 @@ public final class Ihm extends JFrame {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting()) {
-                    textPane.setText(list.getSelectedValue().getInfo());
+                    textPane.setText(list.getSelectedValue().getValues());
                 }
 
             }
@@ -75,13 +73,18 @@ public final class Ihm extends JFrame {
 
     private final class PanelBt extends JPanel {
 
+        private static final long serialVersionUID = 1L;
         private JButton btOpenA2L;
         private JButton btOpenHex;
+
+        final StringBuilder sb = new StringBuilder();
 
         public PanelBt() {
             super();
             ((FlowLayout) getLayout()).setAlignment(FlowLayout.LEFT);
             btOpenA2L = new JButton(new AbstractAction("Open A2L") {
+
+                private static final long serialVersionUID = 1L;
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -89,7 +92,13 @@ public final class Ihm extends JFrame {
                     int rep = chooser.showOpenDialog(null);
 
                     if (rep == JFileChooser.APPROVE_OPTION) {
+
+                        long start = System.currentTimeMillis();
+
                         a2l = new A2l(chooser.getSelectedFile());
+
+                        sb.append("A2L parsing time : " + (System.currentTimeMillis() - start) + "ms\n");
+
                         List<Characteristic> listCharac = a2l.getCharacteristics();
                         Collections.sort(listCharac);
                         list.setListData(listCharac.toArray(new Characteristic[a2l.getCharacteristics().size()]));
@@ -101,6 +110,8 @@ public final class Ihm extends JFrame {
 
             btOpenHex = new JButton(new AbstractAction("Open HEX") {
 
+                private static final long serialVersionUID = 1L;
+
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
@@ -109,26 +120,34 @@ public final class Ihm extends JFrame {
                     if (rep == JFileChooser.APPROVE_OPTION) {
 
                         long lStartTime = System.nanoTime();
-                        System.out.println("Start parsing the IntelHex file: ");
                         IntelHex pHex = null;
                         try {
                             pHex = new IntelHex(chooser.getSelectedFile().getAbsolutePath());
                         } catch (FileNotFoundException e1) {
-                            // TODO Auto-generated catch block
                             e1.printStackTrace();
                         } catch (IOException e1) {
-                            // TODO Auto-generated catch block
                             e1.printStackTrace();
                         }
 
                         long lEndTime = System.nanoTime();
                         long output = lEndTime - lStartTime;
-                        System.out.println("Hex parsing time in miliseconds: " + output / 1000000);
+                        sb.append("Hex parsing time : " + output / 1000000 + "ms\n");
 
-                        if (Association.combine(a2l, pHex)) {
-                            JOptionPane.showMessageDialog(Ihm.this, "Association OK");
+                        lStartTime = System.nanoTime();
+
+                        HexDecoder hexDecoder = new HexDecoder(a2l, pHex);
+
+                        if (hexDecoder.checkEPK()) {
+                            if (hexDecoder.readDataFromHex()) {
+                                lEndTime = System.nanoTime();
+                                output = lEndTime - lStartTime;
+                                sb.append("Reading hex data : " + output / 1000000 + "ms\n");
+                                JOptionPane.showMessageDialog(Ihm.this, sb.toString());
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, "L'identifiant de l'EEPROM ne correspond pas !\nInterruption de la lecture.",
+                                    "Attention", JOptionPane.WARNING_MESSAGE);
                         }
-
                     }
 
                 }

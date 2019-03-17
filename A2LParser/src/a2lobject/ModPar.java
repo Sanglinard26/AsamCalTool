@@ -11,18 +11,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import constante.SecondaryKeywords;
 
 public final class ModPar {
 
-    private static final int nbMandatoryFields = 0;
-
     private String comment;
 
     private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
+        private static final long serialVersionUID = 1L;
+
         {
             put(ADDR_EPK, null);
             put(ECU_CALIBRATION_OFFSET, null);
@@ -81,31 +80,16 @@ public final class ModPar {
 
     }
 
-    public static int getNbMandatoryfields() {
-        return nbMandatoryFields;
-    }
-
-    public Map<SecondaryKeywords, Object> getOptionalsParameters() {
-        return optionalsParameters;
-    }
-
-    public final String getInfo() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("Comment : " + this.comment + "\n");
-
-        for (Entry<SecondaryKeywords, Object> entry : optionalsParameters.entrySet()) {
-            if (entry.getValue() != null) {
-                sb.append(entry.getKey() + " : " + entry.getValue() + "\n");
-            }
+    public final long getEPKAdress() {
+        String addressEPK = ((String) optionalsParameters.get(SecondaryKeywords.ADDR_EPK));
+        if (addressEPK != null) {
+            return Long.parseLong(addressEPK.substring(2), 16);
         }
-
-        return sb.toString();
+        return -1;
     }
 
-    @Override
-    public String toString() {
-        return getInfo();
+    public final String getEPK() {
+        return (String) optionalsParameters.get(SecondaryKeywords.EPK);
     }
 
 }

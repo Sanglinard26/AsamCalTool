@@ -16,9 +16,9 @@ import java.util.List;
 public final class IntelHex {
 
     public final List<Memory> memorySegments = new ArrayList<Memory>();
-    Integer startAddress = null;
+    Long startAddress = null;
     Memory last = null;
-    int extendedAddress = 0;
+    long extendedAddress = 0;
     boolean endOfFile = false;
 
     public static byte parseHexByte(String str) {
@@ -29,12 +29,12 @@ public final class IntelHex {
         return (byte) Integer.parseInt(str.substring(beginIndex, beginIndex + 2), 16);
     }
 
-    public byte[] readBytes(int address, int len) {
+    public byte[] readBytes(long address, int len) {
         for (Memory mem : memorySegments) {
             if (address >= mem.address && (address + len) <= (mem.address + mem.listByte.size())) {
                 byte[] retval = new byte[len];
                 for (int i = 0; i < len; i++) {
-                    retval[i] = mem.listByte.get(i + address - mem.address);
+                    retval[i] = mem.listByte.get((int) (i + address - mem.address));
                 }
                 return retval;
             }
@@ -42,27 +42,12 @@ public final class IntelHex {
         return new byte[0];
     }
 
-    public String readString(int address) {
-        for (Memory mem : memorySegments) {
-            if (address >= mem.address && address < mem.address + mem.listByte.size()) {
-                String retval = "";
-                while (address < mem.address + mem.listByte.size()
-                        && Character.isLetterOrDigit((char) mem.listByte.get(address - mem.address).byteValue())) {
-                    retval += (char) mem.listByte.get(address - mem.address).byteValue();
-                    address++;
-                }
-                return retval;
-            }
-        }
-        return null;
-    }
-
-    public String readString(int address, int nByte) {
+    public String readString(long address, int nByte) {
         for (Memory mem : memorySegments) {
             if (address >= mem.address && address < mem.address + mem.listByte.size()) {
                 String retval = "";
                 while (address < mem.address + mem.listByte.size() && retval.length() < nByte) {
-                    retval += (char) mem.listByte.get(address - mem.address).byteValue();
+                    retval += (char) mem.listByte.get((int) (address - mem.address)).byteValue();
                     address++;
                 }
                 return retval;
@@ -122,47 +107,36 @@ public final class IntelHex {
             line = sr.readLine();
             if (line == null) {
                 break;
-                // throw new IllegalArgumentException("End of file reached unexpectedly");
             }
             processLine(line);
         }
 
-        if (startAddress != null) {
-            System.out.println("Start address: 0x" + Integer.toString(startAddress, 16));
-        }
-        System.out.println("Number of segments: " + memorySegments.size());
-        int i = 0;
-        for (Memory mem : memorySegments) {
-            System.out.print("Segment[" + i + "]:");
-            System.out.print(" Address: 0x" + Integer.toString(mem.address, 16));
-            System.out.println(" Length: " + mem.listByte.size());
-            i++;
-        }
+        sr.close();
     }
 
-    public static int ProcessExtendedLinearAddressRecord(String line) {
+    public static long ProcessExtendedLinearAddressRecord(String line) {
         if (!line.startsWith(":02000004")) {
             throw new IllegalArgumentException("Illegal Extended Linear Address Record line received: " + line);
         }
-        int address = Integer.parseInt(line.substring(9, 13), 16);
+        long address = Long.parseLong(line.substring(9, 13), 16);
         if (0 != (byte) (6 + address + (address >> 8) + parseHexByte(line, 13))) {
             throw new IllegalArgumentException("HexFile Extended Linear Address line checksum error");
         }
         return address << 16;
     }
 
-    public static int ProcessStartAddressRecord(String line) {
+    public static long ProcessStartAddressRecord(String line) {
         if (!line.startsWith(":04000005")) {
             throw new IllegalArgumentException("Illegal Extended Linear Address Record line received: " + line);
         }
-        int address = Integer.parseInt(line.substring(9, 17), 16);
+        long address = Long.parseLong(line.substring(9, 17), 16);
         if (0 != (byte) (9 + address + (address >> 8) + (address >> 16) + (address >> 24) + parseHexByte(line, 17))) {
             throw new IllegalArgumentException("HexFile Start Address line checksum error");
         }
         return address;
     }
 
-    public static Memory ProcessDataRecordLine(String line, int address) {
+    public static Memory ProcessDataRecordLine(String line, long address) {
         Memory memory = ProcessDataRecordLine(line);
         memory.address = memory.address + address;
         return memory;

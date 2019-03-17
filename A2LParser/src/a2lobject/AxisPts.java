@@ -176,8 +176,8 @@ public final class AxisPts {
         return recordLayout;
     }
 
-    public String getAdress() {
-        return adress;
+    public long getAdress() {
+        return Long.parseLong(adress.substring(2), 16);
     }
 
     public int getMaxAxisPoints() {
