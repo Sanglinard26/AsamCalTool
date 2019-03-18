@@ -11,9 +11,13 @@ import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.Vector;
 
 import javax.swing.AbstractAction;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -21,7 +25,10 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -32,128 +39,178 @@ import hex.IntelHex;
 
 public final class Ihm extends JFrame {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    final JList<Characteristic> list;
-    final JTextPane textPane;
+	final JList<Characteristic> list;
+	final JTextPane textPane;
 
-    private A2l a2l;
+	private List<Characteristic> listCharac = Collections.emptyList();
+	private Vector<Characteristic> listCharacFiltre = new Vector<Characteristic>();
 
-    public Ihm() {
-        super("A2LParser");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+	private A2l a2l;
 
-        Container container = getContentPane();
+	public Ihm() {
+		super("A2LParser");
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        container.setLayout(new BorderLayout());
+		Container container = getContentPane();
 
-        list = new JList<Characteristic>();
-        textPane = new JTextPane();
-        textPane.setPreferredSize(new Dimension(500, 500));
+		container.setLayout(new BorderLayout());
 
-        list.addListSelectionListener(new ListSelectionListener() {
+		list = new JList<Characteristic>();
+		textPane = new JTextPane();
+		textPane.setPreferredSize(new Dimension(500, 500));
 
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (!e.getValueIsAdjusting()) {
-                    textPane.setText(list.getSelectedValue().getValues());
-                }
+		list.addListSelectionListener(new ListSelectionListener() {
 
-            }
-        });
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (!e.getValueIsAdjusting()) {
+					textPane.setText(list.getSelectedValue().getValues());
+				}
 
-        container.add(new PanelBt(), BorderLayout.NORTH);
-        container.add(new JScrollPane(list), BorderLayout.WEST);
-        container.add(textPane, BorderLayout.CENTER);
+			}
+		});
 
-        pack();
+		container.add(new PanelBt(), BorderLayout.NORTH);
+		container.add(new JScrollPane(list), BorderLayout.WEST);
+		container.add(textPane, BorderLayout.CENTER);
 
-        setVisible(true);
-    }
+		pack();
 
-    private final class PanelBt extends JPanel {
+		setVisible(true);
+	}
 
-        private static final long serialVersionUID = 1L;
-        private JButton btOpenA2L;
-        private JButton btOpenHex;
+	private final class PanelBt extends JPanel {
 
-        final StringBuilder sb = new StringBuilder();
+		private static final long serialVersionUID = 1L;
+		private JButton btOpenA2L;
+		private JButton btOpenHex;
+		private JTextField txtFiltre;
 
-        public PanelBt() {
-            super();
-            ((FlowLayout) getLayout()).setAlignment(FlowLayout.LEFT);
-            btOpenA2L = new JButton(new AbstractAction("Open A2L") {
+		final StringBuilder sb = new StringBuilder();
 
-                private static final long serialVersionUID = 1L;
+		public PanelBt() {
+			super();
+			((FlowLayout) getLayout()).setAlignment(FlowLayout.LEFT);
+			btOpenA2L = new JButton(new AbstractAction("Open A2L") {
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
-                    int rep = chooser.showOpenDialog(null);
+				private static final long serialVersionUID = 1L;
 
-                    if (rep == JFileChooser.APPROVE_OPTION) {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
+					int rep = chooser.showOpenDialog(null);
 
-                        long start = System.currentTimeMillis();
+					if (rep == JFileChooser.APPROVE_OPTION) {
 
-                        a2l = new A2l(chooser.getSelectedFile());
+						long start = System.currentTimeMillis();
 
-                        sb.append("A2L parsing time : " + (System.currentTimeMillis() - start) + "ms\n");
+						a2l = new A2l(chooser.getSelectedFile());
 
-                        List<Characteristic> listCharac = a2l.getCharacteristics();
-                        Collections.sort(listCharac);
-                        list.setListData(listCharac.toArray(new Characteristic[a2l.getCharacteristics().size()]));
-                    }
+						sb.append("A2L parsing time : " + (System.currentTimeMillis() - start) + "ms\n");
 
-                }
-            });
-            add(btOpenA2L);
+						listCharac = a2l.getCharacteristics();
+						Collections.sort(listCharac);
+						list.setListData(listCharac.toArray(new Characteristic[a2l.getCharacteristics().size()]));
+					}
 
-            btOpenHex = new JButton(new AbstractAction("Open HEX") {
+				}
+			});
+			add(btOpenA2L);
 
-                private static final long serialVersionUID = 1L;
+			btOpenHex = new JButton(new AbstractAction("Open HEX") {
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
-                    int rep = chooser.showOpenDialog(null);
+				private static final long serialVersionUID = 1L;
 
-                    if (rep == JFileChooser.APPROVE_OPTION) {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
+					int rep = chooser.showOpenDialog(null);
 
-                        long lStartTime = System.nanoTime();
-                        IntelHex pHex = null;
-                        try {
-                            pHex = new IntelHex(chooser.getSelectedFile().getAbsolutePath());
-                        } catch (FileNotFoundException e1) {
-                            e1.printStackTrace();
-                        } catch (IOException e1) {
-                            e1.printStackTrace();
-                        }
+					if (rep == JFileChooser.APPROVE_OPTION) {
 
-                        long lEndTime = System.nanoTime();
-                        long output = lEndTime - lStartTime;
-                        sb.append("Hex parsing time : " + output / 1000000 + "ms\n");
+						long lStartTime = System.nanoTime();
+						IntelHex pHex = null;
+						try {
+							pHex = new IntelHex(chooser.getSelectedFile().getAbsolutePath());
+						} catch (FileNotFoundException e1) {
+							e1.printStackTrace();
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
 
-                        lStartTime = System.nanoTime();
+						long lEndTime = System.nanoTime();
+						long output = lEndTime - lStartTime;
+						sb.append("Hex parsing time : " + output / 1000000 + "ms\n");
 
-                        HexDecoder hexDecoder = new HexDecoder(a2l, pHex);
+						lStartTime = System.nanoTime();
 
-                        if (hexDecoder.checkEPK()) {
-                            if (hexDecoder.readDataFromHex()) {
-                                lEndTime = System.nanoTime();
-                                output = lEndTime - lStartTime;
-                                sb.append("Reading hex data : " + output / 1000000 + "ms\n");
-                                JOptionPane.showMessageDialog(Ihm.this, sb.toString());
-                            }
-                        } else {
-                            JOptionPane.showMessageDialog(null, "L'identifiant de l'EEPROM ne correspond pas !\nInterruption de la lecture.",
-                                    "Attention", JOptionPane.WARNING_MESSAGE);
-                        }
-                    }
+						HexDecoder hexDecoder = new HexDecoder(a2l, pHex);
 
-                }
-            });
-            add(btOpenHex);
-        }
-    }
+						if (hexDecoder.checkEPK()) {
+							if (hexDecoder.readDataFromHex()) {
+								lEndTime = System.nanoTime();
+								output = lEndTime - lStartTime;
+								sb.append("Reading hex data : " + output / 1000000 + "ms\n");
+								JOptionPane.showMessageDialog(Ihm.this, sb.toString());
+							}
+						} else {
+							JOptionPane.showMessageDialog(null, "L'identifiant de l'EEPROM ne correspond pas !\nInterruption de la lecture.",
+									"Attention", JOptionPane.WARNING_MESSAGE);
+						}
+					}
+
+				}
+			});
+			add(btOpenHex);
+
+			txtFiltre = new JTextField(20);
+			txtFiltre.getDocument().addDocumentListener(new DocumentListener() {
+
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					if(listCharac.size()>0)
+					setFilter(txtFiltre.getText());
+
+				}
+
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					if(listCharac.size()>0)
+					setFilter(txtFiltre.getText());
+
+				}
+
+				@Override
+				public void changedUpdate(DocumentEvent e) {
+					if(listCharac.size()>0)
+					setFilter(txtFiltre.getText());
+
+				}
+			});
+			add(txtFiltre);
+		}
+	}
+
+	private final void setFilter(String filtre) {
+
+		final Set<Characteristic> tmpList = new LinkedHashSet<Characteristic>();
+
+		listCharacFiltre.clear();
+
+		final int nbLabel = listCharac.size();
+		Characteristic charac;
+
+		for (int i = 0; i < nbLabel; i++) {
+			charac = listCharac.get(i);
+				if (charac.toString().toLowerCase().indexOf(filtre.toLowerCase()) > -1) {
+					tmpList.add(charac);
+				}
+		}
+
+		listCharacFiltre.addAll(tmpList);
+		list.setListData(listCharacFiltre);
+	}
 
 }

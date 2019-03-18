@@ -66,7 +66,7 @@ public final class HexDecoder {
 
             long adress = characteristic.getAdress();
 
-            if (characteristic.toString().equals("BooCtl_bEdgeGearShift_M"))
+            if (characteristic.toString().equals("Exh_stMskLckNplTOxiCatDs_C"))
                 System.out.println(characteristic);
 
             switch (characteristic.getType()) {

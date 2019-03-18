@@ -19,9 +19,9 @@ public final class Converter {
         return bb.get();
     }
 
-    public static int readULONG(ByteBuffer bb, ByteOrder byteOrder) {
+    public static long readULONG(ByteBuffer bb, ByteOrder byteOrder) {
         bb.order(byteOrder);
-        return (bb.getInt() & 0xffffffff);
+        return bb.getInt() & 0xffffffffL;
     }
 
     public static int readSLONG(ByteBuffer bb, ByteOrder byteOrder) {
