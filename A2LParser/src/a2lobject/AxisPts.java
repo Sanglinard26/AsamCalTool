@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import constante.SecondaryKeywords;
@@ -192,28 +191,6 @@ public final class AxisPts {
     public final void assignRecordLayout(HashMap<String, RecordLayout> recordLayouts) {
 
         this.recordLayout = recordLayouts.get(this.deposit);
-    }
-
-    public final String getInfo() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("Name : " + name + "\n");
-        sb.append("LongIdentifier : " + longIdentifier + "\n");
-        sb.append("Adress : " + adress + "\n");
-        sb.append("InputQuantity : " + inputQuantity + "\n");
-        sb.append("Deposit : " + deposit + "\n");
-        sb.append("Conversion : " + conversion + "\n");
-        sb.append("MaxDiff : " + maxDiff + "\n");
-        sb.append("LowerLimit : " + lowerLimit + "\n");
-        sb.append("UpperLimit : " + upperLimit + "\n");
-
-        for (Entry<SecondaryKeywords, Object> entry : optionalsParameters.entrySet()) {
-            if (entry.getValue() != null) {
-                sb.append(entry.getKey() + " : " + entry.getValue() + "\n");
-            }
-        }
-
-        return sb.toString();
     }
 
 }

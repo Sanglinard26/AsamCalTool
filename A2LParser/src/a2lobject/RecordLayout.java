@@ -41,8 +41,10 @@ public final class RecordLayout {
             put(ALIGNMENT_LONG, null);
             put(ALIGNMENT_WORD, null);
             put(AXIS_PTS_X, null);
+            put(SecondaryKeywords.AXIS_PTS_Y, null);
             put(FNC_VALUES, null);
             put(SecondaryKeywords.NO_AXIS_PTS_X, null);
+            put(SecondaryKeywords.NO_AXIS_PTS_Y, null);
             put(STATIC_RECORD_LAYOUT, null);
         }
     };
@@ -74,10 +76,24 @@ public final class RecordLayout {
                         n += 4;
                         break;
 
+                    case "AXIS_PTS_Y":
+
+                        List<String> subList4 = parameters.subList(n + 1, n + 5);
+                        optionalsParameters.put(SecondaryKeywords.AXIS_PTS_Y, new AxisPtsY(subList4));
+                        n += 4;
+                        break;
+
                     case "NO_AXIS_PTS_X":
 
                         List<String> subList3 = parameters.subList(n + 1, n + 3);
                         optionalsParameters.put(SecondaryKeywords.NO_AXIS_PTS_X, new NoAxisPtsX(subList3));
+                        n += 2;
+                        break;
+
+                    case "NO_AXIS_PTS_Y":
+
+                        List<String> subList5 = parameters.subList(n + 1, n + 3);
+                        optionalsParameters.put(SecondaryKeywords.NO_AXIS_PTS_Y, new NoAxisPtsY(subList5));
                         n += 2;
                         break;
 
@@ -112,6 +128,26 @@ public final class RecordLayout {
 
     public FncValues getFncValues() {
         return (FncValues) optionalsParameters.get(SecondaryKeywords.FNC_VALUES);
+    }
+
+    public NoAxisPtsX getNoAxisPtsX() {
+        Object object = optionalsParameters.get(SecondaryKeywords.NO_AXIS_PTS_X);
+        return object != null ? (NoAxisPtsX) object : null;
+    }
+
+    public AxisPtsX getAxisPtsX() {
+        Object object = optionalsParameters.get(SecondaryKeywords.AXIS_PTS_X);
+        return object != null ? (AxisPtsX) object : null;
+    }
+
+    public NoAxisPtsY getNoAxisPtsY() {
+        Object object = optionalsParameters.get(SecondaryKeywords.NO_AXIS_PTS_Y);
+        return object != null ? (NoAxisPtsY) object : null;
+    }
+
+    public AxisPtsY getAxisPtsY() {
+        Object object = optionalsParameters.get(SecondaryKeywords.AXIS_PTS_Y);
+        return object != null ? (AxisPtsY) object : null;
     }
 
     public final class FncValues {
@@ -181,6 +217,56 @@ public final class RecordLayout {
         private DataType dataType;
 
         public NoAxisPtsX(List<String> parameters) {
+            this.position = Integer.parseInt(parameters.get(0));
+            this.dataType = DataType.getDataType(parameters.get(1));
+        }
+
+        public int getPosition() {
+            return position;
+        }
+
+        public DataType getDataType() {
+            return dataType;
+        }
+
+    }
+
+    public final class AxisPtsY {
+
+        private int position;
+        private DataType dataType;
+        private IndexOrder indexOrder;
+        private AdressType adressType;
+
+        public AxisPtsY(List<String> parameters) {
+            this.position = Integer.parseInt(parameters.get(0));
+            this.dataType = DataType.getDataType(parameters.get(1));
+            this.indexOrder = IndexOrder.getIndexOrder(parameters.get(2));
+            this.adressType = AdressType.getAdressType(parameters.get(3));
+        }
+
+        public int getPosition() {
+            return position;
+        }
+
+        public DataType getDataType() {
+            return dataType;
+        }
+
+        public IndexOrder getIndexOrder() {
+            return indexOrder;
+        }
+
+        public AdressType getAdressType() {
+            return adressType;
+        }
+    }
+
+    public final class NoAxisPtsY {
+        private int position;
+        private DataType dataType;
+
+        public NoAxisPtsY(List<String> parameters) {
             this.position = Integer.parseInt(parameters.get(0));
             this.dataType = DataType.getDataType(parameters.get(1));
         }
