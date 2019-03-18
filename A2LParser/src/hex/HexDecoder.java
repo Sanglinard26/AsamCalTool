@@ -66,9 +66,6 @@ public final class HexDecoder {
 
             long adress = characteristic.getAdress();
 
-            if (characteristic.toString().equals("Exh_stMskLckNplTOxiCatDs_C"))
-                System.out.println(characteristic);
-
             switch (characteristic.getType()) {
             case VALUE:
                 readValue(byteOrder, characteristic, adress, compuMethod, fncValues);

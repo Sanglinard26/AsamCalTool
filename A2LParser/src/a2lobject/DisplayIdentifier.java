@@ -11,13 +11,9 @@ public final class DisplayIdentifier {
         this.ident = ident;
     }
 
-    public final String getInfo() {
-        return this.ident;
-    }
-
-    @Override
-    public String toString() {
-        return getInfo();
+    public final String getIdent()
+    {
+    	return this.ident;
     }
 
 }

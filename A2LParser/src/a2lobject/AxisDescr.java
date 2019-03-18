@@ -29,8 +29,6 @@ public final class AxisDescr {
     private RecordLayout recordLayout;
     private AxisPts axisPts;
 
-    private static final int nbMandatoryFields = 6;
-
     private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
         private static final long serialVersionUID = 1L;
 
@@ -115,25 +113,8 @@ public final class AxisDescr {
         }
     }
 
-    public static int getNbMandatoryfields() {
-        return nbMandatoryFields;
-    }
-
     public Attribute getAttribute() {
         return attribute;
-    }
-
-    public final String getInfo() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("Attribute : " + attribute + "\n");
-        sb.append("InputQuantity : " + inputQuantity + "\n");
-        sb.append("Conversion : " + conversion + "\n");
-        sb.append("MaxAxisPoints : " + maxAxisPoints + "\n");
-        sb.append("LowerLimit : " + lowerLimit + "\n");
-        sb.append("UpperLimit : " + upperLimit + "\n");
-
-        return sb.toString();
     }
 
     public void setCompuMethod(CompuMethod compuMethod) {
@@ -158,11 +139,6 @@ public final class AxisDescr {
 
     public RecordLayout getRecordLayout() {
         return recordLayout;
-    }
-
-    @Override
-    public String toString() {
-        return getInfo();
     }
 
     public int getMaxAxisPoints() {

@@ -150,9 +150,6 @@ public final class Characteristic implements Comparable<Characteristic> {
                                 n = nPar + 1;
                                 break;
                             case "BIT_MASK":
-                                if (type.compareTo(CharacteristicType.VALUE) != 0) {
-                                    System.out.println(this.name);
-                                }
                                 String bitMask = parameters.get(nPar + 1);
                                 if (bitMask.startsWith("0x")) {
                                     optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask.substring(2), 16));

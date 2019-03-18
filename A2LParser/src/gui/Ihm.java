@@ -8,6 +8,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
@@ -17,7 +18,6 @@ import java.util.Set;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -31,6 +31,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
 
 import a2lobject.A2l;
 import a2lobject.Characteristic;
@@ -100,6 +101,20 @@ public final class Ihm extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
+					chooser.setFileFilter(new FileFilter() {
+
+						@Override
+						public String getDescription() {
+							return "Fichier A2L";
+						}
+
+						@Override
+						public boolean accept(File paramFile) {
+							if(paramFile.isDirectory())
+								return true;
+							return paramFile.getName().toLowerCase().endsWith("a2l");
+						}
+					});
 					int rep = chooser.showOpenDialog(null);
 
 					if (rep == JFileChooser.APPROVE_OPTION) {
@@ -126,6 +141,20 @@ public final class Ihm extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
+					chooser.setFileFilter(new FileFilter() {
+
+						@Override
+						public String getDescription() {
+							return "Fichier Hex";
+						}
+
+						@Override
+						public boolean accept(File paramFile) {
+							if(paramFile.isDirectory())
+								return true;
+							return paramFile.getName().toLowerCase().endsWith("hex");
+						}
+					});
 					int rep = chooser.showOpenDialog(null);
 
 					if (rep == JFileChooser.APPROVE_OPTION) {
@@ -171,21 +200,21 @@ public final class Ihm extends JFrame {
 				@Override
 				public void removeUpdate(DocumentEvent e) {
 					if(listCharac.size()>0)
-					setFilter(txtFiltre.getText());
+						setFilter(txtFiltre.getText());
 
 				}
 
 				@Override
 				public void insertUpdate(DocumentEvent e) {
 					if(listCharac.size()>0)
-					setFilter(txtFiltre.getText());
+						setFilter(txtFiltre.getText());
 
 				}
 
 				@Override
 				public void changedUpdate(DocumentEvent e) {
 					if(listCharac.size()>0)
-					setFilter(txtFiltre.getText());
+						setFilter(txtFiltre.getText());
 
 				}
 			});
@@ -204,9 +233,9 @@ public final class Ihm extends JFrame {
 
 		for (int i = 0; i < nbLabel; i++) {
 			charac = listCharac.get(i);
-				if (charac.toString().toLowerCase().indexOf(filtre.toLowerCase()) > -1) {
-					tmpList.add(charac);
-				}
+			if (charac.toString().toLowerCase().indexOf(filtre.toLowerCase()) > -1) {
+				tmpList.add(charac);
+			}
 		}
 
 		listCharacFiltre.addAll(tmpList);

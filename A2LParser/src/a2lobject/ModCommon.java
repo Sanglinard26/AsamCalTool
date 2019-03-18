@@ -19,14 +19,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import constante.SecondaryKeywords;
 
 public final class ModCommon {
-
-    private static final int nbMandatoryFields = 0;
 
     private String comment;
 
@@ -118,39 +115,17 @@ public final class ModCommon {
 
     }
 
-    public static int getNbMandatoryfields() {
-        return nbMandatoryFields;
-    }
-
-    public Map<SecondaryKeywords, Object> getOptionalsParameters() {
-        return optionalsParameters;
-    }
-
-    public ByteOrder getByteOrder() {
+    public final ByteOrder getByteOrder() {
         String sByteOrder = (String) optionalsParameters.get(SecondaryKeywords.BYTE_ORDER);
         if ("MSB_LAST".equals(sByteOrder) || "BIG_ENDIAN".equals(sByteOrder)) {
             return ByteOrder.LITTLE_ENDIAN;
         }
         return ByteOrder.BIG_ENDIAN;
     }
-
-    public final String getInfo() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("Comment : " + this.comment + "\n");
-
-        for (Entry<SecondaryKeywords, Object> entry : optionalsParameters.entrySet()) {
-            if (entry.getValue() != null) {
-                sb.append(entry.getKey() + " : " + entry.getValue() + "\n");
-            }
-        }
-
-        return sb.toString();
-    }
-
-    @Override
-    public String toString() {
-        return getInfo();
+    
+    public final String getComment()
+    {
+    	return this.comment;
     }
 
 }

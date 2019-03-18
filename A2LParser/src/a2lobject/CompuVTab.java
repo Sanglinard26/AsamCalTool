@@ -78,17 +78,4 @@ public final class CompuVTab {
     public Map<Float, String> getValuePairs() {
         return valuePairs;
     }
-
-    public final String getInfo() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("Name : " + name + "\n");
-        sb.append("LongIdentifier : " + longIdentifier + "\n");
-        sb.append("ConversionType : " + conversionType + "\n");
-        sb.append("NumberValuePairs : " + numberValuePairs + "\n");
-        sb.append("ValuePairs : " + valuePairs + "\n");
-
-        return sb.toString();
-    }
-
 }

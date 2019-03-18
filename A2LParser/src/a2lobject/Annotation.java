@@ -10,17 +10,19 @@ import static constante.SecondaryKeywords.ANNOTATION_TEXT;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import constante.SecondaryKeywords;
 
 public final class Annotation {
 
-    private static final int nbMandatoryFields = 0;
-
     private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
-        {
+        /**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
             put(ANNOTATION_LABEL, null);
             put(ANNOTATION_ORIGIN, null);
             put(ANNOTATION_TEXT, null);
@@ -49,26 +51,4 @@ public final class Annotation {
         }
 
     }
-
-    public static int getNbMandatoryfields() {
-        return nbMandatoryFields;
-    }
-
-    public final String getInfo() {
-        StringBuilder sb = new StringBuilder();
-
-        for (Entry<SecondaryKeywords, Object> entry : optionalsParameters.entrySet()) {
-            if (entry.getValue() != null) {
-                sb.append(entry.getKey() + " : " + entry.getValue() + "\n");
-            }
-        }
-
-        return sb.toString();
-    }
-
-    @Override
-    public String toString() {
-        return getInfo();
-    }
-
 }

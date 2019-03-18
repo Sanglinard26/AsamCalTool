@@ -91,5 +91,10 @@ public final class ModPar {
     public final String getEPK() {
         return (String) optionalsParameters.get(SecondaryKeywords.EPK);
     }
+    
+    public final String getComment()
+    {
+    	return this.comment;
+    }
 
 }
