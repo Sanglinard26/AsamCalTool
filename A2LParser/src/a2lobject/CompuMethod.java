@@ -146,6 +146,9 @@ public final class CompuMethod implements Comparable<CompuMethod> {
             if (_coeffs[0] + _coeffs[3] + _coeffs[4] == 0) {
                 return (hex * _coeffs[5] - _coeffs[2]) / _coeffs[1];
             }
+            if (_coeffs[0] + _coeffs[1] + _coeffs[3] + _coeffs[5] == 0) {
+                return _coeffs[2] / (hex * _coeffs[4]);
+            }
             return Double.NaN;
         default:
             return hex;
