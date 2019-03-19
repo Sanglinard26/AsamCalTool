@@ -66,6 +66,9 @@ public final class HexDecoder {
             CompuMethod compuMethod = characteristic.getCompuMethod();
 
             long adress = characteristic.getAdress();
+            
+            if(characteristic.toString().equals("EcoCoach_noGearLowCurve_T"))
+            System.out.println(characteristic);
 
             switch (characteristic.getType()) {
             case VALUE:
@@ -135,7 +138,10 @@ public final class HexDecoder {
     private final void readCurve(ByteOrder byteOrder, Characteristic characteristic, long adress, CompuMethod compuMethod, FncValues fncValues) {
         AxisDescr axisDescr = characteristic.getAxisDescrs().get(0);
         int nbValue = axisDescr.getMaxAxisPoints();
+        
+        String displayFormat = characteristic.getFormat();
 
+        double physValue;
         Values values = null;
 
         switch (axisDescr.getAttribute()) {
@@ -182,7 +188,8 @@ public final class HexDecoder {
                     || compuMethodStdAxis.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
 
                 for (int n = 0; n < nbValue; n++) {
-                    values.setValue(0, n, compuMethodStdAxis.compute(hexValues[n]) + "");
+                	physValue = compuMethodStdAxis.compute(hexValues[n]);
+                    values.setValue(0, n, String.format(displayFormat, physValue).trim());
                 }
 
             } else {
@@ -204,10 +211,24 @@ public final class HexDecoder {
             values = new Values(nbValue, 2);
 
             double[] hexValuesComAxis = Converter.readHexValues(hex, adressAxis, axisPtsX.getDataType(), byteOrder, nbValue);
-
-            for (int n = 0; n < nbValue; n++) {
-                values.setValue(0, n, compuMethodAxis.compute(hexValuesComAxis[n]) + "");
+            
+            if (compuMethodAxis.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
+                    || compuMethodAxis.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
+                    || compuMethodAxis.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
+            	
+            	for (int n = 0; n < nbValue; n++) {
+                	physValue = compuMethodAxis.compute(hexValuesComAxis[n]);
+                	//Todo Prise du compte du format pour les COM_AXIS
+                    values.setValue(0, n, String.format(displayFormat, physValue).trim());
+                }
+            	
+            }else{
+            	for (int n = 0; n < nbValue; n++) {
+                    values.setValue(0, n, compuMethodAxis.computeString(hexValuesComAxis[n]));
+                }
             }
+
+            
 
             break;
 
@@ -222,7 +243,8 @@ public final class HexDecoder {
                 || compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
 
             for (int n = 0; n < nbValue; n++) {
-                values.setValue(1, n, compuMethod.compute(hexValues[n]) + "");
+            	physValue = compuMethod.compute(hexValues[n]);
+                values.setValue(1, n, String.format(displayFormat, physValue).trim());
             }
 
         } else {
@@ -243,19 +265,24 @@ public final class HexDecoder {
     private final void readValBlk(ByteOrder byteOrder, Characteristic characteristic, long adress, CompuMethod compuMethod, FncValues fncValues) {
 
         IndexMode indexModeValBlk = fncValues.getIndexMode();
+        
+        double physValue;
+        String displayFormat = characteristic.getFormat();
 
         int[] dim = characteristic.getDimArray();
 
         Values values;
 
         if (dim.length < 2 || dim[1] == 1) {
-            values = new Values(dim[0], 2);
+            values = new Values(dim[0]+1, 2);
+            values.setValue(0, 0, "X");
         } else {
             values = new Values(dim[0] + 1, dim[1] + 1);
+            values.setValue(0, 0, "Y\\X");
         }
 
         for (int x = 0; x < dim[0]; x++) {
-            values.setValue(0, x, x + "");
+            values.setValue(0, x + 1, x + "");
         }
 
         double[] hexValuesValBlk;
@@ -263,13 +290,16 @@ public final class HexDecoder {
         if (dim.length < 2 || dim[1] == 1) {
 
             hexValuesValBlk = Converter.readHexValues(hex, adress, fncValues.getDataType(), byteOrder, dim[0]);
+            
+            values.setValue(1, 0, "Z");
 
             if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
                     || compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
                     || compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
 
                 for (int n = 0; n < dim[0]; n++) {
-                    values.setValue(0, n, compuMethod.compute(hexValuesValBlk[n]) + "");
+                	physValue = compuMethod.compute(hexValuesValBlk[n]);
+                    values.setValue(1, n+1, String.format(displayFormat, physValue).trim());
                 }
             } else {
                 if (characteristic.hasBitMask()) {
@@ -278,7 +308,7 @@ public final class HexDecoder {
                     }
                 }
                 for (int n = 0; n < dim[0]; n++) {
-                    values.setValue(1, n, compuMethod.computeString(hexValuesValBlk[n]) + "");
+                    values.setValue(1, n+1, compuMethod.computeString(hexValuesValBlk[n]) + "");
                 }
             }
 
@@ -296,10 +326,13 @@ public final class HexDecoder {
                 int col = 0;
                 for (int n = 0; n < hexValuesValBlk.length; n++) {
                     if (n % (values.getDimX() - 1) == 0) {
+                    	values.setValue(row+1, 0, row + "");
                         row += 1;
+                        
                     }
                     col = n % (values.getDimX() - 1);
-                    values.setValue(row, col, compuMethod.compute(hexValuesValBlk[n]) + "");
+                    physValue = compuMethod.compute(hexValuesValBlk[n]);
+                    values.setValue(row, col+1, String.format(displayFormat, physValue).trim());
                 }
 
             } else {
@@ -313,10 +346,11 @@ public final class HexDecoder {
                 int col = 0;
                 for (int n = 0; n < hexValuesValBlk.length; n++) {
                     if (n % (values.getDimX() - 1) == 0) {
-                        row += 1;
+                    	values.setValue(row+1, 0, row + "");
+                        row += 1; 
                     }
                     col = n % (values.getDimX() - 1);
-                    values.setValue(row, col, compuMethod.compute(hexValuesValBlk[n]) + "");
+                    values.setValue(row, col+1, compuMethod.compute(hexValuesValBlk[n]) + "");
                 }
 
             }
@@ -328,6 +362,8 @@ public final class HexDecoder {
 
     private void readMap(ByteOrder byteOrder, Characteristic characteristic, long adress, CompuMethod compuMethod, FncValues fncValues) {
         StringBuilder sb2 = new StringBuilder();
+        
+        String displayFormat = characteristic.getFormat();
 
         int nbValueMap = 0;
         int[] dimMap = new int[2];
