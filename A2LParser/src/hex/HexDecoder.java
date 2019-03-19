@@ -24,6 +24,7 @@ import a2lobject.RecordLayout.AxisPtsY;
 import a2lobject.RecordLayout.FncValues;
 import a2lobject.RecordLayout.NoAxisPtsX;
 import a2lobject.RecordLayout.NoAxisPtsY;
+import a2lobject.Values;
 import constante.ConversionType;
 import constante.IndexMode;
 import constante.SecondaryKeywords;
@@ -98,28 +99,36 @@ public final class HexDecoder {
 
         String displayFormat = characteristic.getFormat();
 
+        Values values = new Values(1, 1);
+
         if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
                 || compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
                 || compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
 
             physValue = compuMethod.compute(hexValue);
-            characteristic.setValues(String.format(displayFormat, physValue).trim());
+            values.setValue(0, 0, String.format(displayFormat, physValue).trim());
+
         } else {
             if (characteristic.hasBitMask()) {
                 hexValue = characteristic.applyBitMask((long) hexValue);
             }
 
-            characteristic.setValues(compuMethod.computeString(hexValue));
+            values.setValue(0, 0, compuMethod.computeString(hexValue));
         }
+
+        characteristic.setValues(values);
     }
 
     private final void readAscii(Characteristic characteristic, long adress) {
 
         int nByte = characteristic.getDim();
 
+        Values values = new Values(1, 1);
+
         String ascii = hex.readString(adress, nByte);
         if (ascii != null) {
-            characteristic.setValues(ascii);
+            values.setValue(0, 0, ascii);
+            characteristic.setValues(values);
         }
     }
 
@@ -127,30 +136,28 @@ public final class HexDecoder {
         AxisDescr axisDescr = characteristic.getAxisDescrs().get(0);
         int nbValue = axisDescr.getMaxAxisPoints();
 
-        StringBuilder sb = new StringBuilder();
+        Values values = null;
 
         switch (axisDescr.getAttribute()) {
         case FIX_AXIS:
             Set<Entry<SecondaryKeywords, Object>> entrySet = axisDescr.getOptionalsParameters().entrySet();
             Iterator<Entry<SecondaryKeywords, Object>> it = entrySet.iterator();
 
-            sb.append(Attribute.FIX_AXIS.name() + "_X = ");
-
             while (it.hasNext()) {
                 Map.Entry<SecondaryKeywords, Object> entry = it.next();
                 if (entry.getValue() instanceof FixAxisParDist) {
                     FixAxisParDist axisDist = (FixAxisParDist) entry.getValue();
+                    values = new Values(axisDist.getNumberapo(), 2);
                     for (int n = 0; n < axisDist.getNumberapo(); n++) {
-                        sb.append(axisDist.compute(n) + " | ");
+                        values.setValue(0, n, axisDist.compute(n) + "");
                     }
-                    sb.append("\n");
                     break;
                 } else if (entry.getValue() instanceof FixAxisPar) {
                     FixAxisPar axisDist = (FixAxisPar) entry.getValue();
+                    values = new Values(axisDist.getNumberapo(), 2);
                     for (int n = 0; n < axisDist.getNumberapo(); n++) {
-                        sb.append(axisDist.compute(n) + " | ");
+                        values.setValue(0, n, axisDist.compute(n) + "");
                     }
-                    sb.append("\n");
                 }
             }
             break;
@@ -162,7 +169,7 @@ public final class HexDecoder {
             nbValue = (int) Converter.readHexValue(hex, adress, noAxisPtsX.getDataType(), byteOrder);
             adress += noAxisPtsX.getDataType().getNbByte();
 
-            sb.append(Attribute.STD_AXIS.name() + "_X = ");
+            values = new Values(nbValue, 2);
 
             AxisDescr axisDescrStdAxis = characteristic.getAxisDescrs().get(0);
             CompuMethod compuMethodStdAxis = axisDescrStdAxis.getCompuMethod();
@@ -170,10 +177,20 @@ public final class HexDecoder {
             double[] hexValues = Converter.readHexValues(hex, adress, axisPtsXStdAxis.getDataType(), byteOrder, nbValue);
             adress += axisPtsXStdAxis.getDataType().getNbByte() * nbValue;
 
-            for (double val : hexValues) {
-                sb.append(compuMethodStdAxis.compute(val) + " | ");
+            if (compuMethodStdAxis.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
+                    || compuMethodStdAxis.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
+                    || compuMethodStdAxis.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
+
+                for (int n = 0; n < nbValue; n++) {
+                    values.setValue(0, n, compuMethodStdAxis.compute(hexValues[n]) + "");
+                }
+
+            } else {
+                for (int n = 0; n < nbValue; n++) {
+                    values.setValue(0, n, compuMethodStdAxis.computeString(hexValues[n]) + "");
+                }
+
             }
-            sb.append("\n");
 
             break;
 
@@ -184,14 +201,13 @@ public final class HexDecoder {
             CompuMethod compuMethodAxis = axisPts.getCompuMethod();
             long adressAxis = axisPts.getAdress();
 
-            sb.append(Attribute.COM_AXIS.name() + "_X = ");
+            values = new Values(nbValue, 2);
 
             double[] hexValuesComAxis = Converter.readHexValues(hex, adressAxis, axisPtsX.getDataType(), byteOrder, nbValue);
 
-            for (double val : hexValuesComAxis) {
-                sb.append(compuMethodAxis.compute(val) + " | ");
+            for (int n = 0; n < nbValue; n++) {
+                values.setValue(0, n, compuMethodAxis.compute(hexValuesComAxis[n]) + "");
             }
-            sb.append("\n");
 
             break;
 
@@ -199,76 +215,52 @@ public final class HexDecoder {
             break;
         }
 
-        sb.append("         Z = ");
-
         double[] hexValues = Converter.readHexValues(hex, adress, fncValues.getDataType(), byteOrder, nbValue);
 
         if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
                 || compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
                 || compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
 
-            for (double val : hexValues) {
-                sb.append(compuMethod.compute(val) + " | ");
+            for (int n = 0; n < nbValue; n++) {
+                values.setValue(1, n, compuMethod.compute(hexValues[n]) + "");
             }
-            sb.append("\n");
 
         } else {
 
             if (characteristic.hasBitMask()) {
-                for (int i = 0; i < hexValues.length; i++) {
+                for (int i = 0; i < nbValue; i++) {
                     hexValues[i] = characteristic.applyBitMask((long) hexValues[i]);
-
-                    sb.append(compuMethod.computeString(hexValues[i]) + " | ");
                 }
+            }
+            for (int n = 0; n < nbValue; n++) {
+                values.setValue(1, n, compuMethod.computeString(hexValues[n]) + "");
             }
         }
 
-        characteristic.setValues(sb.toString());
+        characteristic.setValues(values);
     }
 
     private final void readValBlk(ByteOrder byteOrder, Characteristic characteristic, long adress, CompuMethod compuMethod, FncValues fncValues) {
-        StringBuilder sb1 = new StringBuilder();
-
-        Object numberParam = characteristic.getOptionalsParameters().get(SecondaryKeywords.NUMBER);
-        Object matrixDimParam = characteristic.getOptionalsParameters().get(SecondaryKeywords.MATRIX_DIM);
 
         IndexMode indexModeValBlk = fncValues.getIndexMode();
 
-        int[] dim;
+        int[] dim = characteristic.getDimArray();
 
-        if (matrixDimParam != null) {
-            Object[] arrMatrixDim = (Object[]) matrixDimParam;
+        Values values;
 
-            switch (arrMatrixDim.length) {
-            case 1:
-                dim = new int[] { (int) arrMatrixDim[0] };
-                break;
-            case 2:
-                dim = new int[] { (int) arrMatrixDim[0], (int) arrMatrixDim[1] };
-                break;
-            case 3:
-                dim = new int[] { (int) arrMatrixDim[0], (int) arrMatrixDim[1], (int) arrMatrixDim[2] };
-                break;
-
-            default:
-                dim = new int[] { 0 };
-                break;
-            }
-
+        if (dim.length < 2 || dim[1] == 1) {
+            values = new Values(dim[0], 2);
         } else {
-            dim = new int[] { (int) numberParam };
+            values = new Values(dim[0] + 1, dim[1] + 1);
         }
 
-        sb1.append("X = ");
         for (int x = 0; x < dim[0]; x++) {
-            sb1.append(x + " | ");
+            values.setValue(0, x, x + "");
         }
 
         double[] hexValuesValBlk;
 
         if (dim.length < 2 || dim[1] == 1) {
-            sb1.append("\n");
-            sb1.append("Z = ");
 
             hexValuesValBlk = Converter.readHexValues(hex, adress, fncValues.getDataType(), byteOrder, dim[0]);
 
@@ -276,16 +268,17 @@ public final class HexDecoder {
                     || compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
                     || compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
 
-                for (double val : hexValuesValBlk) {
-                    sb1.append(compuMethod.compute(val) + " | ");
+                for (int n = 0; n < dim[0]; n++) {
+                    values.setValue(0, n, compuMethod.compute(hexValuesValBlk[n]) + "");
                 }
             } else {
                 if (characteristic.hasBitMask()) {
-                    for (int i = 0; i < hexValuesValBlk.length; i++) {
+                    for (int i = 0; i < dim[0]; i++) {
                         hexValuesValBlk[i] = characteristic.applyBitMask((long) hexValuesValBlk[i]);
-
-                        sb1.append(compuMethod.computeString(hexValuesValBlk[i]) + " | ");
                     }
+                }
+                for (int n = 0; n < dim[0]; n++) {
+                    values.setValue(1, n, compuMethod.computeString(hexValuesValBlk[n]) + "");
                 }
             }
 
@@ -299,15 +292,14 @@ public final class HexDecoder {
                     || compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
                     || compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
 
-                int cnt = 0;
-
-                for (double val : hexValuesValBlk) {
-
-                    if (cnt % dim[0] == 0) {
-                        sb1.append("\nZ" + (cnt / dim[0]) + " = ");
+                int row = 0;
+                int col = 0;
+                for (int n = 0; n < hexValuesValBlk.length; n++) {
+                    if (n % (values.getDimX() - 1) == 0) {
+                        row += 1;
                     }
-                    sb1.append(compuMethod.compute(val) + " | ");
-                    cnt++;
+                    col = n % (values.getDimX() - 1);
+                    values.setValue(row, col, compuMethod.compute(hexValuesValBlk[n]) + "");
                 }
 
             } else {
@@ -315,21 +307,23 @@ public final class HexDecoder {
                 if (characteristic.hasBitMask()) {
                     for (int i = 0; i < hexValuesValBlk.length; i++) {
                         hexValuesValBlk[i] = characteristic.applyBitMask((long) hexValuesValBlk[i]);
-
-                        if (i % dim[0] == 0) {
-                            sb1.append("\nZ" + (i / dim[0]) + " = ");
-                        }
-                        sb1.append(compuMethod.computeString(hexValuesValBlk[i]) + " | ");
                     }
+                }
+                int row = 0;
+                int col = 0;
+                for (int n = 0; n < hexValuesValBlk.length; n++) {
+                    if (n % (values.getDimX() - 1) == 0) {
+                        row += 1;
+                    }
+                    col = n % (values.getDimX() - 1);
+                    values.setValue(row, col, compuMethod.compute(hexValuesValBlk[n]) + "");
                 }
 
             }
 
         }
 
-        sb1.append("\n");
-
-        characteristic.setValues(sb1.toString());
+        characteristic.setValues(values);
     }
 
     private void readMap(ByteOrder byteOrder, Characteristic characteristic, long adress, CompuMethod compuMethod, FncValues fncValues) {
@@ -337,6 +331,8 @@ public final class HexDecoder {
 
         int nbValueMap = 0;
         int[] dimMap = new int[2];
+
+        Values values;
 
         IndexMode indexModeMap = fncValues.getIndexMode();
 
@@ -394,17 +390,27 @@ public final class HexDecoder {
                     NoAxisPtsY noAxisPtsY = characteristic.getRecordLayout().getNoAxisPtsY();
 
                     int nbValueY = (int) Converter.readHexValue(hex, adress, noAxisPtsX.getDataType(), byteOrder);
-                    adress += noAxisPtsX.getDataType().getNbByte();
+                    adress += noAxisPtsY.getDataType().getNbByte();
 
                     dimMap[cnt + 1] = nbValueY;
 
                     hexValues = Converter.readHexValues(hex, adress, axisPtsXStdAxis.getDataType(), byteOrder, nbValueX);
                     adress += axisPtsXStdAxis.getDataType().getNbByte() * nbValueX;
 
-                    for (double val : hexValues) {
-                        sb2.append(compuMethodStdAxis.compute(val) + " | ");
+                    if (compuMethodStdAxis.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
+                            || compuMethodStdAxis.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
+                            || compuMethodStdAxis.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
+
+                        for (double val : hexValues) {
+                            sb2.append(compuMethodStdAxis.compute(val) + " | ");
+                        }
+                        sb2.append("\n");
+                    } else {
+                        for (double val : hexValues) {
+                            sb2.append(compuMethodStdAxis.computeString(val) + " | ");
+                        }
+                        sb2.append("\n");
                     }
-                    sb2.append("\n");
 
                 } else {
                     sb2.append(Attribute.STD_AXIS.name() + "_Y = ");
@@ -414,10 +420,20 @@ public final class HexDecoder {
                     hexValues = Converter.readHexValues(hex, adress, axisPtsYStdAxis.getDataType(), byteOrder, dimMap[cnt]);
                     adress += axisPtsYStdAxis.getDataType().getNbByte() * dimMap[cnt];
 
-                    for (double val : hexValues) {
-                        sb2.append(compuMethodStdAxis.compute(val) + " | ");
+                    if (compuMethodStdAxis.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
+                            || compuMethodStdAxis.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
+                            || compuMethodStdAxis.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
+
+                        for (double val : hexValues) {
+                            sb2.append(compuMethodStdAxis.compute(val) + " | ");
+                        }
+                        sb2.append("\n");
+                    } else {
+                        for (double val : hexValues) {
+                            sb2.append(compuMethodStdAxis.computeString(val) + " | ");
+                        }
+                        sb2.append("\n");
                     }
-                    sb2.append("\n");
 
                 }
 
@@ -483,19 +499,17 @@ public final class HexDecoder {
                 if (characteristic.hasBitMask()) {
                     for (int i = 0; i < hexValues.length; i++) {
                         hexValues[i] = characteristic.applyBitMask((long) hexValues[i]);
-
-                        if (i % dimMap[0] == 0) {
-                            sb2.append("\nZ" + (i / dimMap[0]) + " = ");
-                        }
-                        sb2.append(compuMethod.computeString(hexValues[i]) + " | ");
                     }
                 }
-
+                for (int i = 0; i < hexValues.length; i++) {
+                    if (i % dimMap[0] == 0) {
+                        sb2.append("\nZ" + (i / dimMap[0]) + " = ");
+                    }
+                    sb2.append(compuMethod.computeString(hexValues[i]) + " | ");
+                }
             }
-
         }
-
-        characteristic.setValues(sb2.toString());
+        // characteristic.setValues(values);
     }
 
 }

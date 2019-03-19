@@ -52,7 +52,7 @@ public final class Characteristic implements Comparable<Characteristic> {
     private float lowerLimit;
     private float upperLimit;
 
-    private String values;
+    private Values values;
 
     private CompuMethod compuMethod;
     private RecordLayout recordLayout;
@@ -272,6 +272,27 @@ public final class Characteristic implements Comparable<Characteristic> {
         return (int) oByte;
     }
 
+    public final int[] getDimArray() {
+        Object numberParam = optionalsParameters.get(SecondaryKeywords.NUMBER);
+        Object matrixDimParam = optionalsParameters.get(SecondaryKeywords.MATRIX_DIM);
+
+        if (matrixDimParam != null) {
+            Object[] arrMatrixDim = (Object[]) matrixDimParam;
+
+            switch (arrMatrixDim.length) {
+            case 1:
+                return new int[] { (int) arrMatrixDim[0] };
+            case 2:
+                return new int[] { (int) arrMatrixDim[0], (int) arrMatrixDim[1] };
+            case 3:
+                return new int[] { (int) arrMatrixDim[0], (int) arrMatrixDim[1], (int) arrMatrixDim[2] };
+            default:
+                return new int[] { 0 };
+            }
+        }
+        return new int[] { (int) numberParam };
+    }
+
     public final boolean hasBitMask() {
         return optionalsParameters.get(BIT_MASK) != null;
     }
@@ -321,11 +342,21 @@ public final class Characteristic implements Comparable<Characteristic> {
     }
 
     public String getValues() {
-        return values;
+
+        StringBuilder sb = new StringBuilder("\n");
+
+        for (short y = 0; y < values.getDimY(); y++) {
+            for (short x = 0; x < values.getDimX(); x++) {
+                sb.append(values.getValue(y, x) + " | ");
+            }
+            sb.append("\n");
+        }
+
+        return sb.toString();
     }
 
-    public void setValues(String d) {
-        this.values = d;
+    public void setValues(Values values) {
+        this.values = values;
     }
 
     public long getAdress() {
