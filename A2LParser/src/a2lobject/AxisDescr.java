@@ -86,8 +86,10 @@ public final class AxisDescr {
                                 break;
                             case "FIX_AXIS_PAR_LIST":
                                 n = nPar + 1;
-                                optionalsParameters.put(FIX_AXIS_PAR_LIST, parameters.subList(n, n + 3));
-                                n += 3;
+                                do {
+                                } while (!parameters.get(++nPar).equals("FIX_AXIS_PAR_LIST"));
+                                optionalsParameters.put(FIX_AXIS_PAR_LIST, new FixAxisParList(parameters.subList(n, nPar - 1)));
+                                n = nPar + 1;
                                 break;
                             }
 

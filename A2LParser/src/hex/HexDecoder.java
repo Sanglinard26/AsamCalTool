@@ -56,17 +56,17 @@ public final class HexDecoder {
 
     public final boolean readDataFromHex() {
 
-        ModCommon modCommon = a2l.getModCommon();
+        final ModCommon modCommon = a2l.getModCommon();
         ByteOrder byteOrder = modCommon.getByteOrder();
 
         for (Characteristic characteristic : a2l.getCharacteristics()) {
 
-            FncValues fncValues = characteristic.getRecordLayout().getFncValues();
-            CompuMethod compuMethod = characteristic.getCompuMethod();
+            final FncValues fncValues = characteristic.getRecordLayout().getFncValues();
+            final CompuMethod compuMethod = characteristic.getCompuMethod();
 
             long adress = characteristic.getAdress();
 
-            if (characteristic.toString().equals("KL_UbUw_ME7"))
+            //if (characteristic.toString().equals("KL_UbUw_ME7"))
                 System.out.println(characteristic);
 
             switch (characteristic.getType()) {
@@ -86,6 +86,7 @@ public final class HexDecoder {
                 readMap(byteOrder, characteristic, adress, compuMethod, fncValues);
                 break;
             default:
+            	//Nothing
                 break;
             }
         }
@@ -625,5 +626,4 @@ public final class HexDecoder {
         }
         characteristic.setValues(values);
     }
-
 }
