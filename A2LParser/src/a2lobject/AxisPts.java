@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import constante.ConversionType;
 import constante.SecondaryKeywords;
 
 /**
@@ -181,6 +182,26 @@ public final class AxisPts {
 
     public int getMaxAxisPoints() {
         return maxAxisPoints;
+    }
+
+    public final String getFormat() {
+        Object oAxisPtsDisplayFormat = optionalsParameters.get(SecondaryKeywords.FORMAT);
+        String displayFormat;
+
+        if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
+                || compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
+                || compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
+            if (oAxisPtsDisplayFormat == null) {
+                displayFormat = compuMethod.getFormat() + "f";
+            } else {
+                displayFormat = oAxisPtsDisplayFormat.toString() + "f";
+            }
+            if (displayFormat.charAt(1) == '0') {
+                displayFormat = displayFormat.replaceFirst("0", "");
+            }
+            return displayFormat;
+        }
+        return "%16.16";
     }
 
     public final void assignComputMethod(HashMap<String, CompuMethod> compuMethods) {
