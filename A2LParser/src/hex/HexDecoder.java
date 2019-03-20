@@ -481,6 +481,8 @@ public final class HexDecoder {
                 double[] hexValues;
 
                 if (cnt == 0) {
+                	
+                	adress = adressTmp;
 
                     AxisPtsX axisPtsXStdAxis = characteristic.getRecordLayout().getAxisPtsX();
 
