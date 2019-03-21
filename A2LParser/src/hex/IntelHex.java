@@ -16,20 +16,17 @@ import java.util.List;
 public final class IntelHex {
 
     private final List<Memory> memorySegments = new ArrayList<Memory>();
-    private Long startAddress = null;
+    @SuppressWarnings("unused")
+	private Long startAddress = null;
     private Memory last = null;
     private long extendedAddress = 0;
     private boolean endOfFile = false;
 
-    public static byte parseHexByte(String str) {
-        return (byte) Integer.parseInt(str, 16);
-    }
-
-    public static byte parseHexByte(String str, int beginIndex) {
+    private final static byte parseHexByte(String str, int beginIndex) {
         return (byte) Integer.parseInt(str.substring(beginIndex, beginIndex + 2), 16);
     }
 
-    public byte[] readBytes(long address, int len) {
+    public final byte[] readBytes(long address, int len) {
         for (Memory mem : memorySegments) {
             if (address >= mem.address && (address + len) <= (mem.address + mem.listByte.size())) {
                 byte[] retval = new byte[len];
@@ -42,7 +39,7 @@ public final class IntelHex {
         return new byte[0];
     }
 
-    public String readString(long address, int nByte) {
+    public final String readString(long address, int nByte) {
         for (Memory mem : memorySegments) {
             if (address >= mem.address && address < mem.address + mem.listByte.size()) {
                 String retval = "";
@@ -90,11 +87,9 @@ public final class IntelHex {
         case "04":
             extendedAddress = processExtendedLinearAddressRecord(line);
             break;
-
         case "05":
             startAddress = processStartAddressRecord(line);
             break;
-
         default:
             break;
         }
@@ -143,10 +138,7 @@ public final class IntelHex {
     }
 
     private static final Memory processDataRecordLine(String line) {
-        if (line.length() > 75) {
-            throw new IllegalArgumentException("Longer than 75 characters line received: " + line);
-        }
-        if (!line.startsWith(":")) {
+        if (line.charAt(0) != ':') {
             throw new IllegalArgumentException("HexFile line does not start with colon: " + line);
         }
         byte length = parseHexByte(line, 1);

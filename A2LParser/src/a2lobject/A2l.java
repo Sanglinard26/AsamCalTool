@@ -118,8 +118,8 @@ public final class A2l {
                         break;
                     case "FUNCTION":
                         fillParameters(buf, line, objectParameters, keyword);
-                        // Function function = new Function(objectParameters);
-                        // functions.put(function.toString(), function);
+                        Function function = new Function(objectParameters);
+                        functions.put(function.toString(), function);
                         break;
                     default:
                         break;

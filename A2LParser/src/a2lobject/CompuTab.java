@@ -12,24 +12,28 @@ import constante.ConversionType;
 public final class CompuTab {
 
     private String name;
-    private String longIdentifier;
-    private ConversionType conversionType;
-    private int numberValuePairs;
+    @SuppressWarnings("unused")
+	private String longIdentifier;
+    @SuppressWarnings("unused")
+	private ConversionType conversionType;
+    @SuppressWarnings("unused")
+	private int numberValuePairs;
     private Map<Float, Float> valuePairs;
-    private String defaultValue; // DEFAULT_VALUE
-    private float defaultValueNumeric; // DEFAULT_VALUE_NUMERIC
+    @SuppressWarnings("unused")
+	private String defaultValue; // DEFAULT_VALUE
+    @SuppressWarnings("unused")
+	private float defaultValueNumeric; // DEFAULT_VALUE_NUMERIC
 
     public CompuTab(List<String> parameters) {
 
         parameters.remove("/begin"); // Remove /begin
-        parameters.remove("COMPU_TAB"); // Remove CHARACTERISTIC
+        parameters.remove("COMPU_TAB"); // Remove COMPU_TAB
 
         if (parameters.size() == 1 || parameters.size() >= 5) {
             for (int n = 0; n < parameters.size(); n++) {
                 switch (n) {
                 case 0:
                     this.name = parameters.get(n);
-                    // System.out.println(this.name);
                     break;
                 case 1:
                     this.longIdentifier = parameters.get(n);
@@ -65,6 +69,9 @@ public final class CompuTab {
                     break;
 
                 default: // Cas de parametres optionels
+                	
+                	n = parameters.size();
+                	
                     break;
                 }
             }

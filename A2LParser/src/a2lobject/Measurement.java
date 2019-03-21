@@ -3,41 +3,39 @@
  */
 package a2lobject;
 
-import java.util.Collections;
 import java.util.List;
 
 public final class Measurement {
 
-    /*
-     * /begin MEASUREMENT ident Name string LongIdentifier datatype Datatype ident Conversion uint Resolution float Accuracy float LowerLimit float
-     * UpperLimit [-> ADDRESS_TYPE] [-> ANNOTATION]* [-> ARRAY_SIZE] [-> BIT_MASK] [-> BIT_OPERATION] [-> BYTE_ORDER] [-> DISCRETE] [->
-     * DISPLAY_IDENTIFIER] [-> ECU_ADDRESS] [-> ECU_ADDRESS_EXTENSION] [-> ERROR_MASK] [-> FORMAT] [-> FUNCTION_LIST] [-> IF_DATA]* [-> LAYOUT] [->
-     * MATRIX_DIM] [-> MAX_REFRESH] [-> MODEL_LINK] [-> PHYS_UNIT] [-> READ_WRITE] [-> REF_MEMORY_SEGMENT] [-> SYMBOL_LINK] [-> VIRTUAL] /end
-     * MEASUREMENT
-     */
-
     private String name;
-    private String longIdentifier;
-    private String dataType;
-    private String conversion;
-    private int resolution;
-    private float accuracy;
-    private float lowerLimit;
-    private float upperLimit;
+    @SuppressWarnings("unused")
+	private String longIdentifier;
+    @SuppressWarnings("unused")
+	private String dataType;
+    @SuppressWarnings("unused")
+	private String conversion;
+    @SuppressWarnings("unused")
+	private int resolution;
+    @SuppressWarnings("unused")
+	private float accuracy;
+    @SuppressWarnings("unused")
+	private float lowerLimit;
+    @SuppressWarnings("unused")
+	private float upperLimit;
 
-    private CompuMethod compuMethod;
+    @SuppressWarnings("unused")
+	private CompuMethod compuMethod;
 
     public Measurement(List<String> parameters) {
 
         parameters.remove(0); // Remove /begin
-        parameters.remove(0); // Remove CHARACTERISTIC
+        parameters.remove(0); // Remove MEASUREMENT
 
         if (parameters.size() >= 8) {
             for (int n = 0; n < parameters.size(); n++) {
                 switch (n) {
                 case 0:
                     this.name = parameters.get(n);
-                    // System.out.println(this.name);
                     break;
                 case 1:
                     this.longIdentifier = parameters.get(n);
@@ -61,6 +59,7 @@ public final class Measurement {
                     this.upperLimit = Float.parseFloat(parameters.get(n));
                     break;
                 default: // Cas de parametres optionels
+                	n = parameters.size();
                     break;
                 }
             }
@@ -74,28 +73,7 @@ public final class Measurement {
         return this.name;
     }
 
-    public final String getInfo() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("Name : " + name + "\n");
-        sb.append("LongIdentifier : " + longIdentifier + "\n");
-        sb.append("DataType : " + dataType + "\n");
-        sb.append("Conversion : " + conversion + "\n");
-        sb.append("Resolution : " + resolution + "\n");
-        sb.append("Accuracy : " + accuracy + "\n");
-        sb.append("LowerLimit : " + lowerLimit + "\n");
-        sb.append("UpperLimit : " + upperLimit + "\n");
-
-        return sb.toString();
-    }
-
     public final void assignComputMethod(List<CompuMethod> compuMethods) {
-
-        int idx = Collections.binarySearch(compuMethods, CompuMethod.createEmptyCompuMethod(conversion));
-
-        if (idx > -1) {
-            this.compuMethod = compuMethods.get(idx);
-        }
 
     }
 }

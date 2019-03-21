@@ -32,7 +32,7 @@ public final class ModPar {
     public ModPar(List<String> parameters) {
 
         parameters.remove("/begin"); // Remove /begin
-        parameters.remove("MOD_PAR"); // Remove RECORD_LAYOUT
+        parameters.remove("MOD_PAR"); // Remove MOD_PAR
 
         if (parameters.size() >= 1) {
             for (int n = 0; n < parameters.size(); n++) {

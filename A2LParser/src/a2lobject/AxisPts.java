@@ -28,23 +28,23 @@ import java.util.Set;
 import constante.ConversionType;
 import constante.SecondaryKeywords;
 
-/**
- * Parametre calibrable avec les proprietes suivantes : -nom - description - type : VALUE, ASCII, VAL_BLK, CURVE, MAP, CUBOID, CUBE_4, CUBE_5 - adress
- * - record layout - computation method - upper and lower calibration limits - format
- */
-
 public final class AxisPts {
 
     private String name;
-    private String longIdentifier;
+    @SuppressWarnings("unused")
+	private String longIdentifier;
     private String adress; // 4-byte unsigned integer
-    private String inputQuantity; // Reference to INPUT_QUANTITY
+    @SuppressWarnings("unused")
+	private String inputQuantity; // Reference to INPUT_QUANTITY
     private String deposit; // Reference to RECORLAYOUT
-    private float maxDiff;
+    @SuppressWarnings("unused")
+	private float maxDiff;
     private String conversion; // Reference to COMPUTMETHOD
     private int maxAxisPoints;
-    private float lowerLimit;
-    private float upperLimit;
+    @SuppressWarnings("unused")
+	private float lowerLimit;
+    @SuppressWarnings("unused")
+	private float upperLimit;
 
     private CompuMethod compuMethod;
     private RecordLayout recordLayout;
@@ -74,14 +74,13 @@ public final class AxisPts {
     public AxisPts(List<String> parameters) {
 
         parameters.remove(0); // Remove /begin
-        parameters.remove(0); // Remove CHARACTERISTIC
+        parameters.remove(0); // Remove AXIS_PTS
 
         if (parameters.size() == 1 || parameters.size() >= 9) {
             for (int n = 0; n < parameters.size(); n++) {
                 switch (n) {
                 case 0:
                     this.name = parameters.get(n);
-                    // System.out.println(this.name);
                     break;
                 case 1:
                     this.longIdentifier = parameters.get(n);
@@ -131,7 +130,6 @@ public final class AxisPts {
                                 optionalsParameters.put(FORMAT, new Format(parameters.get(nPar + 1).toString()));
                                 break;
                             case "PHYS_UNIT":
-
                                 break;
                             case "READ_ONLY":
                                 optionalsParameters.put(READ_ONLY, true);
@@ -141,6 +139,8 @@ public final class AxisPts {
                             }
                         }
                     }
+                    n = parameters.size();
+                    break;
                 }
             }
 

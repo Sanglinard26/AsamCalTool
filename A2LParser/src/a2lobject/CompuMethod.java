@@ -22,16 +22,13 @@ import constante.SecondaryKeywords;
 
 public final class CompuMethod implements Comparable<CompuMethod> {
 
-    /*
-     * /begin COMPU_METHOD ident Name string LongIdentifier enum ConversionType string Format string Unit [-> COEFFS] [-> COEFFS_LINEAR] [->
-     * COMPU_TAB_REF] [-> FORMULA] [-> REF_UNIT] [-> STATUS_STRING_REF] /end COMPU_METHOD
-     */
-
     private String name;
-    private String longIdentifier;
+    @SuppressWarnings("unused")
+	private String longIdentifier;
     private ConversionType conversionType;
     private String format;
-    private String unit;
+    @SuppressWarnings("unused")
+	private String unit;
 
     private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
         private static final long serialVersionUID = 1L;
@@ -49,14 +46,13 @@ public final class CompuMethod implements Comparable<CompuMethod> {
     public CompuMethod(List<String> parameters) {
 
         parameters.remove("/begin"); // Remove /begin
-        parameters.remove("COMPU_METHOD"); // Remove CHARACTERISTIC
+        parameters.remove("COMPU_METHOD"); // Remove COMPU_METHOD
 
         if (parameters.size() == 1 || parameters.size() >= 5) {
             for (int n = 0; n < parameters.size(); n++) {
                 switch (n) {
                 case 0:
                     this.name = parameters.get(n);
-                    // System.out.println(this.name);
                     break;
                 case 1:
                     this.longIdentifier = parameters.get(n);
@@ -94,6 +90,7 @@ public final class CompuMethod implements Comparable<CompuMethod> {
                             }
                         }
                     }
+                    n = parameters.size();
                     break;
                 }
             }
@@ -169,15 +166,15 @@ public final class CompuMethod implements Comparable<CompuMethod> {
         }
     }
 
-    public ConversionType getConversionType() {
+    public final ConversionType getConversionType() {
         return conversionType;
     }
 
-    public Map<SecondaryKeywords, Object> getOptionalsParameters() {
+    public final Map<SecondaryKeywords, Object> getOptionalsParameters() {
         return optionalsParameters;
     }
 
-    public static CompuMethod createEmptyCompuMethod(String name) {
+    public final static CompuMethod createEmptyCompuMethod(String name) {
         List<String> parameters = new ArrayList<String>();
         parameters.add(name);
         return new CompuMethod(parameters);
@@ -188,20 +185,8 @@ public final class CompuMethod implements Comparable<CompuMethod> {
         return this.name.equals(obj.toString());
     }
 
-    public String getFormat() {
+    public final String getFormat() {
         return format;
-    }
-
-    public final String getInfo() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("Name : " + name + "\n");
-        sb.append("LongIdentifier : " + longIdentifier + "\n");
-        sb.append("ConversionType : " + conversionType + "\n");
-        sb.append("Format : " + format + "\n");
-        sb.append("Unit : " + unit + "\n");
-
-        return sb.toString();
     }
 
     @Override

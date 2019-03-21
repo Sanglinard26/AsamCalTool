@@ -3,6 +3,7 @@
  */
 package a2lobject;
 
+import static constante.SecondaryKeywords.AXIS_PTS_REF;
 import static constante.SecondaryKeywords.BYTE_ORDER;
 import static constante.SecondaryKeywords.FIX_AXIS_PAR;
 import static constante.SecondaryKeywords.FIX_AXIS_PAR_DIST;
@@ -19,11 +20,14 @@ import constante.SecondaryKeywords;
 public final class AxisDescr {
 
     private Attribute attribute;
-    private String inputQuantity;
+    @SuppressWarnings("unused")
+	private String inputQuantity;
     private String conversion;
     private int maxAxisPoints;
-    private float lowerLimit;
-    private float upperLimit;
+    @SuppressWarnings("unused")
+	private float lowerLimit;
+    @SuppressWarnings("unused")
+	private float upperLimit;
 
     private CompuMethod compuMethod;
     private RecordLayout recordLayout;
@@ -33,7 +37,7 @@ public final class AxisDescr {
         private static final long serialVersionUID = 1L;
 
         {
-            put(SecondaryKeywords.AXIS_PTS_REF, null);
+            put(AXIS_PTS_REF, null);
             put(BYTE_ORDER, null);
             put(FIX_AXIS_PAR, null);
             put(FIX_AXIS_PAR_DIST, null);
@@ -115,35 +119,35 @@ public final class AxisDescr {
         }
     }
 
-    public Attribute getAttribute() {
+    public final Attribute getAttribute() {
         return attribute;
     }
 
-    public void setCompuMethod(CompuMethod compuMethod) {
+    public final void setCompuMethod(CompuMethod compuMethod) {
         this.compuMethod = compuMethod;
     }
 
-    public void setAxisPts(AxisPts axisPts) {
+    public final void setAxisPts(AxisPts axisPts) {
         this.axisPts = axisPts;
     }
 
-    public AxisPts getAxisPts() {
+    public final AxisPts getAxisPts() {
         return axisPts;
     }
 
-    public String getConversion() {
+    public final String getConversion() {
         return conversion;
     }
 
-    public CompuMethod getCompuMethod() {
+    public final CompuMethod getCompuMethod() {
         return compuMethod;
     }
 
-    public RecordLayout getRecordLayout() {
+    public final RecordLayout getRecordLayout() {
         return recordLayout;
     }
 
-    public int getMaxAxisPoints() {
+    public final int getMaxAxisPoints() {
         return maxAxisPoints;
     }
 

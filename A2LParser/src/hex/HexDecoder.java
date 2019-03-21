@@ -277,7 +277,8 @@ public final class HexDecoder {
 
     private final void readValBlk(ByteOrder byteOrder, Characteristic characteristic, long adress, CompuMethod compuMethod, FncValues fncValues) {
 
-        IndexMode indexModeValBlk = fncValues.getIndexMode();
+        @SuppressWarnings("unused")
+		IndexMode indexModeValBlk = fncValues.getIndexMode();
 
         double physValue;
         String displayFormat = characteristic.getFormat();
@@ -447,7 +448,8 @@ public final class HexDecoder {
         Values values = new Values(dimMap[0] + 1, dimMap[1] + 1);
         values.setValue(0, 0, "Y\\X");
 
-        IndexMode indexModeMap = fncValues.getIndexMode();
+        @SuppressWarnings("unused")
+		IndexMode indexModeMap = fncValues.getIndexMode();
 
         cnt = 0;
 

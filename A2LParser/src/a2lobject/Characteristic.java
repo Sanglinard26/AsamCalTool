@@ -35,21 +35,20 @@ import a2lobject.AxisDescr.Attribute;
 import constante.ConversionType;
 import constante.SecondaryKeywords;
 
-/**
- * Parametre calibrable avec les proprietes suivantes : -nom - description - type : VALUE, ASCII, VAL_BLK, CURVE, MAP, CUBOID, CUBE_4, CUBE_5 - adress
- * - record layout - computation method - upper and lower calibration limits - format
- */
-
 public final class Characteristic implements Comparable<Characteristic> {
 
     private String name;
-    private String longIdentifier;
+    @SuppressWarnings("unused")
+	private String longIdentifier;
     private CharacteristicType type;
     private String adress; // 4-byte unsigned integer
     private String deposit; // Reference to RECORLAYOUT
+    @SuppressWarnings("unused")
     private float maxDiff;
     private String conversion; // Reference to COMPUTMETHOD
+    @SuppressWarnings("unused")
     private float lowerLimit;
+    @SuppressWarnings("unused")
     private float upperLimit;
 
     private Values values;
@@ -97,8 +96,6 @@ public final class Characteristic implements Comparable<Characteristic> {
                 switch (n) {
                 case 0:
                     this.name = parameters.get(n);
-                    // System.out.println(this.name);
-
                     break;
                 case 1:
                     this.longIdentifier = parameters.get(n);

@@ -59,7 +59,6 @@ public final class RecordLayout {
                 switch (n) {
                 case 0:
                     this.name = parameters.get(n);
-                    // System.out.println(this.name);
                     break;
                 default: // Cas de parametres optionels
                     switch (parameters.get(n)) {
@@ -68,35 +67,26 @@ public final class RecordLayout {
                         optionalsParameters.put(FNC_VALUES, new FncValues(subList));
                         n += 4;
                         break;
-
                     case "AXIS_PTS_X":
-
                         List<String> subList2 = parameters.subList(n + 1, n + 5);
                         optionalsParameters.put(AXIS_PTS_X, new AxisPtsX(subList2));
                         n += 4;
                         break;
-
                     case "AXIS_PTS_Y":
-
                         List<String> subList4 = parameters.subList(n + 1, n + 5);
                         optionalsParameters.put(SecondaryKeywords.AXIS_PTS_Y, new AxisPtsY(subList4));
                         n += 4;
                         break;
-
                     case "NO_AXIS_PTS_X":
-
                         List<String> subList3 = parameters.subList(n + 1, n + 3);
                         optionalsParameters.put(SecondaryKeywords.NO_AXIS_PTS_X, new NoAxisPtsX(subList3));
                         n += 2;
                         break;
-
                     case "NO_AXIS_PTS_Y":
-
                         List<String> subList5 = parameters.subList(n + 1, n + 3);
                         optionalsParameters.put(SecondaryKeywords.NO_AXIS_PTS_Y, new NoAxisPtsY(subList5));
                         n += 2;
                         break;
-
                     }
                     break;
                 }

@@ -10,10 +10,10 @@ import java.util.List;
 /**
  * @author albert_kurucz
  */
-public class Memory {
+public final class Memory {
 
     public long address;
-    public List<Byte> listByte;
+    public final List<Byte> listByte;
 
     public Memory(long address, byte[] data) {
         this.address = address;
@@ -23,11 +23,11 @@ public class Memory {
         }
     }
 
-    private boolean canAppendMemory(Memory append) {
+    private final boolean canAppendMemory(Memory append) {
         return append.address == (address + listByte.size());
     }
 
-    public void appendMemory(Memory append) {
+    public final void appendMemory(Memory append) {
         if (!canAppendMemory(append)) {
             throw new IllegalArgumentException("Cannot append memory");
         }

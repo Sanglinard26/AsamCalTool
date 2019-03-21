@@ -17,9 +17,7 @@ import constante.SecondaryKeywords;
 public final class Annotation {
 
     private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
-        /**
-		 * 
-		 */
+
 		private static final long serialVersionUID = 1L;
 
 		{

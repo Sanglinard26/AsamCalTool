@@ -10,22 +10,24 @@ import java.util.Map;
 public final class CompuVTabRange {
 
     private String name;
-    private String longIdentifier;
-    private int numberValueTriples;
+    @SuppressWarnings("unused")
+	private String longIdentifier;
+    @SuppressWarnings("unused")
+	private int numberValueTriples;
     private Map<Range, String> valueTriples;
-    private String defaultValue; // DEFAULT_VALUE
+    @SuppressWarnings("unused")
+	private String defaultValue; // DEFAULT_VALUE
 
     public CompuVTabRange(List<String> parameters) {
 
         parameters.remove(0); // Remove /begin
-        parameters.remove(0); // Remove CHARACTERISTIC
+        parameters.remove(0); // Remove COMPU_VTAB_RANGE
 
         if (parameters.size() >= 4) {
             for (int n = 0; n < parameters.size(); n++) {
                 switch (n) {
                 case 0:
                     this.name = parameters.get(n);
-                    // System.out.println(this.name);
                     break;
                 case 1:
                     this.longIdentifier = parameters.get(n);
@@ -56,6 +58,7 @@ public final class CompuVTabRange {
                     break;
 
                 default: // Cas de parametres optionels
+                	n = parameters.size();
                     break;
                 }
             }
@@ -83,7 +86,6 @@ final class Range {
 
     @Override
     public String toString() {
-        // TODO Auto-generated method stub
         return min + "," + max;
     }
 
