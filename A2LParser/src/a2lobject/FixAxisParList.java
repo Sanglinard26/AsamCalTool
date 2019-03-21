@@ -11,10 +11,18 @@ public final class FixAxisParList {
 
     public FixAxisParList(List<String> parameters) {
 
-    	axisPtsValue = new float[parameters.size()];
-    	
+        axisPtsValue = new float[parameters.size()];
+
         for (int n = 0; n < parameters.size(); n++) {
-        	axisPtsValue[n] = Float.parseFloat(parameters.get(n));
+            axisPtsValue[n] = Float.parseFloat(parameters.get(n));
         }
+    }
+
+    public final int getNbValue() {
+        return axisPtsValue.length;
+    }
+
+    public final double compute(int numVal) {
+        return axisPtsValue[numVal];
     }
 }

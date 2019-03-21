@@ -28,6 +28,7 @@ public final class A2l {
     private HashMap<String, CompuVTabRange> compuVTabRanges;
     private List<Measurement> measurements;
     private HashMap<String, RecordLayout> recordLayouts;
+    private HashMap<String, Function> functions;
 
     public A2l(File a2lFile) {
         parse(a2lFile);
@@ -48,6 +49,7 @@ public final class A2l {
         compuVTabRanges = new HashMap<String, CompuVTabRange>();
         measurements = new ArrayList<Measurement>();
         recordLayouts = new HashMap<String, RecordLayout>();
+        functions = new HashMap<String, Function>();
 
         try (BufferedReader buf = new BufferedReader(new FileReader(a2lFile))) {
 
@@ -114,7 +116,11 @@ public final class A2l {
                         RecordLayout recordLayout = new RecordLayout(objectParameters);
                         recordLayouts.put(recordLayout.toString(), recordLayout);
                         break;
-
+                    case "FUNCTION":
+                        fillParameters(buf, line, objectParameters, keyword);
+                        // Function function = new Function(objectParameters);
+                        // functions.put(function.toString(), function);
+                        break;
                     default:
                         break;
                     }

@@ -16,6 +16,7 @@ import a2lobject.Characteristic;
 import a2lobject.CompuMethod;
 import a2lobject.FixAxisPar;
 import a2lobject.FixAxisParDist;
+import a2lobject.FixAxisParList;
 import a2lobject.ModCommon;
 import a2lobject.ModPar;
 import a2lobject.RecordLayout.AxisPtsX;
@@ -66,7 +67,7 @@ public final class HexDecoder {
 
             long adress = characteristic.getAdress();
 
-            //if (characteristic.toString().equals("KL_UbUw_ME7"))
+            if (characteristic.toString().equals("Ctd_tco_min_rest_cor"))
                 System.out.println(characteristic);
 
             switch (characteristic.getType()) {
@@ -86,7 +87,7 @@ public final class HexDecoder {
                 readMap(byteOrder, characteristic, adress, compuMethod, fncValues);
                 break;
             default:
-            	//Nothing
+                // Nothing
                 break;
             }
         }
@@ -162,6 +163,12 @@ public final class HexDecoder {
                     FixAxisPar axisDist = (FixAxisPar) entry.getValue();
                     values = new Values(axisDist.getNumberapo(), 2);
                     for (int n = 0; n < axisDist.getNumberapo(); n++) {
+                        values.setValue(0, n, axisDist.compute(n) + "");
+                    }
+                } else if (entry.getValue() instanceof FixAxisParList) {
+                    FixAxisParList axisDist = (FixAxisParList) entry.getValue();
+                    values = new Values(axisDist.getNbValue(), 2);
+                    for (int n = 0; n < axisDist.getNbValue(); n++) {
                         values.setValue(0, n, axisDist.compute(n) + "");
                     }
                 }
@@ -482,8 +489,8 @@ public final class HexDecoder {
                 double[] hexValues;
 
                 if (cnt == 0) {
-                	
-                	adress = adressTmp;
+
+                    adress = adressTmp;
 
                     AxisPtsX axisPtsXStdAxis = characteristic.getRecordLayout().getAxisPtsX();
 
