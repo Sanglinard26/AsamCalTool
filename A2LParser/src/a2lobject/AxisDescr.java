@@ -33,19 +33,11 @@ public final class AxisDescr {
     private RecordLayout recordLayout;
     private AxisPts axisPts;
 
-    private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
-        private static final long serialVersionUID = 1L;
-
-        {
-            put(AXIS_PTS_REF, null);
-            put(BYTE_ORDER, null);
-            put(FIX_AXIS_PAR, null);
-            put(FIX_AXIS_PAR_DIST, null);
-            put(FIX_AXIS_PAR_LIST, null);
-        }
-    };
+    private Map<SecondaryKeywords, Object> optionalsParameters ;
 
     public AxisDescr(List<String> parameters) {
+    	
+    	initOptionalsParameters();
 
         if (parameters.size() == 1 || parameters.size() >= 6) {
             for (int n = 0; n < parameters.size(); n++) {
@@ -118,6 +110,22 @@ public final class AxisDescr {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }
     }
+    
+    private final void initOptionalsParameters()
+	{
+		optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
+
+			private static final long serialVersionUID = 1L;
+
+			{
+				put(AXIS_PTS_REF, null);
+	            put(BYTE_ORDER, null);
+	            put(FIX_AXIS_PAR, null);
+	            put(FIX_AXIS_PAR_DIST, null);
+	            put(FIX_AXIS_PAR_LIST, null);
+			}
+		};
+	}
 
     public final Attribute getAttribute() {
         return attribute;

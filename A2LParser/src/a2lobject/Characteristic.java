@@ -58,36 +58,12 @@ public final class Characteristic implements Comparable<Characteristic> {
 
     private List<AxisDescr> axisDescrs;
 
-    private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
-        private static final long serialVersionUID = 1L;
-
-        {
-            put(ANNOTATION, null);
-            put(AXIS_DESCR, null);
-            put(BIT_MASK, null); // Utilise seulement pour les TAB_VERB
-            put(BYTE_ORDER, null); // ToDo
-            put(CALIBRATION_ACCESS, null); // ToDo
-            put(COMPARISON_QUANTITY, null); // ToDo
-            put(DEPENDENT_CHARACTERISTIC, null); // ToDo
-            put(DISCRETE, null); // ToDo
-            put(DISPLAY_IDENTIFIER, null);
-            put(ECU_ADDRESS_EXTENSION, null); // ToDo
-            put(EXTENDED_LIMITS, null); // ToDo
-            put(FORMAT, null);
-            put(MATRIX_DIM, null);
-            put(MAX_REFRESH, null);
-            put(NUMBER, null);
-            put(PHYS_UNIT, null);
-            put(READ_ONLY, null); // Par defaut
-            put(REF_MEMORY_SEGMENT, null);
-            put(STEP_SIZE, null);
-            put(VIRTUAL_CHARACTERISTIC, null);
-
-        }
-    };
+    private Map<SecondaryKeywords, Object> optionalsParameters;
 
     public Characteristic(List<String> parameters) {
 
+    	initOptionalsParameters();
+    	
         parameters.remove("/begin"); // Remove /begin
         parameters.remove("CHARACTERISTIC"); // Remove CHARACTERISTIC
 
@@ -209,6 +185,37 @@ public final class Characteristic implements Comparable<Characteristic> {
         }
 
     }
+    
+    private final void initOptionalsParameters()
+	{
+		optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
+
+			private static final long serialVersionUID = 1L;
+
+			{
+				put(ANNOTATION, null);
+	            put(AXIS_DESCR, null);
+	            put(BIT_MASK, null); // Utilise seulement pour les TAB_VERB
+	            put(BYTE_ORDER, null); // ToDo
+	            put(CALIBRATION_ACCESS, null); // ToDo
+	            put(COMPARISON_QUANTITY, null); // ToDo
+	            put(DEPENDENT_CHARACTERISTIC, null); // ToDo
+	            put(DISCRETE, null); // ToDo
+	            put(DISPLAY_IDENTIFIER, null);
+	            put(ECU_ADDRESS_EXTENSION, null); // ToDo
+	            put(EXTENDED_LIMITS, null); // ToDo
+	            put(FORMAT, null);
+	            put(MATRIX_DIM, null);
+	            put(MAX_REFRESH, null);
+	            put(NUMBER, null);
+	            put(PHYS_UNIT, null);
+	            put(READ_ONLY, null); // Par defaut
+	            put(REF_MEMORY_SEGMENT, null);
+	            put(STEP_SIZE, null);
+	            put(VIRTUAL_CHARACTERISTIC, null);
+			}
+		};
+	}
 
     @Override
     public String toString() {

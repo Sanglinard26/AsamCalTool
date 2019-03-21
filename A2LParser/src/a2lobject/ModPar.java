@@ -19,17 +19,11 @@ public final class ModPar {
 
     private String comment;
 
-    private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
-        private static final long serialVersionUID = 1L;
-
-        {
-            put(ADDR_EPK, null);
-            put(ECU_CALIBRATION_OFFSET, null);
-            put(EPK, null);
-        }
-    };
+    private Map<SecondaryKeywords, Object> optionalsParameters;
 
     public ModPar(List<String> parameters) {
+    	
+    	initOptionalsParameters();
 
         parameters.remove("/begin"); // Remove /begin
         parameters.remove("MOD_PAR"); // Remove MOD_PAR
@@ -79,9 +73,23 @@ public final class ModPar {
         }
 
     }
+    
+    private final void initOptionalsParameters()
+	{
+		optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
+
+			private static final long serialVersionUID = 1L;
+
+			{
+				put(ADDR_EPK, null);
+	            put(ECU_CALIBRATION_OFFSET, null);
+	            put(EPK, null);
+			}
+		};
+	}
 
     public final long getEPKAdress() {
-        String addressEPK = ((String) optionalsParameters.get(SecondaryKeywords.ADDR_EPK));
+        String addressEPK = ((String) optionalsParameters.get(ADDR_EPK));
         if (addressEPK != null) {
             return Long.parseLong(addressEPK.substring(2), 16);
         }
@@ -89,7 +97,7 @@ public final class ModPar {
     }
 
     public final String getEPK() {
-        return (String) optionalsParameters.get(SecondaryKeywords.EPK);
+        return (String) optionalsParameters.get(EPK);
     }
     
     public final String getComment()

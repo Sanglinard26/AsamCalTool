@@ -27,24 +27,11 @@ public final class ModCommon {
 
     private String comment;
 
-    private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
-        private static final long serialVersionUID = 1L;
-
-        {
-            put(ALIGNMENT_BYTE, null);
-            put(ALIGNMENT_FLOAT16_IEEE, null);
-            put(ALIGNMENT_FLOAT32_IEEE, null);
-            put(ALIGNMENT_FLOAT64_IEEE, null);
-            put(ALIGNMENT_INT64, null);
-            put(ALIGNMENT_LONG, null);
-            put(ALIGNMENT_WORD, null);
-            put(BYTE_ORDER, null); // MSB_LAST ==> LITTLE_ENDIAN
-            put(DATA_SIZE, null);
-            put(DEPOSIT, null);
-        }
-    };
+    private Map<SecondaryKeywords, Object> optionalsParameters;
 
     public ModCommon(List<String> parameters) {
+    	
+    	initOptionalsParameters();
 
         parameters.remove("/begin"); // Remove /begin
         parameters.remove("MOD_COMMON"); // Remove RECORD_LAYOUT
@@ -114,6 +101,27 @@ public final class ModCommon {
         }
 
     }
+    
+    private final void initOptionalsParameters()
+	{
+		optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
+
+			private static final long serialVersionUID = 1L;
+
+			{
+				put(ALIGNMENT_BYTE, null);
+	            put(ALIGNMENT_FLOAT16_IEEE, null);
+	            put(ALIGNMENT_FLOAT32_IEEE, null);
+	            put(ALIGNMENT_FLOAT64_IEEE, null);
+	            put(ALIGNMENT_INT64, null);
+	            put(ALIGNMENT_LONG, null);
+	            put(ALIGNMENT_WORD, null);
+	            put(BYTE_ORDER, null); // MSB_LAST ==> LITTLE_ENDIAN
+	            put(DATA_SIZE, null);
+	            put(DEPOSIT, null);
+			}
+		};
+	}
 
     public final ByteOrder getByteOrder() {
         String sByteOrder = (String) optionalsParameters.get(SecondaryKeywords.BYTE_ORDER);

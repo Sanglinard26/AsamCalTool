@@ -28,20 +28,11 @@ public final class Function {
     private Set<String> locMeasurement;
     private Set<String> subFunction;
 
-    private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
-        private static final long serialVersionUID = 1L;
-
-        {
-            put(DEF_CHARACTERISTIC, null);
-            put(FUNCTION_VERSION, null);
-            put(IN_MEASUREMENT, null);
-            put(OUT_MEASUREMENT, null);
-            put(SUB_FUNCTION, null);
-            put(LOC_MEASUREMENT, null);
-        }
-    };
+    private Map<SecondaryKeywords, Object> optionalsParameters;
 
     public Function(List<String> parameters) {
+    	
+    	initOptionalsParameters();
 
         parameters.remove("/begin"); // Remove /begin
         parameters.remove("FUNCTION"); // Remove FUNCTION
@@ -150,6 +141,23 @@ public final class Function {
         }
 
     }
+    
+    private final void initOptionalsParameters()
+	{
+		optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
+
+			private static final long serialVersionUID = 1L;
+
+			{
+				put(DEF_CHARACTERISTIC, null);
+	            put(FUNCTION_VERSION, null);
+	            put(IN_MEASUREMENT, null);
+	            put(OUT_MEASUREMENT, null);
+	            put(SUB_FUNCTION, null);
+	            put(LOC_MEASUREMENT, null);
+			}
+		};
+	}
 
     @Override
     public String toString() {

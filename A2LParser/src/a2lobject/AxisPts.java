@@ -49,29 +49,11 @@ public final class AxisPts {
     private CompuMethod compuMethod;
     private RecordLayout recordLayout;
 
-    private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
-        private static final long serialVersionUID = 1L;
-
-        {
-            put(ANNOTATION, null);
-            put(BYTE_ORDER, null); // ToDo
-            put(CALIBRATION_ACCESS, null); // ToDo
-            put(COMPARISON_QUANTITY, null); // ToDo
-            put(DEPOSIT, null); // ToDo
-            put(DISPLAY_IDENTIFIER, null);
-            put(ECU_ADDRESS_EXTENSION, null); // ToDo
-            put(EXTENDED_LIMITS, null); // ToDo
-            put(FORMAT, null);
-            put(MAX_REFRESH, null);
-            put(MONOTONY, null);
-            put(PHYS_UNIT, null);
-            put(READ_ONLY, null); // Par defaut
-            put(REF_MEMORY_SEGMENT, null);
-            put(STEP_SIZE, null);
-        }
-    };
+    private Map<SecondaryKeywords, Object> optionalsParameters;
 
     public AxisPts(List<String> parameters) {
+    	
+    	initOptionalsParameters();
 
         parameters.remove(0); // Remove /begin
         parameters.remove(0); // Remove AXIS_PTS
@@ -158,6 +140,32 @@ public final class AxisPts {
         }
 
     }
+    
+    private final void initOptionalsParameters()
+	{
+		optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
+
+			private static final long serialVersionUID = 1L;
+
+			{
+				put(ANNOTATION, null);
+	            put(BYTE_ORDER, null); // ToDo
+	            put(CALIBRATION_ACCESS, null); // ToDo
+	            put(COMPARISON_QUANTITY, null); // ToDo
+	            put(DEPOSIT, null); // ToDo
+	            put(DISPLAY_IDENTIFIER, null);
+	            put(ECU_ADDRESS_EXTENSION, null); // ToDo
+	            put(EXTENDED_LIMITS, null); // ToDo
+	            put(FORMAT, null);
+	            put(MAX_REFRESH, null);
+	            put(MONOTONY, null);
+	            put(PHYS_UNIT, null);
+	            put(READ_ONLY, null); // Par defaut
+	            put(REF_MEMORY_SEGMENT, null);
+	            put(STEP_SIZE, null);
+			}
+		};
+	}
 
     @Override
     public String toString() {
@@ -185,7 +193,7 @@ public final class AxisPts {
     }
 
     public final String getFormat() {
-        Object oAxisPtsDisplayFormat = optionalsParameters.get(SecondaryKeywords.FORMAT);
+        Object oAxisPtsDisplayFormat = optionalsParameters.get(FORMAT);
         String displayFormat;
 
         if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0

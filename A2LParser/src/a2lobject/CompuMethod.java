@@ -30,20 +30,11 @@ public final class CompuMethod implements Comparable<CompuMethod> {
     @SuppressWarnings("unused")
 	private String unit;
 
-    private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
-        private static final long serialVersionUID = 1L;
-
-        {
-            put(COEFFS, null);
-            put(COEFFS_LINEAR, null);
-            put(COMPU_TAB_REF, null); // ToDo
-            put(FORMULA, null); // ToDo
-            put(REF_UNIT, null); // ToDo
-            put(STATUS_STRING_REF, null); // ToDo
-        }
-    };
+    private Map<SecondaryKeywords, Object> optionalsParameters;
 
     public CompuMethod(List<String> parameters) {
+    	
+    	initOptionalsParameters();
 
         parameters.remove("/begin"); // Remove /begin
         parameters.remove("COMPU_METHOD"); // Remove COMPU_METHOD
@@ -109,6 +100,23 @@ public final class CompuMethod implements Comparable<CompuMethod> {
         }
 
     }
+    
+    private final void initOptionalsParameters()
+	{
+		optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
+
+			private static final long serialVersionUID = 1L;
+
+			{
+				put(COEFFS, null);
+	            put(COEFFS_LINEAR, null);
+	            put(COMPU_TAB_REF, null); // ToDo
+	            put(FORMULA, null); // ToDo
+	            put(REF_UNIT, null); // ToDo
+	            put(STATUS_STRING_REF, null); // ToDo
+			}
+		};
+	}
 
     @Override
     public String toString() {

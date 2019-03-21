@@ -27,248 +27,258 @@ import constante.SecondaryKeywords;
 
 public final class RecordLayout {
 
-    private String name;
+	private String name;
 
-    private final Map<SecondaryKeywords, Object> optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
-        private static final long serialVersionUID = 1L;
+	private Map<SecondaryKeywords, Object> optionalsParameters;
 
-        {
-            put(ALIGNMENT_BYTE, null);
-            put(ALIGNMENT_FLOAT16_IEEE, null);
-            put(ALIGNMENT_FLOAT32_IEEE, null);
-            put(ALIGNMENT_FLOAT64_IEEE, null);
-            put(ALIGNMENT_INT64, null);
-            put(ALIGNMENT_LONG, null);
-            put(ALIGNMENT_WORD, null);
-            put(AXIS_PTS_X, null);
-            put(SecondaryKeywords.AXIS_PTS_Y, null);
-            put(FNC_VALUES, null);
-            put(SecondaryKeywords.NO_AXIS_PTS_X, null);
-            put(SecondaryKeywords.NO_AXIS_PTS_Y, null);
-            put(STATIC_RECORD_LAYOUT, null);
-        }
-    };
+	public RecordLayout(List<String> parameters) {
+		
+		initOptionalsParameters();
 
-    public RecordLayout(List<String> parameters) {
+		parameters.remove("/begin"); // Remove /begin
+		parameters.remove("RECORD_LAYOUT"); // Remove RECORD_LAYOUT
 
-        parameters.remove("/begin"); // Remove /begin
-        parameters.remove("RECORD_LAYOUT"); // Remove RECORD_LAYOUT
+		if (parameters.size() >= 1) {
+			for (int n = 0; n < parameters.size(); n++) {
+				switch (n) {
+				case 0:
+					this.name = parameters.get(n);
+					break;
+				default: // Cas de parametres optionels
+					switch (parameters.get(n)) {
+					case "FNC_VALUES":
+						List<String> subList = parameters.subList(n + 1, n + 5);
+						optionalsParameters.put(FNC_VALUES, new FncValues(subList));
+						n += 4;
+						break;
+					case "AXIS_PTS_X":
+						List<String> subList2 = parameters.subList(n + 1, n + 5);
+						optionalsParameters.put(AXIS_PTS_X, new AxisPtsX(subList2));
+						n += 4;
+						break;
+					case "AXIS_PTS_Y":
+						List<String> subList4 = parameters.subList(n + 1, n + 5);
+						optionalsParameters.put(SecondaryKeywords.AXIS_PTS_Y, new AxisPtsY(subList4));
+						n += 4;
+						break;
+					case "NO_AXIS_PTS_X":
+						List<String> subList3 = parameters.subList(n + 1, n + 3);
+						optionalsParameters.put(SecondaryKeywords.NO_AXIS_PTS_X, new NoAxisPtsX(subList3));
+						n += 2;
+						break;
+					case "NO_AXIS_PTS_Y":
+						List<String> subList5 = parameters.subList(n + 1, n + 3);
+						optionalsParameters.put(SecondaryKeywords.NO_AXIS_PTS_Y, new NoAxisPtsY(subList5));
+						n += 2;
+						break;
+					default:
+						break;
+					}
+					break;
+				}
+			}
 
-        if (parameters.size() >= 1) {
-            for (int n = 0; n < parameters.size(); n++) {
-                switch (n) {
-                case 0:
-                    this.name = parameters.get(n);
-                    break;
-                default: // Cas de parametres optionels
-                    switch (parameters.get(n)) {
-                    case "FNC_VALUES":
-                        List<String> subList = parameters.subList(n + 1, n + 5);
-                        optionalsParameters.put(FNC_VALUES, new FncValues(subList));
-                        n += 4;
-                        break;
-                    case "AXIS_PTS_X":
-                        List<String> subList2 = parameters.subList(n + 1, n + 5);
-                        optionalsParameters.put(AXIS_PTS_X, new AxisPtsX(subList2));
-                        n += 4;
-                        break;
-                    case "AXIS_PTS_Y":
-                        List<String> subList4 = parameters.subList(n + 1, n + 5);
-                        optionalsParameters.put(SecondaryKeywords.AXIS_PTS_Y, new AxisPtsY(subList4));
-                        n += 4;
-                        break;
-                    case "NO_AXIS_PTS_X":
-                        List<String> subList3 = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(SecondaryKeywords.NO_AXIS_PTS_X, new NoAxisPtsX(subList3));
-                        n += 2;
-                        break;
-                    case "NO_AXIS_PTS_Y":
-                        List<String> subList5 = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(SecondaryKeywords.NO_AXIS_PTS_Y, new NoAxisPtsY(subList5));
-                        n += 2;
-                        break;
-                    }
-                    break;
-                }
-            }
+			// On vide la MAP de parametre non utilise
+			Iterator<Map.Entry<SecondaryKeywords, Object>> iter = optionalsParameters.entrySet().iterator();
+			while (iter.hasNext()) {
+				Map.Entry<SecondaryKeywords, Object> entry = iter.next();
+				if (entry.getValue() == null) {
+					iter.remove();
+				}
+			}
 
-            // On vide la MAP de parametre non utilise
-            Iterator<Map.Entry<SecondaryKeywords, Object>> iter = optionalsParameters.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry<SecondaryKeywords, Object> entry = iter.next();
-                if (entry.getValue() == null) {
-                    iter.remove();
-                }
-            }
+		} else {
+			throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
+		}
 
-        } else {
-            throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
-        }
+	}
+	
+	private final void initOptionalsParameters()
+	{
+		optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
 
-    }
+			private static final long serialVersionUID = 1L;
 
-    @Override
-    public String toString() {
-        return this.name;
-    }
+			{
+				put(ALIGNMENT_BYTE, null);
+				put(ALIGNMENT_FLOAT16_IEEE, null);
+				put(ALIGNMENT_FLOAT32_IEEE, null);
+				put(ALIGNMENT_FLOAT64_IEEE, null);
+				put(ALIGNMENT_INT64, null);
+				put(ALIGNMENT_LONG, null);
+				put(ALIGNMENT_WORD, null);
+				put(AXIS_PTS_X, null);
+				put(SecondaryKeywords.AXIS_PTS_Y, null);
+				put(FNC_VALUES, null);
+				put(SecondaryKeywords.NO_AXIS_PTS_X, null);
+				put(SecondaryKeywords.NO_AXIS_PTS_Y, null);
+				put(STATIC_RECORD_LAYOUT, null);
+			}
+		};
+	}
 
-    public Map<SecondaryKeywords, Object> getOptionalsParameters() {
-        return optionalsParameters;
-    }
+	@Override
+	public String toString() {
+		return this.name;
+	}
 
-    public FncValues getFncValues() {
-        return (FncValues) optionalsParameters.get(SecondaryKeywords.FNC_VALUES);
-    }
+	public Map<SecondaryKeywords, Object> getOptionalsParameters() {
+		return optionalsParameters;
+	}
 
-    public NoAxisPtsX getNoAxisPtsX() {
-        Object object = optionalsParameters.get(SecondaryKeywords.NO_AXIS_PTS_X);
-        return object != null ? (NoAxisPtsX) object : null;
-    }
+	public FncValues getFncValues() {
+		return (FncValues) optionalsParameters.get(SecondaryKeywords.FNC_VALUES);
+	}
 
-    public AxisPtsX getAxisPtsX() {
-        Object object = optionalsParameters.get(SecondaryKeywords.AXIS_PTS_X);
-        return object != null ? (AxisPtsX) object : null;
-    }
+	public NoAxisPtsX getNoAxisPtsX() {
+		Object object = optionalsParameters.get(SecondaryKeywords.NO_AXIS_PTS_X);
+		return object != null ? (NoAxisPtsX) object : null;
+	}
 
-    public NoAxisPtsY getNoAxisPtsY() {
-        Object object = optionalsParameters.get(SecondaryKeywords.NO_AXIS_PTS_Y);
-        return object != null ? (NoAxisPtsY) object : null;
-    }
+	public AxisPtsX getAxisPtsX() {
+		Object object = optionalsParameters.get(SecondaryKeywords.AXIS_PTS_X);
+		return object != null ? (AxisPtsX) object : null;
+	}
 
-    public AxisPtsY getAxisPtsY() {
-        Object object = optionalsParameters.get(SecondaryKeywords.AXIS_PTS_Y);
-        return object != null ? (AxisPtsY) object : null;
-    }
+	public NoAxisPtsY getNoAxisPtsY() {
+		Object object = optionalsParameters.get(SecondaryKeywords.NO_AXIS_PTS_Y);
+		return object != null ? (NoAxisPtsY) object : null;
+	}
 
-    public final class FncValues {
+	public AxisPtsY getAxisPtsY() {
+		Object object = optionalsParameters.get(SecondaryKeywords.AXIS_PTS_Y);
+		return object != null ? (AxisPtsY) object : null;
+	}
 
-        private int position;
-        private DataType dataType;
-        private IndexMode indexMode;
-        private AdressType adressType;
+	public final class FncValues {
 
-        public FncValues(List<String> parameters) {
-            this.position = Integer.parseInt(parameters.get(0));
-            this.dataType = DataType.getDataType(parameters.get(1));
-            this.indexMode = IndexMode.getIndexMode(parameters.get(2));
-            this.adressType = AdressType.getAdressType(parameters.get(3));
-        }
+		private int position;
+		private DataType dataType;
+		private IndexMode indexMode;
+		private AdressType adressType;
 
-        public int getPosition() {
-            return position;
-        }
+		public FncValues(List<String> parameters) {
+			this.position = Integer.parseInt(parameters.get(0));
+			this.dataType = DataType.getDataType(parameters.get(1));
+			this.indexMode = IndexMode.getIndexMode(parameters.get(2));
+			this.adressType = AdressType.getAdressType(parameters.get(3));
+		}
 
-        public DataType getDataType() {
-            return dataType;
-        }
+		public int getPosition() {
+			return position;
+		}
 
-        public IndexMode getIndexMode() {
-            return indexMode;
-        }
+		public DataType getDataType() {
+			return dataType;
+		}
 
-        public AdressType getAdressType() {
-            return adressType;
-        }
-    }
+		public IndexMode getIndexMode() {
+			return indexMode;
+		}
 
-    public final class AxisPtsX {
+		public AdressType getAdressType() {
+			return adressType;
+		}
+	}
 
-        private int position;
-        private DataType dataType;
-        private IndexOrder indexOrder;
-        private AdressType adressType;
+	public final class AxisPtsX {
 
-        public AxisPtsX(List<String> parameters) {
-            this.position = Integer.parseInt(parameters.get(0));
-            this.dataType = DataType.getDataType(parameters.get(1));
-            this.indexOrder = IndexOrder.getIndexOrder(parameters.get(2));
-            this.adressType = AdressType.getAdressType(parameters.get(3));
-        }
+		private int position;
+		private DataType dataType;
+		private IndexOrder indexOrder;
+		private AdressType adressType;
 
-        public int getPosition() {
-            return position;
-        }
+		public AxisPtsX(List<String> parameters) {
+			this.position = Integer.parseInt(parameters.get(0));
+			this.dataType = DataType.getDataType(parameters.get(1));
+			this.indexOrder = IndexOrder.getIndexOrder(parameters.get(2));
+			this.adressType = AdressType.getAdressType(parameters.get(3));
+		}
 
-        public DataType getDataType() {
-            return dataType;
-        }
+		public int getPosition() {
+			return position;
+		}
 
-        public IndexOrder getIndexOrder() {
-            return indexOrder;
-        }
+		public DataType getDataType() {
+			return dataType;
+		}
 
-        public AdressType getAdressType() {
-            return adressType;
-        }
-    }
+		public IndexOrder getIndexOrder() {
+			return indexOrder;
+		}
 
-    public final class NoAxisPtsX {
-        private int position;
-        private DataType dataType;
+		public AdressType getAdressType() {
+			return adressType;
+		}
+	}
 
-        public NoAxisPtsX(List<String> parameters) {
-            this.position = Integer.parseInt(parameters.get(0));
-            this.dataType = DataType.getDataType(parameters.get(1));
-        }
+	public final class NoAxisPtsX {
+		private int position;
+		private DataType dataType;
 
-        public int getPosition() {
-            return position;
-        }
+		public NoAxisPtsX(List<String> parameters) {
+			this.position = Integer.parseInt(parameters.get(0));
+			this.dataType = DataType.getDataType(parameters.get(1));
+		}
 
-        public DataType getDataType() {
-            return dataType;
-        }
+		public int getPosition() {
+			return position;
+		}
 
-    }
+		public DataType getDataType() {
+			return dataType;
+		}
 
-    public final class AxisPtsY {
+	}
 
-        private int position;
-        private DataType dataType;
-        private IndexOrder indexOrder;
-        private AdressType adressType;
+	public final class AxisPtsY {
 
-        public AxisPtsY(List<String> parameters) {
-            this.position = Integer.parseInt(parameters.get(0));
-            this.dataType = DataType.getDataType(parameters.get(1));
-            this.indexOrder = IndexOrder.getIndexOrder(parameters.get(2));
-            this.adressType = AdressType.getAdressType(parameters.get(3));
-        }
+		private int position;
+		private DataType dataType;
+		private IndexOrder indexOrder;
+		private AdressType adressType;
 
-        public int getPosition() {
-            return position;
-        }
+		public AxisPtsY(List<String> parameters) {
+			this.position = Integer.parseInt(parameters.get(0));
+			this.dataType = DataType.getDataType(parameters.get(1));
+			this.indexOrder = IndexOrder.getIndexOrder(parameters.get(2));
+			this.adressType = AdressType.getAdressType(parameters.get(3));
+		}
 
-        public DataType getDataType() {
-            return dataType;
-        }
+		public int getPosition() {
+			return position;
+		}
 
-        public IndexOrder getIndexOrder() {
-            return indexOrder;
-        }
+		public DataType getDataType() {
+			return dataType;
+		}
 
-        public AdressType getAdressType() {
-            return adressType;
-        }
-    }
+		public IndexOrder getIndexOrder() {
+			return indexOrder;
+		}
 
-    public final class NoAxisPtsY {
-        private int position;
-        private DataType dataType;
+		public AdressType getAdressType() {
+			return adressType;
+		}
+	}
 
-        public NoAxisPtsY(List<String> parameters) {
-            this.position = Integer.parseInt(parameters.get(0));
-            this.dataType = DataType.getDataType(parameters.get(1));
-        }
+	public final class NoAxisPtsY {
+		private int position;
+		private DataType dataType;
 
-        public int getPosition() {
-            return position;
-        }
+		public NoAxisPtsY(List<String> parameters) {
+			this.position = Integer.parseInt(parameters.get(0));
+			this.dataType = DataType.getDataType(parameters.get(1));
+		}
 
-        public DataType getDataType() {
-            return dataType;
-        }
+		public int getPosition() {
+			return position;
+		}
 
-    }
+		public DataType getDataType() {
+			return dataType;
+		}
+
+	}
 
 }
