@@ -44,15 +44,9 @@ public final class Annotation {
 
 	private final void initOptionalsParameters()
 	{
-		optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
-
-			private static final long serialVersionUID = 1L;
-
-			{
-				put(ANNOTATION_LABEL, null);
-				put(ANNOTATION_ORIGIN, null);
-				put(ANNOTATION_TEXT, null);
-			}
-		};
+		optionalsParameters = new HashMap<SecondaryKeywords, Object>();
+		optionalsParameters.put(ANNOTATION_LABEL, null);
+		optionalsParameters.put(ANNOTATION_ORIGIN, null);
+		optionalsParameters.put(ANNOTATION_TEXT, null);
 	}
 }

@@ -11,6 +11,10 @@ import static constante.SecondaryKeywords.ALIGNMENT_INT64;
 import static constante.SecondaryKeywords.ALIGNMENT_LONG;
 import static constante.SecondaryKeywords.ALIGNMENT_WORD;
 import static constante.SecondaryKeywords.AXIS_PTS_X;
+import static constante.SecondaryKeywords.AXIS_PTS_Y;
+import static constante.SecondaryKeywords.NO_AXIS_PTS_X;
+import static constante.SecondaryKeywords.NO_AXIS_PTS_Y;
+import static constante.SecondaryKeywords.SRC_ADDR_X;
 import static constante.SecondaryKeywords.FNC_VALUES;
 import static constante.SecondaryKeywords.STATIC_RECORD_LAYOUT;
 
@@ -32,7 +36,7 @@ public final class RecordLayout {
 	private Map<SecondaryKeywords, Object> optionalsParameters;
 
 	public RecordLayout(List<String> parameters) {
-		
+
 		initOptionalsParameters();
 
 		parameters.remove("/begin"); // Remove /begin
@@ -58,17 +62,22 @@ public final class RecordLayout {
 						break;
 					case "AXIS_PTS_Y":
 						List<String> subList4 = parameters.subList(n + 1, n + 5);
-						optionalsParameters.put(SecondaryKeywords.AXIS_PTS_Y, new AxisPtsY(subList4));
+						optionalsParameters.put(AXIS_PTS_Y, new AxisPtsY(subList4));
 						n += 4;
 						break;
 					case "NO_AXIS_PTS_X":
 						List<String> subList3 = parameters.subList(n + 1, n + 3);
-						optionalsParameters.put(SecondaryKeywords.NO_AXIS_PTS_X, new NoAxisPtsX(subList3));
+						optionalsParameters.put(NO_AXIS_PTS_X, new NoAxisPtsX(subList3));
 						n += 2;
 						break;
 					case "NO_AXIS_PTS_Y":
 						List<String> subList5 = parameters.subList(n + 1, n + 3);
-						optionalsParameters.put(SecondaryKeywords.NO_AXIS_PTS_Y, new NoAxisPtsY(subList5));
+						optionalsParameters.put(NO_AXIS_PTS_Y, new NoAxisPtsY(subList5));
+						n += 2;
+						break;
+					case "SRC_ADDR_X":
+						List<String> subList6 = parameters.subList(n + 1, n + 3);
+						optionalsParameters.put(SRC_ADDR_X, new SrcAddrX(subList6));
 						n += 2;
 						break;
 					default:
@@ -92,29 +101,24 @@ public final class RecordLayout {
 		}
 
 	}
-	
+
 	private final void initOptionalsParameters()
 	{
-		optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
-
-			private static final long serialVersionUID = 1L;
-
-			{
-				put(ALIGNMENT_BYTE, null);
-				put(ALIGNMENT_FLOAT16_IEEE, null);
-				put(ALIGNMENT_FLOAT32_IEEE, null);
-				put(ALIGNMENT_FLOAT64_IEEE, null);
-				put(ALIGNMENT_INT64, null);
-				put(ALIGNMENT_LONG, null);
-				put(ALIGNMENT_WORD, null);
-				put(AXIS_PTS_X, null);
-				put(SecondaryKeywords.AXIS_PTS_Y, null);
-				put(FNC_VALUES, null);
-				put(SecondaryKeywords.NO_AXIS_PTS_X, null);
-				put(SecondaryKeywords.NO_AXIS_PTS_Y, null);
-				put(STATIC_RECORD_LAYOUT, null);
-			}
-		};
+		optionalsParameters = new HashMap<SecondaryKeywords, Object>();
+		optionalsParameters.put(ALIGNMENT_BYTE, null);
+		optionalsParameters.put(ALIGNMENT_FLOAT16_IEEE, null);
+		optionalsParameters.put(ALIGNMENT_FLOAT32_IEEE, null);
+		optionalsParameters.put(ALIGNMENT_FLOAT64_IEEE, null);
+		optionalsParameters.put(ALIGNMENT_INT64, null);
+		optionalsParameters.put(ALIGNMENT_LONG, null);
+		optionalsParameters.put(ALIGNMENT_WORD, null);
+		optionalsParameters.put(AXIS_PTS_X, null);
+		optionalsParameters.put(AXIS_PTS_Y, null);
+		optionalsParameters.put(FNC_VALUES, null);
+		optionalsParameters.put(NO_AXIS_PTS_X, null);
+		optionalsParameters.put(NO_AXIS_PTS_Y, null);
+		optionalsParameters.put(SRC_ADDR_X, null);
+		optionalsParameters.put(STATIC_RECORD_LAYOUT, null);
 	}
 
 	@Override
@@ -122,32 +126,33 @@ public final class RecordLayout {
 		return this.name;
 	}
 
-	public Map<SecondaryKeywords, Object> getOptionalsParameters() {
-		return optionalsParameters;
-	}
-
 	public FncValues getFncValues() {
-		return (FncValues) optionalsParameters.get(SecondaryKeywords.FNC_VALUES);
+		return (FncValues) optionalsParameters.get(FNC_VALUES);
 	}
 
 	public NoAxisPtsX getNoAxisPtsX() {
-		Object object = optionalsParameters.get(SecondaryKeywords.NO_AXIS_PTS_X);
+		Object object = optionalsParameters.get(NO_AXIS_PTS_X);
 		return object != null ? (NoAxisPtsX) object : null;
 	}
 
 	public AxisPtsX getAxisPtsX() {
-		Object object = optionalsParameters.get(SecondaryKeywords.AXIS_PTS_X);
+		Object object = optionalsParameters.get(AXIS_PTS_X);
 		return object != null ? (AxisPtsX) object : null;
 	}
 
 	public NoAxisPtsY getNoAxisPtsY() {
-		Object object = optionalsParameters.get(SecondaryKeywords.NO_AXIS_PTS_Y);
+		Object object = optionalsParameters.get(NO_AXIS_PTS_Y);
 		return object != null ? (NoAxisPtsY) object : null;
 	}
 
 	public AxisPtsY getAxisPtsY() {
-		Object object = optionalsParameters.get(SecondaryKeywords.AXIS_PTS_Y);
+		Object object = optionalsParameters.get(AXIS_PTS_Y);
 		return object != null ? (AxisPtsY) object : null;
+	}
+	
+	public SrcAddrX getSrcAddrX() {
+		Object object = optionalsParameters.get(SRC_ADDR_X);
+		return object != null ? (SrcAddrX) object : null;
 	}
 
 	public final class FncValues {
@@ -267,6 +272,25 @@ public final class RecordLayout {
 		private DataType dataType;
 
 		public NoAxisPtsY(List<String> parameters) {
+			this.position = Integer.parseInt(parameters.get(0));
+			this.dataType = DataType.getDataType(parameters.get(1));
+		}
+
+		public int getPosition() {
+			return position;
+		}
+
+		public DataType getDataType() {
+			return dataType;
+		}
+
+	}
+	
+	public final class SrcAddrX {
+		private int position;
+		private DataType dataType;
+
+		public SrcAddrX(List<String> parameters) {
 			this.position = Integer.parseInt(parameters.get(0));
 			this.dataType = DataType.getDataType(parameters.get(1));
 		}

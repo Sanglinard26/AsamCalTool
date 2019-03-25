@@ -37,368 +37,362 @@ import constante.SecondaryKeywords;
 
 public final class Characteristic implements Comparable<Characteristic> {
 
-    private String name;
-    @SuppressWarnings("unused")
+	private String name;
+	@SuppressWarnings("unused")
 	private String longIdentifier;
-    private CharacteristicType type;
-    private String adress; // 4-byte unsigned integer
-    private String deposit; // Reference to RECORLAYOUT
-    @SuppressWarnings("unused")
-    private float maxDiff;
-    private String conversion; // Reference to COMPUTMETHOD
-    @SuppressWarnings("unused")
-    private float lowerLimit;
-    @SuppressWarnings("unused")
-    private float upperLimit;
+	private CharacteristicType type;
+	private String adress; // 4-byte unsigned integer
+	private String deposit; // Reference to RECORLAYOUT
+	@SuppressWarnings("unused")
+	private float maxDiff;
+	private String conversion; // Reference to COMPUTMETHOD
+	@SuppressWarnings("unused")
+	private float lowerLimit;
+	@SuppressWarnings("unused")
+	private float upperLimit;
 
-    private Values values;
+	private Values values;
 
-    private CompuMethod compuMethod;
-    private RecordLayout recordLayout;
+	private CompuMethod compuMethod;
+	private RecordLayout recordLayout;
 
-    private List<AxisDescr> axisDescrs;
+	private List<AxisDescr> axisDescrs;
 
-    private Map<SecondaryKeywords, Object> optionalsParameters;
+	private Map<SecondaryKeywords, Object> optionalsParameters;
 
-    public Characteristic(List<String> parameters) {
+	public Characteristic(List<String> parameters) {
 
-    	initOptionalsParameters();
-    	
-        parameters.remove("/begin"); // Remove /begin
-        parameters.remove("CHARACTERISTIC"); // Remove CHARACTERISTIC
+		initOptionalsParameters();
 
-        if (parameters.size() == 1 || parameters.size() >= 9) {
-            for (int n = 0; n < parameters.size(); n++) {
-                switch (n) {
-                case 0:
-                    this.name = parameters.get(n);
-                    break;
-                case 1:
-                    this.longIdentifier = parameters.get(n);
-                    break;
-                case 2:
-                    this.type = CharacteristicType.getCharacteristicType(parameters.get(n));
-                    break;
-                case 3:
-                    this.adress = parameters.get(n);
-                    break;
-                case 4:
-                    this.deposit = parameters.get(n);
-                    break;
-                case 5:
-                    this.maxDiff = Float.parseFloat(parameters.get(n));
-                    break;
-                case 6:
-                    this.conversion = parameters.get(n);
-                    break;
-                case 7:
-                    this.lowerLimit = Float.parseFloat(parameters.get(n));
-                    break;
-                case 8:
-                    this.upperLimit = Float.parseFloat(parameters.get(n));
-                    break;
+		parameters.remove("/begin"); // Remove /begin
+		parameters.remove("CHARACTERISTIC"); // Remove CHARACTERISTIC
 
-                default: // Cas de parametres optionels
+		if (parameters.size() == 1 || parameters.size() >= 9) {
+			for (int n = 0; n < parameters.size(); n++) {
+				switch (n) {
+				case 0:
+					this.name = parameters.get(n);
+					break;
+				case 1:
+					this.longIdentifier = parameters.get(n);
+					break;
+				case 2:
+					this.type = CharacteristicType.getCharacteristicType(parameters.get(n));
+					break;
+				case 3:
+					this.adress = parameters.get(n);
+					break;
+				case 4:
+					this.deposit = parameters.get(n);
+					break;
+				case 5:
+					this.maxDiff = Float.parseFloat(parameters.get(n));
+					break;
+				case 6:
+					this.conversion = parameters.get(n);
+					break;
+				case 7:
+					this.lowerLimit = Float.parseFloat(parameters.get(n));
+					break;
+				case 8:
+					this.upperLimit = Float.parseFloat(parameters.get(n));
+					break;
 
-                    Set<SecondaryKeywords> keys = optionalsParameters.keySet();
-                    for (int nPar = n; nPar < parameters.size(); nPar++) {
-                        if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-                            switch (parameters.get(nPar)) {
-                            case "ANNOTATION":
-                                n = nPar + 1;
-                                do {
-                                } while (!parameters.get(++nPar).equals("ANNOTATION"));
-                                optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3)));
-                                n = nPar + 1;
-                                break;
-                            case "AXIS_DESCR":
-                                if (axisDescrs == null) {
-                                    axisDescrs = new ArrayList<AxisDescr>();
-                                    optionalsParameters.put(AXIS_DESCR, axisDescrs);
-                                }
-                                n = nPar + 1;
-                                do {
-                                } while (!parameters.get(++nPar).equals("AXIS_DESCR"));
-                                axisDescrs.add(new AxisDescr(parameters.subList(n, nPar - 1)));
-                                n = nPar + 1;
-                                break;
-                            case "BIT_MASK":
-                                String bitMask = parameters.get(nPar + 1);
-                                if (bitMask.startsWith("0x")) {
-                                    optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask.substring(2), 16));
-                                } else {
-                                    optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask));
-                                }
-                                break;
-                            case "DISPLAY_IDENTIFIER":
-                                optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1));
-                                break;
-                            case "FORMAT":
-                                optionalsParameters.put(FORMAT, new Format(parameters.get(nPar + 1).toString()));
-                                break;
+				default: // Cas de parametres optionels
 
-                            case "MATRIX_DIM":
-                                List<Integer> dim = new ArrayList<Integer>();
+				Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+				for (int nPar = n; nPar < parameters.size(); nPar++) {
+					if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
+						switch (parameters.get(nPar)) {
+						case "ANNOTATION":
+							n = nPar + 1;
+							do {
+							} while (!parameters.get(++nPar).equals("ANNOTATION"));
+							optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3)));
+							n = nPar + 1;
+							break;
+						case "AXIS_DESCR":
+							if (axisDescrs == null) {
+								axisDescrs = new ArrayList<AxisDescr>();
+								optionalsParameters.put(AXIS_DESCR, axisDescrs);
+							}
+							n = nPar + 1;
+							do {
+							} while (!parameters.get(++nPar).equals("AXIS_DESCR"));
+							axisDescrs.add(new AxisDescr(parameters.subList(n, nPar - 1)));
+							n = nPar + 1;
+							break;
+						case "BIT_MASK":
+							String bitMask = parameters.get(nPar + 1);
+							if (bitMask.startsWith("0x")) {
+								optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask.substring(2), 16));
+							} else {
+								optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask));
+							}
+							break;
+						case "DISPLAY_IDENTIFIER":
+							optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1));
+							break;
+						case "FORMAT":
+							optionalsParameters.put(FORMAT, new Format(parameters.get(nPar + 1).toString()));
+							break;
 
-                                try {
-                                    n = nPar + 1;
-                                    do {
-                                        dim.add(Integer.parseInt(parameters.get(n)));
-                                        n++;
-                                    } while (n < parameters.size());
-                                } catch (NumberFormatException nfe) {
-                                    n++;
-                                }
-                                optionalsParameters.put(MATRIX_DIM, dim.toArray());
-                                dim.clear();
-                                break;
-                            case "NUMBER":
-                                optionalsParameters.put(NUMBER, Integer.parseInt(parameters.get(nPar + 1)));
-                                break;
-                            case "PHYS_UNIT":
+						case "MATRIX_DIM":
+							List<Integer> dim = new ArrayList<Integer>();
 
-                                break;
-                            case "READ_ONLY":
-                                optionalsParameters.put(READ_ONLY, true);
-                                break;
-                            default:
-                                break;
-                            }
-                        }
-                    }
-                    n = parameters.size();
-                    break;
-                }
-            }
+							try {
+								n = nPar + 1;
+								do {
+									dim.add(Integer.parseInt(parameters.get(n)));
+									n++;
+								} while (n < parameters.size());
+							} catch (NumberFormatException nfe) {
+								n++;
+							}
+							optionalsParameters.put(MATRIX_DIM, dim.toArray());
+							dim.clear();
+							break;
+						case "NUMBER":
+							optionalsParameters.put(NUMBER, Integer.parseInt(parameters.get(nPar + 1)));
+							break;
+						case "PHYS_UNIT":
 
-            // On vide la MAP de parametre non utilise
-            Iterator<Map.Entry<SecondaryKeywords, Object>> iter = optionalsParameters.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry<SecondaryKeywords, Object> entry = iter.next();
-                if (entry.getValue() == null) {
-                    iter.remove();
-                }
-            }
-
-        } else {
-            throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
-        }
-
-    }
-    
-    private final void initOptionalsParameters()
-	{
-		optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
-
-			private static final long serialVersionUID = 1L;
-
-			{
-				put(ANNOTATION, null);
-	            put(AXIS_DESCR, null);
-	            put(BIT_MASK, null); // Utilise seulement pour les TAB_VERB
-	            put(BYTE_ORDER, null); // ToDo
-	            put(CALIBRATION_ACCESS, null); // ToDo
-	            put(COMPARISON_QUANTITY, null); // ToDo
-	            put(DEPENDENT_CHARACTERISTIC, null); // ToDo
-	            put(DISCRETE, null); // ToDo
-	            put(DISPLAY_IDENTIFIER, null);
-	            put(ECU_ADDRESS_EXTENSION, null); // ToDo
-	            put(EXTENDED_LIMITS, null); // ToDo
-	            put(FORMAT, null);
-	            put(MATRIX_DIM, null);
-	            put(MAX_REFRESH, null);
-	            put(NUMBER, null);
-	            put(PHYS_UNIT, null);
-	            put(READ_ONLY, null); // Par defaut
-	            put(REF_MEMORY_SEGMENT, null);
-	            put(STEP_SIZE, null);
-	            put(VIRTUAL_CHARACTERISTIC, null);
+							break;
+						case "READ_ONLY":
+							optionalsParameters.put(READ_ONLY, true);
+							break;
+						default:
+							break;
+						}
+					}
+				}
+				n = parameters.size();
+				break;
+				}
 			}
-		};
+
+			// On vide la MAP de parametre non utilise
+			Iterator<Map.Entry<SecondaryKeywords, Object>> iter = optionalsParameters.entrySet().iterator();
+			while (iter.hasNext()) {
+				Map.Entry<SecondaryKeywords, Object> entry = iter.next();
+				if (entry.getValue() == null) {
+					iter.remove();
+				}
+			}
+
+		} else {
+			throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
+		}
+
 	}
 
-    @Override
-    public String toString() {
-        return this.name;
-    }
+	private final void initOptionalsParameters()
+	{
+		optionalsParameters = new HashMap<SecondaryKeywords, Object>();
+		optionalsParameters.put(ANNOTATION, null);
+		optionalsParameters.put(AXIS_DESCR, null);
+		optionalsParameters.put(BIT_MASK, null); // Utilise seulement pour les TAB_VERB
+		optionalsParameters.put(BYTE_ORDER, null); // ToDo
+		optionalsParameters.put(CALIBRATION_ACCESS, null); // ToDo
+		optionalsParameters.put(COMPARISON_QUANTITY, null); // ToDo
+		optionalsParameters.put(DEPENDENT_CHARACTERISTIC, null); // ToDo
+		optionalsParameters.put(DISCRETE, null); // ToDo
+		optionalsParameters.put(DISPLAY_IDENTIFIER, null);
+		optionalsParameters.put(ECU_ADDRESS_EXTENSION, null); // ToDo
+		optionalsParameters.put(EXTENDED_LIMITS, null); // ToDo
+		optionalsParameters.put(FORMAT, null);
+		optionalsParameters.put(MATRIX_DIM, null);
+		optionalsParameters.put(MAX_REFRESH, null);
+		optionalsParameters.put(NUMBER, null);
+		optionalsParameters.put(PHYS_UNIT, null);
+		optionalsParameters.put(READ_ONLY, null); // Par defaut
+		optionalsParameters.put(REF_MEMORY_SEGMENT, null);
+		optionalsParameters.put(STEP_SIZE, null);
+		optionalsParameters.put(VIRTUAL_CHARACTERISTIC, null);
+	}
 
-    public String getConversion() {
-        return conversion;
-    }
+	@Override
+	public String toString() {
+		return this.name;
+	}
 
-    public CompuMethod getCompuMethod() {
-        return compuMethod;
-    }
+	public String getConversion() {
+		return conversion;
+	}
 
-    public RecordLayout getRecordLayout() {
-        return recordLayout;
-    }
+	public CompuMethod getCompuMethod() {
+		return compuMethod;
+	}
 
-    public Map<SecondaryKeywords, Object> getOptionalsParameters() {
-        return optionalsParameters;
-    }
+	public RecordLayout getRecordLayout() {
+		return recordLayout;
+	}
 
-    public List<AxisDescr> getAxisDescrs() {
-        return axisDescrs;
-    }
+	public Map<SecondaryKeywords, Object> getOptionalsParameters() {
+		return optionalsParameters;
+	}
 
-    public CharacteristicType getType() {
-        return type;
-    }
+	public List<AxisDescr> getAxisDescrs() {
+		return axisDescrs;
+	}
 
-    public final String getFormat() {
-        Object oCharactDisplayFormat = optionalsParameters.get(SecondaryKeywords.FORMAT);
-        String displayFormat;
+	public CharacteristicType getType() {
+		return type;
+	}
 
-        if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
-                || compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
-                || compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
-            if (oCharactDisplayFormat == null) {
-                displayFormat = compuMethod.getFormat() + "f";
-            } else {
-                displayFormat = oCharactDisplayFormat.toString() + "f";
-            }
-            if (displayFormat.charAt(1) == '0') {
-                displayFormat = displayFormat.replaceFirst("0", "");
-            }
-            return displayFormat;
-        }
-        return "%16.16";
-    }
+	public final String getFormat() {
+		Object oCharactDisplayFormat = optionalsParameters.get(SecondaryKeywords.FORMAT);
+		String displayFormat;
 
-    public final int getDim() {
-        Object oByte = optionalsParameters.get(SecondaryKeywords.NUMBER);
+		if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
+				|| compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
+				|| compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
+			if (oCharactDisplayFormat == null) {
+				displayFormat = compuMethod.getFormat() + "f";
+			} else {
+				displayFormat = oCharactDisplayFormat.toString() + "f";
+			}
+			if (displayFormat.charAt(1) == '0') {
+				displayFormat = displayFormat.replaceFirst("0", "");
+			}
+			return displayFormat;
+		}
+		return "%16.16";
+	}
 
-        if (oByte == null) {
-            oByte = optionalsParameters.get(SecondaryKeywords.MATRIX_DIM);
-            return (int) ((Object[]) oByte)[0];
-        }
-        return (int) oByte;
-    }
+	public final int getDim() {
+		Object oByte = optionalsParameters.get(SecondaryKeywords.NUMBER);
 
-    public final int[] getDimArray() {
-        Object numberParam = optionalsParameters.get(SecondaryKeywords.NUMBER);
-        Object matrixDimParam = optionalsParameters.get(SecondaryKeywords.MATRIX_DIM);
+		if (oByte == null) {
+			oByte = optionalsParameters.get(SecondaryKeywords.MATRIX_DIM);
+			return (int) ((Object[]) oByte)[0];
+		}
+		return (int) oByte;
+	}
 
-        if (matrixDimParam != null) {
-            Object[] arrMatrixDim = (Object[]) matrixDimParam;
+	public final int[] getDimArray() {
+		Object numberParam = optionalsParameters.get(SecondaryKeywords.NUMBER);
+		Object matrixDimParam = optionalsParameters.get(SecondaryKeywords.MATRIX_DIM);
 
-            switch (arrMatrixDim.length) {
-            case 1:
-                return new int[] { (int) arrMatrixDim[0] };
-            case 2:
-                return new int[] { (int) arrMatrixDim[0], (int) arrMatrixDim[1] };
-            case 3:
-                return new int[] { (int) arrMatrixDim[0], (int) arrMatrixDim[1], (int) arrMatrixDim[2] };
-            default:
-                return new int[] { 0 };
-            }
-        }
-        return new int[] { (int) numberParam };
-    }
+		if (matrixDimParam != null) {
+			Object[] arrMatrixDim = (Object[]) matrixDimParam;
 
-    public final boolean hasBitMask() {
-        return optionalsParameters.get(BIT_MASK) != null;
-    }
+			switch (arrMatrixDim.length) {
+			case 1:
+				return new int[] { (int) arrMatrixDim[0] };
+			case 2:
+				return new int[] { (int) arrMatrixDim[0], (int) arrMatrixDim[1] };
+			case 3:
+				return new int[] { (int) arrMatrixDim[0], (int) arrMatrixDim[1], (int) arrMatrixDim[2] };
+			default:
+				return new int[] { 0 };
+			}
+		}
+		return new int[] { (int) numberParam };
+	}
 
-    public final double applyBitMask(long value) {
-        long bitMask = (long) optionalsParameters.get(BIT_MASK);
+	public final boolean hasBitMask() {
+		return optionalsParameters.get(BIT_MASK) != null;
+	}
 
-        long maskedValue = value & bitMask;
+	public final double applyBitMask(long value) {
+		long bitMask = (long) optionalsParameters.get(BIT_MASK);
 
-        String bits = Long.toBinaryString(maskedValue);
+		long maskedValue = value & bitMask;
 
-        int idxLSB = bits.lastIndexOf("1");
+		String bits = Long.toBinaryString(maskedValue);
 
-        int shift = 0;
+		int idxLSB = bits.lastIndexOf("1");
 
-        if (idxLSB > 0) {
-            shift = bits.length() - idxLSB;
-        }
+		int shift = 0;
 
-        return maskedValue >> shift;
+		if (idxLSB > 0) {
+			shift = bits.length() - idxLSB;
+		}
 
-    }
+		return maskedValue >> shift;
 
-    public final void assignComputMethod(HashMap<String, CompuMethod> compuMethods) {
+	}
 
-        this.compuMethod = compuMethods.get(this.conversion);
-        if (axisDescrs != null) {
-            for (AxisDescr axisDescr : axisDescrs) {
-                axisDescr.setCompuMethod(compuMethods.get(axisDescr.getConversion()));
-            }
-        }
-    }
+	public final void assignComputMethod(HashMap<String, CompuMethod> compuMethods) {
 
-    public final void assignAxisPts(HashMap<String, AxisPts> axisPts) {
-        if (axisDescrs != null) {
-            for (AxisDescr axisDescr : axisDescrs) {
-                if (axisDescr.getAttribute().compareTo(Attribute.COM_AXIS) == 0) {
-                    axisDescr.setAxisPts(axisPts.get(axisDescr.getOptionalsParameters().get(SecondaryKeywords.AXIS_PTS_REF)));
-                }
-            }
-        }
-    }
+		this.compuMethod = compuMethods.get(this.conversion);
+		if (axisDescrs != null) {
+			for (AxisDescr axisDescr : axisDescrs) {
+				axisDescr.setCompuMethod(compuMethods.get(axisDescr.getConversion()));
+			}
+		}
+	}
 
-    public final void assignRecordLayout(HashMap<String, RecordLayout> recordLayouts) {
+	public final void assignAxisPts(HashMap<String, AxisPts> axisPts) {
+		if (axisDescrs != null) {
+			for (AxisDescr axisDescr : axisDescrs) {
+				if (axisDescr.getAttribute().compareTo(Attribute.COM_AXIS) == 0) {
+					axisDescr.setAxisPts(axisPts.get(axisDescr.getOptionalsParameters().get(SecondaryKeywords.AXIS_PTS_REF)));
+				}
+			}
+		}
+	}
 
-        this.recordLayout = recordLayouts.get(this.deposit);
-    }
+	public final void assignRecordLayout(HashMap<String, RecordLayout> recordLayouts) {
 
-    public String getValues() {
+		this.recordLayout = recordLayouts.get(this.deposit);
+	}
 
-        StringBuilder sb = new StringBuilder("\n");
+	public String getValues() {
 
-        for (short y = 0; y < values.getDimY(); y++) {
-            for (short x = 0; x < values.getDimX(); x++) {
-                sb.append(values.getValue(y, x) + " | ");
-            }
-            sb.append("\n");
-        }
+		StringBuilder sb = new StringBuilder("\n");
 
-        return sb.toString();
-    }
+		for (short y = 0; y < values.getDimY(); y++) {
+			for (short x = 0; x < values.getDimX(); x++) {
+				sb.append(values.getValue(y, x) + " | ");
+			}
+			sb.append("\n");
+		}
 
-    public void setValues(Values values) {
-        this.values = values;
-    }
+		return sb.toString();
+	}
 
-    public long getAdress() {
-        return Long.parseLong(adress.substring(2), 16);
-    }
+	public void setValues(Values values) {
+		this.values = values;
+	}
 
-    public enum CharacteristicType {
+	public long getAdress() {
+		return Long.parseLong(adress.substring(2), 16);
+	}
 
-        ASCII, CURVE, MAP, CUBOID, CUBE_4, CUBE_5, VAL_BLK, VALUE;
+	public enum CharacteristicType {
 
-        private static CharacteristicType getCharacteristicType(String name) {
-            switch (name) {
-            case "ASCII":
-                return ASCII;
-            case "CURVE":
-                return CURVE;
-            case "MAP":
-                return MAP;
-            case "CUBOID":
-                return CUBOID;
-            case "CUBE_4":
-                return CUBE_4;
-            case "CUBE_5":
-                return CUBE_5;
-            case "VAL_BLK":
-                return VAL_BLK;
-            case "VALUE":
-                return VALUE;
-            default:
-                return null;
-            }
-        }
+		ASCII, CURVE, MAP, CUBOID, CUBE_4, CUBE_5, VAL_BLK, VALUE;
 
-    }
+		private static CharacteristicType getCharacteristicType(String name) {
+			switch (name) {
+			case "ASCII":
+				return ASCII;
+			case "CURVE":
+				return CURVE;
+			case "MAP":
+				return MAP;
+			case "CUBOID":
+				return CUBOID;
+			case "CUBE_4":
+				return CUBE_4;
+			case "CUBE_5":
+				return CUBE_5;
+			case "VAL_BLK":
+				return VAL_BLK;
+			case "VALUE":
+				return VALUE;
+			default:
+				return null;
+			}
+		}
 
-    @Override
-    public int compareTo(Characteristic o) {
-        return this.name.compareToIgnoreCase(o.toString());
-    }
+	}
+
+	@Override
+	public int compareTo(Characteristic o) {
+		return this.name.compareToIgnoreCase(o.toString());
+	}
 
 }

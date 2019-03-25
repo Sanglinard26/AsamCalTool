@@ -17,92 +17,86 @@ import constante.SecondaryKeywords;
 
 public final class ModPar {
 
-    private String comment;
+	private String comment;
 
-    private Map<SecondaryKeywords, Object> optionalsParameters;
+	private Map<SecondaryKeywords, Object> optionalsParameters;
 
-    public ModPar(List<String> parameters) {
-    	
-    	initOptionalsParameters();
+	public ModPar(List<String> parameters) {
 
-        parameters.remove("/begin"); // Remove /begin
-        parameters.remove("MOD_PAR"); // Remove MOD_PAR
+		initOptionalsParameters();
 
-        if (parameters.size() >= 1) {
-            for (int n = 0; n < parameters.size(); n++) {
-                switch (n) {
-                case 0:
-                    this.comment = parameters.get(n);
-                    break;
-                default: // Cas de parametres optionels
-                    Set<SecondaryKeywords> keys = optionalsParameters.keySet();
-                    for (int nPar = n; nPar < parameters.size(); nPar++) {
-                        if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-                            switch (parameters.get(nPar)) {
-                            case "ADDR_EPK":
-                                optionalsParameters.put(ADDR_EPK, parameters.get(nPar + 1));
-                                break;
-                            case "ECU_CALIBRATION_OFFSET":
-                                optionalsParameters.put(ECU_CALIBRATION_OFFSET, parameters.get(nPar + 1));
-                                break;
-                            case "EPK":
-                                optionalsParameters.put(EPK, parameters.get(nPar + 1));
-                                break;
-                            default:
-                                break;
-                            }
-                        }
+		parameters.remove("/begin"); // Remove /begin
+		parameters.remove("MOD_PAR"); // Remove MOD_PAR
 
-                    }
-                    n = parameters.size();
-                    break;
-                }
-            }
+		if (parameters.size() >= 1) {
+			for (int n = 0; n < parameters.size(); n++) {
+				switch (n) {
+				case 0:
+					this.comment = parameters.get(n);
+					break;
+				default: // Cas de parametres optionels
+				Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+				for (int nPar = n; nPar < parameters.size(); nPar++) {
+					if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
+						switch (parameters.get(nPar)) {
+						case "ADDR_EPK":
+							optionalsParameters.put(ADDR_EPK, parameters.get(nPar + 1));
+							break;
+						case "ECU_CALIBRATION_OFFSET":
+							optionalsParameters.put(ECU_CALIBRATION_OFFSET, parameters.get(nPar + 1));
+							break;
+						case "EPK":
+							optionalsParameters.put(EPK, parameters.get(nPar + 1));
+							break;
+						default:
+							break;
+						}
+					}
 
-            // On vide la MAP de parametre non utilise
-            Iterator<Map.Entry<SecondaryKeywords, Object>> iter = optionalsParameters.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry<SecondaryKeywords, Object> entry = iter.next();
-                if (entry.getValue() == null) {
-                    iter.remove();
-                }
-            }
-
-        } else {
-            throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
-        }
-
-    }
-    
-    private final void initOptionalsParameters()
-	{
-		optionalsParameters = new HashMap<SecondaryKeywords, Object>() {
-
-			private static final long serialVersionUID = 1L;
-
-			{
-				put(ADDR_EPK, null);
-	            put(ECU_CALIBRATION_OFFSET, null);
-	            put(EPK, null);
+				}
+				n = parameters.size();
+				break;
+				}
 			}
-		};
+
+			// On vide la MAP de parametre non utilise
+			Iterator<Map.Entry<SecondaryKeywords, Object>> iter = optionalsParameters.entrySet().iterator();
+			while (iter.hasNext()) {
+				Map.Entry<SecondaryKeywords, Object> entry = iter.next();
+				if (entry.getValue() == null) {
+					iter.remove();
+				}
+			}
+
+		} else {
+			throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
+		}
+
 	}
 
-    public final long getEPKAdress() {
-        String addressEPK = ((String) optionalsParameters.get(ADDR_EPK));
-        if (addressEPK != null) {
-            return Long.parseLong(addressEPK.substring(2), 16);
-        }
-        return -1;
-    }
+	private final void initOptionalsParameters()
+	{
+		optionalsParameters = new HashMap<SecondaryKeywords, Object>();
+		optionalsParameters.put(ADDR_EPK, null);
+		optionalsParameters.put(ECU_CALIBRATION_OFFSET, null);
+		optionalsParameters.put(EPK, null);
+	}
 
-    public final String getEPK() {
-        return (String) optionalsParameters.get(EPK);
-    }
-    
-    public final String getComment()
-    {
-    	return this.comment;
-    }
+	public final long getEPKAdress() {
+		String addressEPK = ((String) optionalsParameters.get(ADDR_EPK));
+		if (addressEPK != null) {
+			return Long.parseLong(addressEPK.substring(2), 16);
+		}
+		return -1;
+	}
+
+	public final String getEPK() {
+		return (String) optionalsParameters.get(EPK);
+	}
+
+	public final String getComment()
+	{
+		return this.comment;
+	}
 
 }
