@@ -268,7 +268,7 @@ public final class HexDecoder {
             break;
 
         default:
-            break;
+            return;
         }
 
         adress = setAlignment(adress, fncValues.getDataType());
@@ -466,7 +466,7 @@ public final class HexDecoder {
 
                 break;
             default:
-                break;
+                return;
             }
             cnt++;
         }

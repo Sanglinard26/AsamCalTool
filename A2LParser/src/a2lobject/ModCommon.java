@@ -132,8 +132,16 @@ public final class ModCommon {
             return (int) optionalsParameters.get(ALIGNMENT_LONG);
         case SLONG:
             return (int) optionalsParameters.get(ALIGNMENT_LONG);
+        case FLOAT16_IEEE:
+            return (int) optionalsParameters.get(ALIGNMENT_FLOAT16_IEEE);
         case FLOAT32_IEEE:
             return (int) optionalsParameters.get(ALIGNMENT_FLOAT32_IEEE);
+        case FLOAT64_IEEE:
+            return (int) optionalsParameters.get(ALIGNMENT_FLOAT64_IEEE);
+        case A_UINT64:
+            return (int) optionalsParameters.get(ALIGNMENT_INT64);
+        case A_INT64:
+            return (int) optionalsParameters.get(ALIGNMENT_INT64);
         default:
             return 0;
         }
