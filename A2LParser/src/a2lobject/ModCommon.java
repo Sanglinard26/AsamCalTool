@@ -21,113 +21,134 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import constante.DataType;
 import constante.SecondaryKeywords;
 
 public final class ModCommon {
 
-	private String comment;
+    private String comment;
 
-	private Map<SecondaryKeywords, Object> optionalsParameters;
+    private Map<SecondaryKeywords, Object> optionalsParameters;
 
-	public ModCommon(List<String> parameters) {
+    public ModCommon(List<String> parameters) {
 
-		initOptionalsParameters();
+        initOptionalsParameters();
 
-		parameters.remove("/begin"); // Remove /begin
-		parameters.remove("MOD_COMMON"); // Remove MOD_COMMON
+        parameters.remove("/begin"); // Remove /begin
+        parameters.remove("MOD_COMMON"); // Remove MOD_COMMON
 
-		if (parameters.size() >= 1) {
-			for (int n = 0; n < parameters.size(); n++) {
-				switch (n) {
-				case 0:
-					this.comment = parameters.get(n);
-					break;
-				default: // Cas de parametres optionels
-					Set<SecondaryKeywords> keys = optionalsParameters.keySet();
-					for (int nPar = n; nPar < parameters.size(); nPar++) {
-						if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-							switch (parameters.get(nPar)) {
-							case "ALIGNMENT_BYTE":
-								optionalsParameters.put(ALIGNMENT_BYTE, Integer.parseInt(parameters.get(nPar + 1)));
-								break;
-							case "ALIGNMENT_FLOAT16_IEEE":
-								optionalsParameters.put(ALIGNMENT_FLOAT16_IEEE, Integer.parseInt(parameters.get(nPar + 1)));
-								break;
-							case "ALIGNMENT_FLOAT32_IEEE":
-								optionalsParameters.put(ALIGNMENT_FLOAT32_IEEE, Integer.parseInt(parameters.get(nPar + 1)));
-								break;
-							case "ALIGNMENT_FLOAT64_IEEE":
-								optionalsParameters.put(ALIGNMENT_FLOAT64_IEEE, Integer.parseInt(parameters.get(nPar + 1)));
-								break;
-							case "ALIGNMENT_INT64":
-								optionalsParameters.put(ALIGNMENT_INT64, Integer.parseInt(parameters.get(nPar + 1)));
-								break;
-							case "ALIGNMENT_LONG":
-								optionalsParameters.put(ALIGNMENT_LONG, Integer.parseInt(parameters.get(nPar + 1)));
-								break;
-							case "ALIGNMENT_WORD":
-								optionalsParameters.put(ALIGNMENT_WORD, Integer.parseInt(parameters.get(nPar + 1)));
-								break;
-							case "BYTE_ORDER":
-								optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
-								break;
-							case "DATA_SIZE":
-								optionalsParameters.put(DATA_SIZE, Integer.parseInt(parameters.get(nPar + 1)));
-								break;
-							case "DEPOSIT":
-								optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));
-								break;
-							default:
-								break;
-							}
-						}
-					}
-					n = parameters.size();
-					break;
-				}
-			}
+        if (parameters.size() >= 1) {
+            for (int n = 0; n < parameters.size(); n++) {
+                switch (n) {
+                case 0:
+                    this.comment = parameters.get(n);
+                    break;
+                default: // Cas de parametres optionels
+                    Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+                    for (int nPar = n; nPar < parameters.size(); nPar++) {
+                        if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
+                            switch (parameters.get(nPar)) {
+                            case "ALIGNMENT_BYTE":
+                                optionalsParameters.put(ALIGNMENT_BYTE, Integer.parseInt(parameters.get(nPar + 1)));
+                                break;
+                            case "ALIGNMENT_FLOAT16_IEEE":
+                                optionalsParameters.put(ALIGNMENT_FLOAT16_IEEE, Integer.parseInt(parameters.get(nPar + 1)));
+                                break;
+                            case "ALIGNMENT_FLOAT32_IEEE":
+                                optionalsParameters.put(ALIGNMENT_FLOAT32_IEEE, Integer.parseInt(parameters.get(nPar + 1)));
+                                break;
+                            case "ALIGNMENT_FLOAT64_IEEE":
+                                optionalsParameters.put(ALIGNMENT_FLOAT64_IEEE, Integer.parseInt(parameters.get(nPar + 1)));
+                                break;
+                            case "ALIGNMENT_INT64":
+                                optionalsParameters.put(ALIGNMENT_INT64, Integer.parseInt(parameters.get(nPar + 1)));
+                                break;
+                            case "ALIGNMENT_LONG":
+                                optionalsParameters.put(ALIGNMENT_LONG, Integer.parseInt(parameters.get(nPar + 1)));
+                                break;
+                            case "ALIGNMENT_WORD":
+                                optionalsParameters.put(ALIGNMENT_WORD, Integer.parseInt(parameters.get(nPar + 1)));
+                                break;
+                            case "BYTE_ORDER":
+                                optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
+                                break;
+                            case "DATA_SIZE":
+                                optionalsParameters.put(DATA_SIZE, Integer.parseInt(parameters.get(nPar + 1)));
+                                break;
+                            case "DEPOSIT":
+                                optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+                    }
+                    n = parameters.size();
+                    break;
+                }
+            }
 
-			// On vide la MAP de parametre non utilise
-			Iterator<Map.Entry<SecondaryKeywords, Object>> iter = optionalsParameters.entrySet().iterator();
-			while (iter.hasNext()) {
-				Map.Entry<SecondaryKeywords, Object> entry = iter.next();
-				if (entry.getValue() == null) {
-					iter.remove();
-				}
-			}
+            // On vide la MAP de parametre non utilise
+            Iterator<Map.Entry<SecondaryKeywords, Object>> iter = optionalsParameters.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry<SecondaryKeywords, Object> entry = iter.next();
+                if (entry.getValue() == null) {
+                    iter.remove();
+                }
+            }
 
-		} else {
-			throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
-		}
+        } else {
+            throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
+        }
 
-	}
+    }
 
-	private final void initOptionalsParameters()
-	{
-		optionalsParameters = new HashMap<SecondaryKeywords, Object>();
-		optionalsParameters.put(ALIGNMENT_BYTE, null);
-		optionalsParameters.put(ALIGNMENT_FLOAT16_IEEE, null);
-		optionalsParameters.put(ALIGNMENT_FLOAT32_IEEE, null);
-		optionalsParameters.put(ALIGNMENT_FLOAT64_IEEE, null);
-		optionalsParameters.put(ALIGNMENT_INT64, null);
-		optionalsParameters.put(ALIGNMENT_LONG, null);
-		optionalsParameters.put(ALIGNMENT_WORD, null);
-		optionalsParameters.put(BYTE_ORDER, null); // MSB_LAST ==> LITTLE_ENDIAN
-		optionalsParameters.put(DATA_SIZE, null);
-		optionalsParameters.put(DEPOSIT, null);
-	}
+    private final void initOptionalsParameters() {
+        optionalsParameters = new HashMap<SecondaryKeywords, Object>();
+        optionalsParameters.put(ALIGNMENT_BYTE, 1);
+        optionalsParameters.put(ALIGNMENT_FLOAT16_IEEE, 2);
+        optionalsParameters.put(ALIGNMENT_FLOAT32_IEEE, 4);
+        optionalsParameters.put(ALIGNMENT_FLOAT64_IEEE, 8);
+        optionalsParameters.put(ALIGNMENT_INT64, 8);
+        optionalsParameters.put(ALIGNMENT_LONG, 4);
+        optionalsParameters.put(ALIGNMENT_WORD, 2);
+        optionalsParameters.put(BYTE_ORDER, "MSB_LAST"); // If this optional parameter is not declared, MSB_LAST (Intel format) is used as a default
+        optionalsParameters.put(DATA_SIZE, null);
+        optionalsParameters.put(DEPOSIT, null);
+    }
 
-	public final ByteOrder getByteOrder() {
-		String sByteOrder = (String) optionalsParameters.get(BYTE_ORDER);
-		if ("MSB_LAST".equals(sByteOrder) || "BIG_ENDIAN".equals(sByteOrder)) {
-			return ByteOrder.LITTLE_ENDIAN;
-		}
-		return ByteOrder.BIG_ENDIAN;
-	}
+    public final int getAlignment(DataType dataType) {
 
-	public final String getComment()
-	{
-		return this.comment;
-	}
+        switch (dataType) {
+        case UBYTE:
+            return (int) optionalsParameters.get(ALIGNMENT_BYTE);
+        case SBYTE:
+            return (int) optionalsParameters.get(ALIGNMENT_BYTE);
+        case UWORD:
+            return (int) optionalsParameters.get(ALIGNMENT_WORD);
+        case SWORD:
+            return (int) optionalsParameters.get(ALIGNMENT_WORD);
+        case ULONG:
+            return (int) optionalsParameters.get(ALIGNMENT_LONG);
+        case SLONG:
+            return (int) optionalsParameters.get(ALIGNMENT_LONG);
+        case FLOAT32_IEEE:
+            return (int) optionalsParameters.get(ALIGNMENT_FLOAT32_IEEE);
+        default:
+            return 0;
+        }
+    }
+
+    public final ByteOrder getByteOrder() {
+        String sByteOrder = (String) optionalsParameters.get(BYTE_ORDER);
+        if ("MSB_LAST".equals(sByteOrder) || "BIG_ENDIAN".equals(sByteOrder)) {
+            return ByteOrder.LITTLE_ENDIAN;
+        }
+        return ByteOrder.BIG_ENDIAN;
+    }
+
+    public final String getComment() {
+        return this.comment;
+    }
 
 }
