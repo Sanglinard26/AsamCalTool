@@ -23,9 +23,7 @@ public final class A2l {
     private HashMap<String, AxisPts> axisPts;
     private List<Characteristic> characteristics;
     private HashMap<String, CompuMethod> compuMethods;
-    private HashMap<String, CompuTab> compuTabs;
-    private HashMap<String, CompuVTab> compuVTabs;
-    private HashMap<String, CompuVTabRange> compuVTabRanges;
+    private HashMap<String, ConversionTable> conversionTables;
     private List<Measurement> measurements;
     private HashMap<String, RecordLayout> recordLayouts;
     private HashMap<String, Function> functions;
@@ -44,9 +42,7 @@ public final class A2l {
         axisPts = new HashMap<String, AxisPts>();
         characteristics = new ArrayList<Characteristic>();
         compuMethods = new HashMap<String, CompuMethod>();
-        compuTabs = new HashMap<String, CompuTab>();
-        compuVTabs = new HashMap<String, CompuVTab>();
-        compuVTabRanges = new HashMap<String, CompuVTabRange>();
+        conversionTables = new HashMap<String, ConversionTable>();
         measurements = new ArrayList<Measurement>();
         recordLayouts = new HashMap<String, RecordLayout>();
         functions = new HashMap<String, Function>();
@@ -95,17 +91,17 @@ public final class A2l {
                     case "COMPU_TAB":
                         fillParameters(buf, line, objectParameters, keyword);
                         CompuTab compuTab = new CompuTab(objectParameters);
-                        compuTabs.put(compuTab.toString(), compuTab);
+                        conversionTables.put(compuTab.toString(), compuTab);
                         break;
                     case "COMPU_VTAB":
                         fillParameters(buf, line, objectParameters, keyword);
                         CompuVTab compuVTab = new CompuVTab(objectParameters);
-                        compuVTabs.put(compuVTab.toString(), compuVTab);
+                        conversionTables.put(compuVTab.toString(), compuVTab);
                         break;
                     case "COMPU_VTAB_RANGE":
                         fillParameters(buf, line, objectParameters, keyword);
                         CompuVTabRange compuVTabRange = new CompuVTabRange(objectParameters);
-                        compuVTabRanges.put(compuVTabRange.toString(), compuVTabRange);
+                        conversionTables.put(compuVTabRange.toString(), compuVTabRange);
                         break;
                     case "MEASUREMENT":
                         fillParameters(buf, line, objectParameters, keyword);
@@ -196,7 +192,8 @@ public final class A2l {
             CompuMethod compuMethod2 = compuMethods.get(compuMethod);
             Object compuTabRef = compuMethod2.getOptionalsParameters().get(SecondaryKeywords.COMPU_TAB_REF);
             if (compuTabRef != null) {
-                compuMethod2.assignCompuVTab(compuVTabs);
+
+                compuMethod2.assignConversionTable(conversionTables);
             }
         }
     }

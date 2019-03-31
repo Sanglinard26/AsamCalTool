@@ -72,7 +72,7 @@ public final class HexDecoder {
 
             long adress = characteristic.getAdress();
 
-            if (characteristic.toString().equals("Ctd_tco_min_rest_cor"))
+            if (characteristic.toString().equals("ASAM.C.SCALAR.SWORD.VTAB_RANGE_DEFAULT_VALUE"))
                 System.out.println(characteristic);
 
             switch (characteristic.getType()) {
@@ -115,6 +115,10 @@ public final class HexDecoder {
                 || compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
                 || compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
 
+            if (characteristic.hasBitMask()) {
+                hexValue = characteristic.applyBitMask((long) hexValue);
+            }
+
             physValue = compuMethod.compute(hexValue);
             values.setValue(0, 0, String.format(displayFormat, physValue).trim());
 
@@ -148,7 +152,7 @@ public final class HexDecoder {
 
         String displayFormat = characteristic.getFormat();
 
-        double physValue;
+        double physValue = 0;
         Values values = null;
 
         switch (axisDescr.getAttribute()) {
@@ -204,6 +208,8 @@ public final class HexDecoder {
             double[] hexValues = Converter.readHexValues(hex, adress, axisPtsXStdAxis.getDataType(), byteOrder, nbValue);
             adress += axisPtsXStdAxis.getDataType().getNbByte() * nbValue;
 
+            double predValue = 0;
+
             if (compuMethodStdAxis.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
                     || compuMethodStdAxis.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
                     || compuMethodStdAxis.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
@@ -212,10 +218,17 @@ public final class HexDecoder {
                     if (!depositMode.equals(DepositMode.DIFFERENCE.name())) {
                         physValue = compuMethodStdAxis.compute(hexValues[n]);
                     } else {
-                        if (n > 0) {
-                            physValue = compuMethodStdAxis.compute(hexValues[n]) + compuMethodStdAxis.compute(hexValues[n - 1]);
-                        } else {
+                        if (n == 0) {
                             physValue = compuMethodStdAxis.compute(hexValues[n]);
+                            predValue = physValue;
+                        }
+                        if (n > 0 && n < nbValue - 1) {
+                            physValue = compuMethodStdAxis.compute(hexValues[n]) + predValue;
+                            predValue = physValue;
+                        }
+                        if (n == nbValue - 1) {
+                            physValue = compuMethodStdAxis.compute(hexValues[n - 1]) + predValue;
+                            predValue = physValue;
                         }
                     }
                     if (indexOrder.compareTo(IndexOrder.INDEX_INCR) == 0) {
@@ -458,12 +471,22 @@ public final class HexDecoder {
                 if (cnt == 0) {
 
                     NoAxisPtsX noAxisPtsX = characteristic.getRecordLayout().getNoAxisPtsX();
+
+                    if (characteristic.getRecordLayout().getSrcAddrX() != null) {
+                        adressTmp += characteristic.getRecordLayout().getSrcAddrX().getDataType().getNbByte();
+                    }
+
                     adressTmp = setAlignment(adressTmp, noAxisPtsX.getDataType());
                     int nbValueX = (int) Converter.readHexValue(hex, adressTmp, noAxisPtsX.getDataType(), byteOrder);
                     adressTmp += noAxisPtsX.getDataType().getNbByte();
                     dimMap[cnt] = nbValueX;
 
                     NoAxisPtsY noAxisPtsY = characteristic.getRecordLayout().getNoAxisPtsY();
+
+                    if (characteristic.getRecordLayout().getSrcAddrY() != null) {
+                        adressTmp += characteristic.getRecordLayout().getSrcAddrY().getDataType().getNbByte();
+                    }
+
                     adressTmp = setAlignment(adressTmp, noAxisPtsY.getDataType());
                     int nbValueY = (int) Converter.readHexValue(hex, adressTmp, noAxisPtsY.getDataType(), byteOrder);
                     adressTmp += noAxisPtsY.getDataType().getNbByte();

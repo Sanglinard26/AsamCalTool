@@ -9,20 +9,20 @@ import java.util.Map;
 
 import constante.ConversionType;
 
-public final class CompuTab {
+public final class CompuTab extends ConversionTable {
 
     private String name;
     @SuppressWarnings("unused")
-	private String longIdentifier;
+    private String longIdentifier;
     @SuppressWarnings("unused")
-	private ConversionType conversionType;
+    private ConversionType conversionType;
     @SuppressWarnings("unused")
-	private int numberValuePairs;
+    private int numberValuePairs;
     private Map<Float, Float> valuePairs;
     @SuppressWarnings("unused")
-	private String defaultValue; // DEFAULT_VALUE
+    private String defaultValue; // DEFAULT_VALUE
     @SuppressWarnings("unused")
-	private float defaultValueNumeric; // DEFAULT_VALUE_NUMERIC
+    private float defaultValueNumeric; // DEFAULT_VALUE_NUMERIC
 
     public CompuTab(List<String> parameters) {
 
@@ -69,9 +69,9 @@ public final class CompuTab {
                     break;
 
                 default: // Cas de parametres optionels
-                	
-                	n = parameters.size();
-                	
+
+                    n = parameters.size();
+
                     break;
                 }
             }

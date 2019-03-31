@@ -3,20 +3,23 @@
  */
 package a2lobject;
 
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
-public final class CompuVTabRange {
+public final class CompuVTabRange extends ConversionTable {
 
     private String name;
     @SuppressWarnings("unused")
-	private String longIdentifier;
+    private String longIdentifier;
     @SuppressWarnings("unused")
-	private int numberValueTriples;
+    private int numberValueTriples;
     private Map<Range, String> valueTriples;
     @SuppressWarnings("unused")
-	private String defaultValue; // DEFAULT_VALUE
+    private String defaultValue; // DEFAULT_VALUE
 
     public CompuVTabRange(List<String> parameters) {
 
@@ -58,7 +61,7 @@ public final class CompuVTabRange {
                     break;
 
                 default: // Cas de parametres optionels
-                	n = parameters.size();
+                    n = parameters.size();
                     break;
                 }
             }
@@ -72,6 +75,20 @@ public final class CompuVTabRange {
     public String toString() {
         return this.name;
     }
+
+    public final String getStringValue(double hex) {
+        Set<Entry<Range, String>> entries = valueTriples.entrySet();
+        Iterator<Entry<Range, String>> it = entries.iterator();
+        while (it.hasNext()) {
+            Entry<Range, String> entry = it.next();
+            Range range = entry.getKey();
+            if (range.getMin() >= hex && hex < range.getMax()) {
+                return entry.getValue();
+            }
+        }
+        return defaultValue;
+
+    }
 }
 
 final class Range {
@@ -84,9 +101,12 @@ final class Range {
         this.max = max;
     }
 
-    @Override
-    public String toString() {
-        return min + "," + max;
+    public float getMin() {
+        return min;
+    }
+
+    public float getMax() {
+        return max;
     }
 
 }

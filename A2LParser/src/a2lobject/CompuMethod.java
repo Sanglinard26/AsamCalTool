@@ -116,10 +116,10 @@ public final class CompuMethod implements Comparable<CompuMethod> {
         return this.name;
     }
 
-    public final void assignCompuVTab(HashMap<String, CompuVTab> compuVTabs) {
+    public final void assignConversionTable(HashMap<String, ConversionTable> conversionTables) {
 
         String compuTabRef = (String) this.optionalsParameters.get(COMPU_TAB_REF);
-        this.optionalsParameters.put(COMPU_TAB_REF, compuVTabs.get(compuTabRef));
+        this.optionalsParameters.put(COMPU_TAB_REF, conversionTables.get(compuTabRef));
     }
 
     public final double compute(double hex) {
@@ -163,6 +163,10 @@ public final class CompuMethod implements Comparable<CompuMethod> {
                 CompuVTab compuVTab = (CompuVTab) compuTabRef;
                 Float key = new Float(hex);
                 return compuVTab.getValuePairs().get(key);
+            }
+            if (compuTabRef instanceof CompuVTabRange) {
+                CompuVTabRange compuVTabRange = (CompuVTabRange) compuTabRef;
+                return compuVTabRange.getStringValue(hex);
             }
             return "";
         default:
