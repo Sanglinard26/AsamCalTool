@@ -69,7 +69,7 @@ public final class AxisDescr {
 						if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
 							switch (parameters.get(nPar)) {
 							case "AXIS_PTS_REF":
-								optionalsParameters.put(SecondaryKeywords.AXIS_PTS_REF, parameters.get(nPar + 1));
+								optionalsParameters.put(AXIS_PTS_REF, parameters.get(nPar + 1));
 								break;
 							case "DEPOSIT":
 								optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));

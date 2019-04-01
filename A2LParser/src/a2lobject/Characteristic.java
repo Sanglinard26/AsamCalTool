@@ -5,6 +5,7 @@ package a2lobject;
 
 import static constante.SecondaryKeywords.ANNOTATION;
 import static constante.SecondaryKeywords.AXIS_DESCR;
+import static constante.SecondaryKeywords.AXIS_PTS_REF;
 import static constante.SecondaryKeywords.BIT_MASK;
 import static constante.SecondaryKeywords.BYTE_ORDER;
 import static constante.SecondaryKeywords.CALIBRATION_ACCESS;
@@ -240,7 +241,7 @@ public final class Characteristic implements Comparable<Characteristic> {
     }
 
     public final String getFormat() {
-        Object oCharactDisplayFormat = optionalsParameters.get(SecondaryKeywords.FORMAT);
+        Object oCharactDisplayFormat = optionalsParameters.get(FORMAT);
         String displayFormat;
 
         if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
@@ -260,18 +261,18 @@ public final class Characteristic implements Comparable<Characteristic> {
     }
 
     public final int getDim() {
-        Object oByte = optionalsParameters.get(SecondaryKeywords.NUMBER);
+        Object oByte = optionalsParameters.get(NUMBER);
 
         if (oByte == null) {
-            oByte = optionalsParameters.get(SecondaryKeywords.MATRIX_DIM);
+            oByte = optionalsParameters.get(MATRIX_DIM);
             return (int) ((Object[]) oByte)[0];
         }
         return (int) oByte;
     }
 
     public final int[] getDimArray() {
-        Object numberParam = optionalsParameters.get(SecondaryKeywords.NUMBER);
-        Object matrixDimParam = optionalsParameters.get(SecondaryKeywords.MATRIX_DIM);
+        Object numberParam = optionalsParameters.get(NUMBER);
+        Object matrixDimParam = optionalsParameters.get(MATRIX_DIM);
 
         if (matrixDimParam != null) {
             Object[] arrMatrixDim = (Object[]) matrixDimParam;
@@ -328,7 +329,7 @@ public final class Characteristic implements Comparable<Characteristic> {
         if (axisDescrs != null) {
             for (AxisDescr axisDescr : axisDescrs) {
                 if (axisDescr.getAttribute().compareTo(Attribute.COM_AXIS) == 0) {
-                    axisDescr.setAxisPts(axisPts.get(axisDescr.getOptionalsParameters().get(SecondaryKeywords.AXIS_PTS_REF)));
+                    axisDescr.setAxisPts(axisPts.get(axisDescr.getOptionalsParameters().get(AXIS_PTS_REF)));
                 }
             }
         }

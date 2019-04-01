@@ -11,40 +11,40 @@ import hex.IntelHex;
 
 public final class Converter {
 
-    public static final short readUBYTE(ByteBuffer bb) {
+    private static final short readUBYTE(ByteBuffer bb) {
         return (short) (bb.get() & 0xff);
     }
 
-    public static final byte readSBYTE(ByteBuffer bb) {
+    private static final byte readSBYTE(ByteBuffer bb) {
         return bb.get();
     }
 
-    public static final long readULONG(ByteBuffer bb, ByteOrder byteOrder) {
+    private static final long readULONG(ByteBuffer bb, ByteOrder byteOrder) {
         bb.order(byteOrder);
         return bb.getInt() & 0xffffffffL;
     }
 
-    public static final int readSLONG(ByteBuffer bb, ByteOrder byteOrder) {
+    private static final int readSLONG(ByteBuffer bb, ByteOrder byteOrder) {
         bb.order(byteOrder);
         return bb.getInt();
     }
 
-    public static final int readUWORD(ByteBuffer bb, ByteOrder byteOrder) {
+    private static final int readUWORD(ByteBuffer bb, ByteOrder byteOrder) {
         bb.order(byteOrder);
         return bb.getShort() & 0xffff;
     }
 
-    public static final short readSWORD(ByteBuffer bb, ByteOrder byteOrder) {
+    private static final short readSWORD(ByteBuffer bb, ByteOrder byteOrder) {
         bb.order(byteOrder);
         return bb.getShort();
     }
 
-    public static final float readFLOAT32IEEE(ByteBuffer bb, ByteOrder byteOrder) {
+    private static final float readFLOAT32IEEE(ByteBuffer bb, ByteOrder byteOrder) {
         bb.order(byteOrder);
         return bb.getFloat();
     }
 
-    public static final double readFLOAT64IEEE(ByteBuffer bb, ByteOrder byteOrder) {
+    private static final double readFLOAT64IEEE(ByteBuffer bb, ByteOrder byteOrder) {
         bb.order(byteOrder);
         return bb.getDouble();
     }

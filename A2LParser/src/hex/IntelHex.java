@@ -6,6 +6,7 @@ package hex;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,7 @@ public final class IntelHex {
     }
 
     public IntelHex(String fileName) throws FileNotFoundException, IOException {
-        this(new java.io.BufferedReader(new java.io.FileReader(fileName)));
+        this(new BufferedReader(new FileReader(fileName)));
 
     }
 

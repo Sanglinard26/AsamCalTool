@@ -18,7 +18,6 @@ public final class CompuVTabRange extends ConversionTable {
     @SuppressWarnings("unused")
     private int numberValueTriples;
     private Map<Range, String> valueTriples;
-    @SuppressWarnings("unused")
     private String defaultValue; // DEFAULT_VALUE
 
     public CompuVTabRange(List<String> parameters) {

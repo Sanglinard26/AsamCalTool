@@ -42,8 +42,8 @@ public final class Ihm extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
-    final JList<Characteristic> list;
-    final JTextPane textPane;
+    private final JList<Characteristic> list;
+    private final JTextPane textPane;
 
     private List<Characteristic> listCharac = Collections.emptyList();
     private Vector<Characteristic> listCharacFiltre = new Vector<Characteristic>();
@@ -89,7 +89,7 @@ public final class Ihm extends JFrame {
         private JButton btOpenHex;
         private JTextField txtFiltre;
 
-        final StringBuilder sb = new StringBuilder();
+        private final StringBuilder sb = new StringBuilder();
 
         public PanelBt() {
             super();

@@ -68,7 +68,7 @@ public final class HexDecoder {
 
         for (Entry<String, AxisPts> entriesAxisPts : a2l.getAxisPts().entrySet()) {
             readAxisPts(byteOrder, entriesAxisPts.getValue());
-            // System.out.println(entriesAxisPts.getValue().toString() + " : " + entriesAxisPts.getValue().getValues());
+            //System.out.println(entriesAxisPts.getValue().toString() + " : " + entriesAxisPts.getValue().getValues());
         }
 
         for (Characteristic characteristic : a2l.getCharacteristics()) {
