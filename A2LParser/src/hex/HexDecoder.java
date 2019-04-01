@@ -19,6 +19,7 @@ import a2lobject.FixAxisParDist;
 import a2lobject.FixAxisParList;
 import a2lobject.ModCommon;
 import a2lobject.ModPar;
+import a2lobject.RecordLayout;
 import a2lobject.RecordLayout.AxisPtsX;
 import a2lobject.RecordLayout.AxisPtsY;
 import a2lobject.RecordLayout.FncValues;
@@ -65,6 +66,11 @@ public final class HexDecoder {
 
         ByteOrder byteOrder = modCommon.getByteOrder();
 
+        for (Entry<String, AxisPts> entriesAxisPts : a2l.getAxisPts().entrySet()) {
+            readAxisPts(byteOrder, entriesAxisPts.getValue());
+            // System.out.println(entriesAxisPts.getValue().toString() + " : " + entriesAxisPts.getValue().getValues());
+        }
+
         for (Characteristic characteristic : a2l.getCharacteristics()) {
 
             final FncValues fncValues = characteristic.getRecordLayout().getFncValues();
@@ -98,6 +104,61 @@ public final class HexDecoder {
         }
 
         return true;
+
+    }
+
+    private final void readAxisPts(ByteOrder byteOrder, AxisPts axisPts) {
+
+        long adress = axisPts.getAdress();
+        RecordLayout recordLayout = axisPts.getRecordLayout();
+        CompuMethod compuMethod = axisPts.getCompuMethod();
+        AxisPtsX axisPtsX = recordLayout.getAxisPtsX();
+        IndexOrder indexOrder = axisPtsX.getIndexOrder();
+        NoAxisPtsX noAxisPtsX = recordLayout.getNoAxisPtsX();
+        String axisDisplayFormat = axisPts.getFormat();
+
+        double physValue = 0;
+        Values values = null;
+
+        int nbValue = axisPts.getMaxAxisPoints();
+
+        if (noAxisPtsX != null) {
+            adress = setAlignment(adress, noAxisPtsX.getDataType());
+            nbValue = (int) Converter.readHexValue(hex, adress, noAxisPtsX.getDataType(), byteOrder);
+            adress += noAxisPtsX.getDataType().getNbByte();
+        }
+
+        values = new Values(nbValue, 1);
+
+        adress = setAlignment(adress, axisPtsX.getDataType());
+        double[] hexValuesComAxis = Converter.readHexValues(hex, adress, axisPtsX.getDataType(), byteOrder, nbValue);
+
+        if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
+                || compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
+                || compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
+
+            for (int n = 0; n < nbValue; n++) {
+                physValue = compuMethod.compute(hexValuesComAxis[n]);
+                if (indexOrder.compareTo(IndexOrder.INDEX_INCR) == 0) {
+                    values.setValue(0, n, String.format(axisDisplayFormat, physValue).trim());
+                } else {
+                    values.setValue(0, (nbValue - 1) - n, String.format(axisDisplayFormat, physValue).trim());
+                }
+
+            }
+
+        } else {
+            for (int n = 0; n < nbValue; n++) {
+                if (indexOrder.compareTo(IndexOrder.INDEX_INCR) == 0) {
+                    values.setValue(0, n, compuMethod.computeString(hexValuesComAxis[n]));
+                } else {
+                    values.setValue(0, (nbValue - 1) - n, compuMethod.computeString(hexValuesComAxis[n]));
+                }
+
+            }
+        }
+
+        axisPts.setValues(values);
 
     }
 

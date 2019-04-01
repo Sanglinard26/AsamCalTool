@@ -5,7 +5,7 @@ package a2lobject;
 
 public abstract class OptionalParameterRL {
 
-    int position;
+    protected int position;
 
     public final int getPosition() {
         return position;

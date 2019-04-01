@@ -36,6 +36,10 @@ public final class A2l {
         return characteristics;
     }
 
+    public HashMap<String, AxisPts> getAxisPts() {
+        return axisPts;
+    }
+
     private final void parse(File a2lFile) {
         final String BEGIN = "/begin";
 
@@ -192,7 +196,6 @@ public final class A2l {
             CompuMethod compuMethod2 = compuMethods.get(compuMethod);
             Object compuTabRef = compuMethod2.getOptionalsParameters().get(SecondaryKeywords.COMPU_TAB_REF);
             if (compuTabRef != null) {
-
                 compuMethod2.assignConversionTable(conversionTables);
             }
         }
