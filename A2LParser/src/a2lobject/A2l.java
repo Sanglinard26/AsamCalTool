@@ -20,8 +20,7 @@ public final class A2l {
 
     private ModPar modPar;
     private ModCommon modCommon;
-    private HashMap<String, AxisPts> axisPts;
-    private List<Characteristic> characteristics;
+    private HashMap<String, AdjustableObject> adjustableObjects;
     private HashMap<String, CompuMethod> compuMethods;
     private HashMap<String, ConversionTable> conversionTables;
     private List<Measurement> measurements;
@@ -32,19 +31,18 @@ public final class A2l {
         parse(a2lFile);
     }
 
-    public List<Characteristic> getCharacteristics() {
-        return characteristics;
+    public HashMap<String, AdjustableObject> getAdjustableObjects() {
+        return adjustableObjects;
     }
 
-    public HashMap<String, AxisPts> getAxisPts() {
-        return axisPts;
+    public List<AdjustableObject> getListAdjustableObjects() {
+        return new ArrayList<>(adjustableObjects.values());
     }
 
     private final void parse(File a2lFile) {
         final String BEGIN = "/begin";
 
-        axisPts = new HashMap<String, AxisPts>();
-        characteristics = new ArrayList<Characteristic>();
+        adjustableObjects = new HashMap<String, AdjustableObject>();
         compuMethods = new HashMap<String, CompuMethod>();
         conversionTables = new HashMap<String, ConversionTable>();
         measurements = new ArrayList<Measurement>();
@@ -81,11 +79,12 @@ public final class A2l {
                     case "AXIS_PTS":
                         fillParameters(buf, line, objectParameters, keyword);
                         AxisPts axisPt = new AxisPts(objectParameters);
-                        axisPts.put(axisPt.toString(), axisPt);
+                        adjustableObjects.put(axisPt.toString(), axisPt);
                         break;
                     case "CHARACTERISTIC":
                         fillParameters(buf, line, objectParameters, keyword);
-                        characteristics.add(new Characteristic(objectParameters));
+                        Characteristic characteristic = new Characteristic(objectParameters);
+                        adjustableObjects.put(characteristic.toString(), characteristic);
                         break;
                     case "COMPU_METHOD":
                         fillParameters(buf, line, objectParameters, keyword);
@@ -181,15 +180,12 @@ public final class A2l {
 
     private final void assignLinkedObject() {
 
-        for (String axisPt : axisPts.keySet()) {
-            axisPts.get(axisPt).assignComputMethod(compuMethods);
-            axisPts.get(axisPt).assignRecordLayout(recordLayouts);
-        }
-
-        for (Characteristic characteristic : characteristics) {
-            characteristic.assignComputMethod(compuMethods);
-            characteristic.assignRecordLayout(recordLayouts);
-            characteristic.assignAxisPts(axisPts);
+        for (String adjustableObject : adjustableObjects.keySet()) {
+            adjustableObjects.get(adjustableObject).assignComputMethod(compuMethods);
+            adjustableObjects.get(adjustableObject).assignRecordLayout(recordLayouts);
+            if (adjustableObjects.get(adjustableObject) instanceof Characteristic) {
+                ((Characteristic) adjustableObjects.get(adjustableObject)).assignAxisPts(adjustableObjects);
+            }
         }
 
         for (String compuMethod : compuMethods.keySet()) {

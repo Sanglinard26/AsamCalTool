@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import a2lobject.A2l;
+import a2lobject.AdjustableObject;
 import a2lobject.AxisDescr;
 import a2lobject.AxisPts;
 import a2lobject.Characteristic;
@@ -66,41 +67,51 @@ public final class HexDecoder {
 
         ByteOrder byteOrder = modCommon.getByteOrder();
 
-        for (Entry<String, AxisPts> entriesAxisPts : a2l.getAxisPts().entrySet()) {
-            readAxisPts(byteOrder, entriesAxisPts.getValue());
-            //System.out.println(entriesAxisPts.getValue().toString() + " : " + entriesAxisPts.getValue().getValues());
+        for (Entry<String, AdjustableObject> entries : a2l.getAdjustableObjects().entrySet()) {
+            if (entries.getValue() instanceof AxisPts) {
+                readAxisPts(byteOrder, (AxisPts) entries.getValue());
+            }
+
+            // System.out.println(entriesAxisPts.getValue().toString() + " : " + entriesAxisPts.getValue().getValues());
         }
 
-        for (Characteristic characteristic : a2l.getCharacteristics()) {
+        for (Entry<String, AdjustableObject> entries : a2l.getAdjustableObjects().entrySet()) {
 
-            final FncValues fncValues = characteristic.getRecordLayout().getFncValues();
-            final CompuMethod compuMethod = characteristic.getCompuMethod();
+            if (entries.getValue() instanceof Characteristic) {
 
-            long adress = characteristic.getAdress();
+                Characteristic characteristic = (Characteristic) entries.getValue();
 
-            if (characteristic.toString().equals("ASAM.C.SCALAR.SWORD.VTAB_RANGE_DEFAULT_VALUE"))
-                System.out.println(characteristic);
+                final FncValues fncValues = characteristic.getRecordLayout().getFncValues();
+                final CompuMethod compuMethod = characteristic.getCompuMethod();
 
-            switch (characteristic.getType()) {
-            case VALUE:
-                readValue(byteOrder, characteristic, adress, compuMethod, fncValues);
-                break;
-            case ASCII:
-                readAscii(characteristic, adress);
-                break;
-            case CURVE:
-                readCurve(byteOrder, characteristic, adress, compuMethod, fncValues);
-                break;
-            case VAL_BLK:
-                readValBlk(byteOrder, characteristic, adress, compuMethod, fncValues);
-                break;
-            case MAP:
-                readMap(byteOrder, characteristic, adress, compuMethod, fncValues);
-                break;
-            default:
-                // Nothing
-                break;
+                long adress = characteristic.getAdress();
+
+                if (characteristic.toString().equals("ASAM.C.SCALAR.SWORD.VTAB_RANGE_DEFAULT_VALUE"))
+                    System.out.println(characteristic);
+
+                switch (characteristic.getType()) {
+                case VALUE:
+                    readValue(byteOrder, characteristic, adress, compuMethod, fncValues);
+                    break;
+                case ASCII:
+                    readAscii(characteristic, adress);
+                    break;
+                case CURVE:
+                    readCurve(byteOrder, characteristic, adress, compuMethod, fncValues);
+                    break;
+                case VAL_BLK:
+                    readValBlk(byteOrder, characteristic, adress, compuMethod, fncValues);
+                    break;
+                case MAP:
+                    readMap(byteOrder, characteristic, adress, compuMethod, fncValues);
+                    break;
+                default:
+                    // Nothing
+                    break;
+                }
+
             }
+
         }
 
         return true;

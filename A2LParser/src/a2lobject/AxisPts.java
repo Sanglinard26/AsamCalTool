@@ -25,33 +25,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import constante.ConversionType;
 import constante.SecondaryKeywords;
 
-public final class AxisPts {
+public final class AxisPts extends AdjustableObject {
 
-    private String name;
-    @SuppressWarnings("unused")
-    private String longIdentifier;
-    private String adress; // 4-byte unsigned integer
     @SuppressWarnings("unused")
     private String inputQuantity; // Reference to INPUT_QUANTITY
-    private String deposit; // Reference to RECORLAYOUT
-    @SuppressWarnings("unused")
-    private float maxDiff;
-    private String conversion; // Reference to COMPUTMETHOD
     private int maxAxisPoints;
-    @SuppressWarnings("unused")
-    private float lowerLimit;
-    @SuppressWarnings("unused")
-    private float upperLimit;
-
-    private Values values;
-
-    private CompuMethod compuMethod;
-    private RecordLayout recordLayout;
-
-    private Map<SecondaryKeywords, Object> optionalsParameters;
 
     public AxisPts(List<String> parameters) {
 
@@ -170,62 +150,8 @@ public final class AxisPts {
         return this.name;
     }
 
-    public String getConversion() {
-        return conversion;
-    }
-
-    public CompuMethod getCompuMethod() {
-        return compuMethod;
-    }
-
-    public RecordLayout getRecordLayout() {
-        return recordLayout;
-    }
-
-    public long getAdress() {
-        return Long.parseLong(adress.substring(2), 16);
-    }
-
     public int getMaxAxisPoints() {
         return maxAxisPoints;
-    }
-
-    public String getValues() {
-
-        StringBuilder sb = new StringBuilder("\n");
-
-        for (short y = 0; y < values.getDimY(); y++) {
-            for (short x = 0; x < values.getDimX(); x++) {
-                sb.append(values.getValue(y, x) + " | ");
-            }
-            sb.append("\n");
-        }
-
-        return sb.toString();
-    }
-
-    public void setValues(Values values) {
-        this.values = values;
-    }
-
-    public final String getFormat() {
-        Object oAxisPtsDisplayFormat = optionalsParameters.get(FORMAT);
-        String displayFormat;
-
-        if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
-                || compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
-                || compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
-            if (oAxisPtsDisplayFormat == null) {
-                displayFormat = compuMethod.getFormat() + "f";
-            } else {
-                displayFormat = oAxisPtsDisplayFormat.toString() + "f";
-            }
-            if (displayFormat.charAt(1) == '0') {
-                displayFormat = displayFormat.replaceFirst("0", "");
-            }
-            return displayFormat;
-        }
-        return "%16.16";
     }
 
     public final String getDepositMode() {
@@ -233,14 +159,14 @@ public final class AxisPts {
         return oDeposit != null ? oDeposit.toString() : "";
     }
 
+    @Override
     public final void assignComputMethod(HashMap<String, CompuMethod> compuMethods) {
-
         this.compuMethod = compuMethods.get(this.conversion);
     }
 
-    public final void assignRecordLayout(HashMap<String, RecordLayout> recordLayouts) {
-
-        this.recordLayout = recordLayouts.get(this.deposit);
+    @Override
+    public int compareTo(AdjustableObject o) {
+        return this.name.compareToIgnoreCase(o.toString());
     }
 
 }

@@ -33,33 +33,13 @@ import java.util.Map;
 import java.util.Set;
 
 import a2lobject.AxisDescr.Attribute;
-import constante.ConversionType;
 import constante.SecondaryKeywords;
 
-public final class Characteristic implements Comparable<Characteristic> {
+public final class Characteristic extends AdjustableObject {
 
-    private String name;
-    @SuppressWarnings("unused")
-    private String longIdentifier;
     private CharacteristicType type;
-    private String adress; // 4-byte unsigned integer
-    private String deposit; // Reference to RECORLAYOUT
-    @SuppressWarnings("unused")
-    private float maxDiff;
-    private String conversion; // Reference to COMPUTMETHOD
-    @SuppressWarnings("unused")
-    private float lowerLimit;
-    @SuppressWarnings("unused")
-    private float upperLimit;
-
-    private Values values;
-
-    private CompuMethod compuMethod;
-    private RecordLayout recordLayout;
 
     private List<AxisDescr> axisDescrs;
-
-    private Map<SecondaryKeywords, Object> optionalsParameters;
 
     public Characteristic(List<String> parameters) {
 
@@ -216,48 +196,12 @@ public final class Characteristic implements Comparable<Characteristic> {
         return this.name;
     }
 
-    public String getConversion() {
-        return conversion;
-    }
-
-    public CompuMethod getCompuMethod() {
-        return compuMethod;
-    }
-
-    public RecordLayout getRecordLayout() {
-        return recordLayout;
-    }
-
-    public Map<SecondaryKeywords, Object> getOptionalsParameters() {
-        return optionalsParameters;
-    }
-
     public List<AxisDescr> getAxisDescrs() {
         return axisDescrs;
     }
 
     public CharacteristicType getType() {
         return type;
-    }
-
-    public final String getFormat() {
-        Object oCharactDisplayFormat = optionalsParameters.get(FORMAT);
-        String displayFormat;
-
-        if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
-                || compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
-                || compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
-            if (oCharactDisplayFormat == null) {
-                displayFormat = compuMethod.getFormat() + "f";
-            } else {
-                displayFormat = oCharactDisplayFormat.toString() + "f";
-            }
-            if (displayFormat.charAt(1) == '0') {
-                displayFormat = displayFormat.replaceFirst("0", "");
-            }
-            return displayFormat;
-        }
-        return "%16.16";
     }
 
     public final int getDim() {
@@ -315,51 +259,14 @@ public final class Characteristic implements Comparable<Characteristic> {
         return maskedValue >> shift;
     }
 
-    public final void assignComputMethod(HashMap<String, CompuMethod> compuMethods) {
-
-        this.compuMethod = compuMethods.get(this.conversion);
-        if (axisDescrs != null) {
-            for (AxisDescr axisDescr : axisDescrs) {
-                axisDescr.setCompuMethod(compuMethods.get(axisDescr.getConversion()));
-            }
-        }
-    }
-
-    public final void assignAxisPts(HashMap<String, AxisPts> axisPts) {
+    public final void assignAxisPts(HashMap<String, AdjustableObject> adjustableObjects) {
         if (axisDescrs != null) {
             for (AxisDescr axisDescr : axisDescrs) {
                 if (axisDescr.getAttribute().compareTo(Attribute.COM_AXIS) == 0) {
-                    axisDescr.setAxisPts(axisPts.get(axisDescr.getOptionalsParameters().get(AXIS_PTS_REF)));
+                    axisDescr.setAxisPts((AxisPts) adjustableObjects.get(axisDescr.getOptionalsParameters().get(AXIS_PTS_REF)));
                 }
             }
         }
-    }
-
-    public final void assignRecordLayout(HashMap<String, RecordLayout> recordLayouts) {
-
-        this.recordLayout = recordLayouts.get(this.deposit);
-    }
-
-    public String getValues() {
-
-        StringBuilder sb = new StringBuilder("\n");
-
-        for (short y = 0; y < values.getDimY(); y++) {
-            for (short x = 0; x < values.getDimX(); x++) {
-                sb.append(values.getValue(y, x) + " | ");
-            }
-            sb.append("\n");
-        }
-
-        return sb.toString();
-    }
-
-    public void setValues(Values values) {
-        this.values = values;
-    }
-
-    public long getAdress() {
-        return Long.parseLong(adress.substring(2), 16);
     }
 
     public enum CharacteristicType {
@@ -392,7 +299,17 @@ public final class Characteristic implements Comparable<Characteristic> {
     }
 
     @Override
-    public int compareTo(Characteristic o) {
+    public final void assignComputMethod(HashMap<String, CompuMethod> compuMethods) {
+        this.compuMethod = compuMethods.get(this.conversion);
+        if (axisDescrs != null) {
+            for (AxisDescr axisDescr : axisDescrs) {
+                axisDescr.setCompuMethod(compuMethods.get(axisDescr.getConversion()));
+            }
+        }
+    }
+
+    @Override
+    public int compareTo(AdjustableObject o) {
         return this.name.compareToIgnoreCase(o.toString());
     }
 

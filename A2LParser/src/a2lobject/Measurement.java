@@ -9,22 +9,22 @@ public final class Measurement {
 
     private String name;
     @SuppressWarnings("unused")
-	private String longIdentifier;
+    private String longIdentifier;
     @SuppressWarnings("unused")
-	private String dataType;
+    private String dataType;
     @SuppressWarnings("unused")
-	private String conversion;
+    private String conversion;
     @SuppressWarnings("unused")
-	private int resolution;
+    private int resolution;
     @SuppressWarnings("unused")
-	private float accuracy;
+    private float accuracy;
     @SuppressWarnings("unused")
-	private float lowerLimit;
+    private float lowerLimit;
     @SuppressWarnings("unused")
-	private float upperLimit;
+    private float upperLimit;
 
     @SuppressWarnings("unused")
-	private CompuMethod compuMethod;
+    private CompuMethod compuMethod;
 
     public Measurement(List<String> parameters) {
 
@@ -59,7 +59,7 @@ public final class Measurement {
                     this.upperLimit = Float.parseFloat(parameters.get(n));
                     break;
                 default: // Cas de parametres optionels
-                	n = parameters.size();
+                    n = parameters.size();
                     break;
                 }
             }
@@ -73,6 +73,7 @@ public final class Measurement {
         return this.name;
     }
 
+    @SuppressWarnings("unused")
     public final void assignComputMethod(List<CompuMethod> compuMethods) {
 
     }

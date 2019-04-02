@@ -34,7 +34,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
 import a2lobject.A2l;
-import a2lobject.Characteristic;
+import a2lobject.AdjustableObject;
 import hex.HexDecoder;
 import hex.IntelHex;
 
@@ -42,11 +42,11 @@ public final class Ihm extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
-    private final JList<Characteristic> list;
+    private final JList<AdjustableObject> list;
     private final JTextPane textPane;
 
-    private List<Characteristic> listCharac = Collections.emptyList();
-    private Vector<Characteristic> listCharacFiltre = new Vector<Characteristic>();
+    private List<AdjustableObject> listCharac = Collections.emptyList();
+    private Vector<AdjustableObject> listCharacFiltre = new Vector<AdjustableObject>();
 
     private A2l a2l;
 
@@ -58,7 +58,7 @@ public final class Ihm extends JFrame {
 
         container.setLayout(new BorderLayout());
 
-        list = new JList<Characteristic>();
+        list = new JList<AdjustableObject>();
         textPane = new JTextPane();
         textPane.setPreferredSize(new Dimension(500, 500));
 
@@ -125,9 +125,9 @@ public final class Ihm extends JFrame {
 
                         sb.append("A2L parsing time : " + (System.currentTimeMillis() - start) + "ms\n");
 
-                        listCharac = a2l.getCharacteristics();
+                        listCharac = a2l.getListAdjustableObjects();
                         Collections.sort(listCharac);
-                        list.setListData(listCharac.toArray(new Characteristic[a2l.getCharacteristics().size()]));
+                        list.setListData(listCharac.toArray(new AdjustableObject[listCharac.size()]));
                     }
 
                 }
@@ -224,12 +224,12 @@ public final class Ihm extends JFrame {
 
     private final void setFilter(String filtre) {
 
-        final Set<Characteristic> tmpList = new LinkedHashSet<Characteristic>();
+        final Set<AdjustableObject> tmpList = new LinkedHashSet<AdjustableObject>();
 
         listCharacFiltre.clear();
 
         final int nbLabel = listCharac.size();
-        Characteristic charac;
+        AdjustableObject charac;
 
         for (int i = 0; i < nbLabel; i++) {
             charac = listCharac.get(i);
