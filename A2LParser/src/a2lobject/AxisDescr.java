@@ -91,6 +91,8 @@ public final class AxisDescr {
 								optionalsParameters.put(FIX_AXIS_PAR_LIST, new FixAxisParList(parameters.subList(n, nPar - 1)));
 								n = nPar + 1;
 								break;
+							default:
+								break;
 							}
 
 						}
@@ -157,7 +159,7 @@ public final class AxisDescr {
 	public final int getMaxAxisPoints() {
 		return maxAxisPoints;
 	}
-	
+
 	public final String getDepositMode()
 	{
 		Object oDeposit = optionalsParameters.get(DEPOSIT);

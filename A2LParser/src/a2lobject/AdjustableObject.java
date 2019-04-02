@@ -17,7 +17,7 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
     protected String longIdentifier;
     protected String adress;
     protected String deposit;
-    float maxDiff;
+    protected float maxDiff;
     protected String conversion;
     protected float lowerLimit;
     protected float upperLimit;
@@ -69,7 +69,7 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
         return "%16.16";
     }
 
-    public final String getValues() {
+    public final String showValues() {
 
         StringBuilder sb = new StringBuilder("\n");
 
@@ -81,6 +81,11 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
         }
 
         return sb.toString();
+    }
+    
+    public final Values getValues()
+    {
+    	return this.values;
     }
 
     public final void setValues(Values values) {

@@ -67,7 +67,7 @@ public final class Ihm extends JFrame {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if (!e.getValueIsAdjusting() && list.getSelectedValue() != null) {
-                    textPane.setText(list.getSelectedValue().getValues());
+                    textPane.setText(list.getSelectedValue().showValues());
                 }
 
             }
