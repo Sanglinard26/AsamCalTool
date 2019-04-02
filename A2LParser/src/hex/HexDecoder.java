@@ -71,8 +71,6 @@ public final class HexDecoder {
             if (entries.getValue() instanceof AxisPts) {
                 readAxisPts(byteOrder, (AxisPts) entries.getValue());
             }
-
-            // System.out.println(entriesAxisPts.getValue().toString() + " : " + entriesAxisPts.getValue().getValues());
         }
 
         for (Entry<String, AdjustableObject> entries : a2l.getAdjustableObjects().entrySet()) {
@@ -216,6 +214,53 @@ public final class HexDecoder {
             values.setValue(0, 0, ascii);
             characteristic.setValues(values);
         }
+    }
+
+    @SuppressWarnings("unused")
+    private final String[] readFixAxis(Characteristic characteristic, int numAxe) {
+
+        AxisDescr axisDescr = characteristic.getAxisDescrs().get(numAxe);
+
+        Set<Entry<SecondaryKeywords, Object>> entrySet = axisDescr.getOptionalsParameters().entrySet();
+        Iterator<Entry<SecondaryKeywords, Object>> it = entrySet.iterator();
+
+        String[] strValues = null;
+
+        while (it.hasNext()) {
+            Map.Entry<SecondaryKeywords, Object> entry = it.next();
+            if (entry.getValue() instanceof FixAxisParDist) {
+                FixAxisParDist axisDist = (FixAxisParDist) entry.getValue();
+                strValues = new String[axisDist.getNumberapo()];
+                for (int n = 0; n < axisDist.getNumberapo(); n++) {
+                    strValues[n] = axisDist.compute(n) + "";
+                }
+                break;
+            } else if (entry.getValue() instanceof FixAxisPar) {
+                FixAxisPar axisDist = (FixAxisPar) entry.getValue();
+                strValues = new String[axisDist.getNumberapo()];
+                for (int n = 0; n < axisDist.getNumberapo(); n++) {
+                    strValues[n] = axisDist.compute(n) + "";
+                }
+            } else if (entry.getValue() instanceof FixAxisParList) {
+                FixAxisParList axisDist = (FixAxisParList) entry.getValue();
+                strValues = new String[axisDist.getNbValue()];
+                for (int n = 0; n < axisDist.getNbValue(); n++) {
+                    strValues[n] = axisDist.compute(n) + "";
+                }
+            }
+        }
+
+        return strValues;
+
+    }
+
+    @SuppressWarnings("unused")
+    private final String[] readStdAxis() {
+
+        String[] strValues = null;
+
+        return strValues;
+
     }
 
     private final void readCurve(ByteOrder byteOrder, Characteristic characteristic, long adress, CompuMethod compuMethod, FncValues fncValues) {
