@@ -4,7 +4,7 @@
 package constante;
 
 public enum PrimaryKeywords {
-    AXIS_PTS, CHARACTERISTIC, COMPU_METHOD, COMPU_TAB, COMPU_VTAB, COMPU_VTAB_RANGE, MEASUREMENT, RECORD_LAYOUT;
+    AXIS_PTS, CHARACTERISTIC, COMPU_METHOD, COMPU_TAB, COMPU_VTAB, COMPU_VTAB_RANGE, MEASUREMENT, RECORD_LAYOUT, UNKNOWN;
 
     public static final PrimaryKeywords getPrimaryKeywords(String name) {
         for (PrimaryKeywords enumKeyword : PrimaryKeywords.values()) {
@@ -12,7 +12,7 @@ public enum PrimaryKeywords {
                 return enumKeyword;
             }
         }
-        return null;
+        return UNKNOWN;
     }
 
 }

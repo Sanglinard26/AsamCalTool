@@ -5,7 +5,7 @@ package constante;
 
 public enum DataSize {
 
-    BYTE(8), WORD(16), LONG(32);
+    BYTE(8), WORD(16), LONG(32), UNKNOWN(0);
 
     private int nbBits;
 
@@ -20,13 +20,13 @@ public enum DataSize {
     public static DataSize getDataSize(String type) {
         switch (type) {
         case "BYTE":
-            return DataSize.BYTE;
+            return BYTE;
         case "WORD":
-            return DataSize.WORD;
+            return WORD;
         case "LONG":
-            return DataSize.LONG;
+            return LONG;
         default:
-            return null;
+            return UNKNOWN;
         }
     }
 

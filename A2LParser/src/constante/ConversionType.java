@@ -5,26 +5,26 @@ package constante;
 
 public enum ConversionType {
 
-    IDENTICAL, FORM, LINEAR, RAT_FUNC, TAB_INTP, TAB_NOINTP, TAB_VERB;
+    IDENTICAL, FORM, LINEAR, RAT_FUNC, TAB_INTP, TAB_NOINTP, TAB_VERB, UNKNOWN;
 
     public static ConversionType getConversionType(String type) {
         switch (type) {
         case "IDENTICAL":
-            return ConversionType.IDENTICAL;
+            return IDENTICAL;
         case "FORM":
-            return ConversionType.FORM;
+            return FORM;
         case "LINEAR":
-            return ConversionType.LINEAR;
+            return LINEAR;
         case "RAT_FUNC":
-            return ConversionType.RAT_FUNC;
+            return RAT_FUNC;
         case "TAB_INTP":
-            return ConversionType.TAB_INTP;
+            return TAB_INTP;
         case "TAB_NOINTP":
-            return ConversionType.TAB_NOINTP;
+            return TAB_NOINTP;
         case "TAB_VERB":
-            return ConversionType.TAB_VERB;
+            return TAB_VERB;
         default:
-            return null;
+            return UNKNOWN;
         }
 
     }

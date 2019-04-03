@@ -5,7 +5,7 @@ package constante;
 
 public enum DataType {
 
-    UBYTE(1), SBYTE(1), UWORD(2), SWORD(2), ULONG(4), SLONG(4), FLOAT16_IEEE(2), FLOAT32_IEEE(4), FLOAT64_IEEE(8), A_UINT64(8), A_INT64(8);
+    UBYTE(1), SBYTE(1), UWORD(2), SWORD(2), ULONG(4), SLONG(4), FLOAT16_IEEE(2), FLOAT32_IEEE(4), FLOAT64_IEEE(8), A_UINT64(8), A_INT64(8), UNKNOWN(0);
 
     private int nbByte;
 
@@ -21,29 +21,29 @@ public enum DataType {
     public static DataType getDataType(String type) {
         switch (type) {
         case "UBYTE":
-            return DataType.UBYTE;
+            return UBYTE;
         case "SBYTE":
-            return DataType.SBYTE;
+            return SBYTE;
         case "UWORD":
-            return DataType.UWORD;
+            return UWORD;
         case "SWORD":
-            return DataType.SWORD;
+            return SWORD;
         case "ULONG":
-            return DataType.ULONG;
+            return ULONG;
         case "SLONG":
-            return DataType.SLONG;
+            return SLONG;
         case "FLOAT16_IEEE":
-            return DataType.FLOAT16_IEEE;
+            return FLOAT16_IEEE;
         case "FLOAT32_IEEE":
-            return DataType.FLOAT32_IEEE;
+            return FLOAT32_IEEE;
         case "FLOAT64_IEEE":
-            return DataType.FLOAT64_IEEE;
+            return FLOAT64_IEEE;
         case "A_UINT64":
-            return DataType.A_UINT64;
+            return A_UINT64;
         case "A_INT64":
-            return DataType.A_INT64;
+            return A_INT64;
         default:
-            return null;
+            return UNKNOWN;
         }
     }
 

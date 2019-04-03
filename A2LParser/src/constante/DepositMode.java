@@ -5,16 +5,16 @@ package constante;
 
 public enum DepositMode {
 
-	ABSOLUTE, DIFFERENCE;
+	ABSOLUTE, DIFFERENCE, UNKNOWN;
 
     public static DepositMode getDepositMode(String type) {
         switch (type) {
         case "ABSOLUTE":
-            return DepositMode.ABSOLUTE;
+            return ABSOLUTE;
         case "DIFFERENCE":
-            return DepositMode.DIFFERENCE;
+            return DIFFERENCE;
         default:
-            return null;
+            return UNKNOWN;
         }
 
     }

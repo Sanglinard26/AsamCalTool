@@ -5,14 +5,13 @@ package constante;
 
 public enum AdressType {
 
-    PBYTE(1), PWORD(2), PLONG(4), PLONGLONG(8), DIRECT(0);
+    PBYTE(1), PWORD(2), PLONG(4), PLONGLONG(8), DIRECT(0), UNKNOWN(-1);
 
     private int nbByte;
 
     // Constructeur
     AdressType(int nbbits) {
         this.setNbByte(nbbits);
-
     }
 
     public int getNbByte() {
@@ -26,17 +25,17 @@ public enum AdressType {
     public static AdressType getAdressType(String type) {
         switch (type) {
         case "PBYTE":
-            return AdressType.PBYTE;
+            return PBYTE;
         case "PWORD":
-            return AdressType.PWORD;
+            return PWORD;
         case "PLONG":
-            return AdressType.PLONG;
+            return PLONG;
         case "PLONGLONG":
-            return AdressType.PLONGLONG;
+            return PLONGLONG;
         case "DIRECT":
-            return AdressType.DIRECT;
+            return DIRECT;
         default:
-            return null;
+            return UNKNOWN;
         }
 
     }

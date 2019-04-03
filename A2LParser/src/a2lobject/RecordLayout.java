@@ -85,7 +85,9 @@ public final class RecordLayout {
 
                         break;
                     case "NO_RESCALE_X":
-
+                    	List<String> subList9 = parameters.subList(n + 1, n + 3);
+                        optionalsParameters.put(NO_RESCALE_X, new NoRescaleX(subList9));
+                        n += 2;
                         break;
                     case "RESERVED":
                         List<String> subList8 = parameters.subList(n + 1, n + 3);
@@ -334,6 +336,21 @@ public final class RecordLayout {
         }
 
     }
+    
+    public final class NoRescaleX extends OptionalParameterRL{
+    	
+    	private DataType dataType;
+    	
+    	public NoRescaleX(List<String> parameters) {
+    		this.position = Integer.parseInt(parameters.get(0));
+            this.dataType = DataType.getDataType(parameters.get(1));
+        }
+
+        public DataType getDataType() {
+            return dataType;
+        }
+    	
+    }
 
     public final class Reserved extends OptionalParameterRL {
 
@@ -346,6 +363,38 @@ public final class RecordLayout {
 
         public final DataSize getDataSize() {
             return dataSize;
+        }
+    }
+    
+    public final class AxisRescaleX extends OptionalParameterRL {
+
+        private DataType dataType;
+        private int maxNumberOfRescalePairs;
+        private IndexOrder indexOrder;
+        private AdressType adressType;
+
+        public AxisRescaleX(List<String> parameters) {
+            this.position = Integer.parseInt(parameters.get(0));
+            this.dataType = DataType.getDataType(parameters.get(1));
+            this.maxNumberOfRescalePairs = Integer.parseInt(parameters.get(2));
+            this.indexOrder = IndexOrder.getIndexOrder(parameters.get(3));
+            this.adressType = AdressType.getAdressType(parameters.get(4));
+        }
+
+        public final DataType getDataType() {
+            return dataType;
+        }
+        
+        public final int getMaxNumberOfRescalePairs(){
+        	return maxNumberOfRescalePairs;
+        }
+
+        public final IndexOrder getIndexOrder() {
+            return indexOrder;
+        }
+
+        public final AdressType getAdressType() {
+            return adressType;
         }
     }
 

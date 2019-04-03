@@ -5,6 +5,7 @@ package a2lobject;
 
 import static constante.SecondaryKeywords.AXIS_PTS_REF;
 import static constante.SecondaryKeywords.BYTE_ORDER;
+import static constante.SecondaryKeywords.CURVE_AXIS_REF;
 import static constante.SecondaryKeywords.DEPOSIT;
 import static constante.SecondaryKeywords.FIX_AXIS_PAR;
 import static constante.SecondaryKeywords.FIX_AXIS_PAR_DIST;
@@ -71,6 +72,9 @@ public final class AxisDescr {
 							case "AXIS_PTS_REF":
 								optionalsParameters.put(AXIS_PTS_REF, parameters.get(nPar + 1));
 								break;
+							case "CURVE_AXIS_REF":
+								optionalsParameters.put(CURVE_AXIS_REF, parameters.get(nPar + 1));
+								break;
 							case "DEPOSIT":
 								optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));
 								break;
@@ -121,6 +125,7 @@ public final class AxisDescr {
 	{
 		optionalsParameters = new HashMap<SecondaryKeywords, Object>();
 		optionalsParameters.put(AXIS_PTS_REF, null);
+		optionalsParameters.put(CURVE_AXIS_REF, null);
 		optionalsParameters.put(DEPOSIT, null);
 		optionalsParameters.put(BYTE_ORDER, null);
 		optionalsParameters.put(FIX_AXIS_PAR, null);
@@ -171,7 +176,7 @@ public final class AxisDescr {
 	}
 
 	public enum Attribute {
-		CURVE_AXIS, COM_AXIS, FIX_AXIS, RES_AXIS, STD_AXIS;
+		CURVE_AXIS, COM_AXIS, FIX_AXIS, RES_AXIS, STD_AXIS, UNKNOWN;
 
 		public static Attribute getAttribute(String name) {
 			switch (name) {
@@ -186,7 +191,7 @@ public final class AxisDescr {
 			case "STD_AXIS":
 				return STD_AXIS;
 			default:
-				return null;
+				return UNKNOWN;
 			}
 		}
 	}

@@ -5,16 +5,16 @@ package constante;
 
 public enum IndexOrder {
 
-    INDEX_INCR, INDEX_DECR;
+    INDEX_INCR, INDEX_DECR, UNKNOWN;
 
     public static IndexOrder getIndexOrder(String type) {
         switch (type) {
         case "INDEX_INCR":
-            return IndexOrder.INDEX_INCR;
+            return INDEX_INCR;
         case "INDEX_DECR":
-            return IndexOrder.INDEX_DECR;
+            return INDEX_DECR;
         default:
-            return null;
+            return UNKNOWN;
         }
 
     }
