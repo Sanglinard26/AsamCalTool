@@ -12,9 +12,12 @@ import static constante.SecondaryKeywords.ALIGNMENT_LONG;
 import static constante.SecondaryKeywords.ALIGNMENT_WORD;
 import static constante.SecondaryKeywords.AXIS_PTS_X;
 import static constante.SecondaryKeywords.AXIS_PTS_Y;
+import static constante.SecondaryKeywords.AXIS_RESCALE_X;
 import static constante.SecondaryKeywords.FNC_VALUES;
 import static constante.SecondaryKeywords.NO_AXIS_PTS_X;
 import static constante.SecondaryKeywords.NO_AXIS_PTS_Y;
+import static constante.SecondaryKeywords.NO_RESCALE_X;
+import static constante.SecondaryKeywords.RESERVED;
 import static constante.SecondaryKeywords.SRC_ADDR_X;
 import static constante.SecondaryKeywords.SRC_ADDR_Y;
 import static constante.SecondaryKeywords.STATIC_RECORD_LAYOUT;
@@ -26,6 +29,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import constante.AdressType;
+import constante.DataSize;
 import constante.DataType;
 import constante.IndexMode;
 import constante.IndexOrder;
@@ -77,6 +81,17 @@ public final class RecordLayout {
                         optionalsParameters.put(NO_AXIS_PTS_Y, new NoAxisPtsY(subList5));
                         n += 2;
                         break;
+                    case "AXIS_RESCALE_X":
+
+                        break;
+                    case "NO_RESCALE_X":
+
+                        break;
+                    case "RESERVED":
+                        List<String> subList8 = parameters.subList(n + 1, n + 3);
+                        optionalsParameters.put(RESERVED, new Reserved(subList8));
+                        n += 2;
+                        break;
                     case "SRC_ADDR_X":
                         List<String> subList6 = parameters.subList(n + 1, n + 3);
                         optionalsParameters.put(SRC_ADDR_X, new SrcAddrX(subList6));
@@ -120,9 +135,12 @@ public final class RecordLayout {
         optionalsParameters.put(ALIGNMENT_WORD, null);
         optionalsParameters.put(AXIS_PTS_X, null);
         optionalsParameters.put(AXIS_PTS_Y, null);
+        optionalsParameters.put(AXIS_RESCALE_X, null);
         optionalsParameters.put(FNC_VALUES, null);
         optionalsParameters.put(NO_AXIS_PTS_X, null);
         optionalsParameters.put(NO_AXIS_PTS_Y, null);
+        optionalsParameters.put(NO_RESCALE_X, null);
+        optionalsParameters.put(RESERVED, null);
         optionalsParameters.put(SRC_ADDR_X, null);
         optionalsParameters.put(SRC_ADDR_Y, null);
         optionalsParameters.put(STATIC_RECORD_LAYOUT, null);
@@ -315,6 +333,20 @@ public final class RecordLayout {
             return dataType;
         }
 
+    }
+
+    public final class Reserved extends OptionalParameterRL {
+
+        private DataSize dataSize;
+
+        public Reserved(List<String> parameters) {
+            this.position = Integer.parseInt(parameters.get(0));
+            this.dataSize = DataSize.getDataSize(parameters.get(1));
+        }
+
+        public final DataSize getDataSize() {
+            return dataSize;
+        }
     }
 
 }

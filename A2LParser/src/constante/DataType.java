@@ -45,7 +45,6 @@ public enum DataType {
         default:
             return null;
         }
-
     }
 
 }
