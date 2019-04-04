@@ -38,92 +38,84 @@ public final class Function {
 		parameters.remove("FUNCTION"); // Remove FUNCTION
 
 		if (parameters.size() >= 2) {
-			for (int n = 0; n < parameters.size(); n++) {
-				switch (n) {
-				case 0:
-					this.name = parameters.get(n);
-					break;
-				case 1:
-					this.longIdentifier = parameters.get(n);
-					break;
-				default: // Cas de parametres optionels
 
-				Set<SecondaryKeywords> keys = optionalsParameters.keySet();
-				for (int nPar = n; nPar < parameters.size(); nPar++) {
-					if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-						switch (parameters.get(nPar)) {
-						case "DEF_CHARACTERISTIC":
-							if (defCharacteristic == null) {
-								defCharacteristic = new HashSet<String>();
-								optionalsParameters.put(DEF_CHARACTERISTIC, defCharacteristic);
-							}
-							nPar++;
-							do {
-								defCharacteristic.add(parameters.get(nPar));
-								nPar++;
-							} while (nPar < parameters.size()-1 && !parameters.get(nPar).equals("/end"));
-							nPar++;
-							break;
-						case "FUNCTION_VERSION":
-							optionalsParameters.put(FUNCTION_VERSION, parameters.get(++nPar));
-							nPar++;
-							break;
-						case "IN_MEASUREMENT":
-							if (inMeasurement == null) {
-								inMeasurement = new HashSet<String>();
-								optionalsParameters.put(IN_MEASUREMENT, inMeasurement);
-							}
-							nPar++;
-							do {
-								inMeasurement.add(parameters.get(nPar));
-								nPar++;
-							} while (nPar < parameters.size()-1 && !parameters.get(nPar).equals("/end"));
-							nPar++;
-							break;
-						case "LOC_MEASUREMENT":
-							if (locMeasurement == null) {
-								locMeasurement = new HashSet<String>();
-								optionalsParameters.put(LOC_MEASUREMENT, locMeasurement);
-							}
-							nPar++;
-							do {
-								locMeasurement.add(parameters.get(nPar));
-								nPar++;
-							} while (nPar < parameters.size()-1 && !parameters.get(nPar).equals("/end"));
-							nPar++;
-							break;
-						case "OUT_MEASUREMENT":
-							if (outMeasurement == null) {
-								outMeasurement = new HashSet<String>();
-								optionalsParameters.put(OUT_MEASUREMENT, outMeasurement);
-							}
-							nPar++;
-							do {
-								outMeasurement.add(parameters.get(nPar));
-								nPar++;
-							} while (nPar < parameters.size()-1 && !parameters.get(nPar).equals("/end"));
-							nPar++;
-							break;
-						case "SUB_FUNCTION":
-							if (subFunction == null) {
-								subFunction = new HashSet<String>();
-								optionalsParameters.put(SUB_FUNCTION, subFunction);
-							}
-							nPar++;
-							do {
-								subFunction.add(parameters.get(nPar));
-								nPar++;
-							} while (nPar < parameters.size()-1 && !parameters.get(nPar).equals("/end"));
-							nPar++;
-							break;
+			this.name = parameters.get(0);
+			this.longIdentifier = parameters.get(1);
 
-						default:
-							break;
+			int n = 2;
+
+			Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+			for (int nPar = n; nPar < parameters.size(); nPar++) {
+				if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
+					switch (parameters.get(nPar)) {
+					case "DEF_CHARACTERISTIC":
+						if (defCharacteristic == null) {
+							defCharacteristic = new HashSet<String>();
+							optionalsParameters.put(DEF_CHARACTERISTIC, defCharacteristic);
 						}
+						nPar++;
+						do {
+							defCharacteristic.add(parameters.get(nPar));
+							nPar++;
+						} while (nPar < parameters.size()-1 && !parameters.get(nPar).equals("/end"));
+						nPar++;
+						break;
+					case "FUNCTION_VERSION":
+						optionalsParameters.put(FUNCTION_VERSION, parameters.get(++nPar));
+						nPar++;
+						break;
+					case "IN_MEASUREMENT":
+						if (inMeasurement == null) {
+							inMeasurement = new HashSet<String>();
+							optionalsParameters.put(IN_MEASUREMENT, inMeasurement);
+						}
+						nPar++;
+						do {
+							inMeasurement.add(parameters.get(nPar));
+							nPar++;
+						} while (nPar < parameters.size()-1 && !parameters.get(nPar).equals("/end"));
+						nPar++;
+						break;
+					case "LOC_MEASUREMENT":
+						if (locMeasurement == null) {
+							locMeasurement = new HashSet<String>();
+							optionalsParameters.put(LOC_MEASUREMENT, locMeasurement);
+						}
+						nPar++;
+						do {
+							locMeasurement.add(parameters.get(nPar));
+							nPar++;
+						} while (nPar < parameters.size()-1 && !parameters.get(nPar).equals("/end"));
+						nPar++;
+						break;
+					case "OUT_MEASUREMENT":
+						if (outMeasurement == null) {
+							outMeasurement = new HashSet<String>();
+							optionalsParameters.put(OUT_MEASUREMENT, outMeasurement);
+						}
+						nPar++;
+						do {
+							outMeasurement.add(parameters.get(nPar));
+							nPar++;
+						} while (nPar < parameters.size()-1 && !parameters.get(nPar).equals("/end"));
+						nPar++;
+						break;
+					case "SUB_FUNCTION":
+						if (subFunction == null) {
+							subFunction = new HashSet<String>();
+							optionalsParameters.put(SUB_FUNCTION, subFunction);
+						}
+						nPar++;
+						do {
+							subFunction.add(parameters.get(nPar));
+							nPar++;
+						} while (nPar < parameters.size()-1 && !parameters.get(nPar).equals("/end"));
+						nPar++;
+						break;
+
+					default:
+						break;
 					}
-				}
-				n = parameters.size();
-				break;
 				}
 			}
 
@@ -139,7 +131,6 @@ public final class Function {
 		} else {
 			throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
 		}
-
 	}
 
 	private final void initOptionalsParameters()

@@ -46,8 +46,6 @@ public final class HexDecoder {
 
     private static long tmpAdress = 0;
 
-    List<AdjustableObject> tmpAdjustableObject;
-
     public HexDecoder(A2l a2l, IntelHex hex) {
         this.a2l = a2l;
         this.hex = hex;
@@ -73,8 +71,6 @@ public final class HexDecoder {
     public final boolean readDataFromHex() {
 
         ByteOrder byteOrder = modCommon.getByteOrder();
-
-        tmpAdjustableObject = new ArrayList<AdjustableObject>();
 
         for (Entry<String, AdjustableObject> entries : a2l.getAdjustableObjects().entrySet()) {
             if (entries.getValue() instanceof AxisPts) {
@@ -380,10 +376,19 @@ public final class HexDecoder {
         return strValues;
     }
 
-    @SuppressWarnings("unused")
-    private final String[] readCurveAxis(Characteristic characteristic, long adress, ByteOrder byteOrder) {
+    private final String[] readCurveAxis(Characteristic characteristic) {
 
-        return null;
+    	String[] strValues = null;
+    	
+    	Values curveValues = characteristic.getValues();
+    	strValues = new String[curveValues.getDimX()];
+    	
+    	for(int n = 0; n < strValues.length; n++)
+    	{
+    		strValues[n] = curveValues.getValue(0, n);
+    	}
+    	
+        return strValues;
     }
 
     private final void readCurve(ByteOrder byteOrder, Characteristic characteristic, long adress, CompuMethod compuMethod, FncValues fncValues) {
@@ -429,12 +434,20 @@ public final class HexDecoder {
             break;
         case CURVE_AXIS:
 
-            AdjustableObject axisPts = characteristic.getAxisDescrs().get(0).getCurveAxis();
+        	Characteristic curve = (Characteristic) characteristic.getAxisDescrs().get(0).getCurveAxis();
 
-            readCurveAxis(characteristic, adress, byteOrder);
-            nbValue = 0;
-            values = new Values(1, 1);
-            values.setValue(0, 0, "Non support� pour le moment");
+            if(curve.getValues() == null)
+            {
+            	readCurve(byteOrder, curve, curve.getAdress(), curve.getCompuMethod(), curve.getRecordLayout().getFncValues());
+            }
+            
+            String[] curveAxisValue = readCurveAxis(curve);
+            nbValue = curveAxisValue.length;
+
+            values = new Values(nbValue, 2);
+            for (int i = 0; i < nbValue; i++) {
+                values.setValue(0, i, curveAxisValue[i]);
+            }
             break;
 
         default:

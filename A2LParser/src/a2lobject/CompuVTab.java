@@ -11,75 +11,58 @@ import constante.ConversionType;
 
 public final class CompuVTab extends ConversionTable {
 
-    private String name;
-    @SuppressWarnings("unused")
-    private String longIdentifier;
-    @SuppressWarnings("unused")
-    private ConversionType conversionType;
-    @SuppressWarnings("unused")
-    private int numberValuePairs;
-    private Map<Float, String> valuePairs;
-    @SuppressWarnings("unused")
-    private String defaultValue; // DEFAULT_VALUE
+	private String name;
+	@SuppressWarnings("unused")
+	private String longIdentifier;
+	@SuppressWarnings("unused")
+	private ConversionType conversionType;
+	@SuppressWarnings("unused")
+	private int numberValuePairs;
+	private Map<Float, String> valuePairs;
+	@SuppressWarnings("unused")
+	private String defaultValue; // DEFAULT_VALUE
 
-    public CompuVTab(List<String> parameters) {
+	public CompuVTab(List<String> parameters) {
 
-        parameters.remove("/begin"); // Remove /begin
-        parameters.remove("COMPU_VTAB"); // Remove COMPU_VTAB
+		parameters.remove("/begin"); // Remove /begin
+		parameters.remove("COMPU_VTAB"); // Remove COMPU_VTAB
 
-        if (parameters.size() == 1 || parameters.size() >= 5) {
-            for (int n = 0; n < parameters.size(); n++) {
-                switch (n) {
-                case 0:
-                    this.name = parameters.get(n);
-                    break;
-                case 1:
-                    this.longIdentifier = parameters.get(n);
-                    break;
-                case 2:
-                    this.conversionType = ConversionType.getConversionType(parameters.get(n));
-                    break;
-                case 3:
-                    this.numberValuePairs = Integer.parseInt(parameters.get(n));
-                    break;
-                case 4:
-                    this.valuePairs = new LinkedHashMap<Float, String>();
+		if (parameters.size() == 1 || parameters.size() >= 5) {
 
-                    int lastIdx = parameters.indexOf("DEFAULT_VALUE");
+			this.name = parameters.get(0);
+			this.longIdentifier = parameters.get(1);
+			this.conversionType = ConversionType.getConversionType(parameters.get(2));
+			this.numberValuePairs = Integer.parseInt(parameters.get(3));
 
-                    final List<String> listValuePairs;
+			this.valuePairs = new LinkedHashMap<Float, String>();
 
-                    if (lastIdx > -1) {
-                        listValuePairs = parameters.subList(n, lastIdx);
-                    } else {
-                        listValuePairs = parameters.subList(n, parameters.size());
-                    }
+			int lastIdx = parameters.indexOf("DEFAULT_VALUE");
 
-                    for (int i = 0; i < listValuePairs.size(); i++) {
-                        if (i % 2 == 0) {
-                            valuePairs.put(Float.parseFloat(listValuePairs.get(i)), listValuePairs.get(i + 1));
-                        }
-                    }
+			final List<String> listValuePairs;
 
-                    break;
+			if (lastIdx > -1) {
+				listValuePairs = parameters.subList(4, lastIdx);
+			} else {
+				listValuePairs = parameters.subList(4, parameters.size());
+			}
 
-                default: // Cas de parametres optionels
-                    n = parameters.size();
-                    break;
-                }
-            }
-        } else {
-            throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
-        }
+			for (int i = 0; i < listValuePairs.size(); i++) {
+				if (i % 2 == 0) {
+					valuePairs.put(Float.parseFloat(listValuePairs.get(i)), listValuePairs.get(i + 1));
+				}
+			}
+		} else {
+			throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
+		}
 
-    }
+	}
 
-    @Override
-    public String toString() {
-        return this.name;
-    }
+	@Override
+	public String toString() {
+		return this.name;
+	}
 
-    public final Map<Float, String> getValuePairs() {
-        return valuePairs;
-    }
+	public final Map<Float, String> getValuePairs() {
+		return valuePairs;
+	}
 }

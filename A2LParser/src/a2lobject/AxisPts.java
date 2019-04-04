@@ -41,73 +41,48 @@ public final class AxisPts extends AdjustableObject {
 		parameters.remove(0); // Remove AXIS_PTS
 
 		if (parameters.size() == 1 || parameters.size() >= 9) {
-			for (int n = 0; n < parameters.size(); n++) {
-				switch (n) {
-				case 0:
-					this.name = parameters.get(n);
-					break;
-				case 1:
-					this.longIdentifier = parameters.get(n);
-					break;
-				case 2:
-					this.adress = parameters.get(n);
-					break;
-				case 3:
-					this.inputQuantity = parameters.get(n);
-					break;
-				case 4:
-					this.deposit = parameters.get(n);
-					break;
-				case 5:
-					this.maxDiff = Float.parseFloat(parameters.get(n));
-					break;
-				case 6:
-					this.conversion = parameters.get(n);
-					break;
-				case 7:
-					this.maxAxisPoints = Integer.parseInt(parameters.get(n));
-					break;
-				case 8:
-					this.lowerLimit = Float.parseFloat(parameters.get(n));
-					break;
-				case 9:
-					this.upperLimit = Float.parseFloat(parameters.get(n));
-					break;
 
-				default: // Cas de parametres optionels
+			this.name = parameters.get(0);
+			this.longIdentifier = parameters.get(1);
+			this.adress = parameters.get(2);
+			this.inputQuantity = parameters.get(3);
+			this.deposit = parameters.get(4);
+			this.maxDiff = Float.parseFloat(parameters.get(5));
+			this.conversion = parameters.get(6);
+			this.maxAxisPoints = Integer.parseInt(parameters.get(7));
+			this.lowerLimit = Float.parseFloat(parameters.get(8));
+			this.upperLimit = Float.parseFloat(parameters.get(9));
 
-				Set<SecondaryKeywords> keys = optionalsParameters.keySet();
-				for (int nPar = n; nPar < parameters.size(); nPar++) {
-					if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-						switch (parameters.get(nPar)) {
-						case "ANNOTATION":
-							n = nPar + 1;
-							do {
-							} while (!parameters.get(++nPar).equals("ANNOTATION"));
-							optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3)));
-							n = nPar + 1;
-							break;
-						case "DEPOSIT":
-							optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));
-							break;
-						case "DISPLAY_IDENTIFIER":
-							optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1));
-							break;
-						case "FORMAT":
-							optionalsParameters.put(FORMAT, new Format(parameters.get(nPar + 1).toString()));
-							break;
-						case "PHYS_UNIT":
-							break;
-						case "READ_ONLY":
-							optionalsParameters.put(READ_ONLY, true);
-							break;
-						default:
-							break;
-						}
+			int n = 10;
+
+			Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+			for (int nPar = n; nPar < parameters.size(); nPar++) {
+				if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
+					switch (parameters.get(nPar)) {
+					case "ANNOTATION":
+						n = nPar + 1;
+						do {
+						} while (!parameters.get(++nPar).equals("ANNOTATION"));
+						optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3)));
+						n = nPar + 1;
+						break;
+					case "DEPOSIT":
+						optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));
+						break;
+					case "DISPLAY_IDENTIFIER":
+						optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1));
+						break;
+					case "FORMAT":
+						optionalsParameters.put(FORMAT, new Format(parameters.get(nPar + 1).toString()));
+						break;
+					case "PHYS_UNIT":
+						break;
+					case "READ_ONLY":
+						optionalsParameters.put(READ_ONLY, true);
+						break;
+					default:
+						break;
 					}
-				}
-				n = parameters.size();
-				break;
 				}
 			}
 

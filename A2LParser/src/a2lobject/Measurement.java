@@ -73,8 +73,4 @@ public final class Measurement {
         return this.name;
     }
 
-    @SuppressWarnings("unused")
-    public final void assignComputMethod(List<CompuMethod> compuMethods) {
-
-    }
 }

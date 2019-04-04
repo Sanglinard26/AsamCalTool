@@ -13,7 +13,7 @@ public final class FixAxisParList {
 
         axisPtsValue = new float[parameters.size()];
 
-        for (int n = 0; n < parameters.size(); n++) {
+        for (int n = 0; n < axisPtsValue.length; n++) {
             axisPtsValue[n] = Float.parseFloat(parameters.get(n));
         }
     }
