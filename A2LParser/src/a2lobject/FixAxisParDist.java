@@ -7,28 +7,16 @@ import java.util.List;
 
 public final class FixAxisParDist {
 
-    private float offset;
-    private float distance;
-    private int numberapo;
+    private final float offset;
+    private final float distance;
+    private final int numberapo;
 
     public FixAxisParDist(List<String> parameters) {
 
-        for (int n = 0; n < parameters.size(); n++) {
-            switch (n) {
-            case 0:
-                this.offset = Float.parseFloat(parameters.get(n));
-                break;
-            case 1:
-                this.distance = Float.parseFloat(parameters.get(n));
-                break;
-            case 2:
-                this.numberapo = Integer.parseInt(parameters.get(n));
-                break;
+        this.offset = Float.parseFloat(parameters.get(0));
+        this.distance = Float.parseFloat(parameters.get(1));
+        this.numberapo = Integer.parseInt(parameters.get(2));
 
-            default:
-                break;
-            }
-        }
     }
 
     public final double compute(int numVal) {

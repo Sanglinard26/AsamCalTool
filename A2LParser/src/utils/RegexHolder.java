@@ -12,7 +12,7 @@ public final class RegexHolder {
     public static final Pattern DOUBLE_QUOTE = Pattern.compile("\".*\"");
     public static final Pattern MULTI_SPACE = Pattern.compile("\\s+");
 
-    public static boolean isString(String line) {
+    public static final boolean isString(String line) {
         return DOUBLE_QUOTE.matcher(line).matches();
     }
 

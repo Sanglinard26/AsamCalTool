@@ -5,7 +5,7 @@ package a2lobject;
 
 public final class Format {
 
-    private String txtFormat;
+    private final String txtFormat;
     private int overallLength;
     private int decimalesPlace;
 

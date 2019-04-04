@@ -7,7 +7,7 @@ import java.util.List;
 
 public final class FixAxisParList {
 
-    private float[] axisPtsValue;
+    private final float[] axisPtsValue;
 
     public FixAxisParList(List<String> parameters) {
 

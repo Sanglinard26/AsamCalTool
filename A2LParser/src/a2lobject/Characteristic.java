@@ -10,6 +10,7 @@ import static constante.SecondaryKeywords.BIT_MASK;
 import static constante.SecondaryKeywords.BYTE_ORDER;
 import static constante.SecondaryKeywords.CALIBRATION_ACCESS;
 import static constante.SecondaryKeywords.COMPARISON_QUANTITY;
+import static constante.SecondaryKeywords.CURVE_AXIS_REF;
 import static constante.SecondaryKeywords.DEPENDENT_CHARACTERISTIC;
 import static constante.SecondaryKeywords.DISCRETE;
 import static constante.SecondaryKeywords.DISPLAY_IDENTIFIER;
@@ -263,7 +264,10 @@ public final class Characteristic extends AdjustableObject {
         if (axisDescrs != null) {
             for (AxisDescr axisDescr : axisDescrs) {
                 if (axisDescr.getAttribute().compareTo(Attribute.COM_AXIS) == 0) {
-                    axisDescr.setAxisPts((AxisPts) adjustableObjects.get(axisDescr.getOptionalsParameters().get(AXIS_PTS_REF)));
+                    axisDescr.setAxisPts(adjustableObjects.get(axisDescr.getOptionalsParameters().get(AXIS_PTS_REF)));
+                }
+                if (axisDescr.getAttribute().compareTo(Attribute.CURVE_AXIS) == 0) {
+                    axisDescr.setCurveAxis(adjustableObjects.get(axisDescr.getOptionalsParameters().get(CURVE_AXIS_REF)));
                 }
             }
         }

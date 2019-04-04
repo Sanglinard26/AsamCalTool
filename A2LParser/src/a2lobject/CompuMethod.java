@@ -168,9 +168,9 @@ public final class CompuMethod implements Comparable<CompuMethod> {
                 CompuVTabRange compuVTabRange = (CompuVTabRange) compuTabRef;
                 return compuVTabRange.getStringValue(hex);
             }
-            return "";
+            return "NaN";
         default:
-            return "";
+            return "NaN";
         }
     }
 
@@ -178,8 +178,8 @@ public final class CompuMethod implements Comparable<CompuMethod> {
         return conversionType;
     }
 
-    public final Map<SecondaryKeywords, Object> getOptionalsParameters() {
-        return optionalsParameters;
+    public final boolean hasCompuTabRef() {
+        return optionalsParameters.get(COMPU_TAB_REF) != null ? true : false;
     }
 
     public final static CompuMethod createEmptyCompuMethod(String name) {
@@ -206,7 +206,7 @@ public final class CompuMethod implements Comparable<CompuMethod> {
 
         // INT = f(PHYS), f(x) = (axx + bx + c) / (dxx + ex + f)
 
-        private float[] coeffs;
+        private final float[] coeffs;
 
         public Coeffs(List<String> params) {
             this.coeffs = new float[6];
@@ -224,7 +224,7 @@ public final class CompuMethod implements Comparable<CompuMethod> {
 
         // PHYS = f(INT), f(x) = ax + b
 
-        private float[] coeffs;
+        private final float[] coeffs;
 
         public CoeffsLinear(List<String> params) {
             this.coeffs = new float[2];

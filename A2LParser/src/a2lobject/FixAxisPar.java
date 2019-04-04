@@ -7,43 +7,31 @@ import java.util.List;
 
 public final class FixAxisPar {
 
-    private float offset;
-    private float shift;
-    private int numberapo;
+    private final float offset;
+    private final float shift;
+    private final int numberapo;
 
     public FixAxisPar(List<String> parameters) {
 
-        for (int n = 0; n < parameters.size(); n++) {
-            switch (n) {
-            case 0:
-                this.offset = Float.parseFloat(parameters.get(n));
-                break;
-            case 1:
-                this.shift = Float.parseFloat(parameters.get(n));
-                break;
-            case 2:
-                this.numberapo = Integer.parseInt(parameters.get(n));
-                break;
+        this.offset = Float.parseFloat(parameters.get(0));
+        this.shift = Float.parseFloat(parameters.get(1));
+        this.numberapo = Integer.parseInt(parameters.get(2));
 
-            default:
-                break;
-            }
-        }
     }
 
     public final double compute(int numVal) {
         return offset + (numVal << (int) shift);
     }
 
-    public float getOffset() {
+    public final float getOffset() {
         return offset;
     }
 
-    public float getShift() {
+    public final float getShift() {
         return shift;
     }
 
-    public int getNumberapo() {
+    public final int getNumberapo() {
         return numberapo;
     }
 }

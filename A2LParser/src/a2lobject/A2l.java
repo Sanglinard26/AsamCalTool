@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import constante.SecondaryKeywords;
 import utils.RegexHolder;
 
 public final class A2l {
@@ -188,11 +187,10 @@ public final class A2l {
             }
         }
 
-        for (String compuMethod : compuMethods.keySet()) {
-            CompuMethod compuMethod2 = compuMethods.get(compuMethod);
-            Object compuTabRef = compuMethod2.getOptionalsParameters().get(SecondaryKeywords.COMPU_TAB_REF);
-            if (compuTabRef != null) {
-                compuMethod2.assignConversionTable(conversionTables);
+        for (String key : compuMethods.keySet()) {
+            CompuMethod compuMethod = compuMethods.get(key);
+            if (compuMethod.hasCompuTabRef()) {
+                compuMethod.assignConversionTable(conversionTables);
             }
         }
     }
