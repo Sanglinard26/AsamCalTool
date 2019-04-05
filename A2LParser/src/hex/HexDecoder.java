@@ -26,9 +26,12 @@ import a2lobject.ModPar;
 import a2lobject.RecordLayout;
 import a2lobject.RecordLayout.AxisPtsX;
 import a2lobject.RecordLayout.AxisPtsY;
+import a2lobject.RecordLayout.AxisRescaleX;
 import a2lobject.RecordLayout.FncValues;
 import a2lobject.RecordLayout.NoAxisPtsX;
 import a2lobject.RecordLayout.NoAxisPtsY;
+import a2lobject.RecordLayout.NoRescaleX;
+import a2lobject.RecordLayout.Reserved;
 import a2lobject.Values;
 import constante.ConversionType;
 import constante.DataType;
@@ -90,7 +93,7 @@ public final class HexDecoder {
 
                 long adress = characteristic.getAdress();
 
-                if (characteristic.toString().equals("ASAM.C.CURVE.CURVE_AXIS"))
+                if (characteristic.toString().equals("ASAM.C.CURVE.RES_AXIS"))
                     System.out.println(characteristic);
 
                 switch (characteristic.getType()) {
@@ -123,36 +126,57 @@ public final class HexDecoder {
         long adress = axisPts.getAdress();
         RecordLayout recordLayout = axisPts.getRecordLayout();
         CompuMethod compuMethod = axisPts.getCompuMethod();
-        AxisPtsX axisPtsX = recordLayout.getAxisPtsX();
-        if (axisPtsX == null) {
-            return;
-        }
-        IndexOrder indexOrder = axisPtsX.getIndexOrder();
-        NoAxisPtsX noAxisPtsX = recordLayout.getNoAxisPtsX();
         String axisDisplayFormat = axisPts.getFormat();
+        NoAxisPtsX noAxisPtsX = recordLayout.getNoAxisPtsX();
+        AxisPtsX axisPtsX = recordLayout.getAxisPtsX();
+
+        NoRescaleX noRescaleX = recordLayout.getNoRescaleX();
+        Reserved reserved = recordLayout.getReserved();
+        AxisRescaleX axisRescaleX = recordLayout.getAxisRescaleX();
+
+        IndexOrder indexOrder;
+        int nbValue = axisPts.getMaxAxisPoints();
 
         double physValue = 0;
         Values values = null;
+        double[] hexValuesAxisPts;
 
-        int nbValue = axisPts.getMaxAxisPoints();
+        if (axisPtsX != null) {
 
-        if (noAxisPtsX != null) {
-            adress = setAlignment(adress, noAxisPtsX.getDataType());
-            nbValue = (int) Converter.readHexValue(hex, adress, noAxisPtsX.getDataType(), byteOrder);
-            adress += noAxisPtsX.getDataType().getNbByte();
+            indexOrder = axisPtsX.getIndexOrder();
+
+            if (noAxisPtsX != null) {
+                adress = setAlignment(adress, noAxisPtsX.getDataType());
+                nbValue = (int) Converter.readHexValue(hex, adress, noAxisPtsX.getDataType(), byteOrder);
+                adress += noAxisPtsX.getDataType().getNbByte();
+            }
+
+            adress = setAlignment(adress, axisPtsX.getDataType());
+            hexValuesAxisPts = Converter.readHexValues(hex, adress, axisPtsX.getDataType(), byteOrder, nbValue);
+
+        } else {
+
+            indexOrder = axisRescaleX.getIndexOrder();
+
+            adress = setAlignment(adress, noRescaleX.getDataType());
+            nbValue = (int) Converter.readHexValue(hex, adress, noRescaleX.getDataType(), byteOrder);
+            adress += noRescaleX.getDataType().getNbByte();
+
+            // Skip reserved
+            adress += (reserved.getDataSize().getNbBits() / 8);
+
+            adress = setAlignment(adress, axisRescaleX.getDataType());
+            hexValuesAxisPts = Converter.readHexValues(hex, adress, axisRescaleX.getDataType(), byteOrder, nbValue);
         }
 
         values = new Values(nbValue, 1);
-
-        adress = setAlignment(adress, axisPtsX.getDataType());
-        double[] hexValuesComAxis = Converter.readHexValues(hex, adress, axisPtsX.getDataType(), byteOrder, nbValue);
 
         if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
                 || compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
                 || compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
 
             for (int n = 0; n < nbValue; n++) {
-                physValue = compuMethod.compute(hexValuesComAxis[n]);
+                physValue = compuMethod.compute(hexValuesAxisPts[n]);
                 if (indexOrder.compareTo(IndexOrder.INDEX_INCR) == 0) {
                     values.setValue(0, n, String.format(axisDisplayFormat, physValue).trim());
                 } else {
@@ -162,9 +186,9 @@ public final class HexDecoder {
         } else {
             for (int n = 0; n < nbValue; n++) {
                 if (indexOrder.compareTo(IndexOrder.INDEX_INCR) == 0) {
-                    values.setValue(0, n, compuMethod.computeString(hexValuesComAxis[n]));
+                    values.setValue(0, n, compuMethod.computeString(hexValuesAxisPts[n]));
                 } else {
-                    values.setValue(0, (nbValue - 1) - n, compuMethod.computeString(hexValuesComAxis[n]));
+                    values.setValue(0, (nbValue - 1) - n, compuMethod.computeString(hexValuesAxisPts[n]));
                 }
             }
         }
@@ -378,16 +402,15 @@ public final class HexDecoder {
 
     private final String[] readCurveAxis(Characteristic characteristic) {
 
-    	String[] strValues = null;
-    	
-    	Values curveValues = characteristic.getValues();
-    	strValues = new String[curveValues.getDimX()];
-    	
-    	for(int n = 0; n < strValues.length; n++)
-    	{
-    		strValues[n] = curveValues.getValue(0, n);
-    	}
-    	
+        String[] strValues = null;
+
+        Values curveValues = characteristic.getValues();
+        strValues = new String[curveValues.getDimX()];
+
+        for (int n = 0; n < strValues.length; n++) {
+            strValues[n] = curveValues.getValue(0, n);
+        }
+
         return strValues;
     }
 
@@ -428,19 +451,22 @@ public final class HexDecoder {
             }
             break;
         case RES_AXIS:
-            nbValue = 0;
-            values = new Values(1, 1);
-            values.setValue(0, 0, "Non support� pour le moment");
+            String[] resAxisValues = ((AxisPts) axisDescr.getAxisPts()).getStringValues();
+            nbValue = resAxisValues.length;
+
+            values = new Values(nbValue, 2);
+            for (int i = 0; i < nbValue; i++) {
+                values.setValue(0, i, resAxisValues[i]);
+            }
             break;
         case CURVE_AXIS:
 
-        	Characteristic curve = (Characteristic) characteristic.getAxisDescrs().get(0).getCurveAxis();
+            Characteristic curve = (Characteristic) characteristic.getAxisDescrs().get(0).getCurveAxis();
 
-            if(curve.getValues() == null)
-            {
-            	readCurve(byteOrder, curve, curve.getAdress(), curve.getCompuMethod(), curve.getRecordLayout().getFncValues());
+            if (curve.getValues() == null) {
+                readCurve(byteOrder, curve, curve.getAdress(), curve.getCompuMethod(), curve.getRecordLayout().getFncValues());
             }
-            
+
             String[] curveAxisValue = readCurveAxis(curve);
             nbValue = curveAxisValue.length;
 

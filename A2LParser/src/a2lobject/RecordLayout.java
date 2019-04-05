@@ -82,10 +82,12 @@ public final class RecordLayout {
                         n += 2;
                         break;
                     case "AXIS_RESCALE_X":
-
+                        List<String> subList10 = parameters.subList(n + 1, n + 6);
+                        optionalsParameters.put(AXIS_RESCALE_X, new AxisRescaleX(subList10));
+                        n += 5;
                         break;
                     case "NO_RESCALE_X":
-                    	List<String> subList9 = parameters.subList(n + 1, n + 3);
+                        List<String> subList9 = parameters.subList(n + 1, n + 3);
                         optionalsParameters.put(NO_RESCALE_X, new NoRescaleX(subList9));
                         n += 2;
                         break;
@@ -197,6 +199,21 @@ public final class RecordLayout {
     public SrcAddrY getSrcAddrY() {
         Object object = optionalsParameters.get(SRC_ADDR_Y);
         return object != null ? (SrcAddrY) object : null;
+    }
+
+    public NoRescaleX getNoRescaleX() {
+        Object object = optionalsParameters.get(NO_RESCALE_X);
+        return object != null ? (NoRescaleX) object : null;
+    }
+
+    public Reserved getReserved() {
+        Object object = optionalsParameters.get(RESERVED);
+        return object != null ? (Reserved) object : null;
+    }
+
+    public AxisRescaleX getAxisRescaleX() {
+        Object object = optionalsParameters.get(AXIS_RESCALE_X);
+        return object != null ? (AxisRescaleX) object : null;
     }
 
     public final class FncValues extends OptionalParameterRL {
@@ -336,20 +353,20 @@ public final class RecordLayout {
         }
 
     }
-    
-    public final class NoRescaleX extends OptionalParameterRL{
-    	
-    	private DataType dataType;
-    	
-    	public NoRescaleX(List<String> parameters) {
-    		this.position = Integer.parseInt(parameters.get(0));
+
+    public final class NoRescaleX extends OptionalParameterRL {
+
+        private DataType dataType;
+
+        public NoRescaleX(List<String> parameters) {
+            this.position = Integer.parseInt(parameters.get(0));
             this.dataType = DataType.getDataType(parameters.get(1));
         }
 
         public DataType getDataType() {
             return dataType;
         }
-    	
+
     }
 
     public final class Reserved extends OptionalParameterRL {
@@ -365,7 +382,7 @@ public final class RecordLayout {
             return dataSize;
         }
     }
-    
+
     public final class AxisRescaleX extends OptionalParameterRL {
 
         private DataType dataType;
@@ -384,9 +401,9 @@ public final class RecordLayout {
         public final DataType getDataType() {
             return dataType;
         }
-        
-        public final int getMaxNumberOfRescalePairs(){
-        	return maxNumberOfRescalePairs;
+
+        public final int getMaxNumberOfRescalePairs() {
+            return maxNumberOfRescalePairs;
         }
 
         public final IndexOrder getIndexOrder() {

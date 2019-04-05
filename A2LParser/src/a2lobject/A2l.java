@@ -134,14 +134,13 @@ public final class A2l {
 
     private final List<String> fillParameters(BufferedReader buf, String line, List<String> objectParameters, String keyword) throws IOException {
 
-        final String END = "/end ";
         final Pattern regexQuote = RegexHolder.QUOTE;
 
         objectParameters.clear();
 
         do {
             objectParameters.addAll(parseLineWithRegex(regexQuote, line));
-        } while ((line = buf.readLine()) != null && !line.trim().equals(END + keyword));
+        } while ((line = buf.readLine()) != null && !line.trim().endsWith(keyword));
 
         return objectParameters;
 

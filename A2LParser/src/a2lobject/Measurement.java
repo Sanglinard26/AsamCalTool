@@ -56,7 +56,11 @@ public final class Measurement {
                     this.lowerLimit = Float.parseFloat(parameters.get(n));
                     break;
                 case 7:
-                    this.upperLimit = Float.parseFloat(parameters.get(n));
+                    if (parameters.get(n).startsWith("0x")) { // Test pour A2L AW
+                        this.upperLimit = Integer.parseInt(parameters.get(n).substring(2), 16);
+                    } else {
+                        this.upperLimit = Float.parseFloat(parameters.get(n));
+                    }
                     break;
                 default: // Cas de parametres optionels
                     n = parameters.size();
