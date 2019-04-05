@@ -30,11 +30,11 @@ public final class A2l {
         parse(a2lFile);
     }
 
-    public HashMap<String, AdjustableObject> getAdjustableObjects() {
+    public final HashMap<String, AdjustableObject> getAdjustableObjects() {
         return adjustableObjects;
     }
 
-    public List<AdjustableObject> getListAdjustableObjects() {
+    public final List<AdjustableObject> getListAdjustableObjects() {
         return new ArrayList<>(adjustableObjects.values());
     }
 

@@ -57,16 +57,16 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
                 || compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
                 || compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
             if (objectDisplayFormat == null) {
-                displayFormat = compuMethod.getFormat() + "f";
+                displayFormat = compuMethod.getFormat();
             } else {
-                displayFormat = objectDisplayFormat.toString() + "f";
+                displayFormat = objectDisplayFormat.toString();
             }
             if (displayFormat.charAt(1) == '0') {
                 displayFormat = displayFormat.replaceFirst("0", "");
             }
             return displayFormat;
         }
-        return "%16.16";
+        return "%16.16f";
     }
 
     public final String showValues() {

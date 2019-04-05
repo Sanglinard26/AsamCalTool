@@ -359,7 +359,7 @@ public final class HexDecoder {
         double physValue = 0;
         double predValue = 0;
 
-        String displayFormat = characteristic.getFormat();
+        String displayFormat = axisDescrStdAxis.getFormat();
 
         if (compuMethodStdAxis.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
                 || compuMethodStdAxis.getConversionType().compareTo(ConversionType.IDENTICAL) == 0

@@ -10,6 +10,7 @@ import static constante.SecondaryKeywords.DEPOSIT;
 import static constante.SecondaryKeywords.FIX_AXIS_PAR;
 import static constante.SecondaryKeywords.FIX_AXIS_PAR_DIST;
 import static constante.SecondaryKeywords.FIX_AXIS_PAR_LIST;
+import static constante.SecondaryKeywords.FORMAT;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import constante.ConversionType;
 import constante.SecondaryKeywords;
 
 public final class AxisDescr {
@@ -83,6 +85,8 @@ public final class AxisDescr {
 						optionalsParameters.put(FIX_AXIS_PAR_LIST, new FixAxisParList(parameters.subList(n, nPar - 1)));
 						n = nPar + 1;
 						break;
+					case "FORMAT":
+                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1) + "f");
 					default:
 						break;
 					}
@@ -112,6 +116,7 @@ public final class AxisDescr {
 		optionalsParameters.put(FIX_AXIS_PAR, null);
 		optionalsParameters.put(FIX_AXIS_PAR_DIST, null);
 		optionalsParameters.put(FIX_AXIS_PAR_LIST, null);
+		optionalsParameters.put(FORMAT, null);
 	}
 
 	public final Attribute getAttribute() {
@@ -162,6 +167,26 @@ public final class AxisDescr {
 	public Map<SecondaryKeywords, Object> getOptionalsParameters() {
 		return optionalsParameters;
 	}
+	
+	public final String getFormat() {
+        Object objectDisplayFormat = optionalsParameters.get(FORMAT);
+        String displayFormat;
+
+        if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
+                || compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
+                || compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
+            if (objectDisplayFormat == null) {
+                displayFormat = compuMethod.getFormat();
+            } else {
+                displayFormat = objectDisplayFormat.toString();
+            }
+            if (displayFormat.charAt(1) == '0') {
+                displayFormat = displayFormat.replaceFirst("0", "");
+            }
+            return displayFormat;
+        }
+        return "%16.16f";
+    }
 
 	public enum Attribute {
 		CURVE_AXIS, COM_AXIS, FIX_AXIS, RES_AXIS, STD_AXIS, UNKNOWN;

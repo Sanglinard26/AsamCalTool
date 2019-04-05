@@ -97,9 +97,8 @@ public final class Characteristic extends AdjustableObject {
                         optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1));
                         break;
                     case "FORMAT":
-                        optionalsParameters.put(FORMAT, new Format(parameters.get(nPar + 1).toString()));
+                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1) + "f");
                         break;
-
                     case "MATRIX_DIM":
                         List<Integer> dim = new ArrayList<Integer>();
 
@@ -174,11 +173,11 @@ public final class Characteristic extends AdjustableObject {
         return this.name;
     }
 
-    public List<AxisDescr> getAxisDescrs() {
+    public final List<AxisDescr> getAxisDescrs() {
         return axisDescrs;
     }
 
-    public CharacteristicType getType() {
+    public final CharacteristicType getType() {
         return type;
     }
 
@@ -252,7 +251,7 @@ public final class Characteristic extends AdjustableObject {
 
     public enum CharacteristicType {
 
-        ASCII, CURVE, MAP, CUBOID, CUBE_4, CUBE_5, VAL_BLK, VALUE;
+        ASCII, CURVE, MAP, CUBOID, CUBE_4, CUBE_5, VAL_BLK, VALUE, UNKNOWN;
 
         private static CharacteristicType getCharacteristicType(String name) {
             switch (name) {
@@ -273,7 +272,7 @@ public final class Characteristic extends AdjustableObject {
             case "VALUE":
                 return VALUE;
             default:
-                return null;
+                return UNKNOWN;
             }
         }
 

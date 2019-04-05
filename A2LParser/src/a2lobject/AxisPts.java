@@ -73,7 +73,7 @@ public final class AxisPts extends AdjustableObject {
                         optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1));
                         break;
                     case "FORMAT":
-                        optionalsParameters.put(FORMAT, new Format(parameters.get(nPar + 1).toString()));
+                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1) + "f");
                         break;
                     case "PHYS_UNIT":
                         break;
