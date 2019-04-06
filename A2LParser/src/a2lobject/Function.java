@@ -22,12 +22,6 @@ public final class Function {
 	@SuppressWarnings("unused")
 	private String longIdentifier;
 
-	private Set<String> defCharacteristic;
-	private Set<String> inMeasurement;
-	private Set<String> outMeasurement;
-	private Set<String> locMeasurement;
-	private Set<String> subFunction;
-
 	private Map<SecondaryKeywords, Object> optionalsParameters;
 
 	public Function(List<String> parameters) {
@@ -49,13 +43,11 @@ public final class Function {
 				if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
 					switch (parameters.get(nPar)) {
 					case "DEF_CHARACTERISTIC":
-						if (defCharacteristic == null) {
-							defCharacteristic = new HashSet<String>();
-							optionalsParameters.put(DEF_CHARACTERISTIC, defCharacteristic);
-						}
+						Map<String, String> defCharacteristic = new HashMap<String, String>();
+						optionalsParameters.put(DEF_CHARACTERISTIC, defCharacteristic);
 						nPar++;
 						do {
-							defCharacteristic.add(parameters.get(nPar));
+							defCharacteristic.put(parameters.get(nPar), this.name);
 							nPar++;
 						} while (nPar < parameters.size()-1 && !parameters.get(nPar).equals("/end"));
 						nPar++;
@@ -65,10 +57,9 @@ public final class Function {
 						nPar++;
 						break;
 					case "IN_MEASUREMENT":
-						if (inMeasurement == null) {
-							inMeasurement = new HashSet<String>();
-							optionalsParameters.put(IN_MEASUREMENT, inMeasurement);
-						}
+						Set<String> inMeasurement = new HashSet<String>();
+						optionalsParameters.put(IN_MEASUREMENT, inMeasurement);
+
 						nPar++;
 						do {
 							inMeasurement.add(parameters.get(nPar));
@@ -77,10 +68,8 @@ public final class Function {
 						nPar++;
 						break;
 					case "LOC_MEASUREMENT":
-						if (locMeasurement == null) {
-							locMeasurement = new HashSet<String>();
-							optionalsParameters.put(LOC_MEASUREMENT, locMeasurement);
-						}
+						Set<String> locMeasurement = new HashSet<String>();
+						optionalsParameters.put(LOC_MEASUREMENT, locMeasurement);	
 						nPar++;
 						do {
 							locMeasurement.add(parameters.get(nPar));
@@ -89,10 +78,9 @@ public final class Function {
 						nPar++;
 						break;
 					case "OUT_MEASUREMENT":
-						if (outMeasurement == null) {
-							outMeasurement = new HashSet<String>();
-							optionalsParameters.put(OUT_MEASUREMENT, outMeasurement);
-						}
+						Set<String> outMeasurement = new HashSet<String>();
+						optionalsParameters.put(OUT_MEASUREMENT, outMeasurement);
+
 						nPar++;
 						do {
 							outMeasurement.add(parameters.get(nPar));
@@ -101,10 +89,8 @@ public final class Function {
 						nPar++;
 						break;
 					case "SUB_FUNCTION":
-						if (subFunction == null) {
-							subFunction = new HashSet<String>();
-							optionalsParameters.put(SUB_FUNCTION, subFunction);
-						}
+						Set<String> subFunction = new HashSet<String>();
+						optionalsParameters.put(SUB_FUNCTION, subFunction);
 						nPar++;
 						do {
 							subFunction.add(parameters.get(nPar));
@@ -147,5 +133,12 @@ public final class Function {
 	@Override
 	public String toString() {
 		return this.name;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public final Map<String, String> getDefCharacteristic()
+	{
+		Object object = optionalsParameters.get(DEF_CHARACTERISTIC);
+		return (Map<String, String>) (object != null ? object : null);
 	}
 }

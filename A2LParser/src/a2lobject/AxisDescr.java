@@ -61,22 +61,25 @@ public final class AxisDescr {
 					switch (parameters.get(nPar)) {
 					case "AXIS_PTS_REF":
 						optionalsParameters.put(AXIS_PTS_REF, parameters.get(nPar + 1));
+						nPar+=1;
 						break;
 					case "CURVE_AXIS_REF":
 						optionalsParameters.put(CURVE_AXIS_REF, parameters.get(nPar + 1));
+						nPar+=1;
 						break;
 					case "DEPOSIT":
 						optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));
+						nPar+=1;
 						break;
 					case "FIX_AXIS_PAR":
 						n = nPar + 1;
 						optionalsParameters.put(FIX_AXIS_PAR, new FixAxisPar(parameters.subList(n, n + 3)));
-						n = nPar + 3;
+						nPar+=3;
 						break;
 					case "FIX_AXIS_PAR_DIST":
 						n = nPar + 1;
 						optionalsParameters.put(FIX_AXIS_PAR_DIST, new FixAxisParDist(parameters.subList(n, n + 3)));
-						n += 3;
+						nPar+=3;
 						break;
 					case "FIX_AXIS_PAR_LIST":
 						n = nPar + 1;
@@ -87,6 +90,8 @@ public final class AxisDescr {
 						break;
 					case "FORMAT":
                         optionalsParameters.put(FORMAT, parameters.get(nPar + 1) + "f");
+                        nPar+=1;
+                        break;
 					default:
 						break;
 					}

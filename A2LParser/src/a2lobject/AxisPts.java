@@ -68,12 +68,15 @@ public final class AxisPts extends AdjustableObject {
                         break;
                     case "DEPOSIT":
                         optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));
+                        nPar+=1;
                         break;
                     case "DISPLAY_IDENTIFIER":
                         optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1));
+                        nPar+=1;
                         break;
                     case "FORMAT":
                         optionalsParameters.put(FORMAT, parameters.get(nPar + 1) + "f");
+                        nPar+=1;
                         break;
                     case "PHYS_UNIT":
                         break;
@@ -152,5 +155,10 @@ public final class AxisPts extends AdjustableObject {
     public int compareTo(AdjustableObject o) {
         return this.name.compareToIgnoreCase(o.toString());
     }
+
+	@Override
+	public String[] getUnit() {
+		return new String[]{this.compuMethod.getUnit()};
+	}
 
 }

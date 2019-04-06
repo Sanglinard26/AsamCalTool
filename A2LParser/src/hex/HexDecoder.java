@@ -56,7 +56,7 @@ public final class HexDecoder {
         this.modCommon = a2l.getModCommon();
     }
 
-    public final boolean checkEPK() {
+    private final boolean checkEPK() {
         // Check EPK
         final ModPar modPar = a2l.getModPar();
         long adressEPK = modPar.getEPKAdress();
@@ -72,6 +72,11 @@ public final class HexDecoder {
     }
 
     public final boolean readDataFromHex() {
+    	
+    	if(!checkEPK())
+    	{
+    		return false;
+    	}
 
         ByteOrder byteOrder = modCommon.getByteOrder();
 

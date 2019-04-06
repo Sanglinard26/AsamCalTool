@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,6 +54,7 @@ public final class A2l {
             String line;
 
             List<String> objectParameters = new ArrayList<String>();
+            Map<String, String> mergeDefCharacteristic = new HashMap<String, String>();
 
             while ((line = buf.readLine()) != null) {
 
@@ -117,6 +119,11 @@ public final class A2l {
                     case "FUNCTION":
                         fillParameters(buf, line, objectParameters, keyword);
                         Function function = new Function(objectParameters);
+                        if(function.getDefCharacteristic() != null)
+                        {
+                        	mergeDefCharacteristic.putAll(function.getDefCharacteristic());
+                        }
+                        
                         functions.put(function.toString(), function);
                         break;
                     default:
@@ -124,8 +131,12 @@ public final class A2l {
                     }
                 }
             }
+            
+            objectParameters.clear();
 
-            assignLinkedObject();
+            assignLinkedObject(mergeDefCharacteristic);
+            
+            mergeDefCharacteristic.clear();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -176,7 +187,7 @@ public final class A2l {
         return listWord;
     }
 
-    private final void assignLinkedObject() {
+    private final void assignLinkedObject(Map<String, String> defCharacteristic) {
 
         for (String adjustableObject : adjustableObjects.keySet()) {
             adjustableObjects.get(adjustableObject).assignComputMethod(compuMethods);
@@ -184,6 +195,7 @@ public final class A2l {
             if (adjustableObjects.get(adjustableObject) instanceof Characteristic) {
                 ((Characteristic) adjustableObjects.get(adjustableObject)).assignAxisPts(adjustableObjects);
             }
+            adjustableObjects.get(adjustableObject).setFunction(defCharacteristic.get(adjustableObject));
         }
 
         for (String key : compuMethods.keySet()) {
@@ -191,14 +203,14 @@ public final class A2l {
             if (compuMethod.hasCompuTabRef()) {
                 compuMethod.assignConversionTable(conversionTables);
             }
-        }
+        }   
     }
 
-    public ModPar getModPar() {
+    public final ModPar getModPar() {
         return modPar;
     }
 
-    public ModCommon getModCommon() {
+    public final ModCommon getModCommon() {
         return modCommon;
     }
 

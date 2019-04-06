@@ -21,6 +21,8 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
     protected String conversion;
     protected float lowerLimit;
     protected float upperLimit;
+    
+    protected String function;
 
     protected Values values;
 
@@ -43,6 +45,11 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
 
     public final RecordLayout getRecordLayout() {
         return recordLayout;
+    }
+    
+    public final String getFunction()
+    {
+    	return this.function;
     }
 
     public final void assignRecordLayout(HashMap<String, RecordLayout> recordLayouts) {
@@ -91,7 +98,14 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
     public final void setValues(Values values) {
         this.values = values;
     }
+    
+    public final void setFunction(String function)
+    {
+    	this.function = function;
+    }
 
     public abstract void assignComputMethod(HashMap<String, CompuMethod> compuMethods);
+    
+    public abstract String[] getUnit();
 
 }

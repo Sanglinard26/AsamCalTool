@@ -27,7 +27,6 @@ public final class CompuMethod implements Comparable<CompuMethod> {
 	private String longIdentifier;
 	private ConversionType conversionType;
 	private String format;
-	@SuppressWarnings("unused")
 	private String unit;
 
 	private Map<SecondaryKeywords, Object> optionalsParameters;
@@ -55,12 +54,15 @@ public final class CompuMethod implements Comparable<CompuMethod> {
 					switch (parameters.get(nPar)) {
 					case "COEFFS": // 6 coeffs
 						optionalsParameters.put(COEFFS, new Coeffs(parameters.subList(nPar + 1, nPar + 7)));
+						nPar+=6;
 						break;
 					case "COEFFS_LINEAR": // 2 coeffs
 						optionalsParameters.put(COEFFS_LINEAR, new CoeffsLinear(parameters.subList(nPar + 1, nPar + 3)));
+						nPar+=2;
 						break;
 					case "COMPU_TAB_REF":
 						optionalsParameters.put(COMPU_TAB_REF, parameters.get(nPar + 1));
+						nPar+=1;
 						break;
 					case "FORMULA":
 						break;
@@ -180,6 +182,11 @@ public final class CompuMethod implements Comparable<CompuMethod> {
 
 	public final String getFormat() {
 		return format;
+	}
+	
+	public final String getUnit()
+	{
+		return this.unit;
 	}
 
 	@Override

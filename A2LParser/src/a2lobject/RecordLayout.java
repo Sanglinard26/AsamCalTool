@@ -22,6 +22,7 @@ import static constante.SecondaryKeywords.SRC_ADDR_X;
 import static constante.SecondaryKeywords.SRC_ADDR_Y;
 import static constante.SecondaryKeywords.STATIC_RECORD_LAYOUT;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -47,6 +48,8 @@ public final class RecordLayout {
 
         parameters.remove("/begin"); // Remove /begin
         parameters.remove("RECORD_LAYOUT"); // Remove RECORD_LAYOUT
+        
+        List<String> subList = Collections.emptyList();
 
         if (parameters.size() >= 1) {
             for (int n = 0; n < parameters.size(); n++) {
@@ -57,53 +60,53 @@ public final class RecordLayout {
                 default: // Cas de parametres optionels
                     switch (parameters.get(n)) {
                     case "FNC_VALUES":
-                        List<String> subList = parameters.subList(n + 1, n + 5);
+                        subList = parameters.subList(n + 1, n + 5);
                         optionalsParameters.put(FNC_VALUES, new FncValues(subList));
                         n += 4;
                         break;
                     case "AXIS_PTS_X":
-                        List<String> subList2 = parameters.subList(n + 1, n + 5);
-                        optionalsParameters.put(AXIS_PTS_X, new AxisPtsX(subList2));
+                        subList = parameters.subList(n + 1, n + 5);
+                        optionalsParameters.put(AXIS_PTS_X, new AxisPtsX(subList));
                         n += 4;
                         break;
                     case "AXIS_PTS_Y":
-                        List<String> subList4 = parameters.subList(n + 1, n + 5);
-                        optionalsParameters.put(AXIS_PTS_Y, new AxisPtsY(subList4));
+                        subList = parameters.subList(n + 1, n + 5);
+                        optionalsParameters.put(AXIS_PTS_Y, new AxisPtsY(subList));
                         n += 4;
                         break;
                     case "NO_AXIS_PTS_X":
-                        List<String> subList3 = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(NO_AXIS_PTS_X, new NoAxisPtsX(subList3));
+                        subList = parameters.subList(n + 1, n + 3);
+                        optionalsParameters.put(NO_AXIS_PTS_X, new NoAxisPtsX(subList));
                         n += 2;
                         break;
                     case "NO_AXIS_PTS_Y":
-                        List<String> subList5 = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(NO_AXIS_PTS_Y, new NoAxisPtsY(subList5));
+                        subList = parameters.subList(n + 1, n + 3);
+                        optionalsParameters.put(NO_AXIS_PTS_Y, new NoAxisPtsY(subList));
                         n += 2;
                         break;
                     case "AXIS_RESCALE_X":
-                        List<String> subList10 = parameters.subList(n + 1, n + 6);
-                        optionalsParameters.put(AXIS_RESCALE_X, new AxisRescaleX(subList10));
+                        subList = parameters.subList(n + 1, n + 6);
+                        optionalsParameters.put(AXIS_RESCALE_X, new AxisRescaleX(subList));
                         n += 5;
                         break;
                     case "NO_RESCALE_X":
-                        List<String> subList9 = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(NO_RESCALE_X, new NoRescaleX(subList9));
+                        subList = parameters.subList(n + 1, n + 3);
+                        optionalsParameters.put(NO_RESCALE_X, new NoRescaleX(subList));
                         n += 2;
                         break;
                     case "RESERVED":
-                        List<String> subList8 = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(RESERVED, new Reserved(subList8));
+                        subList = parameters.subList(n + 1, n + 3);
+                        optionalsParameters.put(RESERVED, new Reserved(subList));
                         n += 2;
                         break;
                     case "SRC_ADDR_X":
-                        List<String> subList6 = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(SRC_ADDR_X, new SrcAddrX(subList6));
+                        subList = parameters.subList(n + 1, n + 3);
+                        optionalsParameters.put(SRC_ADDR_X, new SrcAddrX(subList));
                         n += 2;
                         break;
                     case "SRC_ADDR_Y":
-                        List<String> subList7 = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(SRC_ADDR_Y, new SrcAddrY(subList7));
+                        subList = parameters.subList(n + 1, n + 3);
+                        optionalsParameters.put(SRC_ADDR_Y, new SrcAddrY(subList));
                         n += 2;
                         break;
                     default:
@@ -112,6 +115,8 @@ public final class RecordLayout {
                     break;
                 }
             }
+            
+            subList.clear();
 
             // On vide la MAP de parametre non utilise
             Iterator<Map.Entry<SecondaryKeywords, OptionalParameterRL>> iter = optionalsParameters.entrySet().iterator();
@@ -218,9 +223,9 @@ public final class RecordLayout {
 
     public final class FncValues extends OptionalParameterRL {
 
-        private DataType dataType;
-        private IndexMode indexMode;
-        private AdressType adressType;
+        private final DataType dataType;
+        private final IndexMode indexMode;
+        private final AdressType adressType;
 
         public FncValues(List<String> parameters) {
             this.position = Integer.parseInt(parameters.get(0));
@@ -229,24 +234,24 @@ public final class RecordLayout {
             this.adressType = AdressType.getAdressType(parameters.get(3));
         }
 
-        public DataType getDataType() {
+        public final DataType getDataType() {
             return dataType;
         }
 
-        public IndexMode getIndexMode() {
+        public final IndexMode getIndexMode() {
             return indexMode;
         }
 
-        public AdressType getAdressType() {
+        public final AdressType getAdressType() {
             return adressType;
         }
     }
 
     public final class AxisPtsX extends OptionalParameterRL {
 
-        private DataType dataType;
-        private IndexOrder indexOrder;
-        private AdressType adressType;
+        private final DataType dataType;
+        private final IndexOrder indexOrder;
+        private final AdressType adressType;
 
         public AxisPtsX(List<String> parameters) {
             this.position = Integer.parseInt(parameters.get(0));
@@ -255,29 +260,29 @@ public final class RecordLayout {
             this.adressType = AdressType.getAdressType(parameters.get(3));
         }
 
-        public DataType getDataType() {
+        public final DataType getDataType() {
             return dataType;
         }
 
-        public IndexOrder getIndexOrder() {
+        public final IndexOrder getIndexOrder() {
             return indexOrder;
         }
 
-        public AdressType getAdressType() {
+        public final AdressType getAdressType() {
             return adressType;
         }
     }
 
     public final class NoAxisPtsX extends OptionalParameterRL {
 
-        private DataType dataType;
+        private final DataType dataType;
 
         public NoAxisPtsX(List<String> parameters) {
             this.position = Integer.parseInt(parameters.get(0));
             this.dataType = DataType.getDataType(parameters.get(1));
         }
 
-        public DataType getDataType() {
+        public final DataType getDataType() {
             return dataType;
         }
 
@@ -285,9 +290,9 @@ public final class RecordLayout {
 
     public final class AxisPtsY extends OptionalParameterRL {
 
-        private DataType dataType;
-        private IndexOrder indexOrder;
-        private AdressType adressType;
+        private final DataType dataType;
+        private final IndexOrder indexOrder;
+        private final AdressType adressType;
 
         public AxisPtsY(List<String> parameters) {
             this.position = Integer.parseInt(parameters.get(0));
@@ -296,29 +301,29 @@ public final class RecordLayout {
             this.adressType = AdressType.getAdressType(parameters.get(3));
         }
 
-        public DataType getDataType() {
+        public final DataType getDataType() {
             return dataType;
         }
 
-        public IndexOrder getIndexOrder() {
+        public final IndexOrder getIndexOrder() {
             return indexOrder;
         }
 
-        public AdressType getAdressType() {
+        public final AdressType getAdressType() {
             return adressType;
         }
     }
 
     public final class NoAxisPtsY extends OptionalParameterRL {
 
-        private DataType dataType;
+        private final DataType dataType;
 
         public NoAxisPtsY(List<String> parameters) {
             this.position = Integer.parseInt(parameters.get(0));
             this.dataType = DataType.getDataType(parameters.get(1));
         }
 
-        public DataType getDataType() {
+        public final DataType getDataType() {
             return dataType;
         }
 
@@ -326,14 +331,14 @@ public final class RecordLayout {
 
     public final class SrcAddrX extends OptionalParameterRL {
 
-        private DataType dataType;
+        private final DataType dataType;
 
         public SrcAddrX(List<String> parameters) {
             this.position = Integer.parseInt(parameters.get(0));
             this.dataType = DataType.getDataType(parameters.get(1));
         }
 
-        public DataType getDataType() {
+        public final DataType getDataType() {
             return dataType;
         }
 
@@ -341,14 +346,14 @@ public final class RecordLayout {
 
     public final class SrcAddrY extends OptionalParameterRL {
 
-        private DataType dataType;
+        private final DataType dataType;
 
         public SrcAddrY(List<String> parameters) {
             this.position = Integer.parseInt(parameters.get(0));
             this.dataType = DataType.getDataType(parameters.get(1));
         }
 
-        public DataType getDataType() {
+        public final DataType getDataType() {
             return dataType;
         }
 
@@ -356,14 +361,14 @@ public final class RecordLayout {
 
     public final class NoRescaleX extends OptionalParameterRL {
 
-        private DataType dataType;
+        private final DataType dataType;
 
         public NoRescaleX(List<String> parameters) {
             this.position = Integer.parseInt(parameters.get(0));
             this.dataType = DataType.getDataType(parameters.get(1));
         }
 
-        public DataType getDataType() {
+        public final DataType getDataType() {
             return dataType;
         }
 
@@ -371,7 +376,7 @@ public final class RecordLayout {
 
     public final class Reserved extends OptionalParameterRL {
 
-        private DataSize dataSize;
+        private final DataSize dataSize;
 
         public Reserved(List<String> parameters) {
             this.position = Integer.parseInt(parameters.get(0));
@@ -385,10 +390,10 @@ public final class RecordLayout {
 
     public final class AxisRescaleX extends OptionalParameterRL {
 
-        private DataType dataType;
-        private int maxNumberOfRescalePairs;
-        private IndexOrder indexOrder;
-        private AdressType adressType;
+        private final DataType dataType;
+        private final int maxNumberOfRescalePairs;
+        private final IndexOrder indexOrder;
+        private final AdressType adressType;
 
         public AxisRescaleX(List<String> parameters) {
             this.position = Integer.parseInt(parameters.get(0));
