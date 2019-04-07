@@ -12,6 +12,7 @@ import static constante.SecondaryKeywords.FIX_AXIS_PAR_DIST;
 import static constante.SecondaryKeywords.FIX_AXIS_PAR_LIST;
 import static constante.SecondaryKeywords.FORMAT;
 
+import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -61,6 +62,10 @@ public final class AxisDescr {
 					switch (parameters.get(nPar)) {
 					case "AXIS_PTS_REF":
 						optionalsParameters.put(AXIS_PTS_REF, parameters.get(nPar + 1));
+						nPar+=1;
+						break;
+					case "BYTE_ORDER":
+						optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
 						nPar+=1;
 						break;
 					case "CURVE_AXIS_REF":
@@ -168,6 +173,18 @@ public final class AxisDescr {
 		Object oDeposit = optionalsParameters.get(DEPOSIT);
 		return oDeposit != null ? oDeposit.toString() : "";
 	}
+	
+	public final ByteOrder getByteOrder() {
+        String sByteOrder = (String) optionalsParameters.get(BYTE_ORDER);
+        if(sByteOrder != null)
+        {
+        	if ("MSB_LAST".equals(sByteOrder) || "BIG_ENDIAN".equals(sByteOrder)) {
+                return ByteOrder.LITTLE_ENDIAN;
+            }
+            return ByteOrder.BIG_ENDIAN;
+        }
+        return null;
+    }
 
 	public Map<SecondaryKeywords, Object> getOptionalsParameters() {
 		return optionalsParameters;

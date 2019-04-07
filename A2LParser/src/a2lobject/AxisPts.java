@@ -66,6 +66,10 @@ public final class AxisPts extends AdjustableObject {
                         optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3)));
                         n = nPar + 1;
                         break;
+                    case "BYTE_ORDER":
+						optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
+						nPar+=1;
+						break;
                     case "DEPOSIT":
                         optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));
                         nPar+=1;

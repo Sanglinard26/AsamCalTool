@@ -3,8 +3,10 @@
  */
 package a2lobject;
 
+import static constante.SecondaryKeywords.BYTE_ORDER;
 import static constante.SecondaryKeywords.FORMAT;
 
+import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,6 +76,18 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
             return displayFormat;
         }
         return "%16.16f";
+    }
+    
+    public final ByteOrder getByteOrder() {
+        String sByteOrder = (String) optionalsParameters.get(BYTE_ORDER);
+        if(sByteOrder != null)
+        {
+        	if ("MSB_LAST".equals(sByteOrder) || "BIG_ENDIAN".equals(sByteOrder)) {
+                return ByteOrder.LITTLE_ENDIAN;
+            }
+            return ByteOrder.BIG_ENDIAN;
+        }
+        return null;
     }
 
     public final String showValues() {

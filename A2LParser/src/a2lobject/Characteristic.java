@@ -92,6 +92,11 @@ public final class Characteristic extends AdjustableObject {
 						} else {
 							optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask));
 						}
+						nPar+=1;
+						break;
+					case "BYTE_ORDER":
+						optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
+						nPar+=1;
 						break;
 					case "DISPLAY_IDENTIFIER":
 						optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1));
@@ -105,13 +110,13 @@ public final class Characteristic extends AdjustableObject {
 						List<Integer> dim = new ArrayList<Integer>();
 
 						try {
-							n = nPar + 1;
+							nPar += 1;
 							do {
-								dim.add(Integer.parseInt(parameters.get(n)));
-								n++;
-							} while (n < parameters.size());
+								dim.add(Integer.parseInt(parameters.get(nPar)));
+								nPar+=1;
+							} while (nPar < parameters.size());
 						} catch (NumberFormatException nfe) {
-							n++;
+							nPar+=1;
 						}
 						optionalsParameters.put(MATRIX_DIM, dim.toArray());
 						dim.clear();
@@ -152,8 +157,8 @@ public final class Characteristic extends AdjustableObject {
 		optionalsParameters = new HashMap<SecondaryKeywords, Object>();
 		optionalsParameters.put(ANNOTATION, null);
 		optionalsParameters.put(AXIS_DESCR, null);
-		optionalsParameters.put(BIT_MASK, null); // Utilise seulement pour les TAB_VERB
-		optionalsParameters.put(BYTE_ORDER, null); // ToDo
+		optionalsParameters.put(BIT_MASK, null);
+		optionalsParameters.put(BYTE_ORDER, null);
 		optionalsParameters.put(CALIBRATION_ACCESS, null); // ToDo
 		optionalsParameters.put(COMPARISON_QUANTITY, null); // ToDo
 		optionalsParameters.put(DEPENDENT_CHARACTERISTIC, null); // ToDo
