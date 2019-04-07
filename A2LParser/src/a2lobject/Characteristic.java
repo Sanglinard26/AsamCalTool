@@ -5,12 +5,10 @@ package a2lobject;
 
 import static constante.SecondaryKeywords.ANNOTATION;
 import static constante.SecondaryKeywords.AXIS_DESCR;
-import static constante.SecondaryKeywords.AXIS_PTS_REF;
 import static constante.SecondaryKeywords.BIT_MASK;
 import static constante.SecondaryKeywords.BYTE_ORDER;
 import static constante.SecondaryKeywords.CALIBRATION_ACCESS;
 import static constante.SecondaryKeywords.COMPARISON_QUANTITY;
-import static constante.SecondaryKeywords.CURVE_AXIS_REF;
 import static constante.SecondaryKeywords.DEPENDENT_CHARACTERISTIC;
 import static constante.SecondaryKeywords.DISCRETE;
 import static constante.SecondaryKeywords.DISPLAY_IDENTIFIER;
@@ -248,11 +246,12 @@ public final class Characteristic extends AdjustableObject {
 	public final void assignAxisPts(HashMap<String, AdjustableObject> adjustableObjects) {
 		if (axisDescrs != null) {
 			for (AxisDescr axisDescr : axisDescrs) {
-				if (axisDescr.getAttribute().compareTo(Attribute.COM_AXIS) == 0 || axisDescr.getAttribute().compareTo(Attribute.RES_AXIS) == 0) {
-					axisDescr.setAxisPts(adjustableObjects.get(axisDescr.getOptionalsParameters().get(AXIS_PTS_REF)));
+				Attribute axisType = axisDescr.getAttribute();
+				if (axisType.compareTo(Attribute.COM_AXIS) == 0 || axisType.compareTo(Attribute.RES_AXIS) == 0) {
+					axisDescr.setAxisPts(adjustableObjects.get(axisDescr.getAxisRef(axisType)));
 				}
-				if (axisDescr.getAttribute().compareTo(Attribute.CURVE_AXIS) == 0) {
-					axisDescr.setCurveAxis(adjustableObjects.get(axisDescr.getOptionalsParameters().get(CURVE_AXIS_REF)));
+				if (axisType.compareTo(Attribute.CURVE_AXIS) == 0) {
+					axisDescr.setCurveAxis(adjustableObjects.get(axisDescr.getAxisRef(axisType)));
 				}
 			}
 		}

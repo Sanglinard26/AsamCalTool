@@ -98,8 +98,8 @@ public final class HexDecoder {
 
 				long adress = characteristic.getAdress();
 
-				if (characteristic.toString().equals("ASAM.C.CURVE.RES_AXIS"))
-					System.out.println(characteristic);
+				//if (characteristic.toString().equals("ASAM.C.CURVE.RES_AXIS"))
+					//System.out.println(characteristic);
 
 				switch (characteristic.getType()) {
 				case VALUE:
@@ -192,10 +192,12 @@ public final class HexDecoder {
 		}
 
 		values = new Values(nbValue, 1);
+		
+		final ConversionType conversionType = compuMethod.getConversionType();
 
-		if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
-				|| compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
-				|| compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
+		if (conversionType.compareTo(ConversionType.RAT_FUNC) == 0
+				|| conversionType.compareTo(ConversionType.IDENTICAL) == 0
+				|| conversionType.compareTo(ConversionType.LINEAR) == 0) {
 
 			for (int n = 0; n < nbValue; n++) {
 				physValue = compuMethod.compute(hexValuesAxisPts[n]);
@@ -227,10 +229,8 @@ public final class HexDecoder {
 		final String displayFormat = characteristic.getFormat();
 
 		final Values values = new Values(1, 1);
-
-		if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
-				|| compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
-				|| compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
+		
+		if (!compuMethod.isVerbal()) {
 
 			if (characteristic.hasBitMask()) {
 				hexValue = characteristic.applyBitMask((long) hexValue);
@@ -305,7 +305,7 @@ public final class HexDecoder {
 
 		final AxisDescr axisDescrStdAxis = characteristic.getAxisDescrs().get(idxAxis);
 		final ByteOrder byteOrder = axisDescrStdAxis.getByteOrder() != null ? axisDescrStdAxis.getByteOrder() : commonByteOrder;
-		final CompuMethod compuMethodStdAxis = axisDescrStdAxis.getCompuMethod();
+		final CompuMethod compuMethod = axisDescrStdAxis.getCompuMethod();
 		final String depositMode = axisDescrStdAxis.getDepositMode();
 
 		int nbValue = 0;
@@ -384,26 +384,24 @@ public final class HexDecoder {
 		double physValue = 0;
 		double predValue = 0;
 
-		String displayFormat = axisDescrStdAxis.getFormat();
+		final String displayFormat = axisDescrStdAxis.getFormat();
 
-		if (compuMethodStdAxis.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
-				|| compuMethodStdAxis.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
-				|| compuMethodStdAxis.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
+		if (!compuMethod.isVerbal()) {
 
 			for (int n = 0; n < nbValue; n++) {
 				if (!depositMode.equals(DepositMode.DIFFERENCE.name())) {
-					physValue = compuMethodStdAxis.compute(hexValues[n]);
+					physValue = compuMethod.compute(hexValues[n]);
 				} else {
 					if (n == 0) {
-						physValue = compuMethodStdAxis.compute(hexValues[n]);
+						physValue = compuMethod.compute(hexValues[n]);
 						predValue = physValue;
 					}
 					if (n > 0 && n < nbValue - 1) {
-						physValue = compuMethodStdAxis.compute(hexValues[n]) + predValue;
+						physValue = compuMethod.compute(hexValues[n]) + predValue;
 						predValue = physValue;
 					}
 					if (n == nbValue - 1) {
-						physValue = compuMethodStdAxis.compute(hexValues[n - 1]) + predValue;
+						physValue = compuMethod.compute(hexValues[n - 1]) + predValue;
 						predValue = physValue;
 					}
 				}
@@ -416,9 +414,9 @@ public final class HexDecoder {
 		} else {
 			for (int n = 0; n < nbValue; n++) {
 				if (indexOrder.compareTo(IndexOrder.INDEX_INCR) == 0) {
-					strValues[n] = compuMethodStdAxis.computeString(hexValues[n]);
+					strValues[n] = compuMethod.computeString(hexValues[n]);
 				} else {
-					strValues[(nbValue - 1) - n] = compuMethodStdAxis.computeString(hexValues[n]);
+					strValues[(nbValue - 1) - n] = compuMethod.computeString(hexValues[n]);
 				}
 			}
 		}
@@ -511,11 +509,10 @@ public final class HexDecoder {
 		adress = setAlignment(adress, fncValues.getDataType());
 		double[] hexValues = Converter.readHexValues(hex, adress, fncValues.getDataType(), byteOrder, nbValue);
 		double physValue = 0;
-		String displayFormat = characteristic.getFormat();
+		
+		final String displayFormat = characteristic.getFormat();
 
-		if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
-				|| compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
-				|| compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
+		if (!compuMethod.isVerbal()) {
 
 			for (int n = 0; n < nbValue; n++) {
 				physValue = compuMethod.compute(hexValues[n]);
@@ -572,9 +569,7 @@ public final class HexDecoder {
 
 			values.setValue(1, 0, "Z");
 
-			if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
-					|| compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
-					|| compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
+			if (!compuMethod.isVerbal()) {
 
 				for (int n = 0; n < dim[0]; n++) {
 					physValue = compuMethod.compute(hexValuesValBlk[n]);
@@ -598,9 +593,7 @@ public final class HexDecoder {
 			adress = setAlignment(adress, fncValues.getDataType());
 			hexValuesValBlk = Converter.readHexValues(hex, adress, fncValues.getDataType(), byteOrder, nbValue);
 
-			if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
-					|| compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
-					|| compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
+			if (!compuMethod.isVerbal()) {
 
 				int row = 0;
 				int col = 0;
@@ -710,9 +703,7 @@ public final class HexDecoder {
 			adress = setAlignment(adress, fncValues.getDataType());
 			double[] hexValues = Converter.readHexValues(hex, adress, fncValues.getDataType(), byteOrder, nbValueMap);
 
-			if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
-					|| compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
-					|| compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
+			if (!compuMethod.isVerbal()) {
 
 				int row = 0;
 				int col = 0;

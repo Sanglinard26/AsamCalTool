@@ -185,8 +185,27 @@ public final class AxisDescr {
         }
         return null;
     }
+	
+	public final String getAxisRef(Attribute type)
+	{
+		Object object = null;
+		switch (type) {
+		case COM_AXIS:
+			object = optionalsParameters.get(AXIS_PTS_REF);
+			break;
+		case RES_AXIS:
+			object = optionalsParameters.get(AXIS_PTS_REF);
+			break;
+		case CURVE_AXIS:
+			object = optionalsParameters.get(CURVE_AXIS_REF);
+			break;
+		default:
+			break;
+		}
+		return object != null ? object.toString() : "";
+	}
 
-	public Map<SecondaryKeywords, Object> getOptionalsParameters() {
+	public final Map<SecondaryKeywords, Object> getOptionalsParameters() {
 		return optionalsParameters;
 	}
 	

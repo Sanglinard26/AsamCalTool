@@ -132,7 +132,7 @@ public final class AxisPts extends AdjustableObject {
         return this.name;
     }
 
-    public int getMaxAxisPoints() {
+    public final int getMaxAxisPoints() {
         return maxAxisPoints;
     }
 

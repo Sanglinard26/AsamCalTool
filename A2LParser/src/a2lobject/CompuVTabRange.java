@@ -76,19 +76,19 @@ public final class CompuVTabRange extends ConversionTable {
 
 final class Range {
 
-	private float min;
-	private float max;
+	private final float min;
+	private final float max;
 
 	public Range(float min, float max) {
 		this.min = min;
 		this.max = max;
 	}
 
-	public float getMin() {
+	public final float getMin() {
 		return min;
 	}
 
-	public float getMax() {
+	public final float getMax() {
 		return max;
 	}
 

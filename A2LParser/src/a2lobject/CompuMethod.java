@@ -10,7 +10,6 @@ import static constante.SecondaryKeywords.FORMULA;
 import static constante.SecondaryKeywords.REF_UNIT;
 import static constante.SecondaryKeywords.STATUS_STRING_REF;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -135,8 +134,19 @@ public final class CompuMethod implements Comparable<CompuMethod> {
 				return _coeffs[2] / (hex * _coeffs[4]);
 			}
 			return Double.NaN;
-		default:
+		case TAB_NOINTP :
+			Object compuTabRef = this.optionalsParameters.get(COMPU_TAB_REF);
+			if(compuTabRef instanceof CompuTab)
+			{
+				@SuppressWarnings("unused")
+				CompuTab compuTab = (CompuTab) compuTabRef;
+				return hex;
+			}
+			return Double.NaN;
+		case TAB_INTP :
 			return hex;
+		default:
+			return Double.NaN;
 		}
 	}
 
@@ -168,11 +178,10 @@ public final class CompuMethod implements Comparable<CompuMethod> {
 	public final boolean hasCompuTabRef() {
 		return optionalsParameters.get(COMPU_TAB_REF) != null ? true : false;
 	}
-
-	public final static CompuMethod createEmptyCompuMethod(String name) {
-		List<String> parameters = new ArrayList<String>();
-		parameters.add(name);
-		return new CompuMethod(parameters);
+	
+	public final boolean isVerbal()
+	{
+		return conversionType.compareTo(ConversionType.TAB_VERB) == 0;
 	}
 
 	@Override
