@@ -12,12 +12,9 @@ import static constante.SecondaryKeywords.DISPLAY_IDENTIFIER;
 import static constante.SecondaryKeywords.ECU_ADDRESS_EXTENSION;
 import static constante.SecondaryKeywords.EXTENDED_LIMITS;
 import static constante.SecondaryKeywords.FORMAT;
-import static constante.SecondaryKeywords.MAX_REFRESH;
 import static constante.SecondaryKeywords.MONOTONY;
 import static constante.SecondaryKeywords.PHYS_UNIT;
 import static constante.SecondaryKeywords.READ_ONLY;
-import static constante.SecondaryKeywords.REF_MEMORY_SEGMENT;
-import static constante.SecondaryKeywords.STEP_SIZE;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -67,20 +64,20 @@ public final class AxisPts extends AdjustableObject {
                         n = nPar + 1;
                         break;
                     case "BYTE_ORDER":
-						optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
-						nPar+=1;
-						break;
+                        optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
+                        nPar += 1;
+                        break;
                     case "DEPOSIT":
                         optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));
-                        nPar+=1;
+                        nPar += 1;
                         break;
                     case "DISPLAY_IDENTIFIER":
                         optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1));
-                        nPar+=1;
+                        nPar += 1;
                         break;
                     case "FORMAT":
                         optionalsParameters.put(FORMAT, parameters.get(nPar + 1) + "f");
-                        nPar+=1;
+                        nPar += 1;
                         break;
                     case "PHYS_UNIT":
                         break;
@@ -111,20 +108,17 @@ public final class AxisPts extends AdjustableObject {
     private final void initOptionalsParameters() {
         optionalsParameters = new HashMap<SecondaryKeywords, Object>();
         optionalsParameters.put(ANNOTATION, null);
-        optionalsParameters.put(BYTE_ORDER, null); // ToDo
+        optionalsParameters.put(BYTE_ORDER, null);
         optionalsParameters.put(CALIBRATION_ACCESS, null); // ToDo
         optionalsParameters.put(COMPARISON_QUANTITY, null); // ToDo
-        optionalsParameters.put(DEPOSIT, null); // ToDo
+        optionalsParameters.put(DEPOSIT, null);
         optionalsParameters.put(DISPLAY_IDENTIFIER, null);
         optionalsParameters.put(ECU_ADDRESS_EXTENSION, null); // ToDo
         optionalsParameters.put(EXTENDED_LIMITS, null); // ToDo
         optionalsParameters.put(FORMAT, null);
-        optionalsParameters.put(MAX_REFRESH, null);
         optionalsParameters.put(MONOTONY, null);
         optionalsParameters.put(PHYS_UNIT, null);
         optionalsParameters.put(READ_ONLY, null); // Par defaut
-        optionalsParameters.put(REF_MEMORY_SEGMENT, null);
-        optionalsParameters.put(STEP_SIZE, null);
     }
 
     @Override
@@ -160,9 +154,9 @@ public final class AxisPts extends AdjustableObject {
         return this.name.compareToIgnoreCase(o.toString());
     }
 
-	@Override
-	public String[] getUnit() {
-		return new String[]{this.compuMethod.getUnit()};
-	}
+    @Override
+    public String[] getUnit() {
+        return new String[] { this.compuMethod.getUnit() };
+    }
 
 }

@@ -119,11 +119,10 @@ public final class A2l {
                     case "FUNCTION":
                         fillParameters(buf, line, objectParameters, keyword);
                         Function function = new Function(objectParameters);
-                        if(function.getDefCharacteristic() != null)
-                        {
-                        	mergeDefCharacteristic.putAll(function.getDefCharacteristic());
+                        if (function.getDefCharacteristic() != null) {
+                            mergeDefCharacteristic.putAll(function.getDefCharacteristic());
                         }
-                        
+
                         functions.put(function.toString(), function);
                         break;
                     default:
@@ -131,12 +130,14 @@ public final class A2l {
                     }
                 }
             }
-            
+
             objectParameters.clear();
 
             assignLinkedObject(mergeDefCharacteristic);
-            
+
             mergeDefCharacteristic.clear();
+
+            System.out.println(getAdjustableObjectByFunction("FunctionScalar"));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -203,7 +204,7 @@ public final class A2l {
             if (compuMethod.hasCompuTabRef()) {
                 compuMethod.assignConversionTable(conversionTables);
             }
-        }   
+        }
     }
 
     public final ModPar getModPar() {
@@ -212,6 +213,20 @@ public final class A2l {
 
     public final ModCommon getModCommon() {
         return modCommon;
+    }
+
+    public List<AdjustableObject> getAdjustableObjectByFunction(String function) {
+        List<AdjustableObject> listByFunction = new ArrayList<AdjustableObject>();
+
+        String functionRef;
+
+        for (String key : adjustableObjects.keySet()) {
+            functionRef = adjustableObjects.get(key).getFunction();
+            if (functionRef != null && functionRef.equals(function)) {
+                listByFunction.add(adjustableObjects.get(key));
+            }
+        }
+        return listByFunction;
     }
 
 }

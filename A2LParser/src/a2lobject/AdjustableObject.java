@@ -23,8 +23,8 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
     protected String conversion;
     protected float lowerLimit;
     protected float upperLimit;
-    
-    protected String function;
+
+    protected String functionRef;
 
     protected Values values;
 
@@ -48,10 +48,9 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
     public final RecordLayout getRecordLayout() {
         return recordLayout;
     }
-    
-    public final String getFunction()
-    {
-    	return this.function;
+
+    public final String getFunction() {
+        return this.functionRef;
     }
 
     public final void assignRecordLayout(HashMap<String, RecordLayout> recordLayouts) {
@@ -77,12 +76,11 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
         }
         return "%16.16f";
     }
-    
+
     public final ByteOrder getByteOrder() {
         String sByteOrder = (String) optionalsParameters.get(BYTE_ORDER);
-        if(sByteOrder != null)
-        {
-        	if ("MSB_LAST".equals(sByteOrder) || "BIG_ENDIAN".equals(sByteOrder)) {
+        if (sByteOrder != null) {
+            if ("MSB_LAST".equals(sByteOrder) || "BIG_ENDIAN".equals(sByteOrder)) {
                 return ByteOrder.LITTLE_ENDIAN;
             }
             return ByteOrder.BIG_ENDIAN;
@@ -103,23 +101,21 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
 
         return sb.toString();
     }
-    
-    public final Values getValues()
-    {
-    	return this.values;
+
+    public final Values getValues() {
+        return this.values;
     }
 
     public final void setValues(Values values) {
         this.values = values;
     }
-    
-    public final void setFunction(String function)
-    {
-    	this.function = function;
+
+    public final void setFunction(String function) {
+        this.functionRef = function;
     }
 
     public abstract void assignComputMethod(HashMap<String, CompuMethod> compuMethods);
-    
+
     public abstract String[] getUnit();
 
 }
