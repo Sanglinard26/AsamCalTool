@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -137,8 +138,6 @@ public final class A2l {
 
             mergeDefCharacteristic.clear();
 
-            System.out.println(getAdjustableObjectByFunction("FunctionScalar"));
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -152,7 +151,7 @@ public final class A2l {
 
         do {
             objectParameters.addAll(parseLineWithRegex(regexQuote, line));
-        } while ((line = buf.readLine()) != null && !line.trim().endsWith(keyword));
+        } while ((line = buf.readLine()) != null && !(line.trim().endsWith(" " + keyword) || line.trim().endsWith("\t" + keyword)));
 
         return objectParameters;
 
@@ -216,7 +215,8 @@ public final class A2l {
     }
 
     public List<AdjustableObject> getAdjustableObjectByFunction(String function) {
-        List<AdjustableObject> listByFunction = new ArrayList<AdjustableObject>();
+
+        final List<AdjustableObject> listByFunction = new ArrayList<AdjustableObject>();
 
         String functionRef;
 
@@ -226,6 +226,9 @@ public final class A2l {
                 listByFunction.add(adjustableObjects.get(key));
             }
         }
+
+        Collections.sort(listByFunction);
+
         return listByFunction;
     }
 
