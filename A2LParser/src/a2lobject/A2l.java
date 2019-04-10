@@ -157,11 +157,12 @@ public final class A2l {
 
     }
 
-    private final List<String> parseLineWithRegex(Pattern regexQuote, String lineToParse) {
+    private final List<String> parseLineWithRegex(Pattern regexQuote, String line) {
 
         final List<String> listWord = new ArrayList<String>();
 
-        final String lineWoutComment = RegexHolder.LINE_COMMENT.matcher(lineToParse.trim()).replaceAll("");
+        final String lineToParse = line.trim();
+        final String lineWoutComment = RegexHolder.LINE_COMMENT.matcher(lineToParse).replaceAll("");
 
         if (RegexHolder.isString(lineWoutComment)) {
             // this string starts and end with a double quote

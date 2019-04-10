@@ -9,7 +9,7 @@ import static constante.SecondaryKeywords.EPK;
 import static constante.SecondaryKeywords.SYSTEM_CONSTANT;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,15 +27,12 @@ public final class ModPar {
 
         initOptionalsParameters();
 
-        parameters.remove("/begin"); // Remove /begin
-        parameters.remove("MOD_PAR"); // Remove MOD_PAR
-
         List<SystemConstant> systemConstant = new ArrayList<SystemConstant>();
 
         if (parameters.size() >= 1) {
-            for (int n = 0; n < parameters.size(); n++) {
+            for (int n = 2; n < parameters.size(); n++) {
                 switch (n) {
-                case 0:
+                case 2:
                     this.comment = parameters.get(n);
                     break;
                 default: // Cas de parametres optionels
@@ -89,7 +86,7 @@ public final class ModPar {
     }
 
     private final void initOptionalsParameters() {
-        optionalsParameters = new HashMap<SecondaryKeywords, Object>();
+        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
         optionalsParameters.put(ADDR_EPK, null);
         optionalsParameters.put(ECU_CALIBRATION_OFFSET, null);
         optionalsParameters.put(EPK, null);

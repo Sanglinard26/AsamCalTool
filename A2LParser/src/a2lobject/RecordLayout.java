@@ -23,7 +23,7 @@ import static constante.SecondaryKeywords.SRC_ADDR_Y;
 import static constante.SecondaryKeywords.STATIC_RECORD_LAYOUT;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -46,15 +46,12 @@ public final class RecordLayout {
 
         initOptionalsParameters();
 
-        parameters.remove("/begin"); // Remove /begin
-        parameters.remove("RECORD_LAYOUT"); // Remove RECORD_LAYOUT
-        
         List<String> subList = Collections.emptyList();
 
         if (parameters.size() >= 1) {
-            for (int n = 0; n < parameters.size(); n++) {
+            for (int n = 2; n < parameters.size(); n++) {
                 switch (n) {
-                case 0:
+                case 2:
                     this.name = parameters.get(n);
                     break;
                 default: // Cas de parametres optionels
@@ -115,7 +112,7 @@ public final class RecordLayout {
                     break;
                 }
             }
-            
+
             subList.clear();
 
             // On vide la MAP de parametre non utilise
@@ -134,7 +131,7 @@ public final class RecordLayout {
     }
 
     private final void initOptionalsParameters() {
-        optionalsParameters = new HashMap<SecondaryKeywords, OptionalParameterRL>();
+        optionalsParameters = new EnumMap<SecondaryKeywords, OptionalParameterRL>(SecondaryKeywords.class);
         optionalsParameters.put(ALIGNMENT_BYTE, null);
         optionalsParameters.put(ALIGNMENT_FLOAT16_IEEE, null);
         optionalsParameters.put(ALIGNMENT_FLOAT32_IEEE, null);

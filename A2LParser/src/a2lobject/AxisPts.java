@@ -16,6 +16,7 @@ import static constante.SecondaryKeywords.MONOTONY;
 import static constante.SecondaryKeywords.PHYS_UNIT;
 import static constante.SecondaryKeywords.READ_ONLY;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -34,23 +35,20 @@ public final class AxisPts extends AdjustableObject {
 
         initOptionalsParameters();
 
-        parameters.remove(0); // Remove /begin
-        parameters.remove(0); // Remove AXIS_PTS
-
         if (parameters.size() == 1 || parameters.size() >= 9) {
 
-            this.name = parameters.get(0);
-            this.longIdentifier = parameters.get(1);
-            this.adress = parameters.get(2);
-            this.inputQuantity = parameters.get(3);
-            this.deposit = parameters.get(4);
-            this.maxDiff = Float.parseFloat(parameters.get(5));
-            this.conversion = parameters.get(6);
-            this.maxAxisPoints = Integer.parseInt(parameters.get(7));
-            this.lowerLimit = Float.parseFloat(parameters.get(8));
-            this.upperLimit = Float.parseFloat(parameters.get(9));
+            this.name = parameters.get(2);
+            this.longIdentifier = parameters.get(3);
+            this.adress = parameters.get(4);
+            this.inputQuantity = parameters.get(5);
+            this.deposit = parameters.get(6);
+            this.maxDiff = Float.parseFloat(parameters.get(7));
+            this.conversion = parameters.get(8);
+            this.maxAxisPoints = Integer.parseInt(parameters.get(9));
+            this.lowerLimit = Float.parseFloat(parameters.get(10));
+            this.upperLimit = Float.parseFloat(parameters.get(11));
 
-            int n = 10;
+            int n = 12;
 
             Set<SecondaryKeywords> keys = optionalsParameters.keySet();
             for (int nPar = n; nPar < parameters.size(); nPar++) {
@@ -106,7 +104,7 @@ public final class AxisPts extends AdjustableObject {
     }
 
     private final void initOptionalsParameters() {
-        optionalsParameters = new HashMap<SecondaryKeywords, Object>();
+        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
         optionalsParameters.put(ANNOTATION, null);
         optionalsParameters.put(BYTE_ORDER, null);
         optionalsParameters.put(CALIBRATION_ACCESS, null); // ToDo
