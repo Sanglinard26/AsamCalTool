@@ -115,15 +115,6 @@ public final class RecordLayout {
 
             subList.clear();
 
-            // On vide la MAP de parametre non utilise
-            Iterator<Map.Entry<SecondaryKeywords, OptionalParameterRL>> iter = optionalsParameters.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry<SecondaryKeywords, OptionalParameterRL> entry = iter.next();
-                if (entry.getValue() == null) {
-                    iter.remove();
-                }
-            }
-
         } else {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }

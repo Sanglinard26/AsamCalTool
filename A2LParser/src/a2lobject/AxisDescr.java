@@ -14,7 +14,6 @@ import static constante.SecondaryKeywords.FORMAT;
 
 import java.nio.ByteOrder;
 import java.util.EnumMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -100,15 +99,6 @@ public final class AxisDescr {
                     default:
                         break;
                     }
-                }
-            }
-
-            // On vide la MAP de parametre non utilise
-            Iterator<Map.Entry<SecondaryKeywords, Object>> iter = optionalsParameters.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry<SecondaryKeywords, Object> entry = iter.next();
-                if (entry.getValue() == null) {
-                    iter.remove();
                 }
             }
 
