@@ -10,7 +10,6 @@ import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Map;
 
-import constante.ConversionType;
 import constante.SecondaryKeywords;
 
 public abstract class AdjustableObject implements Comparable<AdjustableObject> {
@@ -61,16 +60,15 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
         Object objectDisplayFormat = optionalsParameters.get(FORMAT);
         String displayFormat;
 
-        if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
-                || compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
-                || compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
+        if (!compuMethod.isVerbal()) {
             if (objectDisplayFormat == null) {
                 displayFormat = compuMethod.getFormat();
             } else {
                 displayFormat = objectDisplayFormat.toString();
             }
             if (displayFormat.charAt(1) == '0') {
-                displayFormat = displayFormat.replaceFirst("0", "");
+                // displayFormat = displayFormat.replaceFirst("0", "");
+                displayFormat = "%" + displayFormat.substring(2);
             }
             return displayFormat;
         }

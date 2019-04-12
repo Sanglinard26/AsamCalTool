@@ -210,7 +210,8 @@ public final class AxisDescr {
                 displayFormat = objectDisplayFormat.toString();
             }
             if (displayFormat.charAt(1) == '0') {
-                displayFormat = displayFormat.replaceFirst("0", "");
+                // displayFormat = displayFormat.replaceFirst("0", "");
+                displayFormat = "%" + displayFormat.substring(2);
             }
             return displayFormat;
         }
