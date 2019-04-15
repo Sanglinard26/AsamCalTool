@@ -4,6 +4,7 @@
 package hex;
 
 import java.nio.ByteOrder;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -47,6 +48,7 @@ public final class HexDecoder {
     private final ModCommon modCommon;
 
     private static long tmpAdress = 0;
+    private static DecimalFormat df;
 
     public HexDecoder(A2l a2l, IntelHex hex) {
         this.a2l = a2l;
@@ -77,6 +79,8 @@ public final class HexDecoder {
         }
 
         final ByteOrder byteOrder = modCommon.getByteOrder();
+        
+        df = new DecimalFormat();
 
         for (Entry<String, AdjustableObject> entries : a2l.getAdjustableObjects().entrySet()) {
             if (entries.getValue() instanceof AxisPts) {
@@ -136,6 +140,9 @@ public final class HexDecoder {
                 }
             }
         }
+        
+        df = null;
+        
         return true;
     }
 
@@ -146,7 +153,7 @@ public final class HexDecoder {
 
         final RecordLayout recordLayout = axisPts.getRecordLayout();
         final CompuMethod compuMethod = axisPts.getCompuMethod();
-        final String axisDisplayFormat = axisPts.getFormat();
+        final int nbDecimale = axisPts.getNbDecimal();
         final NoAxisPtsX noAxisPtsX = recordLayout.getNoAxisPtsX();
         final AxisPtsX axisPtsX = recordLayout.getAxisPtsX();
 
@@ -192,13 +199,15 @@ public final class HexDecoder {
         values = new Values(nbValue, 1);
 
         if (!compuMethod.isVerbal()) {
+        	
+        	df.setMaximumFractionDigits(nbDecimale);
 
             for (int n = 0; n < nbValue; n++) {
                 physValue = compuMethod.compute(hexValuesAxisPts[n]);
                 if (indexOrder.compareTo(IndexOrder.INDEX_INCR) == 0) {
-                    values.setValue(0, n, String.format(axisDisplayFormat, physValue).trim());
+                	values.setValue(0, n, df.format(physValue));
                 } else {
-                    values.setValue(0, (nbValue - 1) - n, String.format(axisDisplayFormat, physValue).trim());
+                	values.setValue(0, (nbValue - 1) - n, df.format(physValue));
                 }
             }
         } else {
@@ -221,7 +230,7 @@ public final class HexDecoder {
         double hexValue = Converter.readHexValue(hex, adress, fncValues.getDataType(), byteOrder);
         double physValue;
 
-        final String displayFormat = characteristic.getFormat();
+        final int nbDecimale = characteristic.getNbDecimal();
 
         final Values values = new Values(1, 1);
 
@@ -232,7 +241,8 @@ public final class HexDecoder {
             }
 
             physValue = compuMethod.compute(hexValue);
-            values.setValue(0, 0, String.format(displayFormat, physValue).trim());
+            df.setMaximumFractionDigits(nbDecimale);
+            values.setValue(0, 0, df.format(physValue));
 
         } else {
             if (characteristic.hasBitMask()) {
@@ -379,9 +389,11 @@ public final class HexDecoder {
         double physValue = 0;
         double predValue = 0;
 
-        final String displayFormat = axisDescrStdAxis.getFormat();
+        final int nbDecimale = axisDescrStdAxis.getNbDecimal();
 
         if (!compuMethod.isVerbal()) {
+        	
+        	df.setMaximumFractionDigits(nbDecimale);
 
             for (int n = 0; n < nbValue; n++) {
                 if (!depositMode.equals(DepositMode.DIFFERENCE.name())) {
@@ -401,9 +413,9 @@ public final class HexDecoder {
                     }
                 }
                 if (indexOrder.compareTo(IndexOrder.INDEX_INCR) == 0) {
-                    strValues[n] = String.format(displayFormat, physValue).trim();
+                	strValues[n] = df.format(physValue);
                 } else {
-                    strValues[(nbValue - 1) - n] = String.format(displayFormat, physValue).trim();
+                    strValues[(nbValue - 1) - n] = df.format(physValue);
                 }
             }
         } else {
@@ -506,13 +518,15 @@ public final class HexDecoder {
         double[] hexValues = Converter.readHexValues(hex, adress, fncValues.getDataType(), byteOrder, nbValue);
         double physValue = 0;
 
-        final String displayFormat = characteristic.getFormat();
+        final int nbDecimale = characteristic.getNbDecimal();
 
         if (!compuMethod.isVerbal()) {
+        	
+        	df.setMaximumFractionDigits(nbDecimale);
 
             for (int n = 0; n < nbValue; n++) {
                 physValue = compuMethod.compute(hexValues[n]);
-                values.setValue(1, n, String.format(displayFormat, physValue).trim());
+                values.setValue(1, n, df.format(physValue));
             }
 
         } else {
@@ -539,7 +553,7 @@ public final class HexDecoder {
         IndexMode indexModeValBlk = fncValues.getIndexMode();
 
         double physValue;
-        final String displayFormat = characteristic.getFormat();
+        final int nbDecimale = characteristic.getNbDecimal();
 
         final int[] dim = characteristic.getDimArray();
 
@@ -567,10 +581,12 @@ public final class HexDecoder {
             values.setValue(1, 0, "Z");
 
             if (!compuMethod.isVerbal()) {
+            	
+            	df.setMaximumFractionDigits(nbDecimale);
 
                 for (int n = 0; n < dim[0]; n++) {
                     physValue = compuMethod.compute(hexValuesValBlk[n]);
-                    values.setValue(1, n + 1, String.format(displayFormat, physValue).trim());
+                    values.setValue(1, n + 1, df.format(physValue));
                 }
             } else {
                 if (characteristic.hasBitMask()) {
@@ -602,7 +618,7 @@ public final class HexDecoder {
                     }
                     col = n % (values.getDimX() - 1);
                     physValue = compuMethod.compute(hexValuesValBlk[n]);
-                    values.setValue(row, col + 1, String.format(displayFormat, physValue).trim());
+                    values.setValue(row, col + 1, df.format(physValue));
                 }
 
             } else {
@@ -633,7 +649,7 @@ public final class HexDecoder {
     private void readMap(ByteOrder commonByteOrder, Characteristic characteristic, long adress, CompuMethod compuMethod, FncValues fncValues) {
 
         final ByteOrder byteOrder = characteristic.getByteOrder() != null ? characteristic.getByteOrder() : commonByteOrder;
-        final String displayFormat = characteristic.getFormat();
+        final int nbDecimale = characteristic.getNbDecimal();
         double physValue;
 
         int nbValueMap = 0;
@@ -701,6 +717,8 @@ public final class HexDecoder {
             double[] hexValues = Converter.readHexValues(hex, adress, fncValues.getDataType(), byteOrder, nbValueMap);
 
             if (!compuMethod.isVerbal()) {
+            	
+            	df.setMaximumFractionDigits(nbDecimale);
 
                 int row = 0;
                 int col = 0;
@@ -711,14 +729,14 @@ public final class HexDecoder {
                         }
                         col = n % (values.getDimY() - 1);
                         physValue = compuMethod.compute(hexValues[n]);
-                        values.setValue(col + 1, row, String.format(displayFormat, physValue));
+                        values.setValue(col + 1, row, df.format(physValue));
                     } else {
                         if (n % (values.getDimX() - 1) == 0) {
                             row += 1;
                         }
                         col = n % (values.getDimX() - 1);
                         physValue = compuMethod.compute(hexValues[n]);
-                        values.setValue(row, col + 1, String.format(displayFormat, physValue));
+                        values.setValue(row, col + 1, df.format(physValue));
                     }
 
                 }

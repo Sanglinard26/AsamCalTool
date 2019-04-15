@@ -39,7 +39,7 @@ public final class CompuMethod implements Comparable<CompuMethod> {
             this.name = parameters.get(2);
             this.longIdentifier = parameters.get(3);
             this.conversionType = ConversionType.getConversionType(parameters.get(4));
-            this.format = parameters.get(5) + "f";
+            this.format = parameters.get(5);
             this.unit = parameters.get(6);
 
             int n = 7;

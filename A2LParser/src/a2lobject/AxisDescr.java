@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import constante.ConversionType;
 import constante.SecondaryKeywords;
 
 public final class AxisDescr {
@@ -93,7 +92,7 @@ public final class AxisDescr {
                         n = nPar + 1;
                         break;
                     case "FORMAT":
-                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1) + "f");
+                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1));
                         nPar += 1;
                         break;
                     default:
@@ -196,26 +195,22 @@ public final class AxisDescr {
     public final Map<SecondaryKeywords, Object> getOptionalsParameters() {
         return optionalsParameters;
     }
-
-    public final String getFormat() {
-        Object objectDisplayFormat = optionalsParameters.get(FORMAT);
+    
+    public final int getNbDecimal()
+    {
+    	Object objectDisplayFormat = optionalsParameters.get(FORMAT);
         String displayFormat;
 
-        if (compuMethod.getConversionType().compareTo(ConversionType.RAT_FUNC) == 0
-                || compuMethod.getConversionType().compareTo(ConversionType.IDENTICAL) == 0
-                || compuMethod.getConversionType().compareTo(ConversionType.LINEAR) == 0) {
+        if (!compuMethod.isVerbal()) {
             if (objectDisplayFormat == null) {
                 displayFormat = compuMethod.getFormat();
             } else {
                 displayFormat = objectDisplayFormat.toString();
             }
-            if (displayFormat.charAt(1) == '0') {
-                // displayFormat = displayFormat.replaceFirst("0", "");
-                displayFormat = "%" + displayFormat.substring(2);
-            }
-            return displayFormat;
+            
+            return Integer.parseInt(displayFormat.substring(displayFormat.indexOf(".")+1, displayFormat.length()));
         }
-        return "%16.16f";
+        return 0;
     }
 
     public enum Attribute {

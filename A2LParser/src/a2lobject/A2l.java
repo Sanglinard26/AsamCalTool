@@ -60,7 +60,7 @@ public final class A2l {
 
             while ((line = buf.readLine()) != null) {
 
-                if (line.isEmpty()) {
+                if (line.length() == 0) {
                     continue;
                 }
 
@@ -147,12 +147,18 @@ public final class A2l {
     private final List<String> fillParameters(BufferedReader buf, String line, List<String> objectParameters, String keyword) throws IOException {
 
         final Pattern regexQuote = RegexHolder.QUOTE;
+        final String spaceKeyword = " " + keyword;
+        final String tabKeyword = "\t" + keyword;
 
         objectParameters.clear();
 
         do {
-            objectParameters.addAll(parseLineWithRegex(regexQuote, line));
-        } while ((line = buf.readLine()) != null && !(line.trim().endsWith(" " + keyword) || line.trim().endsWith("\t" + keyword)));
+        	line = line.trim();
+        	if(line.length() > 0)
+        	{
+        		objectParameters.addAll(parseLineWithRegex(regexQuote, line));
+        	}
+        } while ((line = buf.readLine()) != null && !(line.trim().endsWith(spaceKeyword) || line.trim().endsWith(tabKeyword)));
 
         return objectParameters;
 
@@ -165,9 +171,9 @@ public final class A2l {
         final String lineWoutComment;
 
         if (line.indexOf("/*") > -1 || line.indexOf("*/") > -1 || line.indexOf("//") > -1) {
-            lineWoutComment = RegexHolder.LINE_COMMENT.matcher(line.trim()).replaceAll("");
+            lineWoutComment = RegexHolder.LINE_COMMENT.matcher(line).replaceAll("");
         } else {
-            lineWoutComment = line.trim();
+            lineWoutComment = line;
         }
 
         if (lineWoutComment.indexOf("\"") > -1 && RegexHolder.isString(lineWoutComment)) {

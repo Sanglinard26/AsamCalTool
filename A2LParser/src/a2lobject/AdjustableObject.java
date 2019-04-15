@@ -55,9 +55,10 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
     public final void assignRecordLayout(HashMap<String, RecordLayout> recordLayouts) {
         this.recordLayout = recordLayouts.get(this.deposit);
     }
-
-    public final String getFormat() {
-        Object objectDisplayFormat = optionalsParameters.get(FORMAT);
+    
+    public final int getNbDecimal()
+    {
+    	Object objectDisplayFormat = optionalsParameters.get(FORMAT);
         String displayFormat;
 
         if (!compuMethod.isVerbal()) {
@@ -66,13 +67,10 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
             } else {
                 displayFormat = objectDisplayFormat.toString();
             }
-            if (displayFormat.charAt(1) == '0') {
-                // displayFormat = displayFormat.replaceFirst("0", "");
-                displayFormat = "%" + displayFormat.substring(2);
-            }
-            return displayFormat;
+            
+            return Integer.parseInt(displayFormat.substring(displayFormat.indexOf(".")+1, displayFormat.length()));
         }
-        return "%16.16f";
+        return 0;
     }
 
     public final ByteOrder getByteOrder() {

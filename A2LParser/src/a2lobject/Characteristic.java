@@ -97,7 +97,7 @@ public final class Characteristic extends AdjustableObject {
                         nPar += 1;
                         break;
                     case "FORMAT":
-                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1) + "f");
+                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1));
                         nPar += 1;
                         break;
                     case "MATRIX_DIM":
