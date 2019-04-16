@@ -26,7 +26,7 @@ public final class AxisDescr {
     @SuppressWarnings("unused")
     private String inputQuantity;
     private String conversion;
-    private int maxAxisPoints;
+    private short maxAxisPoints;
     @SuppressWarnings("unused")
     private float lowerLimit;
     @SuppressWarnings("unused")
@@ -48,7 +48,7 @@ public final class AxisDescr {
             this.attribute = Attribute.getAttribute(parameters.get(0));
             this.inputQuantity = parameters.get(1);
             this.conversion = parameters.get(2);
-            this.maxAxisPoints = Integer.parseInt(parameters.get(3));
+            this.maxAxisPoints = (short) Integer.parseInt(parameters.get(3));
             this.lowerLimit = Float.parseFloat(parameters.get(4));
             this.upperLimit = Float.parseFloat(parameters.get(5));
 
@@ -154,7 +154,7 @@ public final class AxisDescr {
         return recordLayout;
     }
 
-    public final int getMaxAxisPoints() {
+    public final short getMaxAxisPoints() {
         return maxAxisPoints;
     }
 
@@ -196,7 +196,7 @@ public final class AxisDescr {
         return optionalsParameters;
     }
     
-    public final int getNbDecimal()
+    public final byte getNbDecimal()
     {
     	Object objectDisplayFormat = optionalsParameters.get(FORMAT);
         String displayFormat;
@@ -208,7 +208,7 @@ public final class AxisDescr {
                 displayFormat = objectDisplayFormat.toString();
             }
             
-            return Integer.parseInt(displayFormat.substring(displayFormat.indexOf(".")+1, displayFormat.length()));
+            return (byte) Integer.parseInt(displayFormat.substring(displayFormat.indexOf(".")+1, displayFormat.length()));
         }
         return 0;
     }

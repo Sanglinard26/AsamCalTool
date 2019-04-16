@@ -27,7 +27,7 @@ public final class AxisPts extends AdjustableObject {
 
     @SuppressWarnings("unused")
     private String inputQuantity; // Reference to INPUT_QUANTITY
-    private int maxAxisPoints;
+    private short maxAxisPoints;
 
     public AxisPts(List<String> parameters) {
 
@@ -42,7 +42,7 @@ public final class AxisPts extends AdjustableObject {
             this.deposit = parameters.get(6);
             this.maxDiff = Float.parseFloat(parameters.get(7));
             this.conversion = parameters.get(8);
-            this.maxAxisPoints = Integer.parseInt(parameters.get(9));
+            this.maxAxisPoints = (short) Integer.parseInt(parameters.get(9));
             this.lowerLimit = Float.parseFloat(parameters.get(10));
             this.upperLimit = Float.parseFloat(parameters.get(11));
 
@@ -113,7 +113,7 @@ public final class AxisPts extends AdjustableObject {
         return this.name;
     }
 
-    public final int getMaxAxisPoints() {
+    public final short getMaxAxisPoints() {
         return maxAxisPoints;
     }
 

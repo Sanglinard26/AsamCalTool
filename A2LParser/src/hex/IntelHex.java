@@ -43,12 +43,12 @@ public final class IntelHex {
     public final String readString(long address, int nByte) {
         for (Memory mem : memorySegments) {
             if (address >= mem.address && address < mem.address + mem.listByte.size()) {
-                String retval = "";
+                StringBuilder retval = new StringBuilder(nByte);
                 while (address < mem.address + mem.listByte.size() && retval.length() < nByte) {
-                    retval += (char) mem.listByte.get((int) (address - mem.address)).byteValue();
+                    retval.append((char) mem.listByte.get((int) (address - mem.address)).byteValue());
                     address++;
                 }
-                return retval;
+                return retval.toString();
             }
         }
         return null;
@@ -63,9 +63,11 @@ public final class IntelHex {
         if (endOfFile) {
             return;
         }
-        String recordType = line.substring(7, 9);
+
+        char recordType = line.charAt(8);
+        
         switch (recordType) {
-        case "00":
+        case '0':
             Memory memoryOfLine = processDataRecordLine(line, extendedAddress);
             if (last == null) {
                 memorySegments.add(memoryOfLine);
@@ -79,16 +81,16 @@ public final class IntelHex {
                 }
             }
             break;
-        case "01":
+        case '1':
             if (!":00000001FF".equals(line)) {
                 throw new IllegalArgumentException("Illegal End-Of-Line record received");
             }
             endOfFile = true;
             break;
-        case "04":
+        case '4':
             extendedAddress = processExtendedLinearAddressRecord(line);
             break;
-        case "05":
+        case '5':
             startAddress = processStartAddressRecord(line);
             break;
         default:
@@ -151,7 +153,7 @@ public final class IntelHex {
 
         byte[] hexLineDataBytes = new byte[length];
 
-        int i;
+        byte i;
         for (i = 0; i < length; i++) {
             hexLineDataBytes[i] = parseHexByte(line, 9 + 2 * i);
             sum += hexLineDataBytes[i];

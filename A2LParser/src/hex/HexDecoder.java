@@ -153,7 +153,7 @@ public final class HexDecoder {
 
         final RecordLayout recordLayout = axisPts.getRecordLayout();
         final CompuMethod compuMethod = axisPts.getCompuMethod();
-        final int nbDecimale = axisPts.getNbDecimal();
+        final byte nbDecimale = axisPts.getNbDecimal();
         final NoAxisPtsX noAxisPtsX = recordLayout.getNoAxisPtsX();
         final AxisPtsX axisPtsX = recordLayout.getAxisPtsX();
 
@@ -230,7 +230,7 @@ public final class HexDecoder {
         double hexValue = Converter.readHexValue(hex, adress, fncValues.getDataType(), byteOrder);
         double physValue;
 
-        final int nbDecimale = characteristic.getNbDecimal();
+        final byte nbDecimale = characteristic.getNbDecimal();
 
         final Values values = new Values(1, 1);
 
@@ -280,21 +280,21 @@ public final class HexDecoder {
             if (entry.getValue() instanceof FixAxisParDist) {
                 FixAxisParDist axisDist = (FixAxisParDist) entry.getValue();
                 strValues = new String[axisDist.getNumberapo()];
-                for (int n = 0; n < axisDist.getNumberapo(); n++) {
+                for (short n = 0; n < axisDist.getNumberapo(); n++) {
                     strValues[n] = Double.toString(axisDist.compute(n));
                 }
                 return strValues;
             } else if (entry.getValue() instanceof FixAxisPar) {
                 FixAxisPar axisDist = (FixAxisPar) entry.getValue();
                 strValues = new String[axisDist.getNumberapo()];
-                for (int n = 0; n < axisDist.getNumberapo(); n++) {
+                for (short n = 0; n < axisDist.getNumberapo(); n++) {
                     strValues[n] = Double.toString(axisDist.compute(n));
                 }
                 return strValues;
             } else if (entry.getValue() instanceof FixAxisParList) {
                 FixAxisParList axisDist = (FixAxisParList) entry.getValue();
                 strValues = new String[axisDist.getNbValue()];
-                for (int n = 0; n < axisDist.getNbValue(); n++) {
+                for (short n = 0; n < axisDist.getNbValue(); n++) {
                     strValues[n] = Double.toString(axisDist.compute(n));
                 }
                 return strValues;
@@ -389,7 +389,7 @@ public final class HexDecoder {
         double physValue = 0;
         double predValue = 0;
 
-        final int nbDecimale = axisDescrStdAxis.getNbDecimal();
+        final byte nbDecimale = axisDescrStdAxis.getNbDecimal();
 
         if (!compuMethod.isVerbal()) {
         	
@@ -459,7 +459,7 @@ public final class HexDecoder {
             String[] fixAxisValues = readFixAxis(axisDescr);
             nbValue = fixAxisValues.length;
             values = new Values(nbValue, 2);
-            for (int i = 0; i < nbValue; i++) {
+            for (short i = 0; i < nbValue; i++) {
                 values.setValue(0, i, fixAxisValues[i]);
             }
             break;
@@ -468,7 +468,7 @@ public final class HexDecoder {
             String[] stdAxisValues = readStdAxis(characteristic, adress, 0, byteOrder);
             nbValue = stdAxisValues.length;
             values = new Values(nbValue, 2);
-            for (int i = 0; i < nbValue; i++) {
+            for (short i = 0; i < nbValue; i++) {
                 values.setValue(0, i, stdAxisValues[i]);
             }
 
@@ -480,7 +480,7 @@ public final class HexDecoder {
             nbValue = comAxisValues.length;
 
             values = new Values(nbValue, 2);
-            for (int i = 0; i < nbValue; i++) {
+            for (short i = 0; i < nbValue; i++) {
                 values.setValue(0, i, comAxisValues[i]);
             }
             break;
@@ -489,7 +489,7 @@ public final class HexDecoder {
             nbValue = resAxisValues.length;
 
             values = new Values(nbValue, 2);
-            for (int i = 0; i < nbValue; i++) {
+            for (short i = 0; i < nbValue; i++) {
                 values.setValue(0, i, resAxisValues[i]);
             }
             break;
@@ -505,7 +505,7 @@ public final class HexDecoder {
             nbValue = curveAxisValue.length;
 
             values = new Values(nbValue, 2);
-            for (int i = 0; i < nbValue; i++) {
+            for (short i = 0; i < nbValue; i++) {
                 values.setValue(0, i, curveAxisValue[i]);
             }
             break;
@@ -518,13 +518,13 @@ public final class HexDecoder {
         double[] hexValues = Converter.readHexValues(hex, adress, fncValues.getDataType(), byteOrder, nbValue);
         double physValue = 0;
 
-        final int nbDecimale = characteristic.getNbDecimal();
+        final byte nbDecimale = characteristic.getNbDecimal();
 
         if (!compuMethod.isVerbal()) {
         	
         	df.setMaximumFractionDigits(nbDecimale);
 
-            for (int n = 0; n < nbValue; n++) {
+            for (short n = 0; n < nbValue; n++) {
                 physValue = compuMethod.compute(hexValues[n]);
                 values.setValue(1, n, df.format(physValue));
             }
@@ -532,11 +532,11 @@ public final class HexDecoder {
         } else {
 
             if (characteristic.hasBitMask()) {
-                for (int i = 0; i < nbValue; i++) {
+                for (short i = 0; i < nbValue; i++) {
                     hexValues[i] = characteristic.applyBitMask((long) hexValues[i]);
                 }
             }
-            for (int n = 0; n < nbValue; n++) {
+            for (short n = 0; n < nbValue; n++) {
                 values.setValue(1, n, compuMethod.computeString(hexValues[n]));
             }
         }
@@ -553,7 +553,7 @@ public final class HexDecoder {
         IndexMode indexModeValBlk = fncValues.getIndexMode();
 
         double physValue;
-        final int nbDecimale = characteristic.getNbDecimal();
+        final byte nbDecimale = characteristic.getNbDecimal();
 
         final int[] dim = characteristic.getDimArray();
 
@@ -649,7 +649,7 @@ public final class HexDecoder {
     private void readMap(ByteOrder commonByteOrder, Characteristic characteristic, long adress, CompuMethod compuMethod, FncValues fncValues) {
 
         final ByteOrder byteOrder = characteristic.getByteOrder() != null ? characteristic.getByteOrder() : commonByteOrder;
-        final int nbDecimale = characteristic.getNbDecimal();
+        final byte nbDecimale = characteristic.getNbDecimal();
         double physValue;
 
         int nbValueMap = 0;

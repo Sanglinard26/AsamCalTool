@@ -13,13 +13,13 @@ public final class FixAxisParList {
 
         axisPtsValue = new float[parameters.size()];
 
-        for (int n = 0; n < axisPtsValue.length; n++) {
+        for (short n = 0; n < axisPtsValue.length; n++) {
             axisPtsValue[n] = Float.parseFloat(parameters.get(n));
         }
     }
 
-    public final int getNbValue() {
-        return axisPtsValue.length;
+    public final short getNbValue() {
+        return (short) axisPtsValue.length;
     }
 
     public final double compute(int numVal) {

@@ -56,7 +56,7 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
         this.recordLayout = recordLayouts.get(this.deposit);
     }
     
-    public final int getNbDecimal()
+    public final byte getNbDecimal()
     {
     	Object objectDisplayFormat = optionalsParameters.get(FORMAT);
         String displayFormat;
@@ -68,7 +68,7 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
                 displayFormat = objectDisplayFormat.toString();
             }
             
-            return Integer.parseInt(displayFormat.substring(displayFormat.indexOf(".")+1, displayFormat.length()));
+            return (byte) Integer.parseInt(displayFormat.substring(displayFormat.indexOf(".")+1, displayFormat.length()));
         }
         return 0;
     }

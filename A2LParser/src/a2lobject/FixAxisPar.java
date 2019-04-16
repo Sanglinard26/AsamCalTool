@@ -9,13 +9,13 @@ public final class FixAxisPar {
 
     private final float offset;
     private final float shift;
-    private final int numberapo;
+    private final short numberapo;
 
     public FixAxisPar(List<String> parameters) {
 
         this.offset = Float.parseFloat(parameters.get(0));
         this.shift = Float.parseFloat(parameters.get(1));
-        this.numberapo = Integer.parseInt(parameters.get(2));
+        this.numberapo = (short) Integer.parseInt(parameters.get(2));
 
     }
 
@@ -31,7 +31,7 @@ public final class FixAxisPar {
         return shift;
     }
 
-    public final int getNumberapo() {
+    public final short getNumberapo() {
         return numberapo;
     }
 }

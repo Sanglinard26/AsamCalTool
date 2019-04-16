@@ -148,8 +148,8 @@ public final class RecordLayout {
         return this.name;
     }
 
-    public final Map<Integer, OptionalParameterRL> getSortedObject() {
-        TreeMap<Integer, OptionalParameterRL> treeMap = new TreeMap<Integer, OptionalParameterRL>();
+    public final Map<Byte, OptionalParameterRL> getSortedObject() {
+        TreeMap<Byte, OptionalParameterRL> treeMap = new TreeMap<Byte, OptionalParameterRL>();
 
         Iterator<Map.Entry<SecondaryKeywords, OptionalParameterRL>> iter = optionalsParameters.entrySet().iterator();
         while (iter.hasNext()) {
@@ -216,7 +216,7 @@ public final class RecordLayout {
         private final AdressType adressType;
 
         public FncValues(List<String> parameters) {
-            this.position = Integer.parseInt(parameters.get(0));
+            this.position = (byte) Integer.parseInt(parameters.get(0));
             this.dataType = DataType.getDataType(parameters.get(1));
             this.indexMode = IndexMode.getIndexMode(parameters.get(2));
             this.adressType = AdressType.getAdressType(parameters.get(3));
@@ -242,7 +242,7 @@ public final class RecordLayout {
         private final AdressType adressType;
 
         public AxisPtsX(List<String> parameters) {
-            this.position = Integer.parseInt(parameters.get(0));
+            this.position = (byte) Integer.parseInt(parameters.get(0));
             this.dataType = DataType.getDataType(parameters.get(1));
             this.indexOrder = IndexOrder.getIndexOrder(parameters.get(2));
             this.adressType = AdressType.getAdressType(parameters.get(3));
@@ -266,7 +266,7 @@ public final class RecordLayout {
         private final DataType dataType;
 
         public NoAxisPtsX(List<String> parameters) {
-            this.position = Integer.parseInt(parameters.get(0));
+            this.position = (byte) Integer.parseInt(parameters.get(0));
             this.dataType = DataType.getDataType(parameters.get(1));
         }
 
@@ -283,7 +283,7 @@ public final class RecordLayout {
         private final AdressType adressType;
 
         public AxisPtsY(List<String> parameters) {
-            this.position = Integer.parseInt(parameters.get(0));
+            this.position = (byte) Integer.parseInt(parameters.get(0));
             this.dataType = DataType.getDataType(parameters.get(1));
             this.indexOrder = IndexOrder.getIndexOrder(parameters.get(2));
             this.adressType = AdressType.getAdressType(parameters.get(3));
@@ -307,7 +307,7 @@ public final class RecordLayout {
         private final DataType dataType;
 
         public NoAxisPtsY(List<String> parameters) {
-            this.position = Integer.parseInt(parameters.get(0));
+            this.position = (byte) Integer.parseInt(parameters.get(0));
             this.dataType = DataType.getDataType(parameters.get(1));
         }
 
@@ -322,7 +322,7 @@ public final class RecordLayout {
         private final DataType dataType;
 
         public SrcAddrX(List<String> parameters) {
-            this.position = Integer.parseInt(parameters.get(0));
+            this.position = (byte) Integer.parseInt(parameters.get(0));
             this.dataType = DataType.getDataType(parameters.get(1));
         }
 
@@ -337,7 +337,7 @@ public final class RecordLayout {
         private final DataType dataType;
 
         public SrcAddrY(List<String> parameters) {
-            this.position = Integer.parseInt(parameters.get(0));
+            this.position = (byte) Integer.parseInt(parameters.get(0));
             this.dataType = DataType.getDataType(parameters.get(1));
         }
 
@@ -352,7 +352,7 @@ public final class RecordLayout {
         private final DataType dataType;
 
         public NoRescaleX(List<String> parameters) {
-            this.position = Integer.parseInt(parameters.get(0));
+            this.position = (byte) Integer.parseInt(parameters.get(0));
             this.dataType = DataType.getDataType(parameters.get(1));
         }
 
@@ -367,7 +367,7 @@ public final class RecordLayout {
         private final DataSize dataSize;
 
         public Reserved(List<String> parameters) {
-            this.position = Integer.parseInt(parameters.get(0));
+            this.position = (byte) Integer.parseInt(parameters.get(0));
             this.dataSize = DataSize.getDataSize(parameters.get(1));
         }
 
@@ -384,7 +384,7 @@ public final class RecordLayout {
         private final AdressType adressType;
 
         public AxisRescaleX(List<String> parameters) {
-            this.position = Integer.parseInt(parameters.get(0));
+            this.position = (byte) Integer.parseInt(parameters.get(0));
             this.dataType = DataType.getDataType(parameters.get(1));
             this.maxNumberOfRescalePairs = Integer.parseInt(parameters.get(2));
             this.indexOrder = IndexOrder.getIndexOrder(parameters.get(3));

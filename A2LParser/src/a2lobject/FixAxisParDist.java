@@ -9,13 +9,13 @@ public final class FixAxisParDist {
 
     private final float offset;
     private final float distance;
-    private final int numberapo;
+    private final short numberapo;
 
     public FixAxisParDist(List<String> parameters) {
 
         this.offset = Float.parseFloat(parameters.get(0));
         this.distance = Float.parseFloat(parameters.get(1));
-        this.numberapo = Integer.parseInt(parameters.get(2));
+        this.numberapo = (short) Integer.parseInt(parameters.get(2));
 
     }
 
@@ -31,7 +31,7 @@ public final class FixAxisParDist {
         return distance;
     }
 
-    public int getNumberapo() {
+    public short getNumberapo() {
         return numberapo;
     }
 }
