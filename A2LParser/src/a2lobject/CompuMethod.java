@@ -125,13 +125,22 @@ public final class CompuMethod implements Comparable<CompuMethod> {
 		case TAB_NOINTP:
 			Object compuTabRef = this.optionalsParameters.get(COMPU_TAB_REF);
 			if (compuTabRef instanceof CompuTab) {
-				@SuppressWarnings("unused")
 				CompuTab compuTab = (CompuTab) compuTabRef;
-				return hex;
+				Float key = new Float(hex);
+				return compuTab.getValuePairs().get(key);
 			}
-			return Double.NaN;
 		case TAB_INTP:
-			return hex;
+			Object compuTabRefBis = this.optionalsParameters.get(COMPU_TAB_REF);
+			if (compuTabRefBis instanceof CompuTab) {
+				CompuTab compuTab = (CompuTab) compuTabRefBis;
+				Float key = new Float(hex);
+				Float value = compuTab.getValuePairs().get(key);
+				if(value == null)
+				{
+					return hex; // TODO : Make interpolation
+				}
+				return value;
+			}
 		default:
 			return Double.NaN;
 		}

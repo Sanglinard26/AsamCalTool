@@ -22,14 +22,11 @@ public final class CompuVTabRange extends ConversionTable {
 
 	public CompuVTabRange(List<String> parameters) {
 
-		parameters.remove(0); // Remove /begin
-		parameters.remove(0); // Remove COMPU_VTAB_RANGE
-
 		if (parameters.size() >= 4) {
 
-			this.name = parameters.get(0);
-			this.longIdentifier = parameters.get(1);
-			this.numberValueTriples = Integer.parseInt(parameters.get(2));
+			this.name = parameters.get(2);
+			this.longIdentifier = parameters.get(3);
+			this.numberValueTriples = Integer.parseInt(parameters.get(4));
 
 			this.valueTriples = new LinkedHashMap<Range, String>();
 
@@ -38,9 +35,9 @@ public final class CompuVTabRange extends ConversionTable {
 			final List<String> listValuePairs;
 
 			if (lastIdx > -1) {
-				listValuePairs = parameters.subList(3, lastIdx);
+				listValuePairs = parameters.subList(5, lastIdx);
 			} else {
-				listValuePairs = parameters.subList(3, parameters.size());
+				listValuePairs = parameters.subList(5, parameters.size());
 			}
 
 			for (int i = 0; i < listValuePairs.size(); i++) {
@@ -70,7 +67,6 @@ public final class CompuVTabRange extends ConversionTable {
 			}
 		}
 		return defaultValue;
-
 	}
 }
 

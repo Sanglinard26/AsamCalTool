@@ -26,15 +26,12 @@ public final class CompuTab extends ConversionTable {
 
 	public CompuTab(List<String> parameters) {
 
-		parameters.remove("/begin"); // Remove /begin
-		parameters.remove("COMPU_TAB"); // Remove COMPU_TAB
-
 		if (parameters.size() == 1 || parameters.size() >= 5) {
 
-			this.name = parameters.get(0);
-			this.longIdentifier = parameters.get(1);
-			this.conversionType = ConversionType.getConversionType(parameters.get(2));
-			this.numberValuePairs = Integer.parseInt(parameters.get(3));
+			this.name = parameters.get(2);
+			this.longIdentifier = parameters.get(3);
+			this.conversionType = ConversionType.getConversionType(parameters.get(4));
+			this.numberValuePairs = Integer.parseInt(parameters.get(5));
 
 			this.valuePairs = new LinkedHashMap<Float, Float>();
 
@@ -46,9 +43,9 @@ public final class CompuTab extends ConversionTable {
 			final List<String> listValuePairs;
 
 			if (lastIdx > -1) {
-				listValuePairs = parameters.subList(4, lastIdx);
+				listValuePairs = parameters.subList(6, lastIdx);
 			} else {
-				listValuePairs = parameters.subList(4, parameters.size());
+				listValuePairs = parameters.subList(6, parameters.size());
 			}
 
 			for (int i = 0; i < listValuePairs.size(); i++) {
@@ -65,6 +62,10 @@ public final class CompuTab extends ConversionTable {
 	@Override
 	public String toString() {
 		return this.name;
+	}
+	
+	public final Map<Float, Float> getValuePairs() {
+		return valuePairs;
 	}
 
 }

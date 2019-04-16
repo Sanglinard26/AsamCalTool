@@ -124,7 +124,7 @@ public final class AxisPts extends AdjustableObject {
 
     public final String[] getStringValues() {
         String[] strValues = new String[this.values.getDimX()];
-        for (int i = 0; i < strValues.length; i++) {
+        for (short i = 0; i < strValues.length; i++) {
             strValues[i] = this.values.getValue(0, i);
         }
 

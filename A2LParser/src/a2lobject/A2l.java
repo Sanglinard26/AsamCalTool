@@ -64,9 +64,9 @@ public final class A2l {
 					continue;
 				}
 
-				line = line.trim();
-
-				if (line.startsWith(BEGIN)) {
+				if (line.indexOf(BEGIN)>-1) {
+					
+					line = line.trim();
 
 					String keyword = RegexHolder.MULTI_SPACE.split(line, 0)[1];
 
@@ -149,6 +149,7 @@ public final class A2l {
 		final Pattern regexQuote = RegexHolder.QUOTE;
 		final String spaceKeyword = " " + keyword;
 		final String tabKeyword = "\t" + keyword;
+		final String end = "/end";
 
 		objectParameters.clear();
 
@@ -158,7 +159,8 @@ public final class A2l {
 			{
 				objectParameters.addAll(parseLineWithRegex(regexQuote, line));
 			}
-		} while ((line = buf.readLine()) != null && !(line.trim().endsWith(spaceKeyword) || line.trim().endsWith(tabKeyword)));
+			//} while ((line = buf.readLine()) != null && !(line.trim().endsWith(spaceKeyword) || line.trim().endsWith(tabKeyword)));
+		} while ((line = buf.readLine()) != null && !((line.indexOf(spaceKeyword)>-1 || line.indexOf(tabKeyword)>-1) && (line.indexOf(end)>-1)));
 
 		return objectParameters;
 
