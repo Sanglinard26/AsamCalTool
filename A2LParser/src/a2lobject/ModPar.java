@@ -26,17 +26,19 @@ public final class ModPar {
 
         initOptionalsParameters();
 
+        final int nbParams = parameters.size();
+
         List<SystemConstant> systemConstant = new ArrayList<SystemConstant>();
 
-        if (parameters.size() >= 1) {
-            for (int n = 2; n < parameters.size(); n++) {
+        if (nbParams >= 1) {
+            for (int n = 2; n < nbParams; n++) {
                 switch (n) {
                 case 2:
                     this.comment = parameters.get(n);
                     break;
                 default: // Cas de parametres optionels
                     Set<SecondaryKeywords> keys = optionalsParameters.keySet();
-                    for (int nPar = n; nPar < parameters.size(); nPar++) {
+                    for (int nPar = n; nPar < nbParams; nPar++) {
                         if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
                             switch (parameters.get(nPar)) {
                             case "ADDR_EPK":
@@ -64,7 +66,7 @@ public final class ModPar {
                         }
 
                     }
-                    n = parameters.size();
+                    n = nbParams;
                     break;
                 }
             }

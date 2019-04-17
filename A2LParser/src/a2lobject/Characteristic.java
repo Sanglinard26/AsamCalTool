@@ -43,7 +43,9 @@ public final class Characteristic extends AdjustableObject {
 
         initOptionalsParameters();
 
-        if (parameters.size() == 1 || parameters.size() >= 9) {
+        final int nbParams = parameters.size();
+
+        if (nbParams >= 9) {
 
             this.name = parameters.get(2);
             this.longIdentifier = parameters.get(3);
@@ -58,7 +60,7 @@ public final class Characteristic extends AdjustableObject {
             int n = 11;
 
             Set<SecondaryKeywords> keys = optionalsParameters.keySet();
-            for (int nPar = n; nPar < parameters.size(); nPar++) {
+            for (int nPar = n; nPar < nbParams; nPar++) {
                 if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
                     switch (parameters.get(nPar)) {
                     case "ANNOTATION":

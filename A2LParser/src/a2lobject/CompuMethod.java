@@ -21,218 +21,219 @@ import constante.SecondaryKeywords;
 
 public final class CompuMethod implements Comparable<CompuMethod> {
 
-	private String name;
-	@SuppressWarnings("unused")
-	private String longIdentifier;
-	private ConversionType conversionType;
-	private String format;
-	private String unit;
+    private String name;
+    @SuppressWarnings("unused")
+    private String longIdentifier;
+    private ConversionType conversionType;
+    private String format;
+    private String unit;
 
-	private Map<SecondaryKeywords, Object> optionalsParameters;
+    private Map<SecondaryKeywords, Object> optionalsParameters;
 
-	public CompuMethod(List<String> parameters) {
+    public CompuMethod(List<String> parameters) {
 
-		initOptionalsParameters();
+        initOptionalsParameters();
 
-		if (parameters.size() == 1 || parameters.size() >= 5) {
+        final int nbParams = parameters.size();
 
-			this.name = parameters.get(2);
-			this.longIdentifier = parameters.get(3);
-			this.conversionType = ConversionType.getConversionType(parameters.get(4));
-			this.format = parameters.get(5);
-			this.unit = parameters.get(6);
+        if (nbParams >= 5) {
 
-			int n = 7;
+            this.name = parameters.get(2);
+            this.longIdentifier = parameters.get(3);
+            this.conversionType = ConversionType.getConversionType(parameters.get(4));
+            this.format = parameters.get(5);
+            this.unit = parameters.get(6);
 
-			Set<SecondaryKeywords> keys = optionalsParameters.keySet();
-			for (int nPar = n; nPar < parameters.size(); nPar++) {
-				if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-					switch (parameters.get(nPar)) {
-					case "COEFFS": // 6 coeffs
-						optionalsParameters.put(COEFFS, new Coeffs(parameters.subList(nPar + 1, nPar + 7)));
-						nPar += 6;
-						break;
-					case "COEFFS_LINEAR": // 2 coeffs
-						optionalsParameters.put(COEFFS_LINEAR, new CoeffsLinear(parameters.subList(nPar + 1, nPar + 3)));
-						nPar += 2;
-						break;
-					case "COMPU_TAB_REF":
-						optionalsParameters.put(COMPU_TAB_REF, parameters.get(nPar + 1));
-						nPar += 1;
-						break;
-					case "FORMULA":
-						break;
+            int n = 7;
 
-					default:
-						break;
-					}
-				}
-			}
+            Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+            for (int nPar = n; nPar < nbParams; nPar++) {
+                if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
+                    switch (parameters.get(nPar)) {
+                    case "COEFFS": // 6 coeffs
+                        optionalsParameters.put(COEFFS, new Coeffs(parameters.subList(nPar + 1, nPar + 7)));
+                        nPar += 6;
+                        break;
+                    case "COEFFS_LINEAR": // 2 coeffs
+                        optionalsParameters.put(COEFFS_LINEAR, new CoeffsLinear(parameters.subList(nPar + 1, nPar + 3)));
+                        nPar += 2;
+                        break;
+                    case "COMPU_TAB_REF":
+                        optionalsParameters.put(COMPU_TAB_REF, parameters.get(nPar + 1));
+                        nPar += 1;
+                        break;
+                    case "FORMULA":
+                        break;
 
-		} else {
-			throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
-		}
+                    default:
+                        break;
+                    }
+                }
+            }
 
-	}
+        } else {
+            throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
+        }
 
-	private final void initOptionalsParameters() {
-		optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
-		optionalsParameters.put(COEFFS, null);
-		optionalsParameters.put(COEFFS_LINEAR, null);
-		optionalsParameters.put(COMPU_TAB_REF, null); // ToDo
-		optionalsParameters.put(FORMULA, null); // ToDo
-		optionalsParameters.put(REF_UNIT, null); // ToDo
-		optionalsParameters.put(STATUS_STRING_REF, null); // ToDo
-	}
+    }
 
-	@Override
-	public String toString() {
-		return this.name;
-	}
+    private final void initOptionalsParameters() {
+        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
+        optionalsParameters.put(COEFFS, null);
+        optionalsParameters.put(COEFFS_LINEAR, null);
+        optionalsParameters.put(COMPU_TAB_REF, null); // ToDo
+        optionalsParameters.put(FORMULA, null); // ToDo
+        optionalsParameters.put(REF_UNIT, null); // ToDo
+        optionalsParameters.put(STATUS_STRING_REF, null); // ToDo
+    }
 
-	public final void assignConversionTable(HashMap<String, ConversionTable> conversionTables) {
+    @Override
+    public String toString() {
+        return this.name;
+    }
 
-		String compuTabRef = (String) this.optionalsParameters.get(COMPU_TAB_REF);
-		this.optionalsParameters.put(COMPU_TAB_REF, conversionTables.get(compuTabRef));
-	}
+    public final void assignConversionTable(HashMap<String, ConversionTable> conversionTables) {
 
-	public final double compute(double hex) {
+        String compuTabRef = (String) this.optionalsParameters.get(COMPU_TAB_REF);
+        this.optionalsParameters.put(COMPU_TAB_REF, conversionTables.get(compuTabRef));
+    }
 
-		float[] _coeffs;
+    public final double compute(double hex) {
 
-		switch (this.conversionType) {
-		case IDENTICAL:
-			return hex;
-		case FORM:
-			return hex;
-		case LINEAR:
-			CoeffsLinear coeffsLinear = (CoeffsLinear) this.optionalsParameters.get(COEFFS_LINEAR);
-			_coeffs = coeffsLinear.getCoeffs();
-			return (_coeffs[0] * hex) - _coeffs[1];
-		case RAT_FUNC:
-			Coeffs coeffs = (Coeffs) this.optionalsParameters.get(COEFFS);
-			_coeffs = coeffs.getCoeffs();
-			if (_coeffs[0] + _coeffs[2] + _coeffs[3] + _coeffs[4] == 0) {
-				return (hex * _coeffs[5]) / _coeffs[1];
-			}
-			if (_coeffs[0] + _coeffs[3] + _coeffs[4] == 0) {
-				return (hex * _coeffs[5] - _coeffs[2]) / _coeffs[1];
-			}
-			if (_coeffs[0] + _coeffs[1] + _coeffs[3] + _coeffs[5] == 0) {
-				return _coeffs[2] / (hex * _coeffs[4]);
-			}
-			return Double.NaN;
-		case TAB_NOINTP:
-			Object compuTabRef = this.optionalsParameters.get(COMPU_TAB_REF);
-			if (compuTabRef instanceof CompuTab) {
-				CompuTab compuTab = (CompuTab) compuTabRef;
-				Float key = new Float(hex);
-				return compuTab.getValuePairs().get(key);
-			}
-		case TAB_INTP:
-			Object compuTabRefBis = this.optionalsParameters.get(COMPU_TAB_REF);
-			if (compuTabRefBis instanceof CompuTab) {
-				CompuTab compuTab = (CompuTab) compuTabRefBis;
-				Float key = new Float(hex);
-				Float value = compuTab.getValuePairs().get(key);
-				if(value == null)
-				{
-					return hex; // TODO : Make interpolation
-				}
-				return value;
-			}
-		default:
-			return Double.NaN;
-		}
-	}
+        float[] _coeffs;
 
-	public final String computeString(double hex) {
+        switch (this.conversionType) {
+        case IDENTICAL:
+            return hex;
+        case FORM:
+            return hex;
+        case LINEAR:
+            CoeffsLinear coeffsLinear = (CoeffsLinear) this.optionalsParameters.get(COEFFS_LINEAR);
+            _coeffs = coeffsLinear.getCoeffs();
+            return (_coeffs[0] * hex) - _coeffs[1];
+        case RAT_FUNC:
+            Coeffs coeffs = (Coeffs) this.optionalsParameters.get(COEFFS);
+            _coeffs = coeffs.getCoeffs();
+            if (_coeffs[0] + _coeffs[2] + _coeffs[3] + _coeffs[4] == 0) {
+                return (hex * _coeffs[5]) / _coeffs[1];
+            }
+            if (_coeffs[0] + _coeffs[3] + _coeffs[4] == 0) {
+                return (hex * _coeffs[5] - _coeffs[2]) / _coeffs[1];
+            }
+            if (_coeffs[0] + _coeffs[1] + _coeffs[3] + _coeffs[5] == 0) {
+                return _coeffs[2] / (hex * _coeffs[4]);
+            }
+            return Double.NaN;
+        case TAB_NOINTP:
+            Object compuTabRef = this.optionalsParameters.get(COMPU_TAB_REF);
+            if (compuTabRef instanceof CompuTab) {
+                CompuTab compuTab = (CompuTab) compuTabRef;
+                Float key = new Float(hex);
+                return compuTab.getValuePairs().get(key);
+            }
+        case TAB_INTP:
+            Object compuTabRefBis = this.optionalsParameters.get(COMPU_TAB_REF);
+            if (compuTabRefBis instanceof CompuTab) {
+                CompuTab compuTab = (CompuTab) compuTabRefBis;
+                Float key = new Float(hex);
+                Float value = compuTab.getValuePairs().get(key);
+                if (value == null) {
+                    return hex; // TODO : Make interpolation
+                }
+                return value;
+            }
+        default:
+            return Double.NaN;
+        }
+    }
 
-		Object compuTabRef = this.optionalsParameters.get(COMPU_TAB_REF);
+    public final String computeString(double hex) {
 
-		switch (this.conversionType) {
-		case TAB_VERB:
-			if (compuTabRef instanceof CompuVTab) {
-				CompuVTab compuVTab = (CompuVTab) compuTabRef;
-				Float key = new Float(hex);
-				return compuVTab.getValuePairs().get(key);
-			}
-			if (compuTabRef instanceof CompuVTabRange) {
-				CompuVTabRange compuVTabRange = (CompuVTabRange) compuTabRef;
-				return compuVTabRange.getStringValue(hex);
-			}
-			return "NaN";
-		default:
-			return "NaN";
-		}
-	}
+        Object compuTabRef = this.optionalsParameters.get(COMPU_TAB_REF);
 
-	public final ConversionType getConversionType() {
-		return conversionType;
-	}
+        switch (this.conversionType) {
+        case TAB_VERB:
+            if (compuTabRef instanceof CompuVTab) {
+                CompuVTab compuVTab = (CompuVTab) compuTabRef;
+                Float key = new Float(hex);
+                return compuVTab.getValuePairs().get(key);
+            }
+            if (compuTabRef instanceof CompuVTabRange) {
+                CompuVTabRange compuVTabRange = (CompuVTabRange) compuTabRef;
+                return compuVTabRange.getStringValue(hex);
+            }
+            return "NaN";
+        default:
+            return "NaN";
+        }
+    }
 
-	public final boolean hasCompuTabRef() {
-		return optionalsParameters.get(COMPU_TAB_REF) != null ? true : false;
-	}
+    public final ConversionType getConversionType() {
+        return conversionType;
+    }
 
-	public final boolean isVerbal() {
-		return conversionType.compareTo(ConversionType.TAB_VERB) == 0;
-	}
+    public final boolean hasCompuTabRef() {
+        return optionalsParameters.get(COMPU_TAB_REF) != null ? true : false;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		return this.name.equals(obj.toString());
-	}
+    public final boolean isVerbal() {
+        return conversionType.compareTo(ConversionType.TAB_VERB) == 0;
+    }
 
-	public final String getFormat() {
-		return format;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        return this.name.equals(obj.toString());
+    }
 
-	public final String getUnit() {
-		return this.unit;
-	}
+    public final String getFormat() {
+        return format;
+    }
 
-	@Override
-	public int compareTo(CompuMethod o) {
-		return this.name.compareTo(o.name);
-	}
+    public final String getUnit() {
+        return this.unit;
+    }
 
-	public final class Coeffs {
+    @Override
+    public int compareTo(CompuMethod o) {
+        return this.name.compareTo(o.name);
+    }
 
-		// INT = f(PHYS), f(x) = (axx + bx + c) / (dxx + ex + f)
+    public final class Coeffs {
 
-		private final float[] coeffs;
+        // INT = f(PHYS), f(x) = (axx + bx + c) / (dxx + ex + f)
 
-		public Coeffs(List<String> params) {
-			this.coeffs = new float[6];
-			this.coeffs[0] = Float.parseFloat(params.get(0));
-			this.coeffs[1] = Float.parseFloat(params.get(1));
-			this.coeffs[2] = Float.parseFloat(params.get(2));
-			this.coeffs[3] = Float.parseFloat(params.get(3));
-			this.coeffs[4] = Float.parseFloat(params.get(4));
-			this.coeffs[5] = Float.parseFloat(params.get(5));
-		}
+        private final float[] coeffs;
 
-		public final float[] getCoeffs() {
-			return coeffs;
-		}
-	}
+        public Coeffs(List<String> params) {
+            this.coeffs = new float[6];
+            this.coeffs[0] = Float.parseFloat(params.get(0));
+            this.coeffs[1] = Float.parseFloat(params.get(1));
+            this.coeffs[2] = Float.parseFloat(params.get(2));
+            this.coeffs[3] = Float.parseFloat(params.get(3));
+            this.coeffs[4] = Float.parseFloat(params.get(4));
+            this.coeffs[5] = Float.parseFloat(params.get(5));
+        }
 
-	private final class CoeffsLinear {
+        public final float[] getCoeffs() {
+            return coeffs;
+        }
+    }
 
-		// PHYS = f(INT), f(x) = ax + b
+    private final class CoeffsLinear {
 
-		private final float[] coeffs;
+        // PHYS = f(INT), f(x) = ax + b
 
-		public CoeffsLinear(List<String> params) {
-			this.coeffs = new float[2];
-			this.coeffs[0] = Float.parseFloat(params.get(0));
-			this.coeffs[1] = Float.parseFloat(params.get(1));
-		}
+        private final float[] coeffs;
 
-		public final float[] getCoeffs() {
-			return coeffs;
-		}
-	}
+        public CoeffsLinear(List<String> params) {
+            this.coeffs = new float[2];
+            this.coeffs[0] = Float.parseFloat(params.get(0));
+            this.coeffs[1] = Float.parseFloat(params.get(1));
+        }
+
+        public final float[] getCoeffs() {
+            return coeffs;
+        }
+    }
 
 }

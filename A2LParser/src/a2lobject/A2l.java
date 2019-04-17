@@ -20,232 +20,251 @@ import utils.RegexHolder;
 
 public final class A2l {
 
-	private ModPar modPar;
-	private ModCommon modCommon;
-	private HashMap<String, AdjustableObject> adjustableObjects;
-	private HashMap<String, CompuMethod> compuMethods;
-	private HashMap<String, ConversionTable> conversionTables;
-	private List<Measurement> measurements;
-	private HashMap<String, RecordLayout> recordLayouts;
-	private HashMap<String, Function> functions;
+    private ModPar modPar;
+    private ModCommon modCommon;
+    private HashMap<String, AdjustableObject> adjustableObjects;
+    private HashMap<String, CompuMethod> compuMethods;
+    private HashMap<String, ConversionTable> conversionTables;
+    private List<Measurement> measurements;
+    private HashMap<String, RecordLayout> recordLayouts;
+    private HashMap<String, Function> functions;
 
-	public A2l(File a2lFile) {
-		parse(a2lFile);
-	}
+    public A2l(File a2lFile) {
+        parse(a2lFile);
+    }
 
-	public final HashMap<String, AdjustableObject> getAdjustableObjects() {
-		return adjustableObjects;
-	}
+    public final HashMap<String, AdjustableObject> getAdjustableObjects() {
+        return adjustableObjects;
+    }
 
-	public final List<AdjustableObject> getListAdjustableObjects() {
-		return new ArrayList<>(adjustableObjects.values());
-	}
+    public final List<AdjustableObject> getListAdjustableObjects() {
+        return new ArrayList<>(adjustableObjects.values());
+    }
 
-	private final void parse(File a2lFile) {
-		final String BEGIN = "/begin";
+    private final void parse(File a2lFile) {
+        final String BEGIN = "/begin";
 
-		adjustableObjects = new HashMap<String, AdjustableObject>();
-		compuMethods = new HashMap<String, CompuMethod>();
-		conversionTables = new HashMap<String, ConversionTable>();
-		measurements = new ArrayList<Measurement>();
-		recordLayouts = new HashMap<String, RecordLayout>();
-		functions = new HashMap<String, Function>();
+        adjustableObjects = new HashMap<String, AdjustableObject>();
+        compuMethods = new HashMap<String, CompuMethod>();
+        conversionTables = new HashMap<String, ConversionTable>();
+        measurements = new ArrayList<Measurement>();
+        recordLayouts = new HashMap<String, RecordLayout>();
+        functions = new HashMap<String, Function>();
 
-		try (BufferedReader buf = new BufferedReader(new FileReader(a2lFile))) {
+        try (BufferedReader buf = new BufferedReader(new FileReader(a2lFile))) {
 
-			String line;
+            String line;
 
-			final List<String> objectParameters = new ArrayList<String>();
-			final Map<String, String> mergeDefCharacteristic = new HashMap<String, String>();
+            final List<String> objectParameters = new ArrayList<String>();
+            final Map<String, String> mergeDefCharacteristic = new HashMap<String, String>();
 
-			while ((line = buf.readLine()) != null) {
+            while ((line = buf.readLine()) != null) {
 
-				if (line.length() == 0) {
-					continue;
-				}
+                if (line.length() == 0) {
+                    continue;
+                }
 
-				if (line.indexOf(BEGIN)>-1) {
-					
-					line = line.trim();
+                if (line.indexOf(BEGIN) > -1) {
 
-					String keyword = RegexHolder.MULTI_SPACE.split(line, 0)[1];
+                    line = line.trim();
 
-					switch (keyword) {
-					case "MOD_PAR":
-						fillParameters(buf, line, objectParameters, keyword);
-						modPar = new ModPar(objectParameters);
-						break;
-					case "MOD_COMMON":
-						fillParameters(buf, line, objectParameters, keyword);
-						modCommon = new ModCommon(objectParameters);
-						break;
-					case "AXIS_PTS":
-						fillParameters(buf, line, objectParameters, keyword);
-						AxisPts axisPt = new AxisPts(objectParameters);
-						adjustableObjects.put(axisPt.toString(), axisPt);
-						break;
-					case "CHARACTERISTIC":
-						fillParameters(buf, line, objectParameters, keyword);
-						Characteristic characteristic = new Characteristic(objectParameters);
-						adjustableObjects.put(characteristic.toString(), characteristic);
-						break;
-					case "COMPU_METHOD":
-						fillParameters(buf, line, objectParameters, keyword);
-						CompuMethod compuMethod = new CompuMethod(objectParameters);
-						compuMethods.put(compuMethod.toString(), compuMethod);
-						break;
-					case "COMPU_TAB":
-						fillParameters(buf, line, objectParameters, keyword);
-						CompuTab compuTab = new CompuTab(objectParameters);
-						conversionTables.put(compuTab.toString(), compuTab);
-						break;
-					case "COMPU_VTAB":
-						fillParameters(buf, line, objectParameters, keyword);
-						CompuVTab compuVTab = new CompuVTab(objectParameters);
-						conversionTables.put(compuVTab.toString(), compuVTab);
-						break;
-					case "COMPU_VTAB_RANGE":
-						fillParameters(buf, line, objectParameters, keyword);
-						CompuVTabRange compuVTabRange = new CompuVTabRange(objectParameters);
-						conversionTables.put(compuVTabRange.toString(), compuVTabRange);
-						break;
-					case "MEASUREMENT":
-						fillParameters(buf, line, objectParameters, keyword);
-						measurements.add(new Measurement(objectParameters));
-						break;
-					case "RECORD_LAYOUT":
-						fillParameters(buf, line, objectParameters, keyword);
-						RecordLayout recordLayout = new RecordLayout(objectParameters);
-						recordLayouts.put(recordLayout.toString(), recordLayout);
-						break;
-					case "FUNCTION":
-						fillParameters(buf, line, objectParameters, keyword);
-						Function function = new Function(objectParameters);
-						if (function.getDefCharacteristic() != null) {
-							mergeDefCharacteristic.putAll(function.getDefCharacteristic());
-						}
+                    // String keyword = RegexHolder.MULTI_SPACE.split(line, 0)[1];
+                    String keyword = getKeyword(line);
 
-						functions.put(function.toString(), function);
-						break;
-					default:
-						break;
-					}
-				}
-			}
+                    switch (keyword) {
+                    case "MOD_PAR":
+                        fillParameters(buf, line, objectParameters, keyword);
+                        modPar = new ModPar(objectParameters);
+                        break;
+                    case "MOD_COMMON":
+                        fillParameters(buf, line, objectParameters, keyword);
+                        modCommon = new ModCommon(objectParameters);
+                        break;
+                    case "AXIS_PTS":
+                        fillParameters(buf, line, objectParameters, keyword);
+                        AxisPts axisPt = new AxisPts(objectParameters);
+                        adjustableObjects.put(axisPt.toString(), axisPt);
+                        break;
+                    case "CHARACTERISTIC":
+                        fillParameters(buf, line, objectParameters, keyword);
+                        Characteristic characteristic = new Characteristic(objectParameters);
+                        adjustableObjects.put(characteristic.toString(), characteristic);
+                        break;
+                    case "COMPU_METHOD":
+                        fillParameters(buf, line, objectParameters, keyword);
+                        CompuMethod compuMethod = new CompuMethod(objectParameters);
+                        compuMethods.put(compuMethod.toString(), compuMethod);
+                        break;
+                    case "COMPU_TAB":
+                        fillParameters(buf, line, objectParameters, keyword);
+                        CompuTab compuTab = new CompuTab(objectParameters);
+                        conversionTables.put(compuTab.toString(), compuTab);
+                        break;
+                    case "COMPU_VTAB":
+                        fillParameters(buf, line, objectParameters, keyword);
+                        CompuVTab compuVTab = new CompuVTab(objectParameters);
+                        conversionTables.put(compuVTab.toString(), compuVTab);
+                        break;
+                    case "COMPU_VTAB_RANGE":
+                        fillParameters(buf, line, objectParameters, keyword);
+                        CompuVTabRange compuVTabRange = new CompuVTabRange(objectParameters);
+                        conversionTables.put(compuVTabRange.toString(), compuVTabRange);
+                        break;
+                    case "MEASUREMENT":
+                        fillParameters(buf, line, objectParameters, keyword);
+                        measurements.add(new Measurement(objectParameters));
+                        break;
+                    case "RECORD_LAYOUT":
+                        fillParameters(buf, line, objectParameters, keyword);
+                        RecordLayout recordLayout = new RecordLayout(objectParameters);
+                        recordLayouts.put(recordLayout.toString(), recordLayout);
+                        break;
+                    case "FUNCTION":
+                        fillParameters(buf, line, objectParameters, keyword);
+                        Function function = new Function(objectParameters);
+                        if (function.getDefCharacteristic() != null) {
+                            mergeDefCharacteristic.putAll(function.getDefCharacteristic());
+                        }
 
-			objectParameters.clear();
+                        functions.put(function.toString(), function);
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
 
-			assignLinkedObject(mergeDefCharacteristic);
+            objectParameters.clear();
 
-			mergeDefCharacteristic.clear();
+            assignLinkedObject(mergeDefCharacteristic);
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+            mergeDefCharacteristic.clear();
 
-	private final List<String> fillParameters(BufferedReader buf, String line, List<String> objectParameters, String keyword) throws IOException {
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-		final Pattern regexQuote = RegexHolder.QUOTE;
-		final String spaceKeyword = " " + keyword;
-		final String tabKeyword = "\t" + keyword;
-		final String end = "/end";
+    private final List<String> fillParameters(BufferedReader buf, String line, List<String> objectParameters, String keyword) throws IOException {
 
-		objectParameters.clear();
+        final Pattern regexQuote = RegexHolder.QUOTE;
+        final String spaceKeyword = " " + keyword;
+        final String tabKeyword = "\t" + keyword;
+        final String end = "/end";
 
-		do {
-			line = line.trim();
-			if(line.length() > 0)
-			{
-				objectParameters.addAll(parseLineWithRegex(regexQuote, line));
-			}
-			//} while ((line = buf.readLine()) != null && !(line.trim().endsWith(spaceKeyword) || line.trim().endsWith(tabKeyword)));
-		} while ((line = buf.readLine()) != null && !((line.indexOf(spaceKeyword)>-1 || line.indexOf(tabKeyword)>-1) && (line.indexOf(end)>-1)));
+        objectParameters.clear();
 
-		return objectParameters;
+        do {
+            line = line.trim();
+            if (line.length() > 0) {
+                objectParameters.addAll(parseLineWithRegex(regexQuote, line));
+            }
+            // } while ((line = buf.readLine()) != null && !(line.trim().endsWith(spaceKeyword) || line.trim().endsWith(tabKeyword)));
+        } while ((line = buf.readLine()) != null
+                && !((line.indexOf(spaceKeyword) > -1 || line.indexOf(tabKeyword) > -1) && (line.indexOf(end) > -1)));
 
-	}
+        return objectParameters;
 
-	private final List<String> parseLineWithRegex(Pattern regexQuote, String line) {
+    }
 
-		final List<String> listWord = new ArrayList<String>();
+    private static final String getKeyword(String line) {
 
-		final String lineWoutComment;
+        byte idx = 6;
+        int lineSize = line.length();
 
-		if (line.indexOf("/*") > -1 || line.indexOf("*/") > -1 || line.indexOf("//") > -1) {
-			lineWoutComment = RegexHolder.LINE_COMMENT.matcher(line).replaceAll("");
-		} else {
-			lineWoutComment = line;
-		}
+        do {
+            idx += 1;
+        } while (idx < lineSize && !Character.isJavaIdentifierStart(line.charAt(idx)));
 
-		if (lineWoutComment.indexOf("\"") > -1 && RegexHolder.isString(lineWoutComment)) {
-			// this string starts and end with a double quote
-			listWord.add(lineWoutComment.substring(1, lineWoutComment.length() - 1));
-			return listWord;
-		}
+        byte idx2 = idx;
 
-		final Matcher regexMatcher = regexQuote.matcher(lineWoutComment);
+        do {
+            idx2 += 1;
+        } while (idx2 < lineSize && Character.isJavaIdentifierStart(line.charAt(idx2)));
 
-		while (regexMatcher.find()) {
-			if (regexMatcher.group(1) != null) {
-				// Add double-quoted string without the quotes
-				listWord.add(regexMatcher.group(1));
-			} else if (regexMatcher.group(2) != null) {
-				// Add single-quoted string without the quotes
-				listWord.add(regexMatcher.group(2));
-			} else {
-				// Add unquoted word
-				listWord.add(regexMatcher.group());
-			}
-		}
+        return line.substring(idx, idx2);
+    }
 
-		return listWord;
-	}
+    private final List<String> parseLineWithRegex(Pattern regexQuote, String line) {
 
-	private final void assignLinkedObject(Map<String, String> defCharacteristic) {
+        final List<String> listWord = new ArrayList<String>();
 
-		for (Entry<String, AdjustableObject> entry : adjustableObjects.entrySet()) {
-			AdjustableObject adjustableObject = entry.getValue();
-			adjustableObject.assignComputMethod(compuMethods);
-			adjustableObject.assignRecordLayout(recordLayouts);
-			if (adjustableObject instanceof Characteristic) {
-				((Characteristic) adjustableObject).assignAxisPts(adjustableObjects);
-			}
-			adjustableObject.setFunction(defCharacteristic.get(adjustableObject.toString()));
-		}
+        final String lineWoutComment;
 
-		for (Entry<String, CompuMethod> entry : compuMethods.entrySet()) {
-			CompuMethod compuMethod = entry.getValue();
-			if (compuMethod.hasCompuTabRef()) {
-				compuMethod.assignConversionTable(conversionTables);
-			}
-		}
-	}
+        if (line.indexOf("/*") > -1 || line.indexOf("*/") > -1 || line.indexOf("//") > -1) {
+            lineWoutComment = RegexHolder.LINE_COMMENT.matcher(line).replaceAll("");
+        } else {
+            lineWoutComment = line;
+        }
 
-	public final ModPar getModPar() {
-		return modPar;
-	}
+        if (lineWoutComment.indexOf("\"") > -1 && RegexHolder.isString(lineWoutComment)) {
+            // this string starts and end with a double quote
+            listWord.add(lineWoutComment.substring(1, lineWoutComment.length() - 1));
+            return listWord;
+        }
 
-	public final ModCommon getModCommon() {
-		return modCommon;
-	}
+        final Matcher regexMatcher = regexQuote.matcher(lineWoutComment);
 
-	public List<AdjustableObject> getAdjustableObjectByFunction(String function) {
+        while (regexMatcher.find()) {
+            if (regexMatcher.group(1) != null) {
+                // Add double-quoted string without the quotes
+                listWord.add(regexMatcher.group(1));
+            } else if (regexMatcher.group(2) != null) {
+                // Add single-quoted string without the quotes
+                listWord.add(regexMatcher.group(2));
+            } else {
+                // Add unquoted word
+                listWord.add(regexMatcher.group());
+            }
+        }
 
-		final List<AdjustableObject> listByFunction = new ArrayList<AdjustableObject>();
+        return listWord;
+    }
 
-		String functionRef;
+    private final void assignLinkedObject(Map<String, String> defCharacteristic) {
 
-		for (Entry<String, AdjustableObject> entry : adjustableObjects.entrySet()) {
-			functionRef = entry.getValue().getFunction();
-			if (functionRef != null && functionRef.equals(function)) {
-				listByFunction.add(entry.getValue());
-			}
-		}
+        for (Entry<String, AdjustableObject> entry : adjustableObjects.entrySet()) {
+            AdjustableObject adjustableObject = entry.getValue();
+            adjustableObject.assignComputMethod(compuMethods);
+            adjustableObject.assignRecordLayout(recordLayouts);
+            if (adjustableObject instanceof Characteristic) {
+                ((Characteristic) adjustableObject).assignAxisPts(adjustableObjects);
+            }
+            adjustableObject.setFunction(defCharacteristic.get(adjustableObject.toString()));
+        }
 
-		Collections.sort(listByFunction);
+        for (Entry<String, CompuMethod> entry : compuMethods.entrySet()) {
+            CompuMethod compuMethod = entry.getValue();
+            if (compuMethod.hasCompuTabRef()) {
+                compuMethod.assignConversionTable(conversionTables);
+            }
+        }
+    }
 
-		return listByFunction;
-	}
+    public final ModPar getModPar() {
+        return modPar;
+    }
+
+    public final ModCommon getModCommon() {
+        return modCommon;
+    }
+
+    public List<AdjustableObject> getAdjustableObjectByFunction(String function) {
+
+        final List<AdjustableObject> listByFunction = new ArrayList<AdjustableObject>();
+
+        String functionRef;
+
+        for (Entry<String, AdjustableObject> entry : adjustableObjects.entrySet()) {
+            functionRef = entry.getValue().getFunction();
+            if (functionRef != null && functionRef.equals(function)) {
+                listByFunction.add(entry.getValue());
+            }
+        }
+
+        Collections.sort(listByFunction);
+
+        return listByFunction;
+    }
 
 }

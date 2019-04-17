@@ -5,7 +5,8 @@ package constante;
 
 public enum DataType {
 
-    UBYTE(1), SBYTE(1), UWORD(2), SWORD(2), ULONG(4), SLONG(4), FLOAT16_IEEE(2), FLOAT32_IEEE(4), FLOAT64_IEEE(8), A_UINT64(8), A_INT64(8), UNKNOWN(0);
+    UBYTE(1), SBYTE(1), UWORD(2), SWORD(2), ULONG(4), SLONG(4), FLOAT16_IEEE(2), FLOAT32_IEEE(4), FLOAT64_IEEE(8), A_UINT64(8), A_INT64(8), UNKNOWN(
+            0);
 
     private int nbByte;
 

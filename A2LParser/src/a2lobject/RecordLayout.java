@@ -46,10 +46,12 @@ public final class RecordLayout {
 
         initOptionalsParameters();
 
+        final int nbParams = parameters.size();
+
         List<String> subList = Collections.emptyList();
 
-        if (parameters.size() >= 1) {
-            for (int n = 2; n < parameters.size(); n++) {
+        if (nbParams >= 1) {
+            for (int n = 2; n < nbParams; n++) {
                 switch (n) {
                 case 2:
                     this.name = parameters.get(n);

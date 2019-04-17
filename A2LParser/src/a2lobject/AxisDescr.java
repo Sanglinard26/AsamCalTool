@@ -43,7 +43,9 @@ public final class AxisDescr {
 
         initOptionalsParameters();
 
-        if (parameters.size() == 1 || parameters.size() >= 6) {
+        final int nbParams = parameters.size();
+
+        if (nbParams >= 6) {
 
             this.attribute = Attribute.getAttribute(parameters.get(0));
             this.inputQuantity = parameters.get(1);
@@ -55,7 +57,7 @@ public final class AxisDescr {
             int n = 6;
 
             Set<SecondaryKeywords> keys = optionalsParameters.keySet();
-            for (int nPar = n; nPar < parameters.size(); nPar++) {
+            for (int nPar = n; nPar < nbParams; nPar++) {
                 if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
                     switch (parameters.get(nPar)) {
                     case "AXIS_PTS_REF":
@@ -195,10 +197,9 @@ public final class AxisDescr {
     public final Map<SecondaryKeywords, Object> getOptionalsParameters() {
         return optionalsParameters;
     }
-    
-    public final byte getNbDecimal()
-    {
-    	Object objectDisplayFormat = optionalsParameters.get(FORMAT);
+
+    public final byte getNbDecimal() {
+        Object objectDisplayFormat = optionalsParameters.get(FORMAT);
         String displayFormat;
 
         if (!compuMethod.isVerbal()) {
@@ -207,8 +208,8 @@ public final class AxisDescr {
             } else {
                 displayFormat = objectDisplayFormat.toString();
             }
-            
-            return (byte) Integer.parseInt(displayFormat.substring(displayFormat.indexOf(".")+1, displayFormat.length()));
+
+            return (byte) Integer.parseInt(displayFormat.substring(displayFormat.indexOf(".") + 1, displayFormat.length()));
         }
         return 0;
     }

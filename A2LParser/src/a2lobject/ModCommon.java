@@ -33,15 +33,17 @@ public final class ModCommon {
 
         initOptionalsParameters();
 
-        if (parameters.size() >= 1) {
-            for (int n = 2; n < parameters.size(); n++) {
+        final int nbParams = parameters.size();
+
+        if (nbParams >= 1) {
+            for (int n = 2; n < nbParams; n++) {
                 switch (n) {
                 case 2:
                     this.comment = parameters.get(n);
                     break;
                 default: // Cas de parametres optionels
                     Set<SecondaryKeywords> keys = optionalsParameters.keySet();
-                    for (int nPar = n; nPar < parameters.size(); nPar++) {
+                    for (int nPar = n; nPar < nbParams; nPar++) {
                         if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
                             switch (parameters.get(nPar)) {
                             case "ALIGNMENT_BYTE":
@@ -79,7 +81,7 @@ public final class ModCommon {
                             }
                         }
                     }
-                    n = parameters.size();
+                    n = nbParams;
                     break;
                 }
             }

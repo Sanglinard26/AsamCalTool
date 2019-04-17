@@ -28,7 +28,9 @@ public final class Function {
 
         initOptionalsParameters();
 
-        if (parameters.size() >= 2) {
+        final int nbParams = parameters.size();
+
+        if (nbParams >= 2) {
 
             this.name = parameters.get(2);
             this.longIdentifier = parameters.get(3);
@@ -36,7 +38,7 @@ public final class Function {
             int n = 4;
 
             Set<SecondaryKeywords> keys = optionalsParameters.keySet();
-            for (int nPar = n; nPar < parameters.size(); nPar++) {
+            for (int nPar = n; nPar < nbParams; nPar++) {
                 if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
                     switch (parameters.get(nPar)) {
                     case "DEF_CHARACTERISTIC":
@@ -46,7 +48,7 @@ public final class Function {
                         do {
                             defCharacteristic.put(parameters.get(nPar), this.name);
                             nPar++;
-                        } while (nPar < parameters.size() - 1 && !parameters.get(nPar).equals("/end"));
+                        } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
                         nPar++;
                         break;
                     case "FUNCTION_VERSION":
@@ -61,7 +63,7 @@ public final class Function {
                         do {
                             inMeasurement.add(parameters.get(nPar));
                             nPar++;
-                        } while (nPar < parameters.size() - 1 && !parameters.get(nPar).equals("/end"));
+                        } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
                         nPar++;
                         break;
                     case "LOC_MEASUREMENT":
@@ -71,7 +73,7 @@ public final class Function {
                         do {
                             locMeasurement.add(parameters.get(nPar));
                             nPar++;
-                        } while (nPar < parameters.size() - 1 && !parameters.get(nPar).equals("/end"));
+                        } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
                         nPar++;
                         break;
                     case "OUT_MEASUREMENT":
@@ -82,7 +84,7 @@ public final class Function {
                         do {
                             outMeasurement.add(parameters.get(nPar));
                             nPar++;
-                        } while (nPar < parameters.size() - 1 && !parameters.get(nPar).equals("/end"));
+                        } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
                         nPar++;
                         break;
                     case "SUB_FUNCTION":
@@ -92,7 +94,7 @@ public final class Function {
                         do {
                             subFunction.add(parameters.get(nPar));
                             nPar++;
-                        } while (nPar < parameters.size() - 1 && !parameters.get(nPar).equals("/end"));
+                        } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
                         nPar++;
                         break;
 

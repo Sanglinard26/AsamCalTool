@@ -11,55 +11,57 @@ import constante.ConversionType;
 
 public final class CompuVTab extends ConversionTable {
 
-	private String name;
-	@SuppressWarnings("unused")
-	private String longIdentifier;
-	@SuppressWarnings("unused")
-	private ConversionType conversionType;
-	@SuppressWarnings("unused")
-	private int numberValuePairs;
-	private Map<Float, String> valuePairs;
-	@SuppressWarnings("unused")
-	private String defaultValue; // DEFAULT_VALUE
+    private String name;
+    @SuppressWarnings("unused")
+    private String longIdentifier;
+    @SuppressWarnings("unused")
+    private ConversionType conversionType;
+    @SuppressWarnings("unused")
+    private int numberValuePairs;
+    private Map<Float, String> valuePairs;
+    @SuppressWarnings("unused")
+    private String defaultValue; // DEFAULT_VALUE
 
-	public CompuVTab(List<String> parameters) {
+    public CompuVTab(List<String> parameters) {
 
-		if (parameters.size() == 1 || parameters.size() >= 5) {
+        final int nbParams = parameters.size();
 
-			this.name = parameters.get(2);
-			this.longIdentifier = parameters.get(3);
-			this.conversionType = ConversionType.getConversionType(parameters.get(4));
-			this.numberValuePairs = Integer.parseInt(parameters.get(5));
+        if (nbParams >= 5) {
 
-			this.valuePairs = new LinkedHashMap<Float, String>();
+            this.name = parameters.get(2);
+            this.longIdentifier = parameters.get(3);
+            this.conversionType = ConversionType.getConversionType(parameters.get(4));
+            this.numberValuePairs = Integer.parseInt(parameters.get(5));
 
-			int lastIdx = parameters.indexOf("DEFAULT_VALUE");
+            this.valuePairs = new LinkedHashMap<Float, String>();
 
-			final List<String> listValuePairs;
+            int lastIdx = parameters.indexOf("DEFAULT_VALUE");
 
-			if (lastIdx > -1) {
-				listValuePairs = parameters.subList(6, lastIdx);
-			} else {
-				listValuePairs = parameters.subList(6, parameters.size());
-			}
+            final List<String> listValuePairs;
 
-			for (int i = 0; i < listValuePairs.size(); i++) {
-				if (i % 2 == 0) {
-					valuePairs.put(Float.parseFloat(listValuePairs.get(i)), listValuePairs.get(i + 1));
-				}
-			}
-		} else {
-			throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
-		}
+            if (lastIdx > -1) {
+                listValuePairs = parameters.subList(6, lastIdx);
+            } else {
+                listValuePairs = parameters.subList(6, parameters.size());
+            }
 
-	}
+            for (int i = 0; i < listValuePairs.size(); i++) {
+                if (i % 2 == 0) {
+                    valuePairs.put(Float.parseFloat(listValuePairs.get(i)), listValuePairs.get(i + 1));
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
+        }
 
-	@Override
-	public String toString() {
-		return this.name;
-	}
+    }
 
-	public final Map<Float, String> getValuePairs() {
-		return valuePairs;
-	}
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
+    public final Map<Float, String> getValuePairs() {
+        return valuePairs;
+    }
 }

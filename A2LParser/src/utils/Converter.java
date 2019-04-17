@@ -19,33 +19,27 @@ public final class Converter {
         return bb.get();
     }
 
-    private static final long readULONG(ByteBuffer bb, ByteOrder byteOrder) {
-        bb.order(byteOrder);
+    private static final long readULONG(ByteBuffer bb) {
         return bb.getInt() & 0xffffffffL;
     }
 
-    private static final int readSLONG(ByteBuffer bb, ByteOrder byteOrder) {
-        bb.order(byteOrder);
+    private static final int readSLONG(ByteBuffer bb) {
         return bb.getInt();
     }
 
-    private static final int readUWORD(ByteBuffer bb, ByteOrder byteOrder) {
-        bb.order(byteOrder);
+    private static final int readUWORD(ByteBuffer bb) {
         return bb.getShort() & 0xffff;
     }
 
-    private static final short readSWORD(ByteBuffer bb, ByteOrder byteOrder) {
-        bb.order(byteOrder);
+    private static final short readSWORD(ByteBuffer bb) {
         return bb.getShort();
     }
 
-    private static final float readFLOAT32IEEE(ByteBuffer bb, ByteOrder byteOrder) {
-        bb.order(byteOrder);
+    private static final float readFLOAT32IEEE(ByteBuffer bb) {
         return bb.getFloat();
     }
 
-    private static final double readFLOAT64IEEE(ByteBuffer bb, ByteOrder byteOrder) {
-        bb.order(byteOrder);
+    private static final double readFLOAT64IEEE(ByteBuffer bb) {
         return bb.getDouble();
     }
 
@@ -59,38 +53,47 @@ public final class Converter {
         final double[] hexValues = new double[nbValue];
         final int nbByte = dataType.getNbByte();
 
+        final ByteBuffer bb = ByteBuffer.allocateDirect(nbByte);
+        bb.order(byteOrder);
+
         for (int nValue = 0; nValue < nbValue; nValue++) {
             byteValues = hex.readBytes(adress + (nValue * nbByte), nbByte);
             if (byteValues.length > 0) {
+
+                bb.put(byteValues);
+                bb.rewind();
+
                 switch (dataType) {
                 case UBYTE:
-                    hexValues[nValue] = Converter.readUBYTE(ByteBuffer.wrap(byteValues));
+                    hexValues[nValue] = readUBYTE(bb);
                     break;
                 case SBYTE:
-                    hexValues[nValue] = Converter.readSBYTE(ByteBuffer.wrap(byteValues));
+                    hexValues[nValue] = readSBYTE(bb);
                     break;
                 case UWORD:
-                    hexValues[nValue] = Converter.readUWORD(ByteBuffer.wrap(byteValues), byteOrder);
+                    hexValues[nValue] = readUWORD(bb);
                     break;
                 case SWORD:
-                    hexValues[nValue] = Converter.readSWORD(ByteBuffer.wrap(byteValues), byteOrder);
+                    hexValues[nValue] = readSWORD(bb);
                     break;
                 case ULONG:
-                    hexValues[nValue] = Converter.readULONG(ByteBuffer.wrap(byteValues), byteOrder);
+                    hexValues[nValue] = readULONG(bb);
                     break;
                 case SLONG:
-                    hexValues[nValue] = Converter.readSLONG(ByteBuffer.wrap(byteValues), byteOrder);
+                    hexValues[nValue] = readSLONG(bb);
                     break;
                 case FLOAT32_IEEE:
-                    hexValues[nValue] = Converter.readFLOAT32IEEE(ByteBuffer.wrap(byteValues), byteOrder);
+                    hexValues[nValue] = readFLOAT32IEEE(bb);
                     break;
                 case FLOAT64_IEEE:
-                    hexValues[nValue] = Converter.readFLOAT64IEEE(ByteBuffer.wrap(byteValues), byteOrder);
+                    hexValues[nValue] = readFLOAT64IEEE(bb);
                     break;
                 default:
                     // Nothing
                     break;
                 }
+
+                bb.clear();
             }
         }
         return hexValues;

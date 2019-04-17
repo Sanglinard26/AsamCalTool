@@ -16,37 +16,38 @@ import constante.SecondaryKeywords;
 
 public final class Annotation {
 
-	private Map<SecondaryKeywords, Object> optionalsParameters;
+    private Map<SecondaryKeywords, Object> optionalsParameters;
 
-	public Annotation(List<String> parameters) {
+    public Annotation(List<String> parameters) {
 
-		initOptionalsParameters();
+        initOptionalsParameters();
 
-		Set<SecondaryKeywords> keys = optionalsParameters.keySet();
-		for (int nPar = 0; nPar < parameters.size(); nPar++) {
-			if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-				switch (parameters.get(nPar)) {
-				case "ANNOTATION_LABEL":
-					optionalsParameters.put(ANNOTATION_LABEL, parameters.get(nPar + 1));
-					break;
-				case "ANNOTATION_ORIGIN":
-					optionalsParameters.put(ANNOTATION_ORIGIN, parameters.get(nPar + 1));
-					break;
-				case "ANNOTATION_TEXT":
-					optionalsParameters.put(ANNOTATION_TEXT, parameters.get(nPar + 1));
-					break;
-				default:
-					break;
-				}
-			}
-		}
-	}
+        final int nbParams = parameters.size();
 
-	private final void initOptionalsParameters()
-	{
-		optionalsParameters = new HashMap<SecondaryKeywords, Object>();
-		optionalsParameters.put(ANNOTATION_LABEL, null);
-		optionalsParameters.put(ANNOTATION_ORIGIN, null);
-		optionalsParameters.put(ANNOTATION_TEXT, null);
-	}
+        Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+        for (int nPar = 0; nPar < nbParams; nPar++) {
+            if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
+                switch (parameters.get(nPar)) {
+                case "ANNOTATION_LABEL":
+                    optionalsParameters.put(ANNOTATION_LABEL, parameters.get(nPar + 1));
+                    break;
+                case "ANNOTATION_ORIGIN":
+                    optionalsParameters.put(ANNOTATION_ORIGIN, parameters.get(nPar + 1));
+                    break;
+                case "ANNOTATION_TEXT":
+                    optionalsParameters.put(ANNOTATION_TEXT, parameters.get(nPar + 1));
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+    }
+
+    private final void initOptionalsParameters() {
+        optionalsParameters = new HashMap<SecondaryKeywords, Object>();
+        optionalsParameters.put(ANNOTATION_LABEL, null);
+        optionalsParameters.put(ANNOTATION_ORIGIN, null);
+        optionalsParameters.put(ANNOTATION_TEXT, null);
+    }
 }
