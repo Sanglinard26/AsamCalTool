@@ -18,6 +18,7 @@ import java.util.Set;
 
 import constante.ConversionType;
 import constante.SecondaryKeywords;
+import utils.Interpolation;
 
 public final class CompuMethod implements Comparable<CompuMethod> {
 
@@ -138,7 +139,21 @@ public final class CompuMethod implements Comparable<CompuMethod> {
                 Float key = new Float(hex);
                 Float value = compuTab.getValuePairs().get(key);
                 if (value == null) {
-                    return hex; // TODO : Make interpolation
+                    int nbValuePairs = compuTab.getNumberValuePairs();
+                    Float[] keys = compuTab.getValuePairs().keySet().toArray(new Float[nbValuePairs]);
+                    int cnt = 0;
+                    float x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+                    for (float entryKey : keys) {
+                        if (entryKey > key) {
+                            x1 = keys[cnt - 1];
+                            x2 = keys[cnt];
+                            y1 = compuTab.getValuePairs().get(new Float(x1));
+                            y2 = compuTab.getValuePairs().get(new Float(x2));
+                            break;
+                        }
+                        cnt++;
+                    }
+                    return Interpolation.interpLinear(x1, x2, y1, y2, key);
                 }
                 return value;
             }

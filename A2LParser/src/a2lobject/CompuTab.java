@@ -16,7 +16,6 @@ public final class CompuTab extends ConversionTable {
     private String longIdentifier;
     @SuppressWarnings("unused")
     private ConversionType conversionType;
-    @SuppressWarnings("unused")
     private int numberValuePairs;
     private Map<Float, Float> valuePairs;
     @SuppressWarnings("unused")
@@ -64,6 +63,10 @@ public final class CompuTab extends ConversionTable {
     @Override
     public String toString() {
         return this.name;
+    }
+
+    public final int getNumberValuePairs() {
+        return numberValuePairs;
     }
 
     public final Map<Float, Float> getValuePairs() {

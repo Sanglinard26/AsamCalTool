@@ -68,7 +68,6 @@ public final class A2l {
 
                     line = line.trim();
 
-                    // String keyword = RegexHolder.MULTI_SPACE.split(line, 0)[1];
                     String keyword = getKeyword(line);
 
                     switch (keyword) {
@@ -159,7 +158,6 @@ public final class A2l {
             if (line.length() > 0) {
                 objectParameters.addAll(parseLineWithRegex(regexQuote, line));
             }
-            // } while ((line = buf.readLine()) != null && !(line.trim().endsWith(spaceKeyword) || line.trim().endsWith(tabKeyword)));
         } while ((line = buf.readLine()) != null
                 && !((line.indexOf(spaceKeyword) > -1 || line.indexOf(tabKeyword) > -1) && (line.indexOf(end) > -1)));
 
@@ -169,8 +167,8 @@ public final class A2l {
 
     private static final String getKeyword(String line) {
 
-        byte idx = 6;
-        int lineSize = line.length();
+        byte idx = 6; // length of "/begin"
+        final int lineSize = line.length();
 
         do {
             idx += 1;
