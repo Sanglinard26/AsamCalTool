@@ -18,7 +18,7 @@ public final class IntelHex {
 
     private final List<Memory> memorySegments = new ArrayList<Memory>();
     @SuppressWarnings("unused")
-	private Long startAddress = null;
+    private Long startAddress = null;
     private Memory last = null;
     private long extendedAddress = 0;
     private boolean endOfFile = false;
@@ -28,11 +28,12 @@ public final class IntelHex {
     }
 
     public final byte[] readBytes(long address, int len) {
+        long _address = address;
         for (Memory mem : memorySegments) {
-            if (address >= mem.address && (address + len) <= (mem.address + mem.listByte.size())) {
+            if (_address >= mem.address && (_address + len) <= (mem.address + mem.listByte.size())) {
                 byte[] retval = new byte[len];
                 for (int i = 0; i < len; i++) {
-                    retval[i] = mem.listByte.get((int) (i + address - mem.address));
+                    retval[i] = mem.listByte.get((int) (i + _address - mem.address));
                 }
                 return retval;
             }
@@ -41,12 +42,13 @@ public final class IntelHex {
     }
 
     public final String readString(long address, int nByte) {
+        long _address = address;
         for (Memory mem : memorySegments) {
-            if (address >= mem.address && address < mem.address + mem.listByte.size()) {
+            if (_address >= mem.address && _address < mem.address + mem.listByte.size()) {
                 StringBuilder retval = new StringBuilder(nByte);
-                while (address < mem.address + mem.listByte.size() && retval.length() < nByte) {
-                    retval.append((char) mem.listByte.get((int) (address - mem.address)).byteValue());
-                    address++;
+                while (_address < mem.address + mem.listByte.size() && retval.length() < nByte) {
+                    retval.append((char) mem.listByte.get((int) (_address - mem.address)).byteValue());
+                    _address++;
                 }
                 return retval.toString();
             }
@@ -65,7 +67,7 @@ public final class IntelHex {
         }
 
         char recordType = line.charAt(8);
-        
+
         switch (recordType) {
         case '0':
             Memory memoryOfLine = processDataRecordLine(line, extendedAddress);

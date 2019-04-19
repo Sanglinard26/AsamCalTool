@@ -142,7 +142,10 @@ public final class CompuMethod implements Comparable<CompuMethod> {
                     int nbValuePairs = compuTab.getNumberValuePairs();
                     Float[] keys = compuTab.getValuePairs().keySet().toArray(new Float[nbValuePairs]);
                     int cnt = 0;
-                    float x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+                    float x1 = 0;
+                    float x2 = 0;
+                    float y1 = 0;
+                    float y2 = 0;
                     for (float entryKey : keys) {
                         if (entryKey > key) {
                             x1 = keys[cnt - 1];
