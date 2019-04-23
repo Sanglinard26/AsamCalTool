@@ -1,37 +1,37 @@
 /*
  * Creation : 12 mars 2019
  */
-package a2lobject;
+package a2l;
 
 import java.util.List;
 
-public final class FixAxisParDist {
+public final class FixAxisPar {
 
     private final float offset;
-    private final float distance;
+    private final float shift;
     private final short numberapo;
 
-    public FixAxisParDist(List<String> parameters) {
+    public FixAxisPar(List<String> parameters) {
 
         this.offset = Float.parseFloat(parameters.get(0));
-        this.distance = Float.parseFloat(parameters.get(1));
+        this.shift = Float.parseFloat(parameters.get(1));
         this.numberapo = (short) Integer.parseInt(parameters.get(2));
 
     }
 
     public final double compute(int numVal) {
-        return offset + (numVal * distance);
+        return offset + (numVal << (int) shift);
     }
 
-    public float getOffset() {
+    public final float getOffset() {
         return offset;
     }
 
-    public float getDistance() {
-        return distance;
+    public final float getShift() {
+        return shift;
     }
 
-    public short getNumberapo() {
+    public final short getNumberapo() {
         return numberapo;
     }
 }

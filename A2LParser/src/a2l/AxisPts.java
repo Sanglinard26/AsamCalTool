@@ -1,7 +1,7 @@
 /*
  * Creation : 2 mars 2018
  */
-package a2lobject;
+package a2l;
 
 import static constante.SecondaryKeywords.ANNOTATION;
 import static constante.SecondaryKeywords.BYTE_ORDER;
@@ -33,7 +33,62 @@ public final class AxisPts extends AdjustableObject {
 
         initOptionalsParameters();
 
-        final int nbParams = parameters.size();
+        build(parameters);
+    }
+
+    private final void initOptionalsParameters() {
+        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
+        optionalsParameters.put(ANNOTATION, null);
+        optionalsParameters.put(BYTE_ORDER, null);
+        optionalsParameters.put(CALIBRATION_ACCESS, null); // ToDo
+        optionalsParameters.put(COMPARISON_QUANTITY, null); // ToDo
+        optionalsParameters.put(DEPOSIT, null);
+        optionalsParameters.put(DISPLAY_IDENTIFIER, null);
+        optionalsParameters.put(ECU_ADDRESS_EXTENSION, null); // ToDo
+        optionalsParameters.put(EXTENDED_LIMITS, null); // ToDo
+        optionalsParameters.put(FORMAT, null);
+        optionalsParameters.put(MONOTONY, null);
+        optionalsParameters.put(PHYS_UNIT, null);
+        optionalsParameters.put(READ_ONLY, null); // Par defaut
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
+    public final short getMaxAxisPoints() {
+        return maxAxisPoints;
+    }
+
+    public final String getDepositMode() {
+        Object oDeposit = optionalsParameters.get(DEPOSIT);
+        return oDeposit != null ? oDeposit.toString() : "";
+    }
+
+    public final String[] getStringValues() {
+        String[] strValues = new String[this.values.getDimX()];
+        for (short i = 0; i < strValues.length; i++) {
+            strValues[i] = this.values.getValue(0, i);
+        }
+
+        return strValues;
+    }
+
+    @Override
+    public final void assignComputMethod(HashMap<String, CompuMethod> compuMethods) {
+        this.compuMethod = compuMethods.get(this.conversion);
+    }
+
+    @Override
+    public String[] getUnit() {
+        return new String[] { this.compuMethod.getUnit() };
+    }
+
+	@Override
+	public void build(List<String> parameters) throws IllegalArgumentException {
+
+		final int nbParams = parameters.size();
 
         if (nbParams >= 9) {
 
@@ -91,61 +146,7 @@ public final class AxisPts extends AdjustableObject {
         } else {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }
-
-    }
-
-    private final void initOptionalsParameters() {
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
-        optionalsParameters.put(ANNOTATION, null);
-        optionalsParameters.put(BYTE_ORDER, null);
-        optionalsParameters.put(CALIBRATION_ACCESS, null); // ToDo
-        optionalsParameters.put(COMPARISON_QUANTITY, null); // ToDo
-        optionalsParameters.put(DEPOSIT, null);
-        optionalsParameters.put(DISPLAY_IDENTIFIER, null);
-        optionalsParameters.put(ECU_ADDRESS_EXTENSION, null); // ToDo
-        optionalsParameters.put(EXTENDED_LIMITS, null); // ToDo
-        optionalsParameters.put(FORMAT, null);
-        optionalsParameters.put(MONOTONY, null);
-        optionalsParameters.put(PHYS_UNIT, null);
-        optionalsParameters.put(READ_ONLY, null); // Par defaut
-    }
-
-    @Override
-    public String toString() {
-        return this.name;
-    }
-
-    public final short getMaxAxisPoints() {
-        return maxAxisPoints;
-    }
-
-    public final String getDepositMode() {
-        Object oDeposit = optionalsParameters.get(DEPOSIT);
-        return oDeposit != null ? oDeposit.toString() : "";
-    }
-
-    public final String[] getStringValues() {
-        String[] strValues = new String[this.values.getDimX()];
-        for (short i = 0; i < strValues.length; i++) {
-            strValues[i] = this.values.getValue(0, i);
-        }
-
-        return strValues;
-    }
-
-    @Override
-    public final void assignComputMethod(HashMap<String, CompuMethod> compuMethods) {
-        this.compuMethod = compuMethods.get(this.conversion);
-    }
-
-    @Override
-    public int compareTo(AdjustableObject o) {
-        return this.name.compareToIgnoreCase(o.toString());
-    }
-
-    @Override
-    public String[] getUnit() {
-        return new String[] { this.compuMethod.getUnit() };
-    }
+		
+	}
 
 }

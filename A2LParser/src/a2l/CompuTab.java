@@ -1,7 +1,7 @@
 /*
  * Creation : 5 janv. 2019
  */
-package a2lobject;
+package a2l;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,11 +11,6 @@ import constante.ConversionType;
 
 public final class CompuTab extends ConversionTable {
 
-    private String name;
-    @SuppressWarnings("unused")
-    private String longIdentifier;
-    @SuppressWarnings("unused")
-    private ConversionType conversionType;
     private int numberValuePairs;
     private Map<Float, Float> valuePairs;
     @SuppressWarnings("unused")
@@ -25,7 +20,22 @@ public final class CompuTab extends ConversionTable {
 
     public CompuTab(List<String> parameters) {
 
-        final int nbParams = parameters.size();
+        build(parameters);
+
+    }
+
+    public final int getNumberValuePairs() {
+        return numberValuePairs;
+    }
+
+    public final Map<Float, Float> getValuePairs() {
+        return valuePairs;
+    }
+
+	@Override
+	public void build(List<String> parameters) throws IllegalArgumentException {
+		
+		final int nbParams = parameters.size();
 
         if (nbParams >= 5) {
 
@@ -57,20 +67,7 @@ public final class CompuTab extends ConversionTable {
         } else {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }
-
-    }
-
-    @Override
-    public String toString() {
-        return this.name;
-    }
-
-    public final int getNumberValuePairs() {
-        return numberValuePairs;
-    }
-
-    public final Map<Float, Float> getValuePairs() {
-        return valuePairs;
-    }
+		
+	}
 
 }

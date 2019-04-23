@@ -1,7 +1,7 @@
 /*
  * Creation : 3 janv. 2019
  */
-package a2lobject;
+package a2l;
 
 import static constante.SecondaryKeywords.COEFFS;
 import static constante.SecondaryKeywords.COEFFS_LINEAR;
@@ -20,7 +20,7 @@ import constante.ConversionType;
 import constante.SecondaryKeywords;
 import utils.Interpolation;
 
-public final class CompuMethod implements Comparable<CompuMethod> {
+public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
 
     private String name;
     @SuppressWarnings("unused")
@@ -35,47 +35,7 @@ public final class CompuMethod implements Comparable<CompuMethod> {
 
         initOptionalsParameters();
 
-        final int nbParams = parameters.size();
-
-        if (nbParams >= 5) {
-
-            this.name = parameters.get(2);
-            this.longIdentifier = parameters.get(3);
-            this.conversionType = ConversionType.getConversionType(parameters.get(4));
-            this.format = parameters.get(5);
-            this.unit = parameters.get(6);
-
-            int n = 7;
-
-            Set<SecondaryKeywords> keys = optionalsParameters.keySet();
-            for (int nPar = n; nPar < nbParams; nPar++) {
-                if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-                    switch (parameters.get(nPar)) {
-                    case "COEFFS": // 6 coeffs
-                        optionalsParameters.put(COEFFS, new Coeffs(parameters.subList(nPar + 1, nPar + 7)));
-                        nPar += 6;
-                        break;
-                    case "COEFFS_LINEAR": // 2 coeffs
-                        optionalsParameters.put(COEFFS_LINEAR, new CoeffsLinear(parameters.subList(nPar + 1, nPar + 3)));
-                        nPar += 2;
-                        break;
-                    case "COMPU_TAB_REF":
-                        optionalsParameters.put(COMPU_TAB_REF, parameters.get(nPar + 1));
-                        nPar += 1;
-                        break;
-                    case "FORMULA":
-                        break;
-
-                    default:
-                        break;
-                    }
-                }
-            }
-
-        } else {
-            throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
-        }
-
+        build(parameters);
     }
 
     private final void initOptionalsParameters() {
@@ -253,5 +213,51 @@ public final class CompuMethod implements Comparable<CompuMethod> {
             return coeffs;
         }
     }
+
+	@Override
+	public void build(List<String> parameters) throws IllegalArgumentException {
+
+		final int nbParams = parameters.size();
+
+        if (nbParams >= 5) {
+
+            this.name = parameters.get(2);
+            this.longIdentifier = parameters.get(3);
+            this.conversionType = ConversionType.getConversionType(parameters.get(4));
+            this.format = parameters.get(5);
+            this.unit = parameters.get(6);
+
+            int n = 7;
+
+            Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+            for (int nPar = n; nPar < nbParams; nPar++) {
+                if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
+                    switch (parameters.get(nPar)) {
+                    case "COEFFS": // 6 coeffs
+                        optionalsParameters.put(COEFFS, new Coeffs(parameters.subList(nPar + 1, nPar + 7)));
+                        nPar += 6;
+                        break;
+                    case "COEFFS_LINEAR": // 2 coeffs
+                        optionalsParameters.put(COEFFS_LINEAR, new CoeffsLinear(parameters.subList(nPar + 1, nPar + 3)));
+                        nPar += 2;
+                        break;
+                    case "COMPU_TAB_REF":
+                        optionalsParameters.put(COMPU_TAB_REF, parameters.get(nPar + 1));
+                        nPar += 1;
+                        break;
+                    case "FORMULA":
+                        break;
+
+                    default:
+                        break;
+                    }
+                }
+            }
+
+        } else {
+            throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
+        }
+		
+	}
 
 }

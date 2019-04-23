@@ -1,7 +1,7 @@
 /*
  * Creation : 26 janv. 2018
  */
-package a2lobject;
+package a2l;
 
 public final class Values {
 

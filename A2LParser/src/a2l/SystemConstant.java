@@ -1,7 +1,7 @@
 /*
  * Creation : 8 avr. 2019
  */
-package a2lobject;
+package a2l;
 
 import java.util.List;
 

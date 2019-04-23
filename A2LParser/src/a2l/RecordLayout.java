@@ -1,7 +1,7 @@
 /*
  * Creation : 20 févr. 2019
  */
-package a2lobject;
+package a2l;
 
 import static constante.SecondaryKeywords.ALIGNMENT_BYTE;
 import static constante.SecondaryKeywords.ALIGNMENT_FLOAT16_IEEE;
@@ -36,7 +36,7 @@ import constante.IndexMode;
 import constante.IndexOrder;
 import constante.SecondaryKeywords;
 
-public final class RecordLayout {
+public final class RecordLayout implements A2lObject, Comparable<RecordLayout> {
 
     private String name;
 
@@ -46,81 +46,7 @@ public final class RecordLayout {
 
         initOptionalsParameters();
 
-        final int nbParams = parameters.size();
-
-        List<String> subList = Collections.emptyList();
-
-        if (nbParams >= 1) {
-            for (int n = 2; n < nbParams; n++) {
-                switch (n) {
-                case 2:
-                    this.name = parameters.get(n);
-                    break;
-                default: // Cas de parametres optionels
-                    switch (parameters.get(n)) {
-                    case "FNC_VALUES":
-                        subList = parameters.subList(n + 1, n + 5);
-                        optionalsParameters.put(FNC_VALUES, new FncValues(subList));
-                        n += 4;
-                        break;
-                    case "AXIS_PTS_X":
-                        subList = parameters.subList(n + 1, n + 5);
-                        optionalsParameters.put(AXIS_PTS_X, new AxisPtsX(subList));
-                        n += 4;
-                        break;
-                    case "AXIS_PTS_Y":
-                        subList = parameters.subList(n + 1, n + 5);
-                        optionalsParameters.put(AXIS_PTS_Y, new AxisPtsY(subList));
-                        n += 4;
-                        break;
-                    case "NO_AXIS_PTS_X":
-                        subList = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(NO_AXIS_PTS_X, new NoAxisPtsX(subList));
-                        n += 2;
-                        break;
-                    case "NO_AXIS_PTS_Y":
-                        subList = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(NO_AXIS_PTS_Y, new NoAxisPtsY(subList));
-                        n += 2;
-                        break;
-                    case "AXIS_RESCALE_X":
-                        subList = parameters.subList(n + 1, n + 6);
-                        optionalsParameters.put(AXIS_RESCALE_X, new AxisRescaleX(subList));
-                        n += 5;
-                        break;
-                    case "NO_RESCALE_X":
-                        subList = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(NO_RESCALE_X, new NoRescaleX(subList));
-                        n += 2;
-                        break;
-                    case "RESERVED":
-                        subList = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(RESERVED, new Reserved(subList));
-                        n += 2;
-                        break;
-                    case "SRC_ADDR_X":
-                        subList = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(SRC_ADDR_X, new SrcAddrX(subList));
-                        n += 2;
-                        break;
-                    case "SRC_ADDR_Y":
-                        subList = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(SRC_ADDR_Y, new SrcAddrY(subList));
-                        n += 2;
-                        break;
-                    default:
-                        break;
-                    }
-                    break;
-                }
-            }
-
-            subList.clear();
-
-        } else {
-            throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
-        }
-
+        build(parameters);
     }
 
     private final void initOptionalsParameters() {
@@ -409,5 +335,90 @@ public final class RecordLayout {
             return adressType;
         }
     }
+
+	@Override
+	public int compareTo(RecordLayout o) {
+		return this.name.compareTo(o.name);
+	}
+
+	@Override
+	public void build(List<String> parameters) throws IllegalArgumentException {
+		
+		final int nbParams = parameters.size();
+		
+		List<String> subList = Collections.emptyList();
+
+        if (nbParams >= 1) {
+            for (int n = 2; n < nbParams; n++) {
+                switch (n) {
+                case 2:
+                    this.name = parameters.get(n);
+                    break;
+                default: // Cas de parametres optionels
+                    switch (parameters.get(n)) {
+                    case "FNC_VALUES":
+                        subList = parameters.subList(n + 1, n + 5);
+                        optionalsParameters.put(FNC_VALUES, new FncValues(subList));
+                        n += 4;
+                        break;
+                    case "AXIS_PTS_X":
+                        subList = parameters.subList(n + 1, n + 5);
+                        optionalsParameters.put(AXIS_PTS_X, new AxisPtsX(subList));
+                        n += 4;
+                        break;
+                    case "AXIS_PTS_Y":
+                        subList = parameters.subList(n + 1, n + 5);
+                        optionalsParameters.put(AXIS_PTS_Y, new AxisPtsY(subList));
+                        n += 4;
+                        break;
+                    case "NO_AXIS_PTS_X":
+                        subList = parameters.subList(n + 1, n + 3);
+                        optionalsParameters.put(NO_AXIS_PTS_X, new NoAxisPtsX(subList));
+                        n += 2;
+                        break;
+                    case "NO_AXIS_PTS_Y":
+                        subList = parameters.subList(n + 1, n + 3);
+                        optionalsParameters.put(NO_AXIS_PTS_Y, new NoAxisPtsY(subList));
+                        n += 2;
+                        break;
+                    case "AXIS_RESCALE_X":
+                        subList = parameters.subList(n + 1, n + 6);
+                        optionalsParameters.put(AXIS_RESCALE_X, new AxisRescaleX(subList));
+                        n += 5;
+                        break;
+                    case "NO_RESCALE_X":
+                        subList = parameters.subList(n + 1, n + 3);
+                        optionalsParameters.put(NO_RESCALE_X, new NoRescaleX(subList));
+                        n += 2;
+                        break;
+                    case "RESERVED":
+                        subList = parameters.subList(n + 1, n + 3);
+                        optionalsParameters.put(RESERVED, new Reserved(subList));
+                        n += 2;
+                        break;
+                    case "SRC_ADDR_X":
+                        subList = parameters.subList(n + 1, n + 3);
+                        optionalsParameters.put(SRC_ADDR_X, new SrcAddrX(subList));
+                        n += 2;
+                        break;
+                    case "SRC_ADDR_Y":
+                        subList = parameters.subList(n + 1, n + 3);
+                        optionalsParameters.put(SRC_ADDR_Y, new SrcAddrY(subList));
+                        n += 2;
+                        break;
+                    default:
+                        break;
+                    }
+                    break;
+                }
+            }
+
+            subList.clear();
+
+        } else {
+            throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
+        }
+		
+	}
 
 }

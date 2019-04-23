@@ -11,17 +11,13 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Vector;
+
 
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -29,12 +25,15 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeSelectionModel;
 
-import a2lobject.A2l;
-import a2lobject.AdjustableObject;
+import a2l.A2l;
+import a2l.AdjustableObject;
+import a2l.Function;
 import hex.HexDecoder;
 import hex.IntelHex;
 
@@ -42,11 +41,9 @@ public final class Ihm extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
-	private final JList<AdjustableObject> list;
+	private final Container container;
+	private A2lTree a2lTree;
 	private final JTextPane textPane;
-
-	private List<AdjustableObject> listCharac = Collections.emptyList();
-	private Vector<AdjustableObject> listCharacFiltre = new Vector<AdjustableObject>();
 
 	private A2l a2l;
 
@@ -54,28 +51,15 @@ public final class Ihm extends JFrame {
 		super("A2LParser");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-		Container container = getContentPane();
+		container = getContentPane();
 
 		container.setLayout(new BorderLayout());
 
-		list = new JList<AdjustableObject>();
 		textPane = new JTextPane();
-		textPane.setPreferredSize(new Dimension(500, 500));
-
-		list.addListSelectionListener(new ListSelectionListener() {
-
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				if (!e.getValueIsAdjusting() && list.getSelectedValue() != null) {
-					textPane.setText(list.getSelectedValue().showValues());
-					list.getSelectedValue().getUnit();
-				}
-
-			}
-		});
+		textPane.setBorder(BorderFactory.createLoweredSoftBevelBorder());
+		textPane.setPreferredSize(new Dimension(1200, 500));
 
 		container.add(new PanelBt(), BorderLayout.NORTH);
-		container.add(new JScrollPane(list), BorderLayout.WEST);
 		container.add(textPane, BorderLayout.CENTER);
 
 		pack();
@@ -126,9 +110,32 @@ public final class Ihm extends JFrame {
 
 						sb.append("A2L parsing time : " + (System.currentTimeMillis() - start) + "ms\n");
 
-						listCharac = a2l.getListAdjustableObjects();
-						Collections.sort(listCharac);
-						list.setListData(listCharac.toArray(new AdjustableObject[listCharac.size()]));
+						a2lTree = new A2lTree(a2l);
+						a2lTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+						a2lTree.addTreeSelectionListener(new TreeSelectionListener() {
+
+							@Override
+							public void valueChanged(TreeSelectionEvent treeEvent) {
+
+								DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) a2lTree.getLastSelectedPathComponent();
+
+								if(selectedNode != null)
+								{
+									Object sourceEvent = selectedNode.getUserObject();
+									if(sourceEvent instanceof AdjustableObject)
+									{
+										textPane.setText(((AdjustableObject)sourceEvent).showValues());
+									}else if(sourceEvent instanceof Function)
+									{
+										a2lTree.addChildToFunction(selectedNode);
+									}
+								}
+							}
+						});
+
+						container.add(new JScrollPane(a2lTree), BorderLayout.WEST);
+
+						container.revalidate();
 					}
 
 				}
@@ -188,6 +195,8 @@ public final class Ihm extends JFrame {
 							JOptionPane.showMessageDialog(null, "EEPROM identifier doesn't match, reading aborted.",
 									"Warning", JOptionPane.WARNING_MESSAGE);
 						}
+
+						sb.setLength(0);
 					}
 
 				}
@@ -199,22 +208,16 @@ public final class Ihm extends JFrame {
 
 				@Override
 				public void removeUpdate(DocumentEvent e) {
-					if (listCharac.size() > 0)
-						setFilter(txtFiltre.getText());
 
 				}
 
 				@Override
 				public void insertUpdate(DocumentEvent e) {
-					if (listCharac.size() > 0)
-						setFilter(txtFiltre.getText());
 
 				}
 
 				@Override
 				public void changedUpdate(DocumentEvent e) {
-					if (listCharac.size() > 0)
-						setFilter(txtFiltre.getText());
 
 				}
 			});
@@ -222,24 +225,5 @@ public final class Ihm extends JFrame {
 		}
 	}
 
-	private final void setFilter(String filtre) {
-
-		final Set<AdjustableObject> tmpList = new LinkedHashSet<AdjustableObject>();
-
-		listCharacFiltre.clear();
-
-		final int nbLabel = listCharac.size();
-		AdjustableObject charac;
-
-		for (int i = 0; i < nbLabel; i++) {
-			charac = listCharac.get(i);
-			if (charac.toString().toLowerCase().indexOf(filtre.toLowerCase()) > -1) {
-				tmpList.add(charac);
-			}
-		}
-
-		listCharacFiltre.addAll(tmpList);
-		list.setListData(listCharacFiltre);
-	}
 
 }

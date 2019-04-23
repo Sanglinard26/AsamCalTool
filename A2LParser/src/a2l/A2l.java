@@ -1,7 +1,7 @@
 /*
  * Creation : 2 janv. 2019
  */
-package a2lobject;
+package a2l;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +21,7 @@ import utils.RegexHolder;
 
 public final class A2l {
 
+	private String name;
     private ModPar modPar;
     private ModCommon modCommon;
     private HashMap<String, AdjustableObject> adjustableObjects;
@@ -32,18 +34,56 @@ public final class A2l {
     public A2l(File a2lFile) {
         parse(a2lFile);
     }
+    
+    @Override
+    public String toString() {
+    	return getName();
+    }
+    
+    public final String getName()
+    {
+    	return this.name;
+    }
 
     public final HashMap<String, AdjustableObject> getAdjustableObjects() {
         return adjustableObjects;
     }
 
-    public final List<AdjustableObject> getListAdjustableObjects() {
-        return new ArrayList<>(adjustableObjects.values());
+    public final Vector<AdjustableObject> getListAdjustableObjects() {
+    	Vector<AdjustableObject> v = new Vector<>(adjustableObjects.values());
+    	Collections.sort(v);
+        return v;
+    }
+    
+    public final Vector<Function> getListFunction() {
+    	Vector<Function> v = new Vector<>(functions.values());
+    	Collections.sort(v);
+        return v;
+    }
+    
+    public final Vector<CompuMethod> getListCompuMethod() {
+    	Vector<CompuMethod> v = new Vector<>(compuMethods.values());
+    	Collections.sort(v);
+        return v;
+    }
+    
+    public final Vector<ConversionTable> getListConversionTable() {
+    	Vector<ConversionTable> v = new Vector<>(conversionTables.values());
+    	Collections.sort(v);
+        return v;
+    }
+    
+    public final Vector<RecordLayout> getListRecordLayout() {
+    	Vector<RecordLayout> v = new Vector<>(recordLayouts.values());
+    	Collections.sort(v);
+        return v;
     }
 
     private final void parse(File a2lFile) {
         final String BEGIN = "/begin";
 
+        this.name = a2lFile.getName().substring(0, a2lFile.getName().length()-4);
+        
         adjustableObjects = new HashMap<String, AdjustableObject>();
         compuMethods = new HashMap<String, CompuMethod>();
         conversionTables = new HashMap<String, ConversionTable>();
@@ -70,66 +110,71 @@ public final class A2l {
 
                     String keyword = getKeyword(line);
 
-                    switch (keyword) {
-                    case "MOD_PAR":
-                        fillParameters(buf, line, objectParameters, keyword);
-                        modPar = new ModPar(objectParameters);
-                        break;
-                    case "MOD_COMMON":
-                        fillParameters(buf, line, objectParameters, keyword);
-                        modCommon = new ModCommon(objectParameters);
-                        break;
-                    case "AXIS_PTS":
-                        fillParameters(buf, line, objectParameters, keyword);
-                        AxisPts axisPt = new AxisPts(objectParameters);
-                        adjustableObjects.put(axisPt.toString(), axisPt);
-                        break;
-                    case "CHARACTERISTIC":
-                        fillParameters(buf, line, objectParameters, keyword);
-                        Characteristic characteristic = new Characteristic(objectParameters);
-                        adjustableObjects.put(characteristic.toString(), characteristic);
-                        break;
-                    case "COMPU_METHOD":
-                        fillParameters(buf, line, objectParameters, keyword);
-                        CompuMethod compuMethod = new CompuMethod(objectParameters);
-                        compuMethods.put(compuMethod.toString(), compuMethod);
-                        break;
-                    case "COMPU_TAB":
-                        fillParameters(buf, line, objectParameters, keyword);
-                        CompuTab compuTab = new CompuTab(objectParameters);
-                        conversionTables.put(compuTab.toString(), compuTab);
-                        break;
-                    case "COMPU_VTAB":
-                        fillParameters(buf, line, objectParameters, keyword);
-                        CompuVTab compuVTab = new CompuVTab(objectParameters);
-                        conversionTables.put(compuVTab.toString(), compuVTab);
-                        break;
-                    case "COMPU_VTAB_RANGE":
-                        fillParameters(buf, line, objectParameters, keyword);
-                        CompuVTabRange compuVTabRange = new CompuVTabRange(objectParameters);
-                        conversionTables.put(compuVTabRange.toString(), compuVTabRange);
-                        break;
-                    case "MEASUREMENT":
-                        fillParameters(buf, line, objectParameters, keyword);
-                        measurements.add(new Measurement(objectParameters));
-                        break;
-                    case "RECORD_LAYOUT":
-                        fillParameters(buf, line, objectParameters, keyword);
-                        RecordLayout recordLayout = new RecordLayout(objectParameters);
-                        recordLayouts.put(recordLayout.toString(), recordLayout);
-                        break;
-                    case "FUNCTION":
-                        fillParameters(buf, line, objectParameters, keyword);
-                        Function function = new Function(objectParameters);
-                        if (function.getDefCharacteristic() != null) {
-                            mergeDefCharacteristic.putAll(function.getDefCharacteristic());
+                    try {
+                    	switch (keyword) {
+                        case "MOD_PAR":
+                            fillParameters(buf, line, objectParameters, keyword);
+                            modPar = new ModPar(objectParameters);
+                            break;
+                        case "MOD_COMMON":
+                            fillParameters(buf, line, objectParameters, keyword);
+                            modCommon = new ModCommon(objectParameters);
+                            break;
+                        case "AXIS_PTS":
+                            fillParameters(buf, line, objectParameters, keyword);
+                            AxisPts axisPt = new AxisPts(objectParameters);
+                            adjustableObjects.put(axisPt.toString(), axisPt);
+                            break;
+                        case "CHARACTERISTIC":
+                            fillParameters(buf, line, objectParameters, keyword);
+                            Characteristic characteristic = new Characteristic(objectParameters);
+                            adjustableObjects.put(characteristic.toString(), characteristic);
+                            break;
+                        case "COMPU_METHOD":
+                            fillParameters(buf, line, objectParameters, keyword);
+                            CompuMethod compuMethod = new CompuMethod(objectParameters);
+                            compuMethods.put(compuMethod.toString(), compuMethod);
+                            break;
+                        case "COMPU_TAB":
+                            fillParameters(buf, line, objectParameters, keyword);
+                            CompuTab compuTab = new CompuTab(objectParameters);
+                            conversionTables.put(compuTab.toString(), compuTab);
+                            break;
+                        case "COMPU_VTAB":
+                            fillParameters(buf, line, objectParameters, keyword);
+                            CompuVTab compuVTab = new CompuVTab(objectParameters);
+                            conversionTables.put(compuVTab.toString(), compuVTab);
+                            break;
+                        case "COMPU_VTAB_RANGE":
+                            fillParameters(buf, line, objectParameters, keyword);
+                            CompuVTabRange compuVTabRange = new CompuVTabRange(objectParameters);
+                            conversionTables.put(compuVTabRange.toString(), compuVTabRange);
+                            break;
+                        case "MEASUREMENT":
+                            fillParameters(buf, line, objectParameters, keyword);
+                            measurements.add(new Measurement(objectParameters));
+                            break;
+                        case "RECORD_LAYOUT":
+                            fillParameters(buf, line, objectParameters, keyword);
+                            RecordLayout recordLayout = new RecordLayout(objectParameters);
+                            recordLayouts.put(recordLayout.toString(), recordLayout);
+                            break;
+                        case "FUNCTION":
+                            fillParameters(buf, line, objectParameters, keyword);
+                            Function function = new Function(objectParameters);
+                            if (function.getDefCharacteristic() != null) {
+                                mergeDefCharacteristic.putAll(function.getDefCharacteristic());
+                            }
+                            functions.put(function.toString(), function);
+                            break;
+                        default:
+                            break;
                         }
-
-                        functions.put(function.toString(), function);
-                        break;
-                    default:
-                        break;
-                    }
+					} catch (IllegalArgumentException e) {
+						System.out.println("Error with : " + keyword + " => " + objectParameters.get(2) + "\n" + e.toString());
+					}
+                    
+                    
                 }
             }
 
@@ -247,9 +292,9 @@ public final class A2l {
         return modCommon;
     }
 
-    public List<AdjustableObject> getAdjustableObjectByFunction(String function) {
+    public Vector<AdjustableObject> getAdjustableObjectByFunction(String function) {
 
-        final List<AdjustableObject> listByFunction = new ArrayList<AdjustableObject>();
+        final Vector<AdjustableObject> listByFunction = new Vector<AdjustableObject>();
 
         String functionRef;
 

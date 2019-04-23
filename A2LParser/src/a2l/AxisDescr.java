@@ -1,7 +1,7 @@
 /*
  * Creation : 20 févr. 2019
  */
-package a2lobject;
+package a2l;
 
 import static constante.SecondaryKeywords.AXIS_PTS_REF;
 import static constante.SecondaryKeywords.BYTE_ORDER;
@@ -20,7 +20,7 @@ import java.util.Set;
 
 import constante.SecondaryKeywords;
 
-public final class AxisDescr {
+public final class AxisDescr implements A2lObject {
 
     private Attribute attribute;
     @SuppressWarnings("unused")
@@ -43,69 +43,7 @@ public final class AxisDescr {
 
         initOptionalsParameters();
 
-        final int nbParams = parameters.size();
-
-        if (nbParams >= 6) {
-
-            this.attribute = Attribute.getAttribute(parameters.get(0));
-            this.inputQuantity = parameters.get(1);
-            this.conversion = parameters.get(2);
-            this.maxAxisPoints = (short) Integer.parseInt(parameters.get(3));
-            this.lowerLimit = Float.parseFloat(parameters.get(4));
-            this.upperLimit = Float.parseFloat(parameters.get(5));
-
-            int n = 6;
-
-            Set<SecondaryKeywords> keys = optionalsParameters.keySet();
-            for (int nPar = n; nPar < nbParams; nPar++) {
-                if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-                    switch (parameters.get(nPar)) {
-                    case "AXIS_PTS_REF":
-                        optionalsParameters.put(AXIS_PTS_REF, parameters.get(nPar + 1));
-                        nPar += 1;
-                        break;
-                    case "BYTE_ORDER":
-                        optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
-                        nPar += 1;
-                        break;
-                    case "CURVE_AXIS_REF":
-                        optionalsParameters.put(CURVE_AXIS_REF, parameters.get(nPar + 1));
-                        nPar += 1;
-                        break;
-                    case "DEPOSIT":
-                        optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));
-                        nPar += 1;
-                        break;
-                    case "FIX_AXIS_PAR":
-                        n = nPar + 1;
-                        optionalsParameters.put(FIX_AXIS_PAR, new FixAxisPar(parameters.subList(n, n + 3)));
-                        nPar += 3;
-                        break;
-                    case "FIX_AXIS_PAR_DIST":
-                        n = nPar + 1;
-                        optionalsParameters.put(FIX_AXIS_PAR_DIST, new FixAxisParDist(parameters.subList(n, n + 3)));
-                        nPar += 3;
-                        break;
-                    case "FIX_AXIS_PAR_LIST":
-                        n = nPar + 1;
-                        do {
-                        } while (!parameters.get(++nPar).equals("FIX_AXIS_PAR_LIST"));
-                        optionalsParameters.put(FIX_AXIS_PAR_LIST, new FixAxisParList(parameters.subList(n, nPar - 1)));
-                        n = nPar + 1;
-                        break;
-                    case "FORMAT":
-                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1));
-                        nPar += 1;
-                        break;
-                    default:
-                        break;
-                    }
-                }
-            }
-
-        } else {
-            throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
-        }
+        build(parameters);
     }
 
     private final void initOptionalsParameters() {
@@ -234,4 +172,73 @@ public final class AxisDescr {
             }
         }
     }
+
+	@Override
+	public void build(List<String> parameters) throws IllegalArgumentException {
+		
+		final int nbParams = parameters.size();
+
+        if (nbParams >= 6) {
+
+            this.attribute = Attribute.getAttribute(parameters.get(0));
+            this.inputQuantity = parameters.get(1);
+            this.conversion = parameters.get(2);
+            this.maxAxisPoints = (short) Integer.parseInt(parameters.get(3));
+            this.lowerLimit = Float.parseFloat(parameters.get(4));
+            this.upperLimit = Float.parseFloat(parameters.get(5));
+
+            int n = 6;
+
+            Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+            for (int nPar = n; nPar < nbParams; nPar++) {
+                if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
+                    switch (parameters.get(nPar)) {
+                    case "AXIS_PTS_REF":
+                        optionalsParameters.put(AXIS_PTS_REF, parameters.get(nPar + 1));
+                        nPar += 1;
+                        break;
+                    case "BYTE_ORDER":
+                        optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
+                        nPar += 1;
+                        break;
+                    case "CURVE_AXIS_REF":
+                        optionalsParameters.put(CURVE_AXIS_REF, parameters.get(nPar + 1));
+                        nPar += 1;
+                        break;
+                    case "DEPOSIT":
+                        optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));
+                        nPar += 1;
+                        break;
+                    case "FIX_AXIS_PAR":
+                        n = nPar + 1;
+                        optionalsParameters.put(FIX_AXIS_PAR, new FixAxisPar(parameters.subList(n, n + 3)));
+                        nPar += 3;
+                        break;
+                    case "FIX_AXIS_PAR_DIST":
+                        n = nPar + 1;
+                        optionalsParameters.put(FIX_AXIS_PAR_DIST, new FixAxisParDist(parameters.subList(n, n + 3)));
+                        nPar += 3;
+                        break;
+                    case "FIX_AXIS_PAR_LIST":
+                        n = nPar + 1;
+                        do {
+                        } while (!parameters.get(++nPar).equals("FIX_AXIS_PAR_LIST"));
+                        optionalsParameters.put(FIX_AXIS_PAR_LIST, new FixAxisParList(parameters.subList(n, nPar - 1)));
+                        n = nPar + 1;
+                        break;
+                    case "FORMAT":
+                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1));
+                        nPar += 1;
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
+
+        } else {
+            throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
+        }
+		
+	}
 }

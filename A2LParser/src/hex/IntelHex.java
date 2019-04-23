@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package hex;
 
 import java.io.BufferedReader;
@@ -28,12 +25,11 @@ public final class IntelHex {
     }
 
     public final byte[] readBytes(long address, int len) {
-        long _address = address;
         for (Memory mem : memorySegments) {
-            if (_address >= mem.address && (_address + len) <= (mem.address + mem.listByte.size())) {
+            if (address >= mem.address && (address + len) <= (mem.address + mem.listByte.size())) {
                 byte[] retval = new byte[len];
                 for (int i = 0; i < len; i++) {
-                    retval[i] = mem.listByte.get((int) (i + _address - mem.address));
+                    retval[i] = mem.listByte.get((int) (i + address - mem.address));
                 }
                 return retval;
             }

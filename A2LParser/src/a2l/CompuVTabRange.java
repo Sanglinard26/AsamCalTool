@@ -1,7 +1,7 @@
 /*
  * Creation : 5 janv. 2019
  */
-package a2lobject;
+package a2l;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -12,17 +12,33 @@ import java.util.Set;
 
 public final class CompuVTabRange extends ConversionTable {
 
-    private String name;
     @SuppressWarnings("unused")
-    private String longIdentifier;
-    @SuppressWarnings("unused")
-    private int numberValueTriples;
+	private int numberValueTriples;
     private Map<Range, String> valueTriples;
     private String defaultValue; // DEFAULT_VALUE
 
     public CompuVTabRange(List<String> parameters) {
 
-        final int nbParams = parameters.size();
+        build(parameters);
+    }
+
+    public final String getStringValue(double hex) {
+        Set<Entry<Range, String>> entries = valueTriples.entrySet();
+        Iterator<Entry<Range, String>> it = entries.iterator();
+        while (it.hasNext()) {
+            Entry<Range, String> entry = it.next();
+            Range range = entry.getKey();
+            if (range.getMin() >= hex && hex < range.getMax()) {
+                return entry.getValue();
+            }
+        }
+        return defaultValue;
+    }
+
+	@Override
+	public void build(List<String> parameters) throws IllegalArgumentException {
+		
+		final int nbParams = parameters.size();
 
         if (nbParams >= 4) {
 
@@ -51,25 +67,8 @@ public final class CompuVTabRange extends ConversionTable {
         } else {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }
-    }
-
-    @Override
-    public String toString() {
-        return this.name;
-    }
-
-    public final String getStringValue(double hex) {
-        Set<Entry<Range, String>> entries = valueTriples.entrySet();
-        Iterator<Entry<Range, String>> it = entries.iterator();
-        while (it.hasNext()) {
-            Entry<Range, String> entry = it.next();
-            Range range = entry.getKey();
-            if (range.getMin() >= hex && hex < range.getMax()) {
-                return entry.getValue();
-            }
-        }
-        return defaultValue;
-    }
+		
+	}
 }
 
 final class Range {

@@ -1,7 +1,7 @@
 /*
  * Creation : 20 févr. 2019
  */
-package a2lobject;
+package a2l;
 
 import static constante.SecondaryKeywords.ALIGNMENT_BYTE;
 import static constante.SecondaryKeywords.ALIGNMENT_FLOAT16_IEEE;
@@ -23,7 +23,7 @@ import java.util.Set;
 import constante.DataType;
 import constante.SecondaryKeywords;
 
-public final class ModCommon {
+public final class ModCommon implements A2lObject {
 
     private String comment;
 
@@ -33,63 +33,7 @@ public final class ModCommon {
 
         initOptionalsParameters();
 
-        final int nbParams = parameters.size();
-
-        if (nbParams >= 1) {
-            for (int n = 2; n < nbParams; n++) {
-                switch (n) {
-                case 2:
-                    this.comment = parameters.get(n);
-                    break;
-                default: // Cas de parametres optionels
-                    Set<SecondaryKeywords> keys = optionalsParameters.keySet();
-                    for (int nPar = n; nPar < nbParams; nPar++) {
-                        if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-                            switch (parameters.get(nPar)) {
-                            case "ALIGNMENT_BYTE":
-                                optionalsParameters.put(ALIGNMENT_BYTE, Integer.parseInt(parameters.get(nPar + 1)));
-                                break;
-                            case "ALIGNMENT_FLOAT16_IEEE":
-                                optionalsParameters.put(ALIGNMENT_FLOAT16_IEEE, Integer.parseInt(parameters.get(nPar + 1)));
-                                break;
-                            case "ALIGNMENT_FLOAT32_IEEE":
-                                optionalsParameters.put(ALIGNMENT_FLOAT32_IEEE, Integer.parseInt(parameters.get(nPar + 1)));
-                                break;
-                            case "ALIGNMENT_FLOAT64_IEEE":
-                                optionalsParameters.put(ALIGNMENT_FLOAT64_IEEE, Integer.parseInt(parameters.get(nPar + 1)));
-                                break;
-                            case "ALIGNMENT_INT64":
-                                optionalsParameters.put(ALIGNMENT_INT64, Integer.parseInt(parameters.get(nPar + 1)));
-                                break;
-                            case "ALIGNMENT_LONG":
-                                optionalsParameters.put(ALIGNMENT_LONG, Integer.parseInt(parameters.get(nPar + 1)));
-                                break;
-                            case "ALIGNMENT_WORD":
-                                optionalsParameters.put(ALIGNMENT_WORD, Integer.parseInt(parameters.get(nPar + 1)));
-                                break;
-                            case "BYTE_ORDER":
-                                optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
-                                break;
-                            case "DATA_SIZE":
-                                optionalsParameters.put(DATA_SIZE, Integer.parseInt(parameters.get(nPar + 1)));
-                                break;
-                            case "DEPOSIT":
-                                optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));
-                                break;
-                            default:
-                                break;
-                            }
-                        }
-                    }
-                    n = nbParams;
-                    break;
-                }
-            }
-
-        } else {
-            throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
-        }
-
+        build(parameters);
     }
 
     private final void initOptionalsParameters() {
@@ -147,5 +91,67 @@ public final class ModCommon {
     public final String getComment() {
         return this.comment;
     }
+
+	@Override
+	public void build(List<String> parameters) throws IllegalArgumentException {
+		
+		final int nbParams = parameters.size();
+
+        if (nbParams >= 1) {
+            for (int n = 2; n < nbParams; n++) {
+                switch (n) {
+                case 2:
+                    this.comment = parameters.get(n);
+                    break;
+                default: // Cas de parametres optionels
+                    Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+                    for (int nPar = n; nPar < nbParams; nPar++) {
+                        if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
+                            switch (parameters.get(nPar)) {
+                            case "ALIGNMENT_BYTE":
+                                optionalsParameters.put(ALIGNMENT_BYTE, Integer.parseInt(parameters.get(nPar + 1)));
+                                break;
+                            case "ALIGNMENT_FLOAT16_IEEE":
+                                optionalsParameters.put(ALIGNMENT_FLOAT16_IEEE, Integer.parseInt(parameters.get(nPar + 1)));
+                                break;
+                            case "ALIGNMENT_FLOAT32_IEEE":
+                                optionalsParameters.put(ALIGNMENT_FLOAT32_IEEE, Integer.parseInt(parameters.get(nPar + 1)));
+                                break;
+                            case "ALIGNMENT_FLOAT64_IEEE":
+                                optionalsParameters.put(ALIGNMENT_FLOAT64_IEEE, Integer.parseInt(parameters.get(nPar + 1)));
+                                break;
+                            case "ALIGNMENT_INT64":
+                                optionalsParameters.put(ALIGNMENT_INT64, Integer.parseInt(parameters.get(nPar + 1)));
+                                break;
+                            case "ALIGNMENT_LONG":
+                                optionalsParameters.put(ALIGNMENT_LONG, Integer.parseInt(parameters.get(nPar + 1)));
+                                break;
+                            case "ALIGNMENT_WORD":
+                                optionalsParameters.put(ALIGNMENT_WORD, Integer.parseInt(parameters.get(nPar + 1)));
+                                break;
+                            case "BYTE_ORDER":
+                                optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
+                                break;
+                            case "DATA_SIZE":
+                                optionalsParameters.put(DATA_SIZE, Integer.parseInt(parameters.get(nPar + 1)));
+                                break;
+                            case "DEPOSIT":
+                                optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));
+                                break;
+                            default:
+                                break;
+                            }
+                        }
+                    }
+                    n = nbParams;
+                    break;
+                }
+            }
+
+        } else {
+            throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
+        }
+		
+	}
 
 }

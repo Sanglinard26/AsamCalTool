@@ -1,4 +1,4 @@
-package a2lobject;
+package a2l;
 
 import static constante.SecondaryKeywords.DEF_CHARACTERISTIC;
 import static constante.SecondaryKeywords.FUNCTION_VERSION;
@@ -16,7 +16,7 @@ import java.util.Set;
 
 import constante.SecondaryKeywords;
 
-public final class Function {
+public final class Function implements A2lObject, Comparable<Function> {
 
     private String name;
     @SuppressWarnings("unused")
@@ -28,7 +28,39 @@ public final class Function {
 
         initOptionalsParameters();
 
-        final int nbParams = parameters.size();
+        build(parameters);
+    }
+
+    private final void initOptionalsParameters() {
+        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
+        optionalsParameters.put(DEF_CHARACTERISTIC, null);
+        optionalsParameters.put(FUNCTION_VERSION, null);
+        optionalsParameters.put(IN_MEASUREMENT, null);
+        optionalsParameters.put(OUT_MEASUREMENT, null);
+        optionalsParameters.put(SUB_FUNCTION, null);
+        optionalsParameters.put(LOC_MEASUREMENT, null);
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
+    @SuppressWarnings("unchecked")
+    public final Map<String, String> getDefCharacteristic() {
+        Object object = optionalsParameters.get(DEF_CHARACTERISTIC);
+        return (Map<String, String>) (object != null ? object : null);
+    }
+
+	@Override
+	public int compareTo(Function function) {
+		return this.name.compareToIgnoreCase(function.toString());
+	}
+
+	@Override
+	public void build(List<String> parameters) throws IllegalArgumentException {
+		
+		final int nbParams = parameters.size();
 
         if (nbParams >= 2) {
 
@@ -107,26 +139,6 @@ public final class Function {
         } else {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }
-    }
-
-    private final void initOptionalsParameters() {
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
-        optionalsParameters.put(DEF_CHARACTERISTIC, null);
-        optionalsParameters.put(FUNCTION_VERSION, null);
-        optionalsParameters.put(IN_MEASUREMENT, null);
-        optionalsParameters.put(OUT_MEASUREMENT, null);
-        optionalsParameters.put(SUB_FUNCTION, null);
-        optionalsParameters.put(LOC_MEASUREMENT, null);
-    }
-
-    @Override
-    public String toString() {
-        return this.name;
-    }
-
-    @SuppressWarnings("unchecked")
-    public final Map<String, String> getDefCharacteristic() {
-        Object object = optionalsParameters.get(DEF_CHARACTERISTIC);
-        return (Map<String, String>) (object != null ? object : null);
-    }
+		
+	}
 }

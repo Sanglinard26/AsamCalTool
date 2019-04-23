@@ -1,7 +1,7 @@
 /*
  * Creation : 20 févr. 2019
  */
-package a2lobject;
+package a2l;
 
 import static constante.SecondaryKeywords.ANNOTATION_LABEL;
 import static constante.SecondaryKeywords.ANNOTATION_ORIGIN;
@@ -14,7 +14,7 @@ import java.util.Set;
 
 import constante.SecondaryKeywords;
 
-public final class Annotation {
+public final class Annotation implements A2lObject {
 
     private Map<SecondaryKeywords, Object> optionalsParameters;
 
@@ -22,7 +22,20 @@ public final class Annotation {
 
         initOptionalsParameters();
 
-        final int nbParams = parameters.size();
+        build(parameters);
+    }
+
+    private final void initOptionalsParameters() {
+        optionalsParameters = new HashMap<SecondaryKeywords, Object>();
+        optionalsParameters.put(ANNOTATION_LABEL, null);
+        optionalsParameters.put(ANNOTATION_ORIGIN, null);
+        optionalsParameters.put(ANNOTATION_TEXT, null);
+    }
+
+	@Override
+	public void build(List<String> parameters) throws IllegalArgumentException {
+		
+		final int nbParams = parameters.size();
 
         Set<SecondaryKeywords> keys = optionalsParameters.keySet();
         for (int nPar = 0; nPar < nbParams; nPar++) {
@@ -42,12 +55,5 @@ public final class Annotation {
                 }
             }
         }
-    }
-
-    private final void initOptionalsParameters() {
-        optionalsParameters = new HashMap<SecondaryKeywords, Object>();
-        optionalsParameters.put(ANNOTATION_LABEL, null);
-        optionalsParameters.put(ANNOTATION_ORIGIN, null);
-        optionalsParameters.put(ANNOTATION_TEXT, null);
-    }
+	}
 }

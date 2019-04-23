@@ -1,7 +1,7 @@
 /*
  * Creation : 20 févr. 2019
  */
-package a2lobject;
+package a2l;
 
 import static constante.SecondaryKeywords.ADDR_EPK;
 import static constante.SecondaryKeywords.ECU_CALIBRATION_OFFSET;
@@ -16,7 +16,7 @@ import java.util.Set;
 
 import constante.SecondaryKeywords;
 
-public final class ModPar {
+public final class ModPar implements A2lObject {
 
     private String comment;
 
@@ -26,7 +26,43 @@ public final class ModPar {
 
         initOptionalsParameters();
 
-        final int nbParams = parameters.size();
+        build(parameters);
+    }
+
+    private final void initOptionalsParameters() {
+        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
+        optionalsParameters.put(ADDR_EPK, null);
+        optionalsParameters.put(ECU_CALIBRATION_OFFSET, null);
+        optionalsParameters.put(EPK, null);
+        optionalsParameters.put(SYSTEM_CONSTANT, null);
+    }
+
+    public final long getEPKAdress() {
+        String addressEPK = ((String) optionalsParameters.get(ADDR_EPK));
+        if (addressEPK != null) {
+            return Long.parseLong(addressEPK.substring(2), 16);
+        }
+        return -1;
+    }
+
+    public final String getEPK() {
+        return (String) optionalsParameters.get(EPK);
+    }
+
+    public final String getComment() {
+        return this.comment;
+    }
+
+    @SuppressWarnings("unchecked")
+    public final List<SystemConstant> getSystemConstant() {
+        Object object = optionalsParameters.get(SYSTEM_CONSTANT);
+        return object != null ? (List<SystemConstant>) object : new ArrayList<SystemConstant>();
+    }
+
+	@Override
+	public void build(List<String> parameters) throws IllegalArgumentException {
+		
+		final int nbParams = parameters.size();
 
         List<SystemConstant> systemConstant = new ArrayList<SystemConstant>();
 
@@ -74,37 +110,7 @@ public final class ModPar {
         } else {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }
-
-    }
-
-    private final void initOptionalsParameters() {
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
-        optionalsParameters.put(ADDR_EPK, null);
-        optionalsParameters.put(ECU_CALIBRATION_OFFSET, null);
-        optionalsParameters.put(EPK, null);
-        optionalsParameters.put(SYSTEM_CONSTANT, null);
-    }
-
-    public final long getEPKAdress() {
-        String addressEPK = ((String) optionalsParameters.get(ADDR_EPK));
-        if (addressEPK != null) {
-            return Long.parseLong(addressEPK.substring(2), 16);
-        }
-        return -1;
-    }
-
-    public final String getEPK() {
-        return (String) optionalsParameters.get(EPK);
-    }
-
-    public final String getComment() {
-        return this.comment;
-    }
-
-    @SuppressWarnings("unchecked")
-    public final List<SystemConstant> getSystemConstant() {
-        Object object = optionalsParameters.get(SYSTEM_CONSTANT);
-        return object != null ? (List<SystemConstant>) object : new ArrayList<SystemConstant>();
-    }
+		
+	}
 
 }

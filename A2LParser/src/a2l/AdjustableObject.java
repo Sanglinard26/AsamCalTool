@@ -1,7 +1,7 @@
 /*
  * Creation : 2 avr. 2019
  */
-package a2lobject;
+package a2l;
 
 import static constante.SecondaryKeywords.BYTE_ORDER;
 import static constante.SecondaryKeywords.FORMAT;
@@ -12,7 +12,7 @@ import java.util.Map;
 
 import constante.SecondaryKeywords;
 
-public abstract class AdjustableObject implements Comparable<AdjustableObject> {
+public abstract class AdjustableObject implements A2lObject, Comparable<AdjustableObject> {
 
     protected String name;
     protected String longIdentifier;
@@ -31,6 +31,11 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
 
     protected CompuMethod compuMethod;
     protected RecordLayout recordLayout;
+    
+    @Override
+    public final int compareTo(AdjustableObject o) {
+        return this.name.compareToIgnoreCase(o.toString());
+    }
 
     public final long getAdress() {
         return Long.parseLong(adress.substring(2), 16);
@@ -86,13 +91,16 @@ public abstract class AdjustableObject implements Comparable<AdjustableObject> {
 
     public final String showValues() {
 
-        StringBuilder sb = new StringBuilder("\n");
+        StringBuilder sb = new StringBuilder();
 
-        for (short y = 0; y < values.getDimY(); y++) {
-            for (short x = 0; x < values.getDimX(); x++) {
-                sb.append(values.getValue(y, x) + " | ");
+        if(values != null)
+        {
+        	for (short y = 0; y < values.getDimY(); y++) {
+                for (short x = 0; x < values.getDimX(); x++) {
+                    sb.append(values.getValue(y, x) + " | ");
+                }
+                sb.append("\n");
             }
-            sb.append("\n");
         }
 
         return sb.toString();
