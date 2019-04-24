@@ -16,7 +16,7 @@ import java.util.Set;
 
 import constante.SecondaryKeywords;
 
-public final class Function implements A2lObject, Comparable<Function> {
+public final class Function implements A2lObjectBuilder, Comparable<Function> {
 
     private String name;
     @SuppressWarnings("unused")
@@ -24,11 +24,11 @@ public final class Function implements A2lObject, Comparable<Function> {
 
     private Map<SecondaryKeywords, Object> optionalsParameters;
 
-    public Function(List<String> parameters) {
+    public Function(List<String> parameters, int beginLine, int endLine) {
 
         initOptionalsParameters();
 
-        build(parameters);
+        build(parameters, beginLine, endLine);
     }
 
     private final void initOptionalsParameters() {
@@ -52,15 +52,15 @@ public final class Function implements A2lObject, Comparable<Function> {
         return (Map<String, String>) (object != null ? object : null);
     }
 
-	@Override
-	public int compareTo(Function function) {
-		return this.name.compareToIgnoreCase(function.toString());
-	}
+    @Override
+    public int compareTo(Function function) {
+        return this.name.compareToIgnoreCase(function.toString());
+    }
 
-	@Override
-	public void build(List<String> parameters) throws IllegalArgumentException {
-		
-		final int nbParams = parameters.size();
+    @Override
+    public void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
+
+        final int nbParams = parameters.size();
 
         if (nbParams >= 2) {
 
@@ -139,6 +139,6 @@ public final class Function implements A2lObject, Comparable<Function> {
         } else {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }
-		
-	}
+
+    }
 }

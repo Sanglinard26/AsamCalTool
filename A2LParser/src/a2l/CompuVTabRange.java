@@ -13,13 +13,13 @@ import java.util.Set;
 public final class CompuVTabRange extends ConversionTable {
 
     @SuppressWarnings("unused")
-	private int numberValueTriples;
+    private int numberValueTriples;
     private Map<Range, String> valueTriples;
     private String defaultValue; // DEFAULT_VALUE
 
-    public CompuVTabRange(List<String> parameters) {
+    public CompuVTabRange(List<String> parameters, int beginLine, int endLine) {
 
-        build(parameters);
+        build(parameters, beginLine, endLine);
     }
 
     public final String getStringValue(double hex) {
@@ -35,10 +35,10 @@ public final class CompuVTabRange extends ConversionTable {
         return defaultValue;
     }
 
-	@Override
-	public void build(List<String> parameters) throws IllegalArgumentException {
-		
-		final int nbParams = parameters.size();
+    @Override
+    public void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
+
+        final int nbParams = parameters.size();
 
         if (nbParams >= 4) {
 
@@ -67,8 +67,8 @@ public final class CompuVTabRange extends ConversionTable {
         } else {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }
-		
-	}
+
+    }
 }
 
 final class Range {

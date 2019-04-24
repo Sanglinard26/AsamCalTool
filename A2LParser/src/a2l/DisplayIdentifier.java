@@ -5,15 +5,14 @@ package a2l;
 
 public final class DisplayIdentifier {
 
-    private String ident;
+    private final String ident;
 
     public DisplayIdentifier(String ident) {
         this.ident = ident;
     }
 
-    public final String getIdent()
-    {
-    	return this.ident;
+    public final String getIdent() {
+        return this.ident;
     }
 
 }

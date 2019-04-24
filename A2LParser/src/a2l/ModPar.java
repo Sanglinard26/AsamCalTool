@@ -16,17 +16,17 @@ import java.util.Set;
 
 import constante.SecondaryKeywords;
 
-public final class ModPar implements A2lObject {
+public final class ModPar implements A2lObjectBuilder {
 
     private String comment;
 
     private Map<SecondaryKeywords, Object> optionalsParameters;
 
-    public ModPar(List<String> parameters) {
+    public ModPar(List<String> parameters, int beginLine, int endLine) {
 
         initOptionalsParameters();
 
-        build(parameters);
+        build(parameters, beginLine, endLine);
     }
 
     private final void initOptionalsParameters() {
@@ -59,10 +59,10 @@ public final class ModPar implements A2lObject {
         return object != null ? (List<SystemConstant>) object : new ArrayList<SystemConstant>();
     }
 
-	@Override
-	public void build(List<String> parameters) throws IllegalArgumentException {
-		
-		final int nbParams = parameters.size();
+    @Override
+    public void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
+
+        final int nbParams = parameters.size();
 
         List<SystemConstant> systemConstant = new ArrayList<SystemConstant>();
 
@@ -110,7 +110,7 @@ public final class ModPar implements A2lObject {
         } else {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }
-		
-	}
+
+    }
 
 }

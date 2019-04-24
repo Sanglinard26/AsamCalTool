@@ -4,18 +4,19 @@
 package hex;
 
 import java.nio.ByteOrder;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import a2l.A2l;
 import a2l.AdjustableObject;
 import a2l.AxisDescr;
 import a2l.AxisPts;
 import a2l.Characteristic;
+import a2l.Characteristic.CharacteristicType;
 import a2l.CompuMethod;
 import a2l.FixAxisPar;
 import a2l.FixAxisParDist;
@@ -23,8 +24,6 @@ import a2l.FixAxisParList;
 import a2l.ModCommon;
 import a2l.ModPar;
 import a2l.RecordLayout;
-import a2l.Values;
-import a2l.Characteristic.CharacteristicType;
 import a2l.RecordLayout.AxisPtsX;
 import a2l.RecordLayout.AxisPtsY;
 import a2l.RecordLayout.AxisRescaleX;
@@ -33,9 +32,7 @@ import a2l.RecordLayout.NoAxisPtsX;
 import a2l.RecordLayout.NoAxisPtsY;
 import a2l.RecordLayout.NoRescaleX;
 import a2l.RecordLayout.Reserved;
-
-import java.util.Set;
-
+import a2l.Values;
 import constante.DataType;
 import constante.DepositMode;
 import constante.IndexMode;
@@ -50,7 +47,6 @@ public final class HexDecoder {
     private final ModCommon modCommon;
 
     private static long tmpAdress = 0;
-    private static DecimalFormat df;
 
     public HexDecoder(A2l a2l, IntelHex hex) {
         this.a2l = a2l;
@@ -81,8 +77,6 @@ public final class HexDecoder {
         }
 
         final ByteOrder byteOrder = modCommon.getByteOrder();
-
-        df = new DecimalFormat();
 
         for (Entry<String, AdjustableObject> entries : a2l.getAdjustableObjects().entrySet()) {
             if (entries.getValue() instanceof AxisPts) {
@@ -143,8 +137,6 @@ public final class HexDecoder {
             }
         }
 
-        df = null;
-
         return true;
     }
 
@@ -155,7 +147,6 @@ public final class HexDecoder {
 
         final RecordLayout recordLayout = axisPts.getRecordLayout();
         final CompuMethod compuMethod = axisPts.getCompuMethod();
-        final byte nbDecimale = axisPts.getNbDecimal();
         final NoAxisPtsX noAxisPtsX = recordLayout.getNoAxisPtsX();
         final AxisPtsX axisPtsX = recordLayout.getAxisPtsX();
 
@@ -202,14 +193,12 @@ public final class HexDecoder {
 
         if (!compuMethod.isVerbal()) {
 
-            df.setMaximumFractionDigits(nbDecimale);
-
             for (short n = 0; n < nbValue; n++) {
                 physValue = compuMethod.compute(hexValuesAxisPts[n]);
                 if (indexOrder.compareTo(IndexOrder.INDEX_INCR) == 0) {
-                    values.setValue(0, n, df.format(physValue));
+                    values.setValue(0, n, Double.toString(physValue));
                 } else {
-                    values.setValue(0, (nbValue - 1) - n, df.format(physValue));
+                    values.setValue(0, (nbValue - 1) - n, Double.toString(physValue));
                 }
             }
         } else {
@@ -232,8 +221,6 @@ public final class HexDecoder {
         double hexValue = Converter.readHexValue(hex, _adress, fncValues.getDataType(), byteOrder);
         double physValue;
 
-        final byte nbDecimale = characteristic.getNbDecimal();
-
         final Values values = new Values(1, 1);
 
         if (!compuMethod.isVerbal()) {
@@ -243,8 +230,7 @@ public final class HexDecoder {
             }
 
             physValue = compuMethod.compute(hexValue);
-            df.setMaximumFractionDigits(nbDecimale);
-            values.setValue(0, 0, df.format(physValue));
+            values.setValue(0, 0, Double.toString(physValue));
 
         } else {
             if (characteristic.hasBitMask()) {
@@ -391,11 +377,7 @@ public final class HexDecoder {
         double physValue = 0;
         double predValue = 0;
 
-        final byte nbDecimale = axisDescrStdAxis.getNbDecimal();
-
         if (!compuMethod.isVerbal()) {
-
-            df.setMaximumFractionDigits(nbDecimale);
 
             for (short n = 0; n < nbValue; n++) {
                 if (!depositMode.equals(DepositMode.DIFFERENCE.name())) {
@@ -415,9 +397,9 @@ public final class HexDecoder {
                     }
                 }
                 if (indexOrder.compareTo(IndexOrder.INDEX_INCR) == 0) {
-                    strValues[n] = df.format(physValue);
+                    strValues[n] = Double.toString(physValue);
                 } else {
-                    strValues[(nbValue - 1) - n] = df.format(physValue);
+                    strValues[(nbValue - 1) - n] = Double.toString(physValue);
                 }
             }
         } else {
@@ -520,15 +502,11 @@ public final class HexDecoder {
         double[] hexValues = Converter.readHexValues(hex, adress, fncValues.getDataType(), byteOrder, nbValue);
         double physValue = 0;
 
-        final byte nbDecimale = characteristic.getNbDecimal();
-
         if (!compuMethod.isVerbal()) {
-
-            df.setMaximumFractionDigits(nbDecimale);
 
             for (short n = 0; n < nbValue; n++) {
                 physValue = compuMethod.compute(hexValues[n]);
-                values.setValue(1, n, df.format(physValue));
+                values.setValue(1, n, Double.toString(physValue));
             }
 
         } else {
@@ -554,8 +532,6 @@ public final class HexDecoder {
         final IndexMode indexModeValBlk = fncValues.getIndexMode();
 
         double physValue;
-        final byte nbDecimale = characteristic.getNbDecimal();
-
         final int[] dim = characteristic.getDimArray();
 
         Values values;
@@ -583,11 +559,9 @@ public final class HexDecoder {
 
             if (!compuMethod.isVerbal()) {
 
-                df.setMaximumFractionDigits(nbDecimale);
-
                 for (short n = 0; n < dim[0]; n++) {
                     physValue = compuMethod.compute(hexValuesValBlk[n]);
-                    values.setValue(1, n + 1, df.format(physValue));
+                    values.setValue(1, n + 1, Double.toString(physValue));
                 }
             } else {
                 if (characteristic.hasBitMask()) {
@@ -612,24 +586,23 @@ public final class HexDecoder {
                 int row = 0;
                 int col = 0;
                 for (short n = 0; n < nbValue; n++) {
-                	if(indexModeValBlk.compareTo(IndexMode.COLUMN_DIR) == 0)
-                	{
-                		if (n % dim[1] == 0) {
+                    if (indexModeValBlk.compareTo(IndexMode.COLUMN_DIR) == 0) {
+                        if (n % dim[1] == 0) {
                             row += 1;
                         }
                         col = n % dim[1];
                         physValue = compuMethod.compute(hexValuesValBlk[n]);
-                        values.setValue(col + 1, row, df.format(physValue));
-                	}else{
-                		if (n % dim[0] == 0) { // => OK pour ROW_DIR
+                        values.setValue(col + 1, row, Double.toString(physValue));
+                    } else {
+                        if (n % dim[0] == 0) { // => OK pour ROW_DIR
                             values.setValue(row + 1, 0, Integer.toString(row));
                             row += 1;
 
                         }
                         col = n % dim[0];
                         physValue = compuMethod.compute(hexValuesValBlk[n]);
-                        values.setValue(row, col + 1, df.format(physValue));
-                	}
+                        values.setValue(row, col + 1, Double.toString(physValue));
+                    }
                 }
 
             } else {
@@ -642,21 +615,20 @@ public final class HexDecoder {
                 int row = 0;
                 int col = 0;
                 for (short n = 0; n < nbValue; n++) {
-                	if(indexModeValBlk.compareTo(IndexMode.COLUMN_DIR) == 0)
-                	{
-                		if (n % dim[1] == 0) {
+                    if (indexModeValBlk.compareTo(IndexMode.COLUMN_DIR) == 0) {
+                        if (n % dim[1] == 0) {
                             row += 1;
                         }
                         col = n % dim[1];
                         values.setValue(col + 1, row, compuMethod.computeString(hexValuesValBlk[n]));
-                	}else{
-                		if (n % dim[0] == 0) { // => OK pour ROW_DIR
+                    } else {
+                        if (n % dim[0] == 0) { // => OK pour ROW_DIR
                             values.setValue(row + 1, 0, Integer.toString(row));
                             row += 1;
                         }
                         col = n % dim[0];
                         values.setValue(row, col + 1, compuMethod.computeString(hexValuesValBlk[n]));
-                	}
+                    }
                 }
             }
         }
@@ -667,7 +639,6 @@ public final class HexDecoder {
     private void readMap(ByteOrder commonByteOrder, Characteristic characteristic, long adress, CompuMethod compuMethod, FncValues fncValues) {
 
         final ByteOrder byteOrder = characteristic.getByteOrder() != null ? characteristic.getByteOrder() : commonByteOrder;
-        final byte nbDecimale = characteristic.getNbDecimal();
         double physValue;
 
         int nbValueMap = 0;
@@ -727,7 +698,7 @@ public final class HexDecoder {
                 }
             }
         }
-        
+
         listAxisValues.clear();
 
         if (nbValueMap > 0) {
@@ -739,8 +710,6 @@ public final class HexDecoder {
 
             if (!compuMethod.isVerbal()) {
 
-                df.setMaximumFractionDigits(nbDecimale);
-
                 int row = 0;
                 int col = 0;
                 for (short n = 0; n < nbValueMap; n++) {
@@ -750,14 +719,14 @@ public final class HexDecoder {
                         }
                         col = n % dimY;
                         physValue = compuMethod.compute(hexValues[n]);
-                        values.setValue(col + 1, row, df.format(physValue));
+                        values.setValue(col + 1, row, Double.toString(physValue));
                     } else {
                         if (n % dimX == 0) {
                             row += 1;
                         }
                         col = n % dimX;
                         physValue = compuMethod.compute(hexValues[n]);
-                        values.setValue(row, col + 1, df.format(physValue));
+                        values.setValue(row, col + 1, Double.toString(physValue));
                     }
 
                 }

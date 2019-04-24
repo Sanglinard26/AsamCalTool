@@ -20,7 +20,7 @@ import constante.ConversionType;
 import constante.SecondaryKeywords;
 import utils.Interpolation;
 
-public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
+public final class CompuMethod implements A2lObjectBuilder, Comparable<CompuMethod> {
 
     private String name;
     @SuppressWarnings("unused")
@@ -31,11 +31,11 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
 
     private Map<SecondaryKeywords, Object> optionalsParameters;
 
-    public CompuMethod(List<String> parameters) {
+    public CompuMethod(List<String> parameters, int beginLine, int endLine) {
 
         initOptionalsParameters();
 
-        build(parameters);
+        build(parameters, beginLine, endLine);
     }
 
     private final void initOptionalsParameters() {
@@ -214,10 +214,10 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
         }
     }
 
-	@Override
-	public void build(List<String> parameters) throws IllegalArgumentException {
+    @Override
+    public void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
 
-		final int nbParams = parameters.size();
+        final int nbParams = parameters.size();
 
         if (nbParams >= 5) {
 
@@ -257,7 +257,7 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
         } else {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }
-		
-	}
+
+    }
 
 }

@@ -23,17 +23,17 @@ import java.util.Set;
 import constante.DataType;
 import constante.SecondaryKeywords;
 
-public final class ModCommon implements A2lObject {
+public final class ModCommon implements A2lObjectBuilder {
 
     private String comment;
 
     private Map<SecondaryKeywords, Object> optionalsParameters;
 
-    public ModCommon(List<String> parameters) {
+    public ModCommon(List<String> parameters, int beginLine, int endLine) {
 
         initOptionalsParameters();
 
-        build(parameters);
+        build(parameters, beginLine, endLine);
     }
 
     private final void initOptionalsParameters() {
@@ -92,10 +92,10 @@ public final class ModCommon implements A2lObject {
         return this.comment;
     }
 
-	@Override
-	public void build(List<String> parameters) throws IllegalArgumentException {
-		
-		final int nbParams = parameters.size();
+    @Override
+    public void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
+
+        final int nbParams = parameters.size();
 
         if (nbParams >= 1) {
             for (int n = 2; n < nbParams; n++) {
@@ -151,7 +151,7 @@ public final class ModCommon implements A2lObject {
         } else {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }
-		
-	}
+
+    }
 
 }

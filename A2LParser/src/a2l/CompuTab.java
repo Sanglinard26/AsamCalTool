@@ -18,9 +18,9 @@ public final class CompuTab extends ConversionTable {
     @SuppressWarnings("unused")
     private float defaultValueNumeric; // DEFAULT_VALUE_NUMERIC
 
-    public CompuTab(List<String> parameters) {
+    public CompuTab(List<String> parameters, int beginLine, int endLine) {
 
-        build(parameters);
+        build(parameters, beginLine, endLine);
 
     }
 
@@ -32,10 +32,10 @@ public final class CompuTab extends ConversionTable {
         return valuePairs;
     }
 
-	@Override
-	public void build(List<String> parameters) throws IllegalArgumentException {
-		
-		final int nbParams = parameters.size();
+    @Override
+    public void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
+
+        final int nbParams = parameters.size();
 
         if (nbParams >= 5) {
 
@@ -67,7 +67,7 @@ public final class CompuTab extends ConversionTable {
         } else {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }
-		
-	}
+
+    }
 
 }

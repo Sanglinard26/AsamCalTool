@@ -39,11 +39,11 @@ public final class Characteristic extends AdjustableObject {
 
     private List<AxisDescr> axisDescrs;
 
-    public Characteristic(List<String> parameters) {
+    public Characteristic(List<String> parameters, int beginLine, int endLine) {
 
         initOptionalsParameters();
 
-        build(parameters);
+        build(parameters, beginLine, endLine);
     }
 
     private final void initOptionalsParameters() {
@@ -219,104 +219,108 @@ public final class Characteristic extends AdjustableObject {
         return unit;
     }
 
-	@Override
-	public void build(List<String> parameters) throws IllegalArgumentException {
-		
-		final int nbParams = parameters.size();
+    @Override
+    public void build(List<String> parameters, int beginLine, int endLine) throws A2lObjectParsingException {
 
-        if (nbParams >= 9) {
+        final int nbParams = parameters.size();
 
-            this.name = parameters.get(2);
-            this.longIdentifier = parameters.get(3);
-            this.type = CharacteristicType.getCharacteristicType(parameters.get(4));
-            this.adress = parameters.get(5);
-            this.deposit = parameters.get(6);
-            this.maxDiff = Float.parseFloat(parameters.get(7));
-            this.conversion = parameters.get(8);
-            this.lowerLimit = Float.parseFloat(parameters.get(9));
-            this.upperLimit = Float.parseFloat(parameters.get(10));
+        try {
+            if (nbParams >= 9) {
 
-            int n = 11;
+                this.name = parameters.get(2);
+                this.longIdentifier = parameters.get(3);
+                this.type = CharacteristicType.getCharacteristicType(parameters.get(4));
+                this.adress = parameters.get(5);
+                this.deposit = parameters.get(6);
+                this.maxDiff = Float.parseFloat(parameters.get(7));
+                this.conversion = parameters.get(8);
+                this.lowerLimit = Float.parseFloat(parameters.get(9));
+                this.upperLimit = Float.parseFloat(parameters.get(10));
 
-            Set<SecondaryKeywords> keys = optionalsParameters.keySet();
-            for (int nPar = n; nPar < nbParams; nPar++) {
-                if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-                    switch (parameters.get(nPar)) {
-                    case "ANNOTATION":
-                        n = nPar + 1;
-                        do {
-                        } while (!parameters.get(++nPar).equals("ANNOTATION"));
-                        optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3)));
-                        n = nPar + 1;
-                        break;
-                    case "AXIS_DESCR":
-                        if (axisDescrs == null) {
-                            axisDescrs = new ArrayList<AxisDescr>();
-                            optionalsParameters.put(AXIS_DESCR, axisDescrs);
-                        }
-                        n = nPar + 1;
-                        do {
-                        } while (!parameters.get(++nPar).equals("AXIS_DESCR"));
-                        axisDescrs.add(new AxisDescr(parameters.subList(n, nPar - 1)));
-                        n = nPar + 1;
-                        break;
-                    case "BIT_MASK":
-                        String bitMask = parameters.get(nPar + 1);
-                        if (bitMask.startsWith("0x")) {
-                            optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask.substring(2), 16));
-                        } else {
-                            optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask));
-                        }
-                        nPar += 1;
-                        break;
-                    case "BYTE_ORDER":
-                        optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
-                        nPar += 1;
-                        break;
-                    case "DISPLAY_IDENTIFIER":
-                        optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1));
-                        nPar += 1;
-                        break;
-                    case "FORMAT":
-                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1));
-                        nPar += 1;
-                        break;
-                    case "MATRIX_DIM":
-                        List<Integer> dim = new ArrayList<Integer>();
+                int n = 11;
 
-                        try {
-                            nPar += 1;
+                Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+                for (int nPar = n; nPar < nbParams; nPar++) {
+                    if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
+                        switch (parameters.get(nPar)) {
+                        case "ANNOTATION":
+                            n = nPar + 1;
                             do {
-                                dim.add(Integer.parseInt(parameters.get(nPar)));
-                                nPar += 1;
-                            } while (nPar < parameters.size());
-                        } catch (NumberFormatException nfe) {
+                            } while (!parameters.get(++nPar).equals("ANNOTATION"));
+                            optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3), 0, 0));
+                            n = nPar + 1;
+                            break;
+                        case "AXIS_DESCR":
+                            if (axisDescrs == null) {
+                                axisDescrs = new ArrayList<AxisDescr>();
+                                optionalsParameters.put(AXIS_DESCR, axisDescrs);
+                            }
+                            n = nPar + 1;
+                            do {
+                            } while (!parameters.get(++nPar).equals("AXIS_DESCR"));
+                            axisDescrs.add(new AxisDescr(parameters.subList(n, nPar - 1), 0, 0));
+                            n = nPar + 1;
+                            break;
+                        case "BIT_MASK":
+                            String bitMask = parameters.get(nPar + 1);
+                            if (bitMask.startsWith("0x")) {
+                                optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask.substring(2), 16));
+                            } else {
+                                optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask));
+                            }
                             nPar += 1;
+                            break;
+                        case "BYTE_ORDER":
+                            optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
+                            nPar += 1;
+                            break;
+                        case "DISPLAY_IDENTIFIER":
+                            optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1));
+                            nPar += 1;
+                            break;
+                        case "FORMAT":
+                            optionalsParameters.put(FORMAT, parameters.get(nPar + 1));
+                            nPar += 1;
+                            break;
+                        case "MATRIX_DIM":
+                            List<Integer> dim = new ArrayList<Integer>();
+
+                            try {
+                                nPar += 1;
+                                do {
+                                    dim.add(Integer.parseInt(parameters.get(nPar)));
+                                    nPar += 1;
+                                } while (nPar < parameters.size());
+                            } catch (NumberFormatException nfe) {
+                                nPar += 1;
+                            }
+                            optionalsParameters.put(MATRIX_DIM, dim.toArray());
+                            dim.clear();
+                            break;
+                        case "NUMBER":
+                            optionalsParameters.put(NUMBER, Integer.parseInt(parameters.get(nPar + 1)));
+                            nPar += 1;
+                            break;
+                        case "PHYS_UNIT":
+                            optionalsParameters.put(PHYS_UNIT, parameters.get(nPar + 1));
+                            nPar += 1;
+                            break;
+                        case "READ_ONLY":
+                            optionalsParameters.put(READ_ONLY, true);
+                            break;
+                        default:
+                            break;
                         }
-                        optionalsParameters.put(MATRIX_DIM, dim.toArray());
-                        dim.clear();
-                        break;
-                    case "NUMBER":
-                        optionalsParameters.put(NUMBER, Integer.parseInt(parameters.get(nPar + 1)));
-                        nPar += 1;
-                        break;
-                    case "PHYS_UNIT":
-                        optionalsParameters.put(PHYS_UNIT, parameters.get(nPar + 1));
-                        nPar += 1;
-                        break;
-                    case "READ_ONLY":
-                        optionalsParameters.put(READ_ONLY, true);
-                        break;
-                    default:
-                        break;
                     }
                 }
-            }
 
-        } else {
-            throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
+            } else {
+                throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
+            }
+        } catch (IllegalArgumentException e) {
+            throw new A2lObjectParsingException("Parsing error on " + this.name, beginLine, endLine);
         }
-		
-	}
+
+    }
 
 }

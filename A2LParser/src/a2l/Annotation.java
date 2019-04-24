@@ -7,35 +7,35 @@ import static constante.SecondaryKeywords.ANNOTATION_LABEL;
 import static constante.SecondaryKeywords.ANNOTATION_ORIGIN;
 import static constante.SecondaryKeywords.ANNOTATION_TEXT;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import constante.SecondaryKeywords;
 
-public final class Annotation implements A2lObject {
+public final class Annotation implements A2lObjectBuilder {
 
     private Map<SecondaryKeywords, Object> optionalsParameters;
 
-    public Annotation(List<String> parameters) {
+    public Annotation(List<String> parameters, int beginLine, int endLine) {
 
         initOptionalsParameters();
 
-        build(parameters);
+        build(parameters, beginLine, endLine);
     }
 
     private final void initOptionalsParameters() {
-        optionalsParameters = new HashMap<SecondaryKeywords, Object>();
+        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
         optionalsParameters.put(ANNOTATION_LABEL, null);
         optionalsParameters.put(ANNOTATION_ORIGIN, null);
         optionalsParameters.put(ANNOTATION_TEXT, null);
     }
 
-	@Override
-	public void build(List<String> parameters) throws IllegalArgumentException {
-		
-		final int nbParams = parameters.size();
+    @Override
+    public void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
+
+        final int nbParams = parameters.size();
 
         Set<SecondaryKeywords> keys = optionalsParameters.keySet();
         for (int nPar = 0; nPar < nbParams; nPar++) {
@@ -55,5 +55,5 @@ public final class Annotation implements A2lObject {
                 }
             }
         }
-	}
+    }
 }

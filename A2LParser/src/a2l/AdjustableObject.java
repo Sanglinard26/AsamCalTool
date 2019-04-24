@@ -7,12 +7,13 @@ import static constante.SecondaryKeywords.BYTE_ORDER;
 import static constante.SecondaryKeywords.FORMAT;
 
 import java.nio.ByteOrder;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 import constante.SecondaryKeywords;
 
-public abstract class AdjustableObject implements A2lObject, Comparable<AdjustableObject> {
+public abstract class AdjustableObject implements A2lObjectBuilder, Comparable<AdjustableObject> {
 
     protected String name;
     protected String longIdentifier;
@@ -31,7 +32,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
 
     protected CompuMethod compuMethod;
     protected RecordLayout recordLayout;
-    
+
     @Override
     public final int compareTo(AdjustableObject o) {
         return this.name.compareToIgnoreCase(o.toString());
@@ -60,10 +61,9 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     public final void assignRecordLayout(HashMap<String, RecordLayout> recordLayouts) {
         this.recordLayout = recordLayouts.get(this.deposit);
     }
-    
-    public final byte getNbDecimal()
-    {
-    	Object objectDisplayFormat = optionalsParameters.get(FORMAT);
+
+    public final byte getNbDecimal() {
+        Object objectDisplayFormat = optionalsParameters.get(FORMAT);
         String displayFormat;
 
         if (!compuMethod.isVerbal()) {
@@ -72,8 +72,8 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
             } else {
                 displayFormat = objectDisplayFormat.toString();
             }
-            
-            return (byte) Integer.parseInt(displayFormat.substring(displayFormat.indexOf(".")+1, displayFormat.length()));
+
+            return (byte) Integer.parseInt(displayFormat.substring(displayFormat.indexOf(".") + 1, displayFormat.length()));
         }
         return 0;
     }
@@ -91,13 +91,20 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
 
     public final String showValues() {
 
-        StringBuilder sb = new StringBuilder();
+        final DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(getNbDecimal());
 
-        if(values != null)
-        {
-        	for (short y = 0; y < values.getDimY(); y++) {
+        final StringBuilder sb = new StringBuilder();
+
+        if (values != null) {
+            for (short y = 0; y < values.getDimY(); y++) {
                 for (short x = 0; x < values.getDimX(); x++) {
-                    sb.append(values.getValue(y, x) + " | ");
+                    try {
+                        double doubleValue = Double.parseDouble(values.getValue(y, x));
+                        sb.append(df.format(doubleValue) + " | ");
+                    } catch (Exception e) {
+                        sb.append(values.getValue(y, x) + " | ");
+                    }
                 }
                 sb.append("\n");
             }

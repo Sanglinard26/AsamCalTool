@@ -21,7 +21,7 @@ import utils.RegexHolder;
 
 public final class A2l {
 
-	private String name;
+    private String name;
     private ModPar modPar;
     private ModCommon modCommon;
     private HashMap<String, AdjustableObject> adjustableObjects;
@@ -31,18 +31,21 @@ public final class A2l {
     private HashMap<String, RecordLayout> recordLayouts;
     private HashMap<String, Function> functions;
 
+    private static int numLine;
+    private static int beginLine;
+    private static int endLine;
+
     public A2l(File a2lFile) {
         parse(a2lFile);
     }
-    
+
     @Override
     public String toString() {
-    	return getName();
+        return getName();
     }
-    
-    public final String getName()
-    {
-    	return this.name;
+
+    public final String getName() {
+        return this.name;
     }
 
     public final HashMap<String, AdjustableObject> getAdjustableObjects() {
@@ -50,40 +53,40 @@ public final class A2l {
     }
 
     public final Vector<AdjustableObject> getListAdjustableObjects() {
-    	Vector<AdjustableObject> v = new Vector<>(adjustableObjects.values());
-    	Collections.sort(v);
+        Vector<AdjustableObject> v = new Vector<>(adjustableObjects.values());
+        Collections.sort(v);
         return v;
     }
-    
+
     public final Vector<Function> getListFunction() {
-    	Vector<Function> v = new Vector<>(functions.values());
-    	Collections.sort(v);
+        Vector<Function> v = new Vector<>(functions.values());
+        Collections.sort(v);
         return v;
     }
-    
+
     public final Vector<CompuMethod> getListCompuMethod() {
-    	Vector<CompuMethod> v = new Vector<>(compuMethods.values());
-    	Collections.sort(v);
+        Vector<CompuMethod> v = new Vector<>(compuMethods.values());
+        Collections.sort(v);
         return v;
     }
-    
+
     public final Vector<ConversionTable> getListConversionTable() {
-    	Vector<ConversionTable> v = new Vector<>(conversionTables.values());
-    	Collections.sort(v);
+        Vector<ConversionTable> v = new Vector<>(conversionTables.values());
+        Collections.sort(v);
         return v;
     }
-    
+
     public final Vector<RecordLayout> getListRecordLayout() {
-    	Vector<RecordLayout> v = new Vector<>(recordLayouts.values());
-    	Collections.sort(v);
+        Vector<RecordLayout> v = new Vector<>(recordLayouts.values());
+        Collections.sort(v);
         return v;
     }
 
     private final void parse(File a2lFile) {
         final String BEGIN = "/begin";
 
-        this.name = a2lFile.getName().substring(0, a2lFile.getName().length()-4);
-        
+        this.name = a2lFile.getName().substring(0, a2lFile.getName().length() - 4);
+
         adjustableObjects = new HashMap<String, AdjustableObject>();
         compuMethods = new HashMap<String, CompuMethod>();
         conversionTables = new HashMap<String, ConversionTable>();
@@ -98,7 +101,11 @@ public final class A2l {
             final List<String> objectParameters = new ArrayList<String>();
             final Map<String, String> mergeDefCharacteristic = new HashMap<String, String>();
 
+            numLine = 0;
+
             while ((line = buf.readLine()) != null) {
+
+                numLine++;
 
                 if (line.length() == 0) {
                     continue;
@@ -111,57 +118,79 @@ public final class A2l {
                     String keyword = getKeyword(line);
 
                     try {
-                    	switch (keyword) {
+                        switch (keyword) {
                         case "MOD_PAR":
+                            beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
-                            modPar = new ModPar(objectParameters);
+                            endLine = numLine;
+                            modPar = new ModPar(objectParameters, beginLine, endLine);
                             break;
                         case "MOD_COMMON":
+                            beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
-                            modCommon = new ModCommon(objectParameters);
+                            endLine = numLine;
+                            modCommon = new ModCommon(objectParameters, beginLine, endLine);
                             break;
                         case "AXIS_PTS":
+                            beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
-                            AxisPts axisPt = new AxisPts(objectParameters);
+                            endLine = numLine;
+                            AxisPts axisPt = new AxisPts(objectParameters, beginLine, endLine);
                             adjustableObjects.put(axisPt.toString(), axisPt);
                             break;
                         case "CHARACTERISTIC":
+                            beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
-                            Characteristic characteristic = new Characteristic(objectParameters);
+                            endLine = numLine;
+                            Characteristic characteristic = new Characteristic(objectParameters, beginLine, endLine);
                             adjustableObjects.put(characteristic.toString(), characteristic);
                             break;
                         case "COMPU_METHOD":
+                            beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
-                            CompuMethod compuMethod = new CompuMethod(objectParameters);
+                            endLine = numLine;
+                            CompuMethod compuMethod = new CompuMethod(objectParameters, beginLine, endLine);
                             compuMethods.put(compuMethod.toString(), compuMethod);
                             break;
                         case "COMPU_TAB":
+                            beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
-                            CompuTab compuTab = new CompuTab(objectParameters);
+                            endLine = numLine;
+                            CompuTab compuTab = new CompuTab(objectParameters, beginLine, endLine);
                             conversionTables.put(compuTab.toString(), compuTab);
                             break;
                         case "COMPU_VTAB":
+                            beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
-                            CompuVTab compuVTab = new CompuVTab(objectParameters);
+                            endLine = numLine;
+                            CompuVTab compuVTab = new CompuVTab(objectParameters, beginLine, endLine);
                             conversionTables.put(compuVTab.toString(), compuVTab);
                             break;
                         case "COMPU_VTAB_RANGE":
+                            beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
-                            CompuVTabRange compuVTabRange = new CompuVTabRange(objectParameters);
+                            endLine = numLine;
+                            CompuVTabRange compuVTabRange = new CompuVTabRange(objectParameters, beginLine, endLine);
                             conversionTables.put(compuVTabRange.toString(), compuVTabRange);
                             break;
                         case "MEASUREMENT":
+                            beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
-                            measurements.add(new Measurement(objectParameters));
+                            endLine = numLine;
+                            measurements.add(new Measurement(objectParameters, beginLine, endLine));
                             break;
                         case "RECORD_LAYOUT":
+                            beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
-                            RecordLayout recordLayout = new RecordLayout(objectParameters);
+                            endLine = numLine;
+                            RecordLayout recordLayout = new RecordLayout(objectParameters, beginLine, endLine);
                             recordLayouts.put(recordLayout.toString(), recordLayout);
                             break;
                         case "FUNCTION":
+                            beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
-                            Function function = new Function(objectParameters);
+                            endLine = numLine;
+                            Function function = new Function(objectParameters, beginLine, endLine);
                             if (function.getDefCharacteristic() != null) {
                                 mergeDefCharacteristic.putAll(function.getDefCharacteristic());
                             }
@@ -170,11 +199,10 @@ public final class A2l {
                         default:
                             break;
                         }
-					} catch (IllegalArgumentException e) {
-						System.out.println("Error with : " + keyword + " => " + objectParameters.get(2) + "\n" + e.toString());
-					}
-                    
-                    
+                    } catch (A2lObjectParsingException e) {
+                        System.out.println(e.getMessage());
+                    }
+
                 }
             }
 
@@ -203,6 +231,7 @@ public final class A2l {
             if (line.length() > 0) {
                 objectParameters.addAll(parseLineWithRegex(regexQuote, line));
             }
+            numLine++;
         } while ((line = buf.readLine()) != null
                 && !((line.indexOf(spaceKeyword) > -1 || line.indexOf(tabKeyword) > -1) && (line.indexOf(end) > -1)));
 

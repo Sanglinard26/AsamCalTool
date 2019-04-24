@@ -29,11 +29,11 @@ public final class AxisPts extends AdjustableObject {
     private String inputQuantity; // Reference to INPUT_QUANTITY
     private short maxAxisPoints;
 
-    public AxisPts(List<String> parameters) {
+    public AxisPts(List<String> parameters, int beginLine, int endLine) {
 
         initOptionalsParameters();
 
-        build(parameters);
+        build(parameters, beginLine, endLine);
     }
 
     private final void initOptionalsParameters() {
@@ -85,10 +85,10 @@ public final class AxisPts extends AdjustableObject {
         return new String[] { this.compuMethod.getUnit() };
     }
 
-	@Override
-	public void build(List<String> parameters) throws IllegalArgumentException {
+    @Override
+    public void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
 
-		final int nbParams = parameters.size();
+        final int nbParams = parameters.size();
 
         if (nbParams >= 9) {
 
@@ -113,7 +113,7 @@ public final class AxisPts extends AdjustableObject {
                         n = nPar + 1;
                         do {
                         } while (!parameters.get(++nPar).equals("ANNOTATION"));
-                        optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3)));
+                        optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3), 0, 0));
                         n = nPar + 1;
                         break;
                     case "BYTE_ORDER":
@@ -146,7 +146,7 @@ public final class AxisPts extends AdjustableObject {
         } else {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }
-		
-	}
+
+    }
 
 }

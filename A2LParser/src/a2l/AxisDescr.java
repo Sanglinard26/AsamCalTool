@@ -20,7 +20,7 @@ import java.util.Set;
 
 import constante.SecondaryKeywords;
 
-public final class AxisDescr implements A2lObject {
+public final class AxisDescr implements A2lObjectBuilder {
 
     private Attribute attribute;
     @SuppressWarnings("unused")
@@ -39,11 +39,11 @@ public final class AxisDescr implements A2lObject {
 
     private Map<SecondaryKeywords, Object> optionalsParameters;
 
-    public AxisDescr(List<String> parameters) {
+    public AxisDescr(List<String> parameters, int beginLine, int endLine) {
 
         initOptionalsParameters();
 
-        build(parameters);
+        build(parameters, beginLine, endLine);
     }
 
     private final void initOptionalsParameters() {
@@ -173,10 +173,10 @@ public final class AxisDescr implements A2lObject {
         }
     }
 
-	@Override
-	public void build(List<String> parameters) throws IllegalArgumentException {
-		
-		final int nbParams = parameters.size();
+    @Override
+    public void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
+
+        final int nbParams = parameters.size();
 
         if (nbParams >= 6) {
 
@@ -239,6 +239,6 @@ public final class AxisDescr implements A2lObject {
         } else {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }
-		
-	}
+
+    }
 }

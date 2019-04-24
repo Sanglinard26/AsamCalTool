@@ -36,17 +36,17 @@ import constante.IndexMode;
 import constante.IndexOrder;
 import constante.SecondaryKeywords;
 
-public final class RecordLayout implements A2lObject, Comparable<RecordLayout> {
+public final class RecordLayout implements A2lObjectBuilder, Comparable<RecordLayout> {
 
     private String name;
 
     private Map<SecondaryKeywords, OptionalParameterRL> optionalsParameters;
 
-    public RecordLayout(List<String> parameters) {
+    public RecordLayout(List<String> parameters, int beginLine, int endLine) {
 
         initOptionalsParameters();
 
-        build(parameters);
+        build(parameters, beginLine, endLine);
     }
 
     private final void initOptionalsParameters() {
@@ -336,17 +336,17 @@ public final class RecordLayout implements A2lObject, Comparable<RecordLayout> {
         }
     }
 
-	@Override
-	public int compareTo(RecordLayout o) {
-		return this.name.compareTo(o.name);
-	}
+    @Override
+    public int compareTo(RecordLayout o) {
+        return this.name.compareTo(o.name);
+    }
 
-	@Override
-	public void build(List<String> parameters) throws IllegalArgumentException {
-		
-		final int nbParams = parameters.size();
-		
-		List<String> subList = Collections.emptyList();
+    @Override
+    public void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
+
+        final int nbParams = parameters.size();
+
+        List<String> subList = Collections.emptyList();
 
         if (nbParams >= 1) {
             for (int n = 2; n < nbParams; n++) {
@@ -418,7 +418,7 @@ public final class RecordLayout implements A2lObject, Comparable<RecordLayout> {
         } else {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }
-		
-	}
+
+    }
 
 }
