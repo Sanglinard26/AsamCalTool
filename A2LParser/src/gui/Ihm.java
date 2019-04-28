@@ -4,9 +4,13 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -123,7 +127,7 @@ public final class Ihm extends JFrame {
 								if (selectedNode != null) {
 									Object userObject = selectedNode.getUserObject();
 									if (userObject instanceof AdjustableObject) {
-										panelView.displayValues((AdjustableObject) userObject);
+										panelView.displayObject((AdjustableObject) userObject);
 									} else if (userObject instanceof Function) {
 										filteredTree.addChildToFunction(selectedNode);
 									}
@@ -217,26 +221,40 @@ public final class Ihm extends JFrame {
 		
 		public PanelView() {
 			
-			setLayout(new BorderLayout());
+			GridBagConstraints gc = new GridBagConstraints();
+			
+			setLayout(new GridBagLayout());
+			setBorder(BorderFactory.createLoweredSoftBevelBorder());
+			setPreferredSize(new Dimension(1200, 800));
+			setBackground(Color.WHITE);
 			
 			textPane = new JTextPane();
-			textPane.setBorder(BorderFactory.createLoweredSoftBevelBorder());
-			textPane.setPreferredSize(new Dimension(1200, 300));
-			add(textPane, BorderLayout.NORTH);
+			textPane.setContentType("text/html");
+			textPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+			gc.gridx = 0;
+			gc.gridy = 0;
+			gc.weightx = 100;
+			gc.weighty = 0;
+			gc.fill = GridBagConstraints.HORIZONTAL;
+			gc.anchor = GridBagConstraints.FIRST_LINE_START;
+			add(textPane, gc);
 			
 			tableView = new TableView(new TableModelView());
-			tableView.setPreferredSize(new Dimension(1200, 500));
-			
-			JPanel panTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			panTable.add(tableView);
-			add(panTable, BorderLayout.CENTER);
+			gc.gridx = 0;
+			gc.gridy = 1;
+			gc.weightx = 0;
+			gc.weighty = 100;
+			gc.fill = GridBagConstraints.NONE;
+			gc.anchor = GridBagConstraints.FIRST_LINE_START;
+			gc.insets = new Insets(0, 5, 0, 0);
+			add(tableView, gc);
 		}
 		
-		public final void displayValues(AdjustableObject adjustableObject)
+		public final void displayObject(AdjustableObject adjustableObject)
 		{
+			textPane.setText(adjustableObject.getProperties());
 			tableView.getModel().setData(adjustableObject.getValues());
 			TableView.adjustCells(tableView);
-			tableView.updateUI();
 		}
 	}
 

@@ -40,8 +40,7 @@ public class FilteredTree extends JPanel{
 
 	private String filteredText = "";
 	private DefaultTreeModel originalTreeModel;
-	private JScrollPane scrollpane = new JScrollPane();
-	private JTree tree = new JTree();
+	private final JTree tree = new JTree();
 	private DefaultMutableTreeNode originalRoot;
 
 	public FilteredTree(A2l a2l){
@@ -118,7 +117,7 @@ public class FilteredTree extends JPanel{
 		this.setLayout(new BorderLayout());
 
 		add(field, BorderLayout.NORTH);
-		add(scrollpane = new JScrollPane(tree), BorderLayout.CENTER);
+		add(new JScrollPane(tree), BorderLayout.CENTER);
 
 		originalRoot = (DefaultMutableTreeNode) originalTreeModel.getRoot();
 
