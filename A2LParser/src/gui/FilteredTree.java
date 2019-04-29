@@ -77,6 +77,10 @@ public class FilteredTree extends JPanel {
         childNode = new DefaultMutableTreeNode("RECORD_LAYOUT");
         this.originalRoot.add(childNode);
         DynamicUtilTreeNode.createChildren(childNode, a2l.getListRecordLayout());
+        
+        childNode = new DefaultMutableTreeNode("UNIT");
+        this.originalRoot.add(childNode);
+        DynamicUtilTreeNode.createChildren(childNode, a2l.getListUnit());
     }
 
     public final void addChildToFunction(DefaultMutableTreeNode function) {
@@ -175,7 +179,6 @@ public class FilteredTree extends JPanel {
         for (int i = 0; i < tree.getRowCount(); i++) {
             tree.expandRow(i);
         }
-
     }
 
     /**

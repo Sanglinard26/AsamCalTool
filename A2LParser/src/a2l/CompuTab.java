@@ -6,6 +6,7 @@ package a2l;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import constante.ConversionType;
 
@@ -13,10 +14,8 @@ public final class CompuTab extends ConversionTable {
 
     private int numberValuePairs;
     private Map<Float, Float> valuePairs;
-    @SuppressWarnings("unused")
     private String defaultValue; // DEFAULT_VALUE
-    @SuppressWarnings("unused")
-    private float defaultValueNumeric; // DEFAULT_VALUE_NUMERIC
+    private float defaultValueNumeric = Float.NaN; // DEFAULT_VALUE_NUMERIC
 
     public CompuTab(List<String> parameters, int beginLine, int endLine) {
 
@@ -69,5 +68,28 @@ public final class CompuTab extends ConversionTable {
         }
 
     }
+
+	@Override
+	public String getProperties() {
+		
+		StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
+
+        sb.append("<ul><li><b>Name: </b>" + name + "\n");
+        sb.append("<li><b>Long identifier: </b>" + longIdentifier + "\n");
+        sb.append("<li><b>Conversion type: </b>" + conversionType.name() + "\n");
+        sb.append("<li><b>Number of value pairs: </b>" + numberValuePairs + "\n");
+        sb.append("<li><b>Value pairs: </b>");
+        sb.append("<ul>");
+        for(Entry<Float, Float> entry : valuePairs.entrySet())
+        {
+        	sb.append("<li>" + entry.getKey() + " => " + entry.getValue() + "\n");
+        }
+        sb.append("</ul>");
+        sb.append("<li><b>Default value: </b>" + defaultValue + "\n");
+        sb.append("<li><b>Default value numeric: </b>" + defaultValueNumeric + "\n");
+        sb.append("</u></html>");
+
+        return sb.toString();
+	}
 
 }

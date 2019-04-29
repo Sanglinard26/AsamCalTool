@@ -20,7 +20,7 @@ import java.util.Set;
 
 import constante.SecondaryKeywords;
 
-public final class AxisDescr implements A2lObjectBuilder {
+public final class AxisDescr {
 
     private Attribute attribute;
     @SuppressWarnings("unused")
@@ -173,8 +173,7 @@ public final class AxisDescr implements A2lObjectBuilder {
         }
     }
 
-    @Override
-    public void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
+    private void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
 
         final int nbParams = parameters.size();
 

@@ -5,7 +5,7 @@ package a2l;
 
 import constante.ConversionType;
 
-public abstract class ConversionTable implements A2lObjectBuilder, Comparable<ConversionTable> {
+public abstract class ConversionTable implements A2lObject, Comparable<ConversionTable> {
 
 	protected String name;
 	protected String longIdentifier;

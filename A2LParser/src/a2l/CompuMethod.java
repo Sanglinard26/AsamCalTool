@@ -20,10 +20,9 @@ import constante.ConversionType;
 import constante.SecondaryKeywords;
 import utils.Interpolation;
 
-public final class CompuMethod implements A2lObjectBuilder, Comparable<CompuMethod> {
+public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
 
     private String name;
-    @SuppressWarnings("unused")
     private String longIdentifier;
     private ConversionType conversionType;
     private String format;
@@ -42,7 +41,7 @@ public final class CompuMethod implements A2lObjectBuilder, Comparable<CompuMeth
         optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
         optionalsParameters.put(COEFFS, null);
         optionalsParameters.put(COEFFS_LINEAR, null);
-        optionalsParameters.put(COMPU_TAB_REF, null); // ToDo
+        optionalsParameters.put(COMPU_TAB_REF, null);
         optionalsParameters.put(FORMULA, null); // ToDo
         optionalsParameters.put(REF_UNIT, null); // ToDo
         optionalsParameters.put(STATUS_STRING_REF, null); // ToDo
@@ -170,6 +169,25 @@ public final class CompuMethod implements A2lObjectBuilder, Comparable<CompuMeth
     public final String getUnit() {
         return this.unit;
     }
+    
+    public final String getProperties()
+    {
+    	StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
+
+        sb.append("<ul><li><b>Name: </b>" + name + "\n");
+        sb.append("<li><b>Long identifier: </b>" + longIdentifier + "\n");
+        sb.append("<li><b>Conversion type: </b>" + conversionType.name() + "\n");
+        sb.append("<li><b>Unit: </b>[" + unit + "]\n");
+        sb.append("<li><b>Format: </b>" + format + "\n");
+        if(hasCompuTabRef())
+        {
+        	String compuTabRef = optionalsParameters.get(COMPU_TAB_REF).toString();
+        	sb.append("<li><b>Ref conversion table: </b><a href=" + compuTabRef + ">" + compuTabRef + "</a>\n");
+        }
+        sb.append("</u></html>");
+
+        return sb.toString();
+    }
 
     @Override
     public int compareTo(CompuMethod o) {
@@ -246,6 +264,8 @@ public final class CompuMethod implements A2lObjectBuilder, Comparable<CompuMeth
                         nPar += 1;
                         break;
                     case "FORMULA":
+                        break;
+                    case "REF_UNIT":
                         break;
 
                     default:

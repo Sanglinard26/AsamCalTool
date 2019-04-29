@@ -14,7 +14,7 @@ import java.util.Set;
 
 import constante.SecondaryKeywords;
 
-public final class Annotation implements A2lObjectBuilder {
+public final class Annotation {
 
     private Map<SecondaryKeywords, Object> optionalsParameters;
 
@@ -32,8 +32,7 @@ public final class Annotation implements A2lObjectBuilder {
         optionalsParameters.put(ANNOTATION_TEXT, null);
     }
 
-    @Override
-    public void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
+    private void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
 
         final int nbParams = parameters.size();
 

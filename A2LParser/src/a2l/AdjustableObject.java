@@ -12,7 +12,7 @@ import java.util.Map;
 
 import constante.SecondaryKeywords;
 
-public abstract class AdjustableObject implements A2lObjectBuilder, Comparable<AdjustableObject> {
+public abstract class AdjustableObject implements A2lObject, Comparable<AdjustableObject> {
 
     protected String name;
     protected String longIdentifier;

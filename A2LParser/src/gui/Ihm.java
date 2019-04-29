@@ -36,6 +36,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 
 import a2l.A2l;
+import a2l.A2lObject;
 import a2l.AdjustableObject;
 import a2l.Function;
 import a2l.TableModelView;
@@ -128,9 +129,8 @@ public final class Ihm extends JFrame {
 
                                 if (selectedNode != null) {
                                     Object userObject = selectedNode.getUserObject();
-                                    if (userObject instanceof AdjustableObject) {
-                                        panelView.displayObject((AdjustableObject) userObject);
-                                    } else if (userObject instanceof Function) {
+                                    panelView.displayObject((A2lObject) userObject);
+                                    if (userObject instanceof Function) {
                                         filteredTree.addChildToFunction(selectedNode);
                                     }
                                 }
@@ -266,10 +266,16 @@ public final class Ihm extends JFrame {
             add(new JScrollPane(tableView), gc);
         }
 
-        public final void displayObject(AdjustableObject adjustableObject) {
-            textPane.setText(adjustableObject.getProperties());
-            tableView.getModel().setData(adjustableObject.getValues());
-            TableView.adjustCells(tableView);
+        public final void displayObject(A2lObject a2lObject) {
+            textPane.setText(a2lObject.getProperties());
+            if(a2lObject instanceof AdjustableObject)
+            {
+            	tableView.getModel().setData(((AdjustableObject) a2lObject).getValues());
+                TableView.adjustCells(tableView);
+            }else{
+            	tableView.getModel().setData(null);
+            }
+            
         }
     }
 

@@ -30,6 +30,7 @@ public final class A2l {
     private List<Measurement> measurements;
     private HashMap<String, RecordLayout> recordLayouts;
     private HashMap<String, Function> functions;
+    private HashMap<String, Unit> units;
 
     private static int numLine;
     private static int beginLine;
@@ -81,6 +82,12 @@ public final class A2l {
         Collections.sort(v);
         return v;
     }
+    
+    public final Vector<Unit> getListUnit() {
+        Vector<Unit> v = new Vector<>(units.values());
+        Collections.sort(v);
+        return v;
+    }
 
     private final void parse(File a2lFile) {
         final String BEGIN = "/begin";
@@ -93,6 +100,7 @@ public final class A2l {
         measurements = new ArrayList<Measurement>();
         recordLayouts = new HashMap<String, RecordLayout>();
         functions = new HashMap<String, Function>();
+        units = new HashMap<String, Unit>();
 
         try (BufferedReader buf = new BufferedReader(new FileReader(a2lFile))) {
 
@@ -196,6 +204,13 @@ public final class A2l {
                             }
                             functions.put(function.toString(), function);
                             break;
+                        case "UNIT":
+                        	beginLine = numLine;
+                            fillParameters(buf, line, objectParameters, keyword);
+                            endLine = numLine;
+                            Unit unit = new Unit(objectParameters, beginLine, endLine);
+                            units.put(unit.toString(), unit);
+                        	break;
                         default:
                             break;
                         }
