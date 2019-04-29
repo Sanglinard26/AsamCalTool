@@ -87,11 +87,11 @@ public abstract class AdjustableObject implements A2lObjectBuilder, Comparable<A
         }
         return null;
     }
-    
+
     protected abstract void formatValues();
 
     public final Values getValues() {
-    	formatValues();
+        formatValues();
         return this.values;
     }
 
@@ -106,29 +106,27 @@ public abstract class AdjustableObject implements A2lObjectBuilder, Comparable<A
     public abstract void assignComputMethod(HashMap<String, CompuMethod> compuMethods);
 
     public abstract String[] getUnit();
-    
-    public String getProperties()
-    {
-    	StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
-    	
-    	sb.append("<ul><li><b>Name: </b>" + name + "\n");
-    	sb.append("<li><b>Long identifier: </b>" + longIdentifier + "\n");
-    	sb.append("<li><b>Function: </b>" + functionRef + "\n");
-    	sb.append("<li><b>Unit: </b>");
-    	for(String unit : getUnit())
-    	{
-    		sb.append("[" + unit + "]");
-    	}
-    	sb.append("\n");
-    	sb.append("<li><b>Lower limit: </b>" + lowerLimit + "\n");
-    	sb.append("<li><b>Upper limit: </b>" + upperLimit + "\n");
-    	sb.append("<li><b>Max diff: </b>" + maxDiff + "\n");
-    	sb.append("<li><b>Adress: </b>" + adress + "\n");
-    	sb.append("<li><b>Deposit: </b>" + deposit + "\n");
-    	sb.append("<li><b>Conversion: </b>" + conversion + "\n</ul>");
-    	sb.append("<b><u>VALUES :\n</u></b></html>");
-    	
-    	return sb.toString();
+
+    public String getProperties() {
+        StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
+
+        sb.append("<ul><li><b>Name: </b>" + name + "\n");
+        sb.append("<li><b>Long identifier: </b>" + longIdentifier + "\n");
+        sb.append("<li><b>Function: </b><a href=" + functionRef + ">" + functionRef + "</a>\n");
+        sb.append("<li><b>Unit: </b>");
+        for (String unit : getUnit()) {
+            sb.append("[" + unit + "]");
+        }
+        sb.append("\n");
+        sb.append("<li><b>Lower limit: </b>" + lowerLimit + "\n");
+        sb.append("<li><b>Upper limit: </b>" + upperLimit + "\n");
+        sb.append("<li><b>Max diff: </b>" + maxDiff + "\n");
+        sb.append("<li><b>Adress: </b>" + adress + "\n");
+        sb.append("<li><b>Deposit: </b><a href=" + deposit + ">" + deposit + "</a>\n");
+        sb.append("<li><b>Conversion: </b><a href=" + conversion + ">" + conversion + "</a>\n</ul>");
+        sb.append("<b><u>VALUES :\n</u></b></html>");
+
+        return sb.toString();
     }
 
 }
