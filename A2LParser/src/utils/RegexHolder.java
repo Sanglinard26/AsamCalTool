@@ -13,6 +13,15 @@ public final class RegexHolder {
 
     public static final boolean isString(String line) {
         // return DOUBLE_QUOTE.matcher(line).matches();
+        if (line.indexOf("\\") == -1) {
+            for (int i = 1; i < line.length() - 1; i++) {
+                if (line.charAt(i) == '"' && line.charAt(i + 1) == '"') {
+                    // return true;
+                }
+            }
+            // System.out.println(line);
+            // return false;
+        }
         return line.charAt(0) == '"' && line.charAt(line.length() - 1) == '"';
     }
 

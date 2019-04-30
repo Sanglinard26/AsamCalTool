@@ -11,6 +11,7 @@ import static constante.SecondaryKeywords.FIX_AXIS_PAR;
 import static constante.SecondaryKeywords.FIX_AXIS_PAR_DIST;
 import static constante.SecondaryKeywords.FIX_AXIS_PAR_LIST;
 import static constante.SecondaryKeywords.FORMAT;
+import static constante.SecondaryKeywords.PHYS_UNIT;
 
 import java.nio.ByteOrder;
 import java.util.EnumMap;
@@ -56,6 +57,7 @@ public final class AxisDescr {
         optionalsParameters.put(FIX_AXIS_PAR_DIST, null);
         optionalsParameters.put(FIX_AXIS_PAR_LIST, null);
         optionalsParameters.put(FORMAT, null);
+        optionalsParameters.put(PHYS_UNIT, null);
     }
 
     public final Attribute getAttribute() {
@@ -152,6 +154,11 @@ public final class AxisDescr {
         return 0;
     }
 
+    public final String getPhysUnit() {
+        Object oPhysUnit = optionalsParameters.get(PHYS_UNIT);
+        return oPhysUnit != null ? oPhysUnit.toString() : "";
+    }
+
     public enum Attribute {
         CURVE_AXIS, COM_AXIS, FIX_AXIS, RES_AXIS, STD_AXIS, UNKNOWN;
 
@@ -227,6 +234,10 @@ public final class AxisDescr {
                         break;
                     case "FORMAT":
                         optionalsParameters.put(FORMAT, parameters.get(nPar + 1));
+                        nPar += 1;
+                        break;
+                    case "PHYS_UNIT":
+                        optionalsParameters.put(PHYS_UNIT, parameters.get(nPar + 1));
                         nPar += 1;
                         break;
                     default:

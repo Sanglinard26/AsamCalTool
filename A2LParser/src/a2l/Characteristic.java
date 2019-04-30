@@ -195,19 +195,23 @@ public final class Characteristic extends AdjustableObject {
     @Override
     public String[] getUnit() {
         String[] unit;
+
         switch (this.type) {
         case VALUE:
             unit = new String[] { this.compuMethod.getUnit() };
             break;
         case CURVE:
             unit = new String[2];
-            unit[0] = this.axisDescrs.get(0).getCompuMethod().getUnit();
+            unit[0] = this.axisDescrs.get(0).getPhysUnit().length() > 0 ? this.axisDescrs.get(0).getPhysUnit()
+                    : this.axisDescrs.get(0).getCompuMethod().getUnit();
             unit[1] = this.compuMethod.getUnit();
             break;
         case MAP:
             unit = new String[3];
-            unit[0] = this.axisDescrs.get(0).getCompuMethod().getUnit();
-            unit[1] = this.axisDescrs.get(1).getCompuMethod().getUnit();
+            unit[0] = this.axisDescrs.get(0).getPhysUnit().length() > 0 ? this.axisDescrs.get(0).getPhysUnit()
+                    : this.axisDescrs.get(0).getCompuMethod().getUnit();
+            unit[1] = this.axisDescrs.get(1).getPhysUnit().length() > 0 ? this.axisDescrs.get(1).getPhysUnit()
+                    : this.axisDescrs.get(1).getCompuMethod().getUnit();
             unit[2] = this.compuMethod.getUnit();
             break;
         case VAL_BLK:

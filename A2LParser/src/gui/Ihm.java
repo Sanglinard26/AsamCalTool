@@ -246,20 +246,22 @@ public final class Ihm extends JFrame {
             });
 
             textPane.setContentType("text/html");
-            textPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            gc.insets = new Insets(5, 5, 0, 0);
             gc.gridx = 0;
             gc.gridy = 0;
             gc.weightx = 100;
-            gc.weighty = 0;
-            gc.fill = GridBagConstraints.HORIZONTAL;
+            gc.weighty = 40;
+            gc.fill = GridBagConstraints.BOTH;
             gc.anchor = GridBagConstraints.FIRST_LINE_START;
-            add(textPane, gc);
+            JScrollPane scrollPane = new JScrollPane(textPane);
+            scrollPane.getViewport().setPreferredSize(new Dimension(500, 400));
+            add(scrollPane, gc);
 
             tableView = new TableView(new TableModelView());
             gc.gridx = 0;
             gc.gridy = 1;
             gc.weightx = 0;
-            gc.weighty = 100;
+            gc.weighty = 60;
             gc.fill = GridBagConstraints.BOTH;
             gc.anchor = GridBagConstraints.FIRST_LINE_START;
             gc.insets = new Insets(0, 5, 0, 0);
@@ -268,14 +270,14 @@ public final class Ihm extends JFrame {
 
         public final void displayObject(A2lObject a2lObject) {
             textPane.setText(a2lObject.getProperties());
-            if(a2lObject instanceof AdjustableObject)
-            {
-            	tableView.getModel().setData(((AdjustableObject) a2lObject).getValues());
+            textPane.setCaretPosition(0);
+            if (a2lObject instanceof AdjustableObject) {
+                tableView.getModel().setData(((AdjustableObject) a2lObject).getValues());
                 TableView.adjustCells(tableView);
-            }else{
-            	tableView.getModel().setData(null);
+            } else {
+                tableView.getModel().setData(null);
             }
-            
+
         }
     }
 

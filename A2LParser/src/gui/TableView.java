@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.Component;
+
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellRenderer;
@@ -48,7 +49,5 @@ public final class TableView extends JTable {
             column = columnModel.getColumn(col);
             column.setPreferredWidth(maxWidth + 10);
         }
-
     }
-
 }

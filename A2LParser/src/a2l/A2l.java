@@ -82,7 +82,7 @@ public final class A2l {
         Collections.sort(v);
         return v;
     }
-    
+
     public final Vector<Unit> getListUnit() {
         Vector<Unit> v = new Vector<>(units.values());
         Collections.sort(v);
@@ -205,12 +205,12 @@ public final class A2l {
                             functions.put(function.toString(), function);
                             break;
                         case "UNIT":
-                        	beginLine = numLine;
+                            beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             Unit unit = new Unit(objectParameters, beginLine, endLine);
                             units.put(unit.toString(), unit);
-                        	break;
+                            break;
                         default:
                             break;
                         }
