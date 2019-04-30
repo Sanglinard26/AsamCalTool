@@ -423,9 +423,12 @@ public final class RecordLayout implements A2lObject, Comparable<RecordLayout> {
 
 	@Override
 	public String getProperties() {
-		StringBuilder sb = new StringBuilder("...");
+		StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
 
-		return sb.toString();
+        sb.append("<ul><li><b>Name: </b>" + name + "\n");
+        sb.append("</u></html>");
+
+        return sb.toString();
 	}
 
 }

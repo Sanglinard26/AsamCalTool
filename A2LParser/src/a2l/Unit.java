@@ -81,7 +81,9 @@ public final class Unit implements A2lObject, Comparable<Unit> {
 
 	private final class UnitConversion
 	{
+		@SuppressWarnings("unused")
 		private final float gradient;
+		@SuppressWarnings("unused")
 		private final float offset;
 
 		public UnitConversion(List<String> params) {
@@ -92,12 +94,19 @@ public final class Unit implements A2lObject, Comparable<Unit> {
 
 	private final class SiExponents
 	{
+		@SuppressWarnings("unused")
 		private final int length;
+		@SuppressWarnings("unused")
 		private final int mass;
+		@SuppressWarnings("unused")
 		private final int time;
+		@SuppressWarnings("unused")
 		private final int electricCurrent;
+		@SuppressWarnings("unused")
 		private final int temperature;
+		@SuppressWarnings("unused")
 		private final int amountOfSubstance;
+		@SuppressWarnings("unused")
 		private final int luminousIntensity;
 
 		public SiExponents(List<String> params) {
@@ -118,9 +127,15 @@ public final class Unit implements A2lObject, Comparable<Unit> {
 
 	@Override
 	public String getProperties() {
-		StringBuilder sb = new StringBuilder("...");
+		StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
 
-		return sb.toString();
+        sb.append("<ul><li><b>Name: </b>" + name + "\n");
+        sb.append("<li><b>Long identifier: </b>" + longIdentifier + "\n");
+        sb.append("<li><b>Display: </b>" + display + "\n");
+        sb.append("<li><b>Unit type: </b>" + unitType.name() + "\n");
+        sb.append("</u></html>");
+
+        return sb.toString();
 	}
 }
 

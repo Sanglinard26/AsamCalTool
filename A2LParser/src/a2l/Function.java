@@ -19,7 +19,6 @@ import constante.SecondaryKeywords;
 public final class Function implements A2lObject, Comparable<Function> {
 
 	private String name;
-	@SuppressWarnings("unused")
 	private String longIdentifier;
 
 	private Map<SecondaryKeywords, Object> optionalsParameters;
@@ -144,8 +143,12 @@ public final class Function implements A2lObject, Comparable<Function> {
 
 	@Override
 	public String getProperties() {
-		StringBuilder sb = new StringBuilder("...");
+		StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
 
-		return sb.toString();
+        sb.append("<ul><li><b>Name: </b>" + name + "\n");
+        sb.append("<li><b>Long identifier: </b>" + longIdentifier + "\n");
+        sb.append("</u></html>");
+
+        return sb.toString();
 	}
 }

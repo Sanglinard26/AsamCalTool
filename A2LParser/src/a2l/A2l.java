@@ -17,7 +17,7 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import utils.RegexHolder;
+import utils.ParserUtils;
 
 public final class A2l {
 
@@ -234,7 +234,7 @@ public final class A2l {
 
     private final List<String> fillParameters(BufferedReader buf, String line, List<String> objectParameters, String keyword) throws IOException {
 
-        final Pattern regexQuote = RegexHolder.QUOTE;
+        final Pattern regexQuote = ParserUtils.QUOTE;
         final String spaceKeyword = " " + keyword;
         final String tabKeyword = "\t" + keyword;
         final String end = "/end";
@@ -279,13 +279,16 @@ public final class A2l {
         final String lineWoutComment;
 
         if (line.indexOf("/*") > -1 || line.indexOf("*/") > -1 || line.indexOf("//") > -1) {
-            lineWoutComment = RegexHolder.LINE_COMMENT.matcher(line).replaceAll("");
+            lineWoutComment = ParserUtils.LINE_COMMENT.matcher(line).replaceAll("");
+            if(lineWoutComment.length() == 0)
+            {
+            	return listWord;
+            }
         } else {
             lineWoutComment = line;
         }
-
-        if (lineWoutComment.indexOf("\"") > -1 && RegexHolder.isString(lineWoutComment)) {
-            // this string starts and end with a double quote
+        
+        if (lineWoutComment.charAt(0) == '"' && lineWoutComment.charAt(lineWoutComment.length() - 1) == '"' && ParserUtils.isUniqueString(lineWoutComment)) {
             listWord.add(lineWoutComment.substring(1, lineWoutComment.length() - 1));
             return listWord;
         }
