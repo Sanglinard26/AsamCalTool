@@ -65,7 +65,7 @@ public final class Characteristic extends AdjustableObject {
         optionalsParameters.put(MAX_REFRESH, null);
         optionalsParameters.put(NUMBER, null);
         optionalsParameters.put(PHYS_UNIT, null);
-        optionalsParameters.put(READ_ONLY, null); // Par defaut
+        optionalsParameters.put(READ_ONLY, false); // Par defaut
         optionalsParameters.put(REF_MEMORY_SEGMENT, null);
         optionalsParameters.put(STEP_SIZE, null);
         optionalsParameters.put(VIRTUAL_CHARACTERISTIC, null);
@@ -77,6 +77,9 @@ public final class Characteristic extends AdjustableObject {
     }
 
     public final List<AxisDescr> getAxisDescrs() {
+        if (axisDescrs == null) {
+            return new ArrayList<AxisDescr>();
+        }
         return axisDescrs;
     }
 

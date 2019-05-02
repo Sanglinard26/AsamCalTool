@@ -5,6 +5,7 @@ package a2l;
 
 import static constante.SecondaryKeywords.BYTE_ORDER;
 import static constante.SecondaryKeywords.FORMAT;
+import static constante.SecondaryKeywords.READ_ONLY;
 
 import java.nio.ByteOrder;
 import java.util.HashMap;
@@ -88,11 +89,40 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         return null;
     }
 
+    public final String getDimension() {
+        StringBuilder stringDimension = new StringBuilder();
+        if (this instanceof AxisPts) {
+            stringDimension.append("[" + ((AxisPts) this).getMaxAxisPoints() + " x 1]");
+        } else {
+            Characteristic characteristic = (Characteristic) this;
+
+            int nbAxe = characteristic.getAxisDescrs().size();
+
+            stringDimension.append("[");
+            if (nbAxe == 1) {
+                stringDimension.append(characteristic.getAxisDescrs().get(0).getMaxAxisPoints());
+                stringDimension.append(" x 2");
+            } else if (nbAxe == 2) {
+                stringDimension.append(characteristic.getAxisDescrs().get(0).getMaxAxisPoints());
+                stringDimension.append(" x ");
+                stringDimension.append(characteristic.getAxisDescrs().get(1).getMaxAxisPoints());
+            } else {
+                stringDimension.append("1 x 1");
+            }
+            stringDimension.append("]");
+        }
+        return stringDimension.toString();
+    }
+
     protected abstract void formatValues();
 
     public final Values getValues() {
         formatValues();
         return this.values;
+    }
+
+    public final boolean isReadOnly() {
+        return (boolean) optionalsParameters.get(READ_ONLY);
     }
 
     public final void setValues(Values values) {
@@ -123,8 +153,16 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         sb.append("<li><b>Max diff: </b>" + maxDiff + "\n");
         sb.append("<li><b>Adress: </b>" + adress + "\n");
         sb.append("<li><b>Deposit: </b><a href=" + deposit + ">" + deposit + "</a>\n");
-        sb.append("<li><b>Conversion: </b><a href=" + conversion + ">" + conversion + "</a>\n</ul>");
-        sb.append("<b><u>VALUES :\n</u></b></html>");
+        sb.append("<li><b>Conversion: </b><a href=" + conversion + ">" + conversion + "</a>\n");
+        sb.append("<li><b>Dimensions [x*y]: </b>" + getDimension() + "\n");
+        sb.append("</ul>");
+
+        sb.append("<b><u>OPTIONALS PARAMETERS :\n</u></b>");
+        sb.append("<ul><li><b>Read only : </b>" + isReadOnly() + "\n</ul>");
+
+        sb.append("<b><u>VALUES :\n</u></b>");
+
+        sb.append("</html>");
 
         return sb.toString();
     }

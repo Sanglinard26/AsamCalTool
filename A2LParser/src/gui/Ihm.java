@@ -83,7 +83,7 @@ public final class Ihm extends JFrame {
             super();
             ((FlowLayout) getLayout()).setAlignment(FlowLayout.LEFT);
 
-            labelHex = new JLabel("Hex file : ...");
+            labelHex = new JLabel("Data initialized with : ...");
 
             btOpenA2L = new JButton(new AbstractAction("Open A2L") {
 
@@ -194,7 +194,7 @@ public final class Ihm extends JFrame {
                         if (hexDecoder.readDataFromHex()) {
                             lEndTime = System.nanoTime();
                             output = lEndTime - lStartTime;
-                            labelHex.setText("<html>Hex file : " + "<b>" + chooser.getSelectedFile().getName() + "</b></html>");
+                            labelHex.setText("<html>Data initialized with : " + "<b>" + chooser.getSelectedFile().getName() + "</b></html>");
                             sb.append("Reading hex data : " + output / 1000000 + "ms\n");
                             JOptionPane.showMessageDialog(Ihm.this, sb.toString());
 
