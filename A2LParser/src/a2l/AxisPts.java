@@ -114,7 +114,7 @@ public final class AxisPts extends AdjustableObject {
                         n = nPar + 1;
                         do {
                         } while (!parameters.get(++nPar).equals("ANNOTATION"));
-                        optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3), 0, 0));
+                        optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3)));
                         n = nPar + 1;
                         break;
                     case "BYTE_ORDER":

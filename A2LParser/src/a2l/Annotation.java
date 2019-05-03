@@ -18,11 +18,11 @@ public final class Annotation {
 
     private Map<SecondaryKeywords, Object> optionalsParameters;
 
-    public Annotation(List<String> parameters, int beginLine, int endLine) {
+    public Annotation(List<String> parameters) {
 
         initOptionalsParameters();
 
-        build(parameters, beginLine, endLine);
+        build(parameters);
     }
 
     private final void initOptionalsParameters() {
@@ -32,7 +32,7 @@ public final class Annotation {
         optionalsParameters.put(ANNOTATION_TEXT, null);
     }
 
-    private void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
+    private void build(List<String> parameters) throws IllegalArgumentException {
 
         final int nbParams = parameters.size();
 

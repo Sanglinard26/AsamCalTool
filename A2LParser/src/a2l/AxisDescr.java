@@ -40,11 +40,11 @@ public final class AxisDescr {
 
     private Map<SecondaryKeywords, Object> optionalsParameters;
 
-    public AxisDescr(List<String> parameters, int beginLine, int endLine) {
+    public AxisDescr(List<String> parameters) {
 
         initOptionalsParameters();
 
-        build(parameters, beginLine, endLine);
+        build(parameters);
     }
 
     private final void initOptionalsParameters() {
@@ -180,7 +180,7 @@ public final class AxisDescr {
         }
     }
 
-    private void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
+    private void build(List<String> parameters) throws IllegalArgumentException {
 
         final int nbParams = parameters.size();
 

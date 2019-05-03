@@ -217,8 +217,9 @@ public final class Ihm extends JFrame {
     private final class PanelView extends JPanel {
         private static final long serialVersionUID = 1L;
 
-        private final TableView tableView;
         private final JTextPane textPane;
+        private final JLabel labelValues;
+        private final TableView tableView;
 
         public PanelView() {
 
@@ -257,9 +258,19 @@ public final class Ihm extends JFrame {
             scrollPane.getViewport().setPreferredSize(new Dimension(500, 400));
             add(scrollPane, gc);
 
-            tableView = new TableView(new TableModelView());
+            labelValues = new JLabel("<html><b><u>Values:</u></b>");
             gc.gridx = 0;
             gc.gridy = 1;
+            gc.weightx = 0;
+            gc.weighty = 0;
+            gc.fill = GridBagConstraints.NONE;
+            gc.anchor = GridBagConstraints.FIRST_LINE_START;
+            gc.insets = new Insets(5, 5, 0, 0);
+            add(labelValues, gc);
+
+            tableView = new TableView(new TableModelView());
+            gc.gridx = 0;
+            gc.gridy = 2;
             gc.weightx = 0;
             gc.weighty = 60;
             gc.fill = GridBagConstraints.BOTH;

@@ -11,6 +11,8 @@ import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Map;
 
+import a2l.AxisDescr.Attribute;
+import a2l.Characteristic.CharacteristicType;
 import constante.SecondaryKeywords;
 
 public abstract class AdjustableObject implements A2lObject, Comparable<AdjustableObject> {
@@ -96,22 +98,35 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         } else {
             Characteristic characteristic = (Characteristic) this;
 
-            int nbAxe = characteristic.getAxisDescrs().size();
-
             stringDimension.append("[");
-            if (nbAxe == 1) {
-                stringDimension.append(characteristic.getAxisDescrs().get(0).getMaxAxisPoints());
-                stringDimension.append(" x 2");
-            } else if (nbAxe == 2) {
-                stringDimension.append(characteristic.getAxisDescrs().get(0).getMaxAxisPoints());
-                stringDimension.append(" x ");
-                stringDimension.append(characteristic.getAxisDescrs().get(1).getMaxAxisPoints());
+            if (values != null) {
+                if (characteristic.getType().compareTo(CharacteristicType.VALUE) == 0) {
+                    stringDimension.append("1 x 1");
+                } else if (characteristic.getType().compareTo(CharacteristicType.CURVE) == 0) {
+                    stringDimension.append(values.getDimX() + " x 2");
+                } else {
+                    stringDimension.append((values.getDimX() - 1) + " x " + (values.getDimY() - 1));
+                }
             } else {
-                stringDimension.append("1 x 1");
+                stringDimension.append("? x ?");
             }
             stringDimension.append("]");
+
+            if (characteristic.getType().compareTo(CharacteristicType.CURVE) == 0) {
+                int dimMaxX = characteristic.getAxisDescrs().get(0).getMaxAxisPoints();
+                stringDimension.append(" (Max : [" + dimMaxX + " x 2])");
+            } else if (characteristic.getType().compareTo(CharacteristicType.MAP) == 0) {
+                int dimMaxX = characteristic.getAxisDescrs().get(0).getMaxAxisPoints();
+                int dimMaxY = characteristic.getAxisDescrs().get(0).getMaxAxisPoints();
+                stringDimension.append(" (Max : [" + dimMaxX + " x " + dimMaxY + "])");
+            }
         }
         return stringDimension.toString();
+    }
+
+    public final String getFormat() {
+        Object oFormat = optionalsParameters.get(FORMAT);
+        return oFormat != null ? oFormat.toString() : compuMethod.getFormat();
     }
 
     protected abstract void formatValues();
@@ -154,13 +169,27 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         sb.append("<li><b>Adress: </b>" + adress + "\n");
         sb.append("<li><b>Deposit: </b><a href=" + deposit + ">" + deposit + "</a>\n");
         sb.append("<li><b>Conversion: </b><a href=" + conversion + ">" + conversion + "</a>\n");
-        sb.append("<li><b>Dimensions [x*y]: </b>" + getDimension() + "\n");
+        sb.append("<li><b>Dimensions [X x Y]: </b>" + getDimension() + "\n");
+
+        if (this instanceof Characteristic) {
+            Characteristic characteristic = (Characteristic) this;
+            AxisDescr axis;
+            for (int i = 0; i < characteristic.getAxisDescrs().size(); i++) {
+                sb.append("<li><b>Axis " + (i + 1) + ": </b>");
+                axis = characteristic.getAxisDescrs().get(i);
+                sb.append("<ul><li><b>Type: </b>" + axis.getAttribute().name());
+                if (axis.getAttribute().compareTo(Attribute.COM_AXIS) == 0) {
+                    sb.append("<li><b>Axis Pts Ref: </b><a href=" + axis.getAxisPts() + ">" + axis.getAxisPts());
+                }
+                sb.append("</ul>");
+            }
+        }
+
         sb.append("</ul>");
 
         sb.append("<b><u>OPTIONALS PARAMETERS :\n</u></b>");
-        sb.append("<ul><li><b>Read only : </b>" + isReadOnly() + "\n</ul>");
-
-        sb.append("<b><u>VALUES :\n</u></b>");
+        sb.append("<ul><li><b>Format : </b>" + getFormat() + "\n");
+        sb.append("<li><b>Read only : </b>" + isReadOnly() + "\n");
 
         sb.append("</html>");
 
