@@ -117,7 +117,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
                 stringDimension.append(" (Max : [" + dimMaxX + " x 2])");
             } else if (characteristic.getType().compareTo(CharacteristicType.MAP) == 0) {
                 int dimMaxX = characteristic.getAxisDescrs().get(0).getMaxAxisPoints();
-                int dimMaxY = characteristic.getAxisDescrs().get(0).getMaxAxisPoints();
+                int dimMaxY = characteristic.getAxisDescrs().get(1).getMaxAxisPoints();
                 stringDimension.append(" (Max : [" + dimMaxX + " x " + dimMaxY + "])");
             }
         }
