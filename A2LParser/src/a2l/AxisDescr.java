@@ -97,6 +97,9 @@ public final class AxisDescr {
     }
 
     public final short getMaxAxisPoints() {
+        if (attribute.compareTo(Attribute.COM_AXIS) == 0) {
+            return ((AxisPts) getAxisPts()).getMaxAxisPoints();
+        }
         return maxAxisPoints;
     }
 
