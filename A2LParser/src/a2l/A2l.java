@@ -280,15 +280,15 @@ public final class A2l {
 
         if (line.indexOf("/*") > -1 || line.indexOf("*/") > -1 || line.indexOf("//") > -1) {
             lineWoutComment = ParserUtils.LINE_COMMENT.matcher(line).replaceAll("");
-            if(lineWoutComment.length() == 0)
-            {
-            	return listWord;
+            if (lineWoutComment.length() == 0) {
+                return listWord;
             }
         } else {
             lineWoutComment = line;
         }
-        
-        if (lineWoutComment.charAt(0) == '"' && lineWoutComment.charAt(lineWoutComment.length() - 1) == '"' && ParserUtils.isUniqueString(lineWoutComment)) {
+
+        if (lineWoutComment.charAt(0) == '"' && lineWoutComment.charAt(lineWoutComment.length() - 1) == '"'
+                && ParserUtils.isUniqueString(lineWoutComment)) {
             listWord.add(lineWoutComment.substring(1, lineWoutComment.length() - 1));
             return listWord;
         }

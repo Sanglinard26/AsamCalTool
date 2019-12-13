@@ -143,11 +143,16 @@ public final class Characteristic extends AdjustableObject {
     }
 
     public final void assignAxisPts(HashMap<String, AdjustableObject> adjustableObjects) {
+
+        AdjustableObject axisPts;
+
         if (axisDescrs != null) {
             for (AxisDescr axisDescr : axisDescrs) {
                 Attribute axisType = axisDescr.getAttribute();
                 if (axisType.compareTo(Attribute.COM_AXIS) == 0 || axisType.compareTo(Attribute.RES_AXIS) == 0) {
-                    axisDescr.setAxisPts(adjustableObjects.get(axisDescr.getAxisRef(axisType)));
+                    axisPts = adjustableObjects.get(axisDescr.getAxisRef(axisType));
+                    axisDescr.setAxisPts(axisPts);
+                    ((AxisPts) axisPts).assignCharacteristic(this);
                 }
                 if (axisType.compareTo(Attribute.CURVE_AXIS) == 0) {
                     axisDescr.setCurveAxis(adjustableObjects.get(axisDescr.getAxisRef(axisType)));

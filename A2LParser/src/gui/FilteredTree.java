@@ -77,7 +77,7 @@ public class FilteredTree extends JPanel {
         childNode = new DefaultMutableTreeNode("RECORD_LAYOUT");
         this.originalRoot.add(childNode);
         DynamicUtilTreeNode.createChildren(childNode, a2l.getListRecordLayout());
-        
+
         childNode = new DefaultMutableTreeNode("UNIT");
         this.originalRoot.add(childNode);
         DynamicUtilTreeNode.createChildren(childNode, a2l.getListUnit());
@@ -152,7 +152,7 @@ public class FilteredTree extends JPanel {
 
     private void filterTree(String text) {
 
-        filteredText = text;
+        filteredText = text.toLowerCase();
 
         if (text.trim().length() == 0) {
 
@@ -276,7 +276,7 @@ public class FilteredTree extends JPanel {
 
             Font newFont;
 
-            if (filteredText.length() > 0 && value.toString().startsWith(filteredText)) {
+            if (filteredText.length() > 0 && value.toString().toLowerCase().startsWith(filteredText)) {
                 newFont = c.getFont().deriveFont(Font.BOLD);
             } else {
                 newFont = c.getFont().deriveFont(Font.PLAIN);
@@ -303,7 +303,7 @@ public class FilteredTree extends JPanel {
         private String textToMatch;
 
         public TreeNodeBuilder(String textToMatch) {
-            this.textToMatch = textToMatch;
+            this.textToMatch = textToMatch.toLowerCase();
         }
 
         public DefaultMutableTreeNode prune(DefaultMutableTreeNode root) {
@@ -339,7 +339,7 @@ public class FilteredTree extends JPanel {
                 DefaultMutableTreeNode nextLeaf = leaf.getNextLeaf();
 
                 // if it does not start with the text then snip it off its parent
-                if (!leaf.getUserObject().toString().startsWith(textToMatch)) {
+                if (!leaf.getUserObject().toString().toLowerCase().startsWith(textToMatch)) {
                     DefaultMutableTreeNode parent = (DefaultMutableTreeNode) leaf.getParent();
 
                     if (parent != null)

@@ -17,6 +17,7 @@ import static constante.SecondaryKeywords.PHYS_UNIT;
 import static constante.SecondaryKeywords.READ_ONLY;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -30,11 +31,15 @@ public final class AxisPts extends AdjustableObject {
     private String inputQuantity; // Reference to INPUT_QUANTITY
     private short maxAxisPoints;
 
+    private List<Characteristic> characteristicsDependency;
+
     public AxisPts(List<String> parameters, int beginLine, int endLine) {
 
         initOptionalsParameters();
 
         build(parameters, beginLine, endLine);
+
+        characteristicsDependency = new ArrayList<Characteristic>();
     }
 
     private final void initOptionalsParameters() {
@@ -79,6 +84,14 @@ public final class AxisPts extends AdjustableObject {
     @Override
     public final void assignComputMethod(HashMap<String, CompuMethod> compuMethods) {
         this.compuMethod = compuMethods.get(this.conversion);
+    }
+
+    public final void assignCharacteristic(Characteristic characteristic) {
+        characteristicsDependency.add(characteristic);
+    }
+
+    public final List<Characteristic> getCharacteristicsDependency() {
+        return characteristicsDependency;
     }
 
     @Override

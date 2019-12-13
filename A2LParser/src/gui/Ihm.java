@@ -116,6 +116,13 @@ public final class Ihm extends JFrame {
 
                         sb.append("A2L parsing time : " + (System.currentTimeMillis() - start) + "ms\n");
 
+                        if (filteredTree != null) {
+                            container.remove(filteredTree);
+                            labelHex.setText("Data initialized with : ...");
+                            panelView.textPane.setText("<html><br>");
+                            panelView.tableView.getModel().setData(null);
+                        }
+
                         filteredTree = new FilteredTree(a2l);
 
                         a2lTree = filteredTree.getTree();
@@ -129,10 +136,15 @@ public final class Ihm extends JFrame {
 
                                 if (selectedNode != null) {
                                     Object userObject = selectedNode.getUserObject();
-                                    panelView.displayObject((A2lObject) userObject);
-                                    if (userObject instanceof Function) {
-                                        filteredTree.addChildToFunction(selectedNode);
+
+                                    if (userObject instanceof A2lObject) {
+                                        panelView.displayObject((A2lObject) userObject);
+
+                                        if (userObject instanceof Function) {
+                                            filteredTree.addChildToFunction(selectedNode);
+                                        }
                                     }
+
                                 }
                             }
                         });

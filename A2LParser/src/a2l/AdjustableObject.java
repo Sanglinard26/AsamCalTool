@@ -145,7 +145,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     }
 
     public final void setFunction(String function) {
-        this.functionRef = function;
+        this.functionRef = function == null ? "" : function;
     }
 
     public abstract void assignComputMethod(HashMap<String, CompuMethod> compuMethods);
@@ -182,6 +182,14 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
                     sb.append("<li><b>Axis Pts Ref: </b><a href=" + axis.getAxisPts() + ">" + axis.getAxisPts());
                 }
                 sb.append("</ul>");
+            }
+        }
+
+        if (this instanceof AxisPts) {
+            AxisPts axisPts = (AxisPts) this;
+            sb.append("<li><b>Used by: </b>");
+            for (Characteristic characteristic : axisPts.getCharacteristicsDependency()) {
+                sb.append(characteristic.name + " | ");
             }
         }
 
