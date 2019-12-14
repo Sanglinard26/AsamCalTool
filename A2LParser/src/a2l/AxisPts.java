@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import constante.ConversionType;
 import constante.SecondaryKeywords;
 
 public final class AxisPts extends AdjustableObject {
@@ -169,5 +170,16 @@ public final class AxisPts extends AdjustableObject {
             }
         }
     }
+
+	@Override
+	public Double[] getResolution() {
+		
+		if(ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType())!=0)
+    	{
+			return new Double[]{this.compuMethod.compute(1)};
+    	}
+		
+		return new Double[]{Double.NaN};
+	}
 
 }
