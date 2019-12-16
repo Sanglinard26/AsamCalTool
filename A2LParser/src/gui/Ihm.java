@@ -232,6 +232,7 @@ public final class Ihm extends JFrame {
         private final JTextPane textPane;
         private final JLabel labelValues;
         private final TableView tableView;
+        private final SurfaceChart surfaceChart;
 
         public PanelView() {
 
@@ -262,6 +263,7 @@ public final class Ihm extends JFrame {
             gc.insets = new Insets(5, 5, 0, 0);
             gc.gridx = 0;
             gc.gridy = 0;
+            gc.gridwidth = 2;
             gc.weightx = 100;
             gc.weighty = 40;
             gc.fill = GridBagConstraints.BOTH;
@@ -273,6 +275,7 @@ public final class Ihm extends JFrame {
             labelValues = new JLabel("<html><b><u>Values:</u></b>");
             gc.gridx = 0;
             gc.gridy = 1;
+            gc.gridwidth = 2;
             gc.weightx = 0;
             gc.weighty = 0;
             gc.fill = GridBagConstraints.NONE;
@@ -283,12 +286,24 @@ public final class Ihm extends JFrame {
             tableView = new TableView(new TableModelView());
             gc.gridx = 0;
             gc.gridy = 2;
-            gc.weightx = 0;
-            gc.weighty = 60;
+            gc.gridwidth = 1;
+            gc.weightx = 50;
+            gc.weighty = 50;
             gc.fill = GridBagConstraints.BOTH;
             gc.anchor = GridBagConstraints.FIRST_LINE_START;
             gc.insets = new Insets(0, 5, 0, 0);
             add(new JScrollPane(tableView), gc);
+
+            surfaceChart = new SurfaceChart();
+            gc.gridx = 1;
+            gc.gridy = 2;
+            gc.gridwidth = 1;
+            gc.weightx = 50;
+            gc.weighty = 50;
+            gc.fill = GridBagConstraints.BOTH;
+            gc.anchor = GridBagConstraints.FIRST_LINE_START;
+            gc.insets = new Insets(0, 5, 0, 0);
+            add(new JScrollPane(surfaceChart), gc);
         }
 
         public final void displayObject(A2lObject a2lObject) {

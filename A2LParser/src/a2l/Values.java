@@ -3,6 +3,8 @@
  */
 package a2l;
 
+import utils.NumeralString;
+
 public final class Values {
 
     private final int dimX;
@@ -32,6 +34,49 @@ public final class Values {
     public final void setValue(int axeX, int axeY, String value) {
         idx = axeY + dimX * axeX;
         this.values[idx] = value;
+    }
+
+    public final float[] getXAxis() {
+        float[] xAxis = new float[dimX - 1];
+
+        for (int x = 1; x < dimX; x++) {
+            if (NumeralString.isNumber(getValue(0, x))) {
+                xAxis[x - 1] = Float.parseFloat(getValue(0, x));
+            } else {
+                xAxis[x - 1] = x;
+            }
+        }
+        return xAxis;
+    }
+
+    public final float[] getYAxis() {
+        float[] yAxis = new float[dimY - 1];
+
+        for (int y = 1; y < dimY; y++) {
+            if (NumeralString.isNumber(getValue(y, 0))) {
+                yAxis[y - 1] = Float.parseFloat(getValue(y, 0));
+            } else {
+                yAxis[y - 1] = y;
+            }
+        }
+        return yAxis;
+    }
+
+    public final float[][] getZvalues() {
+
+        float[][] floatValues = new float[dimY - 1][dimX - 1];
+
+        for (short y = 1; y < dimY; y++) {
+            for (short x = 1; x < dimX; x++) {
+
+                if (NumeralString.isNumber(getValue(y, x))) {
+                    floatValues[y - 1][x - 1] = Float.parseFloat(getValue(y, x));
+                } else {
+                    floatValues[y - 1][x - 1] = Float.NaN;
+                }
+            }
+        }
+        return floatValues;
     }
 
 }
