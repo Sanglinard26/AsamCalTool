@@ -151,6 +151,8 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     public abstract void assignComputMethod(HashMap<String, CompuMethod> compuMethods);
 
     public abstract String[] getUnit();
+    
+    public abstract Double[] getResolution();
 
     public String getProperties() {
         StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
@@ -183,6 +185,10 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
                 }
                 sb.append("</ul>");
             }
+            for (double resol : getResolution()) {
+                System.out.print("[" + resol + "]");
+            }
+            
         }
 
         if (this instanceof AxisPts) {
