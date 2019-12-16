@@ -184,15 +184,17 @@ public final class AxisPts extends AdjustableObject {
         }
     }
 
-	@Override
-	public Double[] getResolution() {
-		
-		if(ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType())!=0)
-    	{
-			return new Double[]{this.compuMethod.compute(1)};
-    	}
-		
-		return new Double[]{Double.NaN};
-	}
+    @Override
+    public Double[] getResolution() {
+
+        if (ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) != 0) {
+            double val0 = this.compuMethod.compute(0);
+            double val1 = this.compuMethod.compute(1);
+            double resol = formatValue(val1 - val0, getNbDecimal());
+            return new Double[] { resol };
+        }
+
+        return new Double[] { Double.NaN };
+    }
 
 }

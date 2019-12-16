@@ -232,7 +232,6 @@ public final class Characteristic extends AdjustableObject {
         }
         return unit;
     }
-    
 
     @Override
     public void build(List<String> parameters, int beginLine, int endLine) throws A2lObjectParsingException {
@@ -367,38 +366,71 @@ public final class Characteristic extends AdjustableObject {
 
     }
 
-	@Override
-	public Double[] getResolution() {
-		
-		Double[] resol;
+    @Override
+    public Double[] getResolution() {
+
+        Double[] tabResol;
+
+        CompuMethod cmX;
+        CompuMethod cmY;
+
+        double val0 = 0;
+        double val1 = 0;
+        double resol = 0;
 
         switch (this.type) {
         case VALUE:
-            resol = new Double[]{ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) !=0 ? this.compuMethod.compute(1) : Double.NaN};
+            val0 = this.compuMethod.compute(0);
+            val1 = this.compuMethod.compute(1);
+            resol = formatValue(val1 - val0, getNbDecimal());
+            tabResol = new Double[] { ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) != 0 ? resol : Double.NaN };
             break;
         case CURVE:
-            resol = new Double[2];
-            CompuMethod cmX = this.axisDescrs.get(0).getCompuMethod();
-            resol[0] = ConversionType.TAB_VERB.compareTo(cmX.getConversionType()) !=0 ? cmX.compute(1) : Double.NaN;
-            resol[1] = ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) !=0 ? this.compuMethod.compute(1) : Double.NaN;
+            tabResol = new Double[2];
+
+            cmX = this.axisDescrs.get(0).getCompuMethod();
+            val0 = cmX.compute(0);
+            val1 = cmX.compute(1);
+            resol = formatValue(val1 - val0, this.axisDescrs.get(0).getNbDecimal());
+            tabResol[0] = ConversionType.TAB_VERB.compareTo(cmX.getConversionType()) != 0 ? resol : Double.NaN;
+
+            val0 = this.compuMethod.compute(0);
+            val1 = this.compuMethod.compute(1);
+            resol = formatValue(val1 - val0, getNbDecimal());
+            tabResol[1] = ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) != 0 ? resol : Double.NaN;
             break;
         case MAP:
-            resol = new Double[3];
-            CompuMethod cmX1 = this.axisDescrs.get(0).getCompuMethod();
-            CompuMethod cmY = this.axisDescrs.get(1).getCompuMethod();
-            resol[0] = ConversionType.TAB_VERB.compareTo(cmX1.getConversionType()) !=0 ? cmX1.compute(1) : Double.NaN;
-            resol[1] = ConversionType.TAB_VERB.compareTo(cmY.getConversionType()) !=0 ? cmY.compute(1) : Double.NaN;
-            resol[2] = ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) !=0 ? this.compuMethod.compute(1) : Double.NaN;
+            tabResol = new Double[3];
+
+            cmX = this.axisDescrs.get(0).getCompuMethod();
+            val0 = cmX.compute(0);
+            val1 = cmX.compute(1);
+            resol = formatValue(val1 - val0, this.axisDescrs.get(0).getNbDecimal());
+            tabResol[0] = ConversionType.TAB_VERB.compareTo(cmX.getConversionType()) != 0 ? resol : Double.NaN;
+
+            cmY = this.axisDescrs.get(1).getCompuMethod();
+            val0 = cmY.compute(0);
+            val1 = cmY.compute(1);
+            resol = formatValue(val1 - val0, this.axisDescrs.get(1).getNbDecimal());
+            tabResol[1] = ConversionType.TAB_VERB.compareTo(cmY.getConversionType()) != 0 ? resol : Double.NaN;
+
+            val0 = this.compuMethod.compute(0);
+            val1 = this.compuMethod.compute(1);
+            resol = formatValue(val1 - val0, getNbDecimal());
+            tabResol[2] = ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) != 0 ? resol : Double.NaN;
             break;
         case VAL_BLK:
-            resol = new Double[]{ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) !=0 ? this.compuMethod.compute(1) : Double.NaN};
+            val0 = this.compuMethod.compute(0);
+            val1 = this.compuMethod.compute(1);
+            resol = formatValue(val1 - val0, getNbDecimal());
+            tabResol = new Double[] { ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) != 0 ? resol : Double.NaN };
             break;
         default:
-            resol = new Double[] { Double.NaN };
+            tabResol = new Double[] { Double.NaN };
             break;
         }
-        return resol;
-    	
-	}
+        return tabResol;
+
+    }
 
 }

@@ -8,6 +8,8 @@ import static constante.SecondaryKeywords.FORMAT;
 import static constante.SecondaryKeywords.READ_ONLY;
 
 import java.nio.ByteOrder;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -129,6 +131,15 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         return oFormat != null ? oFormat.toString() : compuMethod.getFormat();
     }
 
+    protected static double formatValue(double value, byte nbDecimal) {
+        final DecimalFormat df = new DecimalFormat();
+        DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+        dfs.setDecimalSeparator('.');
+        df.setDecimalFormatSymbols(dfs);
+        df.setMaximumFractionDigits(nbDecimal);
+        return Double.parseDouble(df.format(value));
+    }
+
     protected abstract void formatValues();
 
     public final Values getValues() {
@@ -151,7 +162,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     public abstract void assignComputMethod(HashMap<String, CompuMethod> compuMethods);
 
     public abstract String[] getUnit();
-    
+
     public abstract Double[] getResolution();
 
     public String getProperties() {
@@ -185,10 +196,11 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
                 }
                 sb.append("</ul>");
             }
+            System.out.println();
             for (double resol : getResolution()) {
                 System.out.print("[" + resol + "]");
             }
-            
+
         }
 
         if (this instanceof AxisPts) {
