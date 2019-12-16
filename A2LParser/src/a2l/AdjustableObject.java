@@ -175,6 +175,10 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         for (String unit : getUnit()) {
             sb.append("[" + unit + "]");
         }
+        sb.append("<li><b>Resolution: </b>");
+        for (double resol : getResolution()) {
+            sb.append("[" + resol + "]");
+        }
         sb.append("\n");
         sb.append("<li><b>Lower limit: </b>" + lowerLimit + "\n");
         sb.append("<li><b>Upper limit: </b>" + upperLimit + "\n");
@@ -196,11 +200,6 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
                 }
                 sb.append("</ul>");
             }
-            System.out.println();
-            for (double resol : getResolution()) {
-                System.out.print("[" + resol + "]");
-            }
-
         }
 
         if (this instanceof AxisPts) {
