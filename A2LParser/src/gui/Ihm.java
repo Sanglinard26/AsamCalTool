@@ -140,6 +140,10 @@ public final class Ihm extends JFrame {
                                     if (userObject instanceof A2lObject) {
                                         panelView.displayObject((A2lObject) userObject);
 
+                                        if (userObject instanceof AdjustableObject) {
+                                            panelView.updateChart((AdjustableObject) userObject);
+                                        }
+
                                         if (userObject instanceof Function) {
                                             filteredTree.addChildToFunction(selectedNode);
                                         }
@@ -316,6 +320,11 @@ public final class Ihm extends JFrame {
                 tableView.getModel().setData(null);
             }
 
+        }
+
+        public final void updateChart(AdjustableObject adjustableObject) {
+            surfaceChart.getArraySurfaceModel().setValues(adjustableObject.getValues().getXAxis(), adjustableObject.getValues().getYAxis(),
+                    adjustableObject.getValues().getZvalues());
         }
     }
 

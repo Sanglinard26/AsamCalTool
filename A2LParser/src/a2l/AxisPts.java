@@ -17,6 +17,7 @@ import static constante.SecondaryKeywords.PHYS_UNIT;
 import static constante.SecondaryKeywords.READ_ONLY;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -169,6 +170,10 @@ public final class AxisPts extends AdjustableObject {
 
         if (values != null) {
             final DecimalFormat df = new DecimalFormat();
+            DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+            dfs.setDecimalSeparator('.');
+            String separator = new String(new char[] { dfs.getGroupingSeparator() });
+            df.setDecimalFormatSymbols(dfs);
             df.setMaximumFractionDigits(getNbDecimal());
 
             int nbValues = values.getDimX();
@@ -176,7 +181,7 @@ public final class AxisPts extends AdjustableObject {
             for (int i = 0; i < nbValues; i++) {
                 try {
                     double doubleValue = Double.parseDouble(values.getValue(0, i));
-                    values.setValue(0, i, df.format(doubleValue));
+                    values.setValue(0, i, df.format(doubleValue).replace(separator, ""));
                 } catch (Exception e) {
                     // Nothing
                 }

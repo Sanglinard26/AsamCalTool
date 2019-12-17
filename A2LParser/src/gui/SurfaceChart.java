@@ -14,6 +14,9 @@ public final class SurfaceChart extends JComponent {
 
     private static final long serialVersionUID = 1L;
 
+    private final MapSurfaceModel arraySurfaceModel;
+    private final JSurface surface;
+
     public SurfaceChart() {
 
         setBorder(BorderFactory.createEmptyBorder());
@@ -22,15 +25,23 @@ public final class SurfaceChart extends JComponent {
 
         // final Map map = (Map) variable;
 
-        MapSurfaceModel arraySurfaceModel = new MapSurfaceModel();
+        arraySurfaceModel = new MapSurfaceModel();
         // arraySurfaceModel.setValues(map.getValues().getXAxis(), map.getValues().getYAxis(), map.getValues().getZvalues());
 
-        JSurface surface = new JSurface(arraySurfaceModel);
+        surface = new JSurface(arraySurfaceModel);
         // surface.setXLabel("X [" + map.getUnitX() + "]");
         // surface.setYLabel("Y [" + map.getUnitY() + "]");
 
         this.add(surface);
 
+    }
+
+    public MapSurfaceModel getArraySurfaceModel() {
+        return arraySurfaceModel;
+    }
+
+    public JSurface getSurface() {
+        return surface;
     }
 
     public class MapSurfaceModel extends AbstractSurfaceModel {

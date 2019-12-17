@@ -25,6 +25,7 @@ import static constante.SecondaryKeywords.STEP_SIZE;
 import static constante.SecondaryKeywords.VIRTUAL_CHARACTERISTIC;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -342,6 +343,10 @@ public final class Characteristic extends AdjustableObject {
 
         if (values != null) {
             final DecimalFormat df = new DecimalFormat();
+            final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+            dfs.setDecimalSeparator('.');
+            String separator = new String(new char[] { dfs.getGroupingSeparator() });
+            df.setDecimalFormatSymbols(dfs);
 
             for (short y = 0; y < values.getDimY(); y++) {
                 for (short x = 0; x < values.getDimX(); x++) {
@@ -356,7 +361,7 @@ public final class Characteristic extends AdjustableObject {
                             df.setMaximumFractionDigits(getNbDecimal());
                         }
 
-                        values.setValue(y, x, df.format(doubleValue));
+                        values.setValue(y, x, df.format(doubleValue).replace(separator, ""));
                     } catch (Exception e) {
                         // Nothing
                     }
