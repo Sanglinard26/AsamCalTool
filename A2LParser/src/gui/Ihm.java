@@ -38,6 +38,8 @@ import javax.swing.tree.TreeSelectionModel;
 import a2l.A2l;
 import a2l.A2lObject;
 import a2l.AdjustableObject;
+import a2l.Characteristic;
+import a2l.Characteristic.CharacteristicType;
 import a2l.Function;
 import a2l.TableModelView;
 import hex.HexDecoder;
@@ -140,8 +142,11 @@ public final class Ihm extends JFrame {
                                     if (userObject instanceof A2lObject) {
                                         panelView.displayObject((A2lObject) userObject);
 
-                                        if (userObject instanceof AdjustableObject) {
-                                            panelView.updateChart((AdjustableObject) userObject);
+                                        if (userObject instanceof Characteristic) {
+                                            Characteristic characteristic = (Characteristic) userObject;
+                                            if (characteristic.getType().compareTo(CharacteristicType.VALUE) != 0) {
+                                                panelView.updateChart((Characteristic) userObject);
+                                            }
                                         }
 
                                         if (userObject instanceof Function) {
@@ -325,6 +330,7 @@ public final class Ihm extends JFrame {
         public final void updateChart(AdjustableObject adjustableObject) {
             surfaceChart.getArraySurfaceModel().setValues(adjustableObject.getValues().getXAxis(), adjustableObject.getValues().getYAxis(),
                     adjustableObject.getValues().getZvalues());
+            surfaceChart.getArraySurfaceModel().autoScale();
         }
     }
 

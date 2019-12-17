@@ -59,8 +59,8 @@ public final class SurfaceChart extends JComponent {
             setDisplayGrids(true);
             setPlotColor(SurfaceModel.PlotColor.SPECTRUM);
             setFirstFunctionOnly(true);
-            setZMin(Float.MAX_VALUE);
-            setZMax(Float.MIN_VALUE);
+            setZMin(Float.NEGATIVE_INFINITY);
+            setZMax(Float.POSITIVE_INFINITY);
         }
 
         public void setValues(float[] xAxis, float[] yAxis, float[][] zValues) {
@@ -90,8 +90,8 @@ public final class SurfaceChart extends JComponent {
 
                     if (zValues != null) {
                         v1 = zValues[j][i];
-                        z1Max = Math.max(z1Max, v1);
-                        z1Min = Math.min(z1Min, v1);
+                        z1Max = Math.min(z1Max, v1);
+                        z1Min = Math.max(z1Min, v1);
                     } else {
                         v1 = Float.NaN;
                     }
