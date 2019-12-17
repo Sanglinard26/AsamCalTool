@@ -146,7 +146,11 @@ public final class Ihm extends JFrame {
                                             Characteristic characteristic = (Characteristic) userObject;
                                             if (characteristic.getType().compareTo(CharacteristicType.VALUE) != 0) {
                                                 panelView.updateChart((Characteristic) userObject);
+                                                panelView.surfaceChart.setVisible(true);
+                                            }else{
+                                            	panelView.surfaceChart.setVisible(false);
                                             }
+                                            
                                         }
 
                                         if (userObject instanceof Function) {
@@ -312,6 +316,7 @@ public final class Ihm extends JFrame {
             gc.fill = GridBagConstraints.BOTH;
             gc.anchor = GridBagConstraints.FIRST_LINE_START;
             gc.insets = new Insets(0, 5, 0, 0);
+            surfaceChart.setVisible(false);
             add(new JScrollPane(surfaceChart), gc);
         }
 
@@ -330,7 +335,6 @@ public final class Ihm extends JFrame {
         public final void updateChart(AdjustableObject adjustableObject) {
             surfaceChart.getArraySurfaceModel().setValues(adjustableObject.getValues().getXAxis(), adjustableObject.getValues().getYAxis(),
                     adjustableObject.getValues().getZvalues());
-            surfaceChart.getArraySurfaceModel().autoScale();
         }
     }
 
