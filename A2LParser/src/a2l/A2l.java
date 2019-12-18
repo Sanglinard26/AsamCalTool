@@ -89,6 +89,12 @@ public final class A2l {
         return v;
     }
 
+    public final Vector<SystemConstant> getListSystemConstant() {
+        Vector<SystemConstant> v = new Vector<>(modPar.getSystemConstant());
+        Collections.sort(v);
+        return v;
+    }
+
     private final void parse(File a2lFile) {
         final String BEGIN = "/begin";
 

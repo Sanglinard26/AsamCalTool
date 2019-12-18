@@ -5,7 +5,7 @@ package a2l;
 
 import java.util.List;
 
-public final class SystemConstant {
+public final class SystemConstant implements Comparable<SystemConstant> {
 
     private final String name;
     private final String value;
@@ -21,6 +21,16 @@ public final class SystemConstant {
 
     public final String getValue() {
         return this.value;
+    }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+
+    @Override
+    public int compareTo(SystemConstant o) {
+        return this.name.compareTo(o.name);
     }
 
 }

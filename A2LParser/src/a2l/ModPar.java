@@ -18,106 +18,105 @@ import constante.SecondaryKeywords;
 
 public final class ModPar implements A2lObject {
 
-	private String comment;
+    private String comment;
 
-	private Map<SecondaryKeywords, Object> optionalsParameters;
+    private Map<SecondaryKeywords, Object> optionalsParameters;
 
-	public ModPar(List<String> parameters, int beginLine, int endLine) {
+    public ModPar(List<String> parameters, int beginLine, int endLine) {
 
-		initOptionalsParameters();
+        initOptionalsParameters();
 
-		build(parameters, beginLine, endLine);
-	}
+        build(parameters, beginLine, endLine);
+    }
 
-	private final void initOptionalsParameters() {
-		optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
-		optionalsParameters.put(ADDR_EPK, null);
-		optionalsParameters.put(ECU_CALIBRATION_OFFSET, null);
-		optionalsParameters.put(EPK, null);
-		optionalsParameters.put(SYSTEM_CONSTANT, null);
-	}
+    private final void initOptionalsParameters() {
+        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
+        optionalsParameters.put(ADDR_EPK, null);
+        optionalsParameters.put(ECU_CALIBRATION_OFFSET, null);
+        optionalsParameters.put(EPK, null);
+        optionalsParameters.put(SYSTEM_CONSTANT, null);
+    }
 
-	public final long getEPKAdress() {
-		String addressEPK = ((String) optionalsParameters.get(ADDR_EPK));
-		if (addressEPK != null) {
-			return Long.parseLong(addressEPK.substring(2), 16);
-		}
-		return -1;
-	}
+    public final long getEPKAdress() {
+        String addressEPK = ((String) optionalsParameters.get(ADDR_EPK));
+        if (addressEPK != null) {
+            return Long.parseLong(addressEPK.substring(2), 16);
+        }
+        return -1;
+    }
 
-	public final String getEPK() {
-		return (String) optionalsParameters.get(EPK);
-	}
+    public final String getEPK() {
+        return (String) optionalsParameters.get(EPK);
+    }
 
-	public final String getComment() {
-		return this.comment;
-	}
+    public final String getComment() {
+        return this.comment;
+    }
 
-	@SuppressWarnings("unchecked")
-	public final List<SystemConstant> getSystemConstant() {
-		Object object = optionalsParameters.get(SYSTEM_CONSTANT);
-		return object != null ? (List<SystemConstant>) object : new ArrayList<SystemConstant>();
-	}
+    @SuppressWarnings("unchecked")
+    public final List<SystemConstant> getSystemConstant() {
+        Object object = optionalsParameters.get(SYSTEM_CONSTANT);
+        return object != null ? (List<SystemConstant>) object : new ArrayList<SystemConstant>();
+    }
 
-	@Override
-	public void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
+    @Override
+    public void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
 
-		final int nbParams = parameters.size();
+        final int nbParams = parameters.size();
 
-		List<SystemConstant> systemConstant = new ArrayList<SystemConstant>();
+        List<SystemConstant> systemConstant = new ArrayList<SystemConstant>();
 
-		if (nbParams >= 1) {
-			for (int n = 2; n < nbParams; n++) {
-				switch (n) {
-				case 2:
-					this.comment = parameters.get(n);
-					break;
-				default: // Cas de parametres optionels
-				Set<SecondaryKeywords> keys = optionalsParameters.keySet();
-				for (int nPar = n; nPar < nbParams; nPar++) {
-					if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-						switch (parameters.get(nPar)) {
-						case "ADDR_EPK":
-							optionalsParameters.put(ADDR_EPK, parameters.get(nPar + 1));
-							nPar += 1;
-							break;
-						case "ECU_CALIBRATION_OFFSET":
-							optionalsParameters.put(ECU_CALIBRATION_OFFSET, parameters.get(nPar + 1));
-							nPar += 1;
-							break;
-						case "EPK":
-							optionalsParameters.put(EPK, parameters.get(nPar + 1));
-							nPar += 1;
-							break;
-						case "SYSTEM_CONSTANT":
-							if (systemConstant.isEmpty()) {
-								optionalsParameters.put(SYSTEM_CONSTANT, systemConstant);
-							}
-							systemConstant.add(new SystemConstant(parameters.subList(nPar + 1, nPar + 3)));
-							nPar += 2;
-							break;
-						default:
-							break;
-						}
-					}
+        if (nbParams >= 1) {
+            for (int n = 2; n < nbParams; n++) {
+                switch (n) {
+                case 2:
+                    this.comment = parameters.get(n);
+                    break;
+                default: // Cas de parametres optionels
+                    Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+                    for (int nPar = n; nPar < nbParams; nPar++) {
+                        if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
+                            switch (parameters.get(nPar)) {
+                            case "ADDR_EPK":
+                                optionalsParameters.put(ADDR_EPK, parameters.get(nPar + 1));
+                                nPar += 1;
+                                break;
+                            case "ECU_CALIBRATION_OFFSET":
+                                optionalsParameters.put(ECU_CALIBRATION_OFFSET, parameters.get(nPar + 1));
+                                nPar += 1;
+                                break;
+                            case "EPK":
+                                optionalsParameters.put(EPK, parameters.get(nPar + 1));
+                                nPar += 1;
+                                break;
+                            case "SYSTEM_CONSTANT":
+                                if (systemConstant.isEmpty()) {
+                                    optionalsParameters.put(SYSTEM_CONSTANT, systemConstant);
+                                }
+                                systemConstant.add(new SystemConstant(parameters.subList(nPar + 1, nPar + 3)));
+                                nPar += 2;
+                                break;
+                            default:
+                                break;
+                            }
+                        }
 
-				}
-				n = nbParams;
-				break;
-				}
-			}
+                    }
+                    n = nbParams;
+                    break;
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
+        }
 
-		} else {
-			throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
-		}
+    }
 
-	}
+    @Override
+    public String getProperties() {
+        StringBuilder sb = new StringBuilder("...");
 
-	@Override
-	public String getProperties() {
-		StringBuilder sb = new StringBuilder("...");
-
-		return sb.toString();
-	}
+        return sb.toString();
+    }
 
 }

@@ -81,6 +81,10 @@ public class FilteredTree extends JPanel {
         childNode = new DefaultMutableTreeNode("UNIT");
         this.originalRoot.add(childNode);
         DynamicUtilTreeNode.createChildren(childNode, a2l.getListUnit());
+
+        childNode = new DefaultMutableTreeNode("SYSTEM_CONSTANT");
+        this.originalRoot.add(childNode);
+        DynamicUtilTreeNode.createChildren(childNode, a2l.getListSystemConstant());
     }
 
     public final void addChildToFunction(DefaultMutableTreeNode function) {
