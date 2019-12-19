@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -147,10 +148,10 @@ public final class Ihm extends JFrame {
                                             if (characteristic.getType().compareTo(CharacteristicType.VALUE) != 0) {
                                                 panelView.updateChart((Characteristic) userObject);
                                                 panelView.surfaceChart.setVisible(true);
-                                            }else{
-                                            	panelView.surfaceChart.setVisible(false);
+                                            } else {
+                                                panelView.surfaceChart.setVisible(false);
                                             }
-                                            
+
                                         }
 
                                         if (userObject instanceof Function) {
@@ -332,9 +333,28 @@ public final class Ihm extends JFrame {
 
         }
 
-        public final void updateChart(AdjustableObject adjustableObject) {
-            surfaceChart.getArraySurfaceModel().setValues(adjustableObject.getValues().getXAxis(), adjustableObject.getValues().getYAxis(),
-                    adjustableObject.getValues().getZvalues());
+        public final void updateChart(Characteristic characteristic) {
+
+            switch (characteristic.getType()) {
+            case MAP:
+                surfaceChart.getArraySurfaceModel().setValues(characteristic.getValues().getXAxis(), characteristic.getValues().getYAxis(),
+                        characteristic.getValues().getZvalues());
+                break;
+            case CURVE:
+                float[][] zValuesOrigin = characteristic.getValues().getZvalues();
+
+                int length = zValuesOrigin[0].length;
+                float[][] zValuesNew = new float[2][length];
+
+                zValuesNew[0] = Arrays.copyOf(zValuesOrigin[0], length);
+                zValuesNew[1] = Arrays.copyOf(zValuesOrigin[0], length);
+
+                surfaceChart.getArraySurfaceModel().setValues(characteristic.getValues().getXAxis(), new float[] { 0, 1 }, zValuesNew);
+                break;
+            default:
+                break;
+            }
+
         }
     }
 
