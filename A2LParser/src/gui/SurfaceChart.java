@@ -23,14 +23,9 @@ public final class SurfaceChart extends JComponent {
 
         this.setLayout(new BorderLayout());
 
-        // final Map map = (Map) variable;
-
         arraySurfaceModel = new MapSurfaceModel();
-        // arraySurfaceModel.setValues(map.getValues().getXAxis(), map.getValues().getYAxis(), map.getValues().getZvalues());
 
         surface = new JSurface(arraySurfaceModel);
-        // surface.setXLabel("X [" + map.getUnitX() + "]");
-        // surface.setYLabel("Y [" + map.getUnitY() + "]");
 
         this.add(surface);
 

@@ -145,7 +145,7 @@ public final class Ihm extends JFrame {
 
                                         if (userObject instanceof Characteristic) {
                                             Characteristic characteristic = (Characteristic) userObject;
-                                            if (characteristic.getType().compareTo(CharacteristicType.VALUE) != 0) {
+                                            if (characteristic.getType().compareTo(CharacteristicType.MAP) == 0 || characteristic.getType().compareTo(CharacteristicType.CURVE) == 0) {
                                                 panelView.updateChart((Characteristic) userObject);
                                                 panelView.surfaceChart.setVisible(true);
                                             } else {
