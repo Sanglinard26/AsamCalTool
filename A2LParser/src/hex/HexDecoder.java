@@ -542,6 +542,9 @@ public final class HexDecoder {
         } else {
             values = new Values(dim[0] + 1, dim[1] + 1);
             values.setValue(0, 0, "Y\\X");
+            for (short y = 0; y < dim[1]; y++) { // Patch pour les VAL_BLK qui n'ont qu'une colonne
+                values.setValue(y + 1, 0, Integer.toString(y));
+            }
         }
 
         for (short x = 0; x < dim[0]; x++) {
@@ -597,7 +600,6 @@ public final class HexDecoder {
                         if (n % dim[0] == 0) { // => OK pour ROW_DIR
                             values.setValue(row + 1, 0, Integer.toString(row));
                             row += 1;
-
                         }
                         col = n % dim[0];
                         physValue = compuMethod.compute(hexValuesValBlk[n]);

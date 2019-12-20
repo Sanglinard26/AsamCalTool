@@ -145,7 +145,8 @@ public final class Ihm extends JFrame {
 
                                         if (userObject instanceof Characteristic) {
                                             Characteristic characteristic = (Characteristic) userObject;
-                                            if (characteristic.getType().compareTo(CharacteristicType.MAP) == 0 || characteristic.getType().compareTo(CharacteristicType.CURVE) == 0) {
+                                            if (characteristic.getType().compareTo(CharacteristicType.MAP) == 0
+                                                    || characteristic.getType().compareTo(CharacteristicType.CURVE) == 0) {
                                                 panelView.updateChart((Characteristic) userObject);
                                                 panelView.surfaceChart.setVisible(true);
                                             } else {
@@ -245,6 +246,7 @@ public final class Ihm extends JFrame {
 
         private final JTextPane textPane;
         private final JLabel labelValues;
+        private final JLabel labelChart;
         private final TableView tableView;
         private final SurfaceChart surfaceChart;
 
@@ -289,13 +291,24 @@ public final class Ihm extends JFrame {
             labelValues = new JLabel("<html><b><u>Values:</u></b>");
             gc.gridx = 0;
             gc.gridy = 1;
-            gc.gridwidth = 2;
+            gc.gridwidth = 1;
             gc.weightx = 0;
             gc.weighty = 0;
             gc.fill = GridBagConstraints.NONE;
             gc.anchor = GridBagConstraints.FIRST_LINE_START;
             gc.insets = new Insets(5, 5, 0, 0);
             add(labelValues, gc);
+
+            labelChart = new JLabel("<html><b><u>Chart:</u></b>");
+            gc.gridx = 1;
+            gc.gridy = 1;
+            gc.gridwidth = 1;
+            gc.weightx = 0;
+            gc.weighty = 0;
+            gc.fill = GridBagConstraints.NONE;
+            gc.anchor = GridBagConstraints.FIRST_LINE_START;
+            gc.insets = new Insets(5, 5, 0, 0);
+            add(labelChart, gc);
 
             tableView = new TableView(new TableModelView());
             gc.gridx = 0;
