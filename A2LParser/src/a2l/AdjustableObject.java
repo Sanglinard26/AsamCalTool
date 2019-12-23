@@ -134,10 +134,16 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     protected static double formatValue(double value, byte nbDecimal) {
         final DecimalFormat df = new DecimalFormat();
         DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+        String separator = new String(new char[] { dfs.getGroupingSeparator() });
         dfs.setDecimalSeparator('.');
         df.setDecimalFormatSymbols(dfs);
         df.setMaximumFractionDigits(nbDecimal);
-        return Double.parseDouble(df.format(value));
+        try {
+        	return Double.parseDouble(df.format(value).replace(separator, ""));
+		} catch (Exception e) {
+			return Double.NaN;
+		}
+        
     }
 
     protected abstract void formatValues();
