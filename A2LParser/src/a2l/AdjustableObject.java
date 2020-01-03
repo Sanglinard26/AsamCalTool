@@ -23,10 +23,10 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     protected String longIdentifier;
     protected String adress;
     protected String deposit;
-    protected float maxDiff;
+    protected double maxDiff;
     protected String conversion;
-    protected float lowerLimit;
-    protected float upperLimit;
+    protected double lowerLimit;
+    protected double upperLimit;
     protected boolean dataRead;
 
     protected String functionRef;
@@ -140,11 +140,11 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         df.setDecimalFormatSymbols(dfs);
         df.setMaximumFractionDigits(nbDecimal);
         try {
-        	return Double.parseDouble(df.format(value).replace(separator, ""));
-		} catch (Exception e) {
-			return Double.NaN;
-		}
-        
+            return Double.parseDouble(df.format(value).replace(separator, ""));
+        } catch (Exception e) {
+            return Double.NaN;
+        }
+
     }
 
     protected abstract void formatValues();
@@ -153,10 +153,9 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         formatValues();
         return this.values;
     }
-    
-    public final boolean hasData()
-    {
-    	return this.dataRead;
+
+    public final boolean hasData() {
+        return this.dataRead;
     }
 
     public final boolean isReadOnly() {

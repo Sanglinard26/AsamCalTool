@@ -10,9 +10,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -361,6 +363,59 @@ public final class A2l {
         Collections.sort(listByFunction);
 
         return listByFunction;
+    }
+
+    public static StringBuilder compareA2L(final A2l first, final A2l second) {
+
+        final StringBuilder sb = new StringBuilder();
+
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                Set<String> missingObjects = new HashSet<>(first.getAdjustableObjects().keySet());
+                Set<String> newObjects = new HashSet<>(second.getAdjustableObjects().keySet());
+                Set<String> compObjects = new HashSet<>(second.getAdjustableObjects().keySet());
+
+                newObjects.removeAll(first.getAdjustableObjects().keySet());
+                missingObjects.removeAll(second.getAdjustableObjects().keySet());
+                compObjects.retainAll(first.getAdjustableObjects().keySet());
+
+                HashMap<String, AdjustableObject> firstAdjObject = first.getAdjustableObjects();
+                HashMap<String, AdjustableObject> secondAdjObject = second.getAdjustableObjects();
+
+                AdjustableObject object1;
+                AdjustableObject object2;
+
+                sb.append("*** COMPARE REPORT ***\n\n");
+
+                sb.append("Missing objects : " + missingObjects + "\n");
+                sb.append("New objects : " + newObjects + "\n");
+
+                sb.append("Different object :\n");
+
+                for (String objectName : compObjects) {
+                    object1 = firstAdjObject.get(objectName);
+                    object2 = secondAdjObject.get(objectName);
+                    if ("AirEfc_facCorBoostSlopEfc_M".equals(objectName)) {
+                        int i = 0;
+                    }
+
+                    if (!object1.equals(object2))
+                        sb.append(objectName + " => isn't equal\n");
+                }
+
+                sb.append("\n*** END ***");
+
+            }
+        });
+
+        thread.start();
+
+        while (thread.isAlive()) {
+        }
+
+        return sb;
     }
 
 }

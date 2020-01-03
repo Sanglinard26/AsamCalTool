@@ -27,6 +27,7 @@ import static constante.SecondaryKeywords.VIRTUAL_CHARACTERISTIC;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -247,10 +248,10 @@ public final class Characteristic extends AdjustableObject {
                 this.type = CharacteristicType.getCharacteristicType(parameters.get(4));
                 this.adress = parameters.get(5);
                 this.deposit = parameters.get(6);
-                this.maxDiff = Float.parseFloat(parameters.get(7));
+                this.maxDiff = Double.parseDouble(parameters.get(7));
                 this.conversion = parameters.get(8);
-                this.lowerLimit = Float.parseFloat(parameters.get(9));
-                this.upperLimit = Float.parseFloat(parameters.get(10));
+                this.lowerLimit = Double.parseDouble(parameters.get(9));
+                this.upperLimit = Double.parseDouble(parameters.get(10));
 
                 int n = 11;
 
@@ -384,50 +385,43 @@ public final class Characteristic extends AdjustableObject {
 
         switch (this.type) {
         case VALUE:
-            val0 = this.compuMethod.compute(1);
-            val1 = this.compuMethod.compute(2);
-            tabResol = new Double[] { ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) != 0
-                    ? formatValue(val1 - val0, getNbDecimal()) : Double.NaN };
+            val0 = formatValue(this.compuMethod.compute(1), getNbDecimal());
+            val1 = formatValue(this.compuMethod.compute(2), getNbDecimal());
+            tabResol = new Double[] { ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) != 0 ? val1 - val0 : Double.NaN };
             break;
         case CURVE:
             tabResol = new Double[2];
 
             cmX = this.axisDescrs.get(0).getCompuMethod();
-            val0 = cmX.compute(1);
-            val1 = cmX.compute(2);
-            tabResol[0] = ConversionType.TAB_VERB.compareTo(cmX.getConversionType()) != 0
-                    ? formatValue(val1 - val0, this.axisDescrs.get(0).getNbDecimal()) : Double.NaN;
+            val0 = formatValue(cmX.compute(1), this.axisDescrs.get(0).getNbDecimal());
+            val1 = formatValue(cmX.compute(2), this.axisDescrs.get(0).getNbDecimal());
+            tabResol[0] = ConversionType.TAB_VERB.compareTo(cmX.getConversionType()) != 0 ? val1 - val0 : Double.NaN;
 
-            val0 = this.compuMethod.compute(1);
-            val1 = this.compuMethod.compute(2);
-            tabResol[1] = ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) != 0 ? formatValue(val1 - val0, getNbDecimal())
-                    : Double.NaN;
+            val0 = formatValue(this.compuMethod.compute(1), getNbDecimal());
+            val1 = formatValue(this.compuMethod.compute(2), getNbDecimal());
+            tabResol[1] = ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) != 0 ? val1 - val0 : Double.NaN;
             break;
         case MAP:
             tabResol = new Double[3];
 
             cmX = this.axisDescrs.get(0).getCompuMethod();
-            val0 = cmX.compute(1);
-            val1 = cmX.compute(2);
-            tabResol[0] = ConversionType.TAB_VERB.compareTo(cmX.getConversionType()) != 0
-                    ? formatValue(val1 - val0, this.axisDescrs.get(0).getNbDecimal()) : Double.NaN;
+            val0 = formatValue(cmX.compute(1), this.axisDescrs.get(0).getNbDecimal());
+            val1 = formatValue(cmX.compute(2), this.axisDescrs.get(0).getNbDecimal());
+            tabResol[0] = ConversionType.TAB_VERB.compareTo(cmX.getConversionType()) != 0 ? val1 - val0 : Double.NaN;
 
             cmY = this.axisDescrs.get(1).getCompuMethod();
-            val0 = cmY.compute(1);
-            val1 = cmY.compute(2);
-            tabResol[1] = ConversionType.TAB_VERB.compareTo(cmY.getConversionType()) != 0
-                    ? formatValue(val1 - val0, this.axisDescrs.get(1).getNbDecimal()) : Double.NaN;
+            val0 = formatValue(cmY.compute(1), this.axisDescrs.get(1).getNbDecimal());
+            val1 = formatValue(cmY.compute(2), this.axisDescrs.get(1).getNbDecimal());
+            tabResol[1] = ConversionType.TAB_VERB.compareTo(cmY.getConversionType()) != 0 ? val1 - val0 : Double.NaN;
 
-            val0 = this.compuMethod.compute(1);
-            val1 = this.compuMethod.compute(2);
-            tabResol[2] = ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) != 0 ? formatValue(val1 - val0, getNbDecimal())
-                    : Double.NaN;
+            val0 = formatValue(this.compuMethod.compute(1), getNbDecimal());
+            val1 = formatValue(this.compuMethod.compute(2), getNbDecimal());
+            tabResol[2] = ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) != 0 ? val1 - val0 : Double.NaN;
             break;
         case VAL_BLK:
-            val0 = this.compuMethod.compute(1);
-            val1 = this.compuMethod.compute(2);
-            tabResol = new Double[] { ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) != 0
-                    ? formatValue(val1 - val0, getNbDecimal()) : Double.NaN };
+            val0 = formatValue(this.compuMethod.compute(1), getNbDecimal());
+            val1 = formatValue(this.compuMethod.compute(2), getNbDecimal());
+            tabResol = new Double[] { ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) != 0 ? val1 - val0 : Double.NaN };
             break;
         default:
             tabResol = new Double[] { Double.NaN };
@@ -435,6 +429,26 @@ public final class Characteristic extends AdjustableObject {
         }
         return tabResol;
 
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        }
+
+        if ((obj != null) && (getClass() == obj.getClass())) {
+            Characteristic characteristic = (Characteristic) obj;
+
+            boolean genericTest = conversion.equals(characteristic.conversion) && Double.compare(lowerLimit, characteristic.lowerLimit) == 0
+                    && Double.compare(upperLimit, characteristic.upperLimit) == 0;
+
+            return genericTest && getType().compareTo(characteristic.getType()) == 0 && Arrays.deepEquals(getUnit(), characteristic.getUnit())
+                    && Arrays.deepEquals(getResolution(), characteristic.getResolution());
+        }
+
+        return false;
     }
 
 }

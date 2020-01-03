@@ -19,6 +19,7 @@ import static constante.SecondaryKeywords.READ_ONLY;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -113,11 +114,11 @@ public final class AxisPts extends AdjustableObject {
             this.adress = parameters.get(4);
             this.inputQuantity = parameters.get(5);
             this.deposit = parameters.get(6);
-            this.maxDiff = Float.parseFloat(parameters.get(7));
+            this.maxDiff = Double.parseDouble(parameters.get(7));
             this.conversion = parameters.get(8);
             this.maxAxisPoints = (short) Integer.parseInt(parameters.get(9));
-            this.lowerLimit = Float.parseFloat(parameters.get(10));
-            this.upperLimit = Float.parseFloat(parameters.get(11));
+            this.lowerLimit = Double.parseDouble(parameters.get(10));
+            this.upperLimit = Double.parseDouble(parameters.get(11));
 
             int n = 12;
 
@@ -193,13 +194,33 @@ public final class AxisPts extends AdjustableObject {
     public Double[] getResolution() {
 
         if (ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) != 0) {
-            double val0 = this.compuMethod.compute(0);
-            double val1 = this.compuMethod.compute(1);
-            double resol = formatValue(val1 - val0, getNbDecimal());
+            double val0 = formatValue(this.compuMethod.compute(1), getNbDecimal());
+            double val1 = formatValue(this.compuMethod.compute(2), getNbDecimal());
+            double resol = val1 - val0;
             return new Double[] { resol };
         }
 
         return new Double[] { Double.NaN };
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        }
+
+        if ((obj != null) && (getClass() == obj.getClass())) {
+            AxisPts axisPts = (AxisPts) obj;
+
+            boolean genericTest = conversion.equals(axisPts.conversion) && Double.compare(lowerLimit, axisPts.lowerLimit) == 0
+                    && Double.compare(upperLimit, axisPts.upperLimit) == 0;
+
+            return genericTest && maxAxisPoints == axisPts.maxAxisPoints && Arrays.deepEquals(getUnit(), axisPts.getUnit())
+                    && Arrays.deepEquals(getResolution(), axisPts.getResolution());
+        }
+
+        return false;
     }
 
 }

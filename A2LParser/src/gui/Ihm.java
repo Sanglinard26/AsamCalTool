@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.event.HyperlinkEvent;
@@ -78,6 +79,7 @@ public final class Ihm extends JFrame {
         private static final long serialVersionUID = 1L;
         private JButton btOpenA2L;
         private JButton btOpenHex;
+        private JButton btComparA2L;
         private JLabel labelHex;
 
         private final StringBuilder sb = new StringBuilder();
@@ -238,6 +240,55 @@ public final class Ihm extends JFrame {
             add(btOpenHex);
 
             add(labelHex);
+
+            btComparA2L = new JButton(new AbstractAction("Compare A2L") {
+
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+
+                    JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
+                    chooser.setMultiSelectionEnabled(true);
+                    chooser.setFileFilter(new FileFilter() {
+
+                        @Override
+                        public String getDescription() {
+                            return "A2L files (*.a2l)";
+                        }
+
+                        @Override
+                        public boolean accept(File paramFile) {
+                            if (paramFile.isDirectory())
+                                return true;
+                            return paramFile.getName().toLowerCase().endsWith("a2l");
+                        }
+                    });
+                    int rep = chooser.showOpenDialog(null);
+
+                    if (rep == JFileChooser.APPROVE_OPTION) {
+                        File[] a2lFiles = chooser.getSelectedFiles();
+                        if (a2lFiles.length == 2) {
+                            A2l first = new A2l(a2lFiles[0]);
+                            A2l second = new A2l(a2lFiles[1]);
+                            StringBuilder sb = A2l.compareA2L(first, second);
+
+                            JTextArea textArea = new JTextArea(sb.toString());
+                            JScrollPane scrollPane = new JScrollPane(textArea);
+                            textArea.setLineWrap(true);
+                            textArea.setWrapStyleWord(true);
+                            scrollPane.setPreferredSize(new Dimension(500, 500));
+                            JOptionPane.showMessageDialog(null, scrollPane);
+
+                        } else {
+                            JOptionPane.showMessageDialog(Ihm.this, "Two files are required !");
+                        }
+
+                    }
+
+                }
+            });
+            add(btComparA2L);
         }
     }
 
