@@ -26,9 +26,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.JTree;
+import javax.swing.SwingConstants;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -240,6 +242,10 @@ public final class Ihm extends JFrame {
             add(btOpenHex);
 
             add(labelHex);
+            
+            final JSeparator sep = new JSeparator(SwingConstants.VERTICAL);
+            sep.setPreferredSize(new Dimension(20, 20));
+            add(sep);
 
             btComparA2L = new JButton(new AbstractAction("Compare A2L") {
 

@@ -151,7 +151,7 @@ public final class AxisDescr {
             } else {
                 displayFormat = objectDisplayFormat.toString();
             }
-
+            // NPE si par exemple "%8"
             return (byte) Integer.parseInt(displayFormat.substring(displayFormat.indexOf(".") + 1, displayFormat.length()));
         }
         return 0;

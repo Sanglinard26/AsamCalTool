@@ -89,7 +89,8 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
             if (compuTabRef instanceof CompuTab) {
                 CompuTab compuTab = (CompuTab) compuTabRef;
                 Float key = new Float(hex);
-                return compuTab.getValuePairs().get(key);
+                Float result = compuTab.getValuePairs().get(key);
+                return result != null ? result : Double.NaN;
             }
         case TAB_INTP:
             Object compuTabRefBis = this.optionalsParameters.get(COMPU_TAB_REF);
@@ -115,7 +116,8 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
                         }
                         cnt++;
                     }
-                    return Interpolation.interpLinear(x1, x2, y1, y2, key);
+                    Double result = Interpolation.interpLinear(x1, x2, y1, y2, key);
+                    return result != null ? result : Double.NaN;
                 }
                 return value;
             }

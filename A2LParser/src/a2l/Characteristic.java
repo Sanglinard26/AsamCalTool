@@ -213,8 +213,23 @@ public final class Characteristic extends AdjustableObject {
             break;
         case CURVE:
             unit = new String[2];
-            unit[0] = this.axisDescrs.get(0).getPhysUnit().length() > 0 ? this.axisDescrs.get(0).getPhysUnit()
-                    : this.axisDescrs.get(0).getCompuMethod().getUnit();
+            AxisDescr axisDescr = this.axisDescrs.get(0);
+            if(axisDescr.getPhysUnit().length() > 0)
+            {
+            	unit[0] = axisDescr.getPhysUnit().length() > 0 ? axisDescr.getPhysUnit()
+                    : axisDescr.getCompuMethod().getUnit();
+            }else{
+            	if(axisDescr.getCompuMethod() != null)
+            	{
+            		unit[0] = axisDescr.getCompuMethod().getUnit();
+            	}else{
+            		if(axisDescr.getAttribute().compareTo(Attribute.CURVE_AXIS)==0)
+            		{
+            			unit[0] = "";
+            		}
+            	}
+            }
+            
             unit[1] = this.compuMethod.getUnit();
             break;
         case MAP:
@@ -393,9 +408,14 @@ public final class Characteristic extends AdjustableObject {
             tabResol = new Double[2];
 
             cmX = this.axisDescrs.get(0).getCompuMethod();
-            val0 = formatValue(cmX.compute(1), this.axisDescrs.get(0).getNbDecimal());
-            val1 = formatValue(cmX.compute(2), this.axisDescrs.get(0).getNbDecimal());
-            tabResol[0] = ConversionType.TAB_VERB.compareTo(cmX.getConversionType()) != 0 ? val1 - val0 : Double.NaN;
+            if(cmX != null)
+            {
+            	val0 = formatValue(cmX.compute(1), this.axisDescrs.get(0).getNbDecimal());
+                val1 = formatValue(cmX.compute(2), this.axisDescrs.get(0).getNbDecimal());
+                tabResol[0] = ConversionType.TAB_VERB.compareTo(cmX.getConversionType()) != 0 ? val1 - val0 : Double.NaN;
+            }else{
+            	tabResol[0] = Double.NaN;
+            }
 
             val0 = formatValue(this.compuMethod.compute(1), getNbDecimal());
             val1 = formatValue(this.compuMethod.compute(2), getNbDecimal());
