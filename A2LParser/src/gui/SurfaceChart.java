@@ -67,10 +67,10 @@ public final class SurfaceChart extends JComponent {
             setYMin(yAxis[0]);
             setYMax(yAxis[(yLength - 1)]);
             setCalcDivisions(Math.max(xLength - 1, yLength - 1));
-            
-            setZMin(-0.00001f);
-            setZMax(0.00001f);
-            
+
+            float minZValue = Float.POSITIVE_INFINITY;
+            float maxZValue = Float.NEGATIVE_INFINITY;
+
             final float xfactor = 20.0F / (xMax - xMin);
             final float yfactor = 20.0F / (yMax - yMin);
 
@@ -86,8 +86,13 @@ public final class SurfaceChart extends JComponent {
 
                     if (zValues != null) {
                         v1 = zValues[j][i];
-                        zMax = Math.max(zMax, v1);
-                        zMin = Math.min(zMin, v1);
+
+                        if (v1 < minZValue)
+                            minZValue = v1;
+
+                        if (v1 > maxZValue)
+                            maxZValue = v1;
+
                     } else {
                         v1 = Float.NaN;
                     }
@@ -101,6 +106,9 @@ public final class SurfaceChart extends JComponent {
                     surfaceVertex[0][s] = new SurfaceVertex(Float.NaN, Float.NaN, Float.NaN);
                 }
             }
+
+            zMin = minZValue;
+            zMax = maxZValue;
 
             if (zMax - zMin == 0) {
                 zMax += 0.1;

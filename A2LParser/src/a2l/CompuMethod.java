@@ -116,8 +116,7 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
                         }
                         cnt++;
                     }
-                    Double result = Interpolation.interpLinear(x1, x2, y1, y2, key);
-                    return result != null ? result : Double.NaN;
+                    return Interpolation.interpLinear(x1, x2, y1, y2, key);
                 }
                 return value;
             }
@@ -171,20 +170,18 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
     public final String getUnit() {
         return this.unit;
     }
-    
-    public final String getProperties()
-    {
-    	StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
+
+    public final String getProperties() {
+        StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
 
         sb.append("<ul><li><b>Name: </b>" + name + "\n");
         sb.append("<li><b>Long identifier: </b>" + longIdentifier + "\n");
         sb.append("<li><b>Conversion type: </b>" + conversionType.name() + "\n");
         sb.append("<li><b>Unit: </b>[" + unit + "]\n");
         sb.append("<li><b>Format: </b>" + format + "\n");
-        if(hasCompuTabRef())
-        {
-        	String compuTabRef = optionalsParameters.get(COMPU_TAB_REF).toString();
-        	sb.append("<li><b>Ref conversion table: </b><a href=" + compuTabRef + ">" + compuTabRef + "</a>\n");
+        if (hasCompuTabRef()) {
+            String compuTabRef = optionalsParameters.get(COMPU_TAB_REF).toString();
+            sb.append("<li><b>Ref conversion table: </b><a href=" + compuTabRef + ">" + compuTabRef + "</a>\n");
         }
         sb.append("</u></html>");
 

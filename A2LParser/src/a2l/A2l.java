@@ -397,9 +397,6 @@ public final class A2l {
                 for (String objectName : compObjects) {
                     object1 = firstAdjObject.get(objectName);
                     object2 = secondAdjObject.get(objectName);
-                    if ("AirEfc_facCorBoostSlopEfc_M".equals(objectName)) {
-                        int i = 0;
-                    }
 
                     if (!object1.equals(object2))
                         sb.append(objectName + " => isn't equal\n");

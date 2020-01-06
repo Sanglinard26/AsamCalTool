@@ -48,6 +48,7 @@ import a2l.Function;
 import a2l.TableModelView;
 import hex.HexDecoder;
 import hex.IntelHex;
+import net.ericaro.surfaceplotter.surface.JSurface;
 
 public final class Ihm extends JFrame {
 
@@ -242,7 +243,7 @@ public final class Ihm extends JFrame {
             add(btOpenHex);
 
             add(labelHex);
-            
+
             final JSeparator sep = new JSeparator(SwingConstants.VERTICAL);
             sep.setPreferredSize(new Dimension(20, 20));
             add(sep);
@@ -405,10 +406,14 @@ public final class Ihm extends JFrame {
 
         public final void updateChart(Characteristic characteristic) {
 
+            JSurface jSurface = surfaceChart.getSurface();
+
             switch (characteristic.getType()) {
             case MAP:
                 surfaceChart.getArraySurfaceModel().setValues(characteristic.getValues().getXAxis(), characteristic.getValues().getYAxis(),
                         characteristic.getValues().getZvalues());
+                jSurface.setXLabel("X [" + characteristic.getUnit()[0] + "]");
+                jSurface.setYLabel("Y [" + characteristic.getUnit()[1] + "]");
                 break;
             case CURVE:
                 float[][] zValuesOrigin = characteristic.getValues().getZvalues();
@@ -420,6 +425,7 @@ public final class Ihm extends JFrame {
                 zValuesNew[1] = Arrays.copyOf(zValuesOrigin[0], length);
 
                 surfaceChart.getArraySurfaceModel().setValues(characteristic.getValues().getXAxis(), new float[] { 0, 1 }, zValuesNew);
+                jSurface.setXLabel("X [" + characteristic.getUnit()[0] + "]");
                 break;
             default:
                 break;
