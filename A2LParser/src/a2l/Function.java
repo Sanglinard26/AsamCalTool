@@ -51,6 +51,12 @@ public final class Function implements A2lObject, Comparable<Function> {
         return (Map<String, String>) (object != null ? object : null);
     }
 
+    @SuppressWarnings("unchecked")
+    public final Map<String, String> getInMeasurement() {
+        Object object = optionalsParameters.get(IN_MEASUREMENT);
+        return (Map<String, String>) (object != null ? object : null);
+    }
+
     @Override
     public int compareTo(Function function) {
         return this.name.compareToIgnoreCase(function.toString());

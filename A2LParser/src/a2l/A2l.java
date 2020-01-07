@@ -97,6 +97,12 @@ public final class A2l {
         return v;
     }
 
+    public final Vector<Measurement> getListMeasurement() {
+        Vector<Measurement> v = new Vector<>(measurements);
+        Collections.sort(v);
+        return v;
+    }
+
     private final void parse(File a2lFile) {
         final String BEGIN = "/begin";
 

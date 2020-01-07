@@ -26,6 +26,7 @@ import a2l.Characteristic;
 import a2l.CompuMethod;
 import a2l.ConversionTable;
 import a2l.Function;
+import a2l.Measurement;
 import a2l.RecordLayout;
 
 /**
@@ -85,6 +86,10 @@ public class FilteredTree extends JPanel {
         childNode = new DefaultMutableTreeNode("SYSTEM_CONSTANT");
         this.originalRoot.add(childNode);
         DynamicUtilTreeNode.createChildren(childNode, a2l.getListSystemConstant());
+
+        childNode = new DefaultMutableTreeNode("MEASUREMENT");
+        this.originalRoot.add(childNode);
+        DynamicUtilTreeNode.createChildren(childNode, a2l.getListMeasurement());
     }
 
     public final void addChildToFunction(DefaultMutableTreeNode function) {
@@ -219,6 +224,7 @@ public class FilteredTree extends JPanel {
         private static final String COMPU_METHOD = "/COMPU_METHOD.png";
         private static final String FUNCTION = "/FUNCTION.png";
         private static final String RECORD_LAYOUT = "/RECORD_LAYOUT.png";
+        private static final String MEASUREMENT = "/MEASUREMENT.png";
         private static final String CONVERSION_TABLE = "/CONVERSION_TABLE.png";
         private static final String SCALAIRE = "/SCALAIRE.png";
         private static final String CURVE = "/CURVE.png";
@@ -233,7 +239,8 @@ public class FilteredTree extends JPanel {
                 new ImageIcon(getClass().getResource(INCONNU)), new ImageIcon(getClass().getResource(VALUEBLOCK)),
                 new ImageIcon(getClass().getResource(AXIS)), new ImageIcon(getClass().getResource(ASCII)), new ImageIcon(getClass().getResource(A2L)),
                 new ImageIcon(getClass().getResource(COMPU_METHOD)), new ImageIcon(getClass().getResource(FUNCTION)),
-                new ImageIcon(getClass().getResource(RECORD_LAYOUT)), new ImageIcon(getClass().getResource(CONVERSION_TABLE)) };
+                new ImageIcon(getClass().getResource(RECORD_LAYOUT)), new ImageIcon(getClass().getResource(CONVERSION_TABLE)),
+                new ImageIcon(getClass().getResource(MEASUREMENT)) };
 
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row,
@@ -255,6 +262,8 @@ public class FilteredTree extends JPanel {
                 c.setIcon(icons[10]);
             } else if (userObject instanceof ConversionTable) {
                 c.setIcon(icons[11]);
+            } else if (userObject instanceof Measurement) {
+                c.setIcon(icons[12]);
             } else if (userObject instanceof AdjustableObject) {
                 switch (((Characteristic) userObject).getType()) {
                 case VALUE:
