@@ -7,12 +7,14 @@ import static constante.SecondaryKeywords.LOC_MEASUREMENT;
 import static constante.SecondaryKeywords.OUT_MEASUREMENT;
 import static constante.SecondaryKeywords.SUB_FUNCTION;
 
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Vector;
 
 import constante.SecondaryKeywords;
 
@@ -51,12 +53,42 @@ public final class Function implements A2lObject, Comparable<Function> {
         return (Map<String, String>) (object != null ? object : null);
     }
 
-    @SuppressWarnings("unchecked")
-    public final Map<String, String> getInMeasurement() {
+    public final Vector<String> getInMeasurement() {
         Object object = optionalsParameters.get(IN_MEASUREMENT);
-        return (Map<String, String>) (object != null ? object : null);
+        if(object != null)
+        {
+        	@SuppressWarnings("unchecked")
+			Vector<String> v = new Vector<String>(((Set<String>) object));
+        	Collections.sort(v);
+        	return v;
+        }
+        return new Vector<String>();
     }
-
+    
+    public final Vector<String> getLocMeasurement() {
+        Object object = optionalsParameters.get(LOC_MEASUREMENT);
+        if(object != null)
+        {
+        	@SuppressWarnings("unchecked")
+			Vector<String> v = new Vector<String>(((Set<String>) object));
+        	Collections.sort(v);
+        	return v;
+        }
+        return new Vector<String>();
+    }
+    
+    public final Vector<String> getOutMeasurement() {
+        Object object = optionalsParameters.get(OUT_MEASUREMENT);
+        if(object != null)
+        {
+        	@SuppressWarnings("unchecked")
+			Vector<String> v = new Vector<String>(((Set<String>) object));
+        	Collections.sort(v);
+        	return v;
+        }
+        return new Vector<String>();
+    }
+    
     @Override
     public int compareTo(Function function) {
         return this.name.compareToIgnoreCase(function.toString());

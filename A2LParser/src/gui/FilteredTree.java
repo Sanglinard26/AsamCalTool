@@ -92,9 +92,25 @@ public class FilteredTree extends JPanel {
         DynamicUtilTreeNode.createChildren(childNode, a2l.getListMeasurement());
     }
 
-    public final void addChildToFunction(DefaultMutableTreeNode function) {
+    public final void addChildToFunction(DefaultMutableTreeNode functionNode, Function function) {
         A2l a2l = (A2l) this.originalRoot.getUserObject();
-        DynamicUtilTreeNode.createChildren(function, a2l.getAdjustableObjectByFunction(function.toString()));
+        
+        DefaultMutableTreeNode childNode = new DefaultMutableTreeNode("DEF_CHARACTERISTIC");
+        functionNode.add(childNode);
+        DynamicUtilTreeNode.createChildren(childNode, a2l.getAdjustableObjectByFunction(functionNode.toString()));
+        
+        childNode = new DefaultMutableTreeNode("IN_MEASUREMENT");
+        functionNode.add(childNode);
+        DynamicUtilTreeNode.createChildren(childNode, function.getInMeasurement());
+        
+        childNode = new DefaultMutableTreeNode("LOC_MEASUREMENT");
+        functionNode.add(childNode);
+        DynamicUtilTreeNode.createChildren(childNode, function.getLocMeasurement());
+        
+        childNode = new DefaultMutableTreeNode("OUT_MEASUREMENT");
+        functionNode.add(childNode);
+        DynamicUtilTreeNode.createChildren(childNode, function.getOutMeasurement());
+        
     }
 
     private void guiLayout() {

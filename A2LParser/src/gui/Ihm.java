@@ -161,7 +161,8 @@ public final class Ihm extends JFrame {
                                         }
 
                                         if (userObject instanceof Function) {
-                                            filteredTree.addChildToFunction(selectedNode);
+                                        	Function function = (Function) userObject;
+                                            filteredTree.addChildToFunction(selectedNode, function);
                                         }
                                     }
 
