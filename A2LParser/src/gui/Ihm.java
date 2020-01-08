@@ -34,10 +34,13 @@ import javax.swing.JTree;
 import javax.swing.SwingConstants;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.TreeWillExpandListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreeSelectionModel;
 
 import a2l.A2l;
@@ -141,48 +144,22 @@ public final class Ihm extends JFrame {
 
                             @Override
                             public void valueChanged(TreeSelectionEvent treeEvent) {
+                                DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeEvent.getPath().getLastPathComponent();
+                                updateSelection(node);
+                            }
+                        });
 
-                                DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) a2lTree.getLastSelectedPathComponent();
+                        a2lTree.addTreeWillExpandListener(new TreeWillExpandListener() {
 
-                                if (selectedNode != null) {
-                                    Object userObject = selectedNode.getUserObject();
+                            @Override
+                            public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
+                                DefaultMutableTreeNode node = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
+                                updateSelection(node);
 
-                                    if (userObject instanceof String && selectedNode.getParent().toString().endsWith("MEASUREMENT")) {
-                                        Enumeration<Measurement> enumMeasurment = a2l.getListMeasurement().elements();
-                                        Measurement measurement;
-                                        while (enumMeasurment.hasMoreElements()) {
-                                            measurement = enumMeasurment.nextElement();
-                                            if (userObject.toString().equals(measurement.toString())) {
-                                                userObject = measurement;
-                                                break;
-                                            }
-                                        }
-                                    } else {
-                                        panelView.textPane.setText("...");
-                                    }
+                            }
 
-                                    if (userObject instanceof A2lObject) {
-                                        panelView.displayObject((A2lObject) userObject);
-
-                                        if (userObject instanceof Characteristic) {
-                                            Characteristic characteristic = (Characteristic) userObject;
-                                            if (characteristic.hasData() && (characteristic.getType().compareTo(CharacteristicType.MAP) == 0
-                                                    || characteristic.getType().compareTo(CharacteristicType.CURVE) == 0)) {
-                                                panelView.updateChart((Characteristic) userObject);
-                                                panelView.surfaceChart.setVisible(true);
-                                            } else {
-                                                panelView.surfaceChart.setVisible(false);
-                                            }
-
-                                        }
-
-                                        if (userObject instanceof Function) {
-                                            Function function = (Function) userObject;
-                                            filteredTree.addChildToFunction(selectedNode, function);
-                                        }
-                                    }
-
-                                }
+                            @Override
+                            public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {
                             }
                         });
 
@@ -313,6 +290,49 @@ public final class Ihm extends JFrame {
                 }
             });
             add(btComparA2L);
+        }
+
+        private final void updateSelection(DefaultMutableTreeNode selectedNode) {
+
+            if (selectedNode != null) {
+                Object userObject = selectedNode.getUserObject();
+
+                if (userObject instanceof String && selectedNode.getParent().toString().endsWith("MEASUREMENT")) {
+                    Enumeration<Measurement> enumMeasurment = a2l.getListMeasurement().elements();
+                    Measurement measurement;
+                    while (enumMeasurment.hasMoreElements()) {
+                        measurement = enumMeasurment.nextElement();
+                        if (userObject.toString().equals(measurement.toString())) {
+                            userObject = measurement;
+                            break;
+                        }
+                    }
+                } else {
+                    panelView.textPane.setText("...");
+                }
+
+                if (userObject instanceof A2lObject) {
+                    panelView.displayObject((A2lObject) userObject);
+
+                    if (userObject instanceof Characteristic) {
+                        Characteristic characteristic = (Characteristic) userObject;
+                        if (characteristic.hasData() && (characteristic.getType().compareTo(CharacteristicType.MAP) == 0
+                                || characteristic.getType().compareTo(CharacteristicType.CURVE) == 0)) {
+                            panelView.updateChart((Characteristic) userObject);
+                            panelView.surfaceChart.setVisible(true);
+                        } else {
+                            panelView.surfaceChart.setVisible(false);
+                        }
+
+                    }
+
+                    if (userObject instanceof Function) {
+                        Function function = (Function) userObject;
+                        filteredTree.addChildToFunction(selectedNode, function);
+                    }
+                }
+
+            }
         }
     }
 
