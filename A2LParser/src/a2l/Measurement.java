@@ -54,7 +54,7 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
 
     @Override
     public String getProperties() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
 
         sb.append("<ul><li><b>Name: </b>" + name + "\n");
         sb.append("<li><b>Long identifier: </b>" + longIdentifier + "\n");

@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Enumeration;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -45,6 +46,7 @@ import a2l.AdjustableObject;
 import a2l.Characteristic;
 import a2l.Characteristic.CharacteristicType;
 import a2l.Function;
+import a2l.Measurement;
 import a2l.TableModelView;
 import hex.HexDecoder;
 import hex.IntelHex;
@@ -145,6 +147,20 @@ public final class Ihm extends JFrame {
                                 if (selectedNode != null) {
                                     Object userObject = selectedNode.getUserObject();
 
+                                    if (userObject instanceof String && selectedNode.getParent().toString().endsWith("MEASUREMENT")) {
+                                        Enumeration<Measurement> enumMeasurment = a2l.getListMeasurement().elements();
+                                        Measurement measurement;
+                                        while (enumMeasurment.hasMoreElements()) {
+                                            measurement = enumMeasurment.nextElement();
+                                            if (userObject.toString().equals(measurement.toString())) {
+                                                userObject = measurement;
+                                                break;
+                                            }
+                                        }
+                                    } else {
+                                        panelView.textPane.setText("...");
+                                    }
+
                                     if (userObject instanceof A2lObject) {
                                         panelView.displayObject((A2lObject) userObject);
 
@@ -161,7 +177,7 @@ public final class Ihm extends JFrame {
                                         }
 
                                         if (userObject instanceof Function) {
-                                        	Function function = (Function) userObject;
+                                            Function function = (Function) userObject;
                                             filteredTree.addChildToFunction(selectedNode, function);
                                         }
                                     }

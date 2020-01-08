@@ -29,7 +29,7 @@ public final class A2l {
     private HashMap<String, AdjustableObject> adjustableObjects;
     private HashMap<String, CompuMethod> compuMethods;
     private HashMap<String, ConversionTable> conversionTables;
-    private List<Measurement> measurements;
+    private HashMap<String, Measurement> measurements;
     private HashMap<String, RecordLayout> recordLayouts;
     private HashMap<String, Function> functions;
     private HashMap<String, Unit> units;
@@ -98,7 +98,7 @@ public final class A2l {
     }
 
     public final Vector<Measurement> getListMeasurement() {
-        Vector<Measurement> v = new Vector<>(measurements);
+        Vector<Measurement> v = new Vector<>(measurements.values());
         Collections.sort(v);
         return v;
     }
@@ -111,7 +111,7 @@ public final class A2l {
         adjustableObjects = new HashMap<String, AdjustableObject>();
         compuMethods = new HashMap<String, CompuMethod>();
         conversionTables = new HashMap<String, ConversionTable>();
-        measurements = new ArrayList<Measurement>();
+        measurements = new HashMap<String, Measurement>();
         recordLayouts = new HashMap<String, RecordLayout>();
         functions = new HashMap<String, Function>();
         units = new HashMap<String, Unit>();
@@ -199,7 +199,8 @@ public final class A2l {
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
-                            measurements.add(new Measurement(objectParameters, beginLine, endLine));
+                            Measurement measurement = new Measurement(objectParameters, beginLine, endLine);
+                            measurements.put(measurement.toString(), measurement);
                             break;
                         case "RECORD_LAYOUT":
                             beginLine = numLine;

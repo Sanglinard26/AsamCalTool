@@ -94,23 +94,23 @@ public class FilteredTree extends JPanel {
 
     public final void addChildToFunction(DefaultMutableTreeNode functionNode, Function function) {
         A2l a2l = (A2l) this.originalRoot.getUserObject();
-        
+
         DefaultMutableTreeNode childNode = new DefaultMutableTreeNode("DEF_CHARACTERISTIC");
         functionNode.add(childNode);
         DynamicUtilTreeNode.createChildren(childNode, a2l.getAdjustableObjectByFunction(functionNode.toString()));
-        
+
         childNode = new DefaultMutableTreeNode("IN_MEASUREMENT");
         functionNode.add(childNode);
         DynamicUtilTreeNode.createChildren(childNode, function.getInMeasurement());
-        
+
         childNode = new DefaultMutableTreeNode("LOC_MEASUREMENT");
         functionNode.add(childNode);
         DynamicUtilTreeNode.createChildren(childNode, function.getLocMeasurement());
-        
+
         childNode = new DefaultMutableTreeNode("OUT_MEASUREMENT");
         functionNode.add(childNode);
         DynamicUtilTreeNode.createChildren(childNode, function.getOutMeasurement());
-        
+
     }
 
     private void guiLayout() {
@@ -241,6 +241,9 @@ public class FilteredTree extends JPanel {
         private static final String FUNCTION = "/FUNCTION.png";
         private static final String RECORD_LAYOUT = "/RECORD_LAYOUT.png";
         private static final String MEASUREMENT = "/MEASUREMENT.png";
+        private static final String IN_MEASUREMENT = "/IN_MEASUREMENT.png";
+        private static final String LOC_MEASUREMENT = "/LOC_MEASUREMENT.png";
+        private static final String OUT_MEASUREMENT = "/OUT_MEASUREMENT.png";
         private static final String CONVERSION_TABLE = "/CONVERSION_TABLE.png";
         private static final String SCALAIRE = "/SCALAIRE.png";
         private static final String CURVE = "/CURVE.png";
@@ -256,7 +259,8 @@ public class FilteredTree extends JPanel {
                 new ImageIcon(getClass().getResource(AXIS)), new ImageIcon(getClass().getResource(ASCII)), new ImageIcon(getClass().getResource(A2L)),
                 new ImageIcon(getClass().getResource(COMPU_METHOD)), new ImageIcon(getClass().getResource(FUNCTION)),
                 new ImageIcon(getClass().getResource(RECORD_LAYOUT)), new ImageIcon(getClass().getResource(CONVERSION_TABLE)),
-                new ImageIcon(getClass().getResource(MEASUREMENT)) };
+                new ImageIcon(getClass().getResource(MEASUREMENT)), new ImageIcon(getClass().getResource(IN_MEASUREMENT)),
+                new ImageIcon(getClass().getResource(LOC_MEASUREMENT)), new ImageIcon(getClass().getResource(OUT_MEASUREMENT)) };
 
         @Override
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row,
@@ -299,6 +303,22 @@ public class FilteredTree extends JPanel {
                     break;
                 default:
                     c.setIcon(icons[3]);
+                    break;
+                }
+            } else if (userObject instanceof String && ((DefaultMutableTreeNode) value).getParent().toString().endsWith("MEASUREMENT")) {
+                String parent = ((DefaultMutableTreeNode) value).getParent().toString();
+
+                switch (parent) {
+                case "IN_MEASUREMENT":
+                    c.setIcon(icons[13]);
+                    break;
+                case "LOC_MEASUREMENT":
+                    c.setIcon(icons[14]);
+                    break;
+                case "OUT_MEASUREMENT":
+                    c.setIcon(icons[15]);
+                    break;
+                default:
                     break;
                 }
             }
