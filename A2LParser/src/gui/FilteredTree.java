@@ -14,6 +14,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -399,6 +400,7 @@ public class FilteredTree extends JPanel {
 
                         if (rep == JFileChooser.APPROVE_OPTION) {
                             LabUtils.writeCharacteristicLab(fileChooser.getSelectedFile(), (Function) object);
+                            JOptionPane.showInternalMessageDialog(null, "Export done !");
                         }
 
                     }
@@ -434,6 +436,7 @@ public class FilteredTree extends JPanel {
 
                         if (rep == JFileChooser.APPROVE_OPTION) {
                             LabUtils.writeMeasurementLab(fileChooser.getSelectedFile(), (Function) object);
+                            JOptionPane.showInternalMessageDialog(null, "Export done !");
                         }
 
                     }

@@ -344,6 +344,11 @@ public final class A2l {
                 compuMethod.assignConversionTable(conversionTables);
             }
         }
+        
+        for (Entry<String, Measurement> entry : measurements.entrySet()) {
+        	Measurement measurement = entry.getValue();
+        	measurement.assignComputMethod(compuMethods);
+        }
     }
 
     public final ModPar getModPar() {
