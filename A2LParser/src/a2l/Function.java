@@ -50,45 +50,42 @@ public final class Function implements A2lObject, Comparable<Function> {
     @SuppressWarnings("unchecked")
     public final Map<String, String> getDefCharacteristic() {
         Object object = optionalsParameters.get(DEF_CHARACTERISTIC);
-        return (Map<String, String>) (object != null ? object : null);
+        return (Map<String, String>) (object != null ? object : new HashMap<String, String>());
     }
 
     public final Vector<String> getInMeasurement() {
         Object object = optionalsParameters.get(IN_MEASUREMENT);
-        if(object != null)
-        {
-        	@SuppressWarnings("unchecked")
-			Vector<String> v = new Vector<String>(((Set<String>) object));
-        	Collections.sort(v);
-        	return v;
+        if (object != null) {
+            @SuppressWarnings("unchecked")
+            Vector<String> v = new Vector<String>(((Set<String>) object));
+            Collections.sort(v);
+            return v;
         }
         return new Vector<String>();
     }
-    
+
     public final Vector<String> getLocMeasurement() {
         Object object = optionalsParameters.get(LOC_MEASUREMENT);
-        if(object != null)
-        {
-        	@SuppressWarnings("unchecked")
-			Vector<String> v = new Vector<String>(((Set<String>) object));
-        	Collections.sort(v);
-        	return v;
+        if (object != null) {
+            @SuppressWarnings("unchecked")
+            Vector<String> v = new Vector<String>(((Set<String>) object));
+            Collections.sort(v);
+            return v;
         }
         return new Vector<String>();
     }
-    
+
     public final Vector<String> getOutMeasurement() {
         Object object = optionalsParameters.get(OUT_MEASUREMENT);
-        if(object != null)
-        {
-        	@SuppressWarnings("unchecked")
-			Vector<String> v = new Vector<String>(((Set<String>) object));
-        	Collections.sort(v);
-        	return v;
+        if (object != null) {
+            @SuppressWarnings("unchecked")
+            Vector<String> v = new Vector<String>(((Set<String>) object));
+            Collections.sort(v);
+            return v;
         }
         return new Vector<String>();
     }
-    
+
     @Override
     public int compareTo(Function function) {
         return this.name.compareToIgnoreCase(function.toString());
