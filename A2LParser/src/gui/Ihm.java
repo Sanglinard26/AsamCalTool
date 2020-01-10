@@ -32,6 +32,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.TreeExpansionEvent;
@@ -104,7 +105,7 @@ public final class Ihm extends JFrame {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
+                    final JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
                     chooser.setFileFilter(new FileFilter() {
 
                         @Override
@@ -125,7 +126,15 @@ public final class Ihm extends JFrame {
 
                         long start = System.currentTimeMillis();
 
-                        a2l = new A2l(chooser.getSelectedFile());
+                        A2lWorker worker = new A2lWorker(chooser.getSelectedFile());
+
+                        worker.execute();
+
+                        while (!worker.isDone()) {
+
+                        }
+
+                        // a2l = new A2l(chooser.getSelectedFile());
 
                         sb.append("A2L parsing time : " + (System.currentTimeMillis() - start) + "ms\n");
 
@@ -153,7 +162,6 @@ public final class Ihm extends JFrame {
 
                             @Override
                             public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
-                                // a2lTree.setSelectionPath(event.getPath());
                                 DefaultMutableTreeNode node = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
                                 if (!(node.getUserObject() instanceof String)) {
                                     updateSelection(node);
@@ -472,6 +480,21 @@ public final class Ihm extends JFrame {
             }
 
         }
+    }
+
+    private final class A2lWorker extends SwingWorker<Void, Void> {
+        private File a2lFile;
+
+        public A2lWorker(File file) {
+            this.a2lFile = file;
+        }
+
+        @Override
+        protected Void doInBackground() throws Exception {
+            a2l = new A2l(a2lFile);
+            return null;
+        }
+
     }
 
 }

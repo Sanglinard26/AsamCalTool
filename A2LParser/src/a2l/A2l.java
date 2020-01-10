@@ -38,7 +38,9 @@ public final class A2l {
     private static int beginLine;
     private static int endLine;
 
-    public A2l(File a2lFile) {
+    private String state = "";
+
+    public A2l(final File a2lFile) {
         parse(a2lFile);
     }
 
@@ -103,8 +105,10 @@ public final class A2l {
         return v;
     }
 
-    private final void parse(File a2lFile) {
+    private final String parse(File a2lFile) {
         final String BEGIN = "/begin";
+
+        state = "Init";
 
         this.name = a2lFile.getName().substring(0, a2lFile.getName().length() - 4);
 
@@ -124,6 +128,8 @@ public final class A2l {
             final Map<String, String> mergeDefCharacteristic = new HashMap<String, String>();
 
             numLine = 0;
+
+            state = "Parsing in progress";
 
             while ((line = buf.readLine()) != null) {
 
@@ -239,12 +245,21 @@ public final class A2l {
             objectParameters.clear();
 
             assignLinkedObject(mergeDefCharacteristic);
+            state = "Completed";
 
             mergeDefCharacteristic.clear();
 
+            return state;
+
         } catch (IOException e) {
+            state = "Error";
             e.printStackTrace();
         }
+        return state;
+    }
+
+    public String getSTATE() {
+        return state;
     }
 
     private final List<String> fillParameters(BufferedReader buf, String line, List<String> objectParameters, String keyword) throws IOException {
@@ -344,10 +359,10 @@ public final class A2l {
                 compuMethod.assignConversionTable(conversionTables);
             }
         }
-        
+
         for (Entry<String, Measurement> entry : measurements.entrySet()) {
-        	Measurement measurement = entry.getValue();
-        	measurement.assignComputMethod(compuMethods);
+            Measurement measurement = entry.getValue();
+            measurement.assignComputMethod(compuMethods);
         }
     }
 
@@ -385,6 +400,7 @@ public final class A2l {
 
             @Override
             public void run() {
+
                 Set<String> missingObjects = new HashSet<>(first.getAdjustableObjects().keySet());
                 Set<String> newObjects = new HashSet<>(second.getAdjustableObjects().keySet());
                 Set<String> compObjects = new HashSet<>(second.getAdjustableObjects().keySet());
