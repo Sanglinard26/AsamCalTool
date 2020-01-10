@@ -153,7 +153,12 @@ public final class Ihm extends JFrame {
 
                             @Override
                             public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
-                                a2lTree.setSelectionPath(event.getPath());
+                                // a2lTree.setSelectionPath(event.getPath());
+                                DefaultMutableTreeNode node = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
+                                if (!(node.getUserObject() instanceof String)) {
+                                    updateSelection(node);
+                                }
+
                             }
 
                             @Override
