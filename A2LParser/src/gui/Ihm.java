@@ -17,6 +17,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -56,7 +58,7 @@ import hex.HexDecoder;
 import hex.IntelHex;
 import net.ericaro.surfaceplotter.surface.JSurface;
 
-public final class Ihm extends JFrame {
+public final class Ihm extends JFrame implements Observer {
 
     private static final long serialVersionUID = 1L;
 
@@ -75,6 +77,35 @@ public final class Ihm extends JFrame {
         container = getContentPane();
         container.setLayout(new BorderLayout());
         container.add(new PanelBt(), BorderLayout.NORTH);
+        
+        filteredTree = new FilteredTree();
+        a2lTree = filteredTree.getTree();
+        a2lTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        a2lTree.addTreeSelectionListener(new TreeSelectionListener() {
+
+            @Override
+            public void valueChanged(TreeSelectionEvent treeEvent) {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeEvent.getPath().getLastPathComponent();
+                updateSelection(node);
+            }
+        });
+
+        a2lTree.addTreeWillExpandListener(new TreeWillExpandListener() {
+
+            @Override
+            public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
+                if (!(node.getUserObject() instanceof String)) {
+                    updateSelection(node);
+                }
+
+            }
+
+            @Override
+            public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {
+            }
+        });
+        container.add(filteredTree, BorderLayout.WEST);
 
         panelView = new PanelView();
         container.add(panelView, BorderLayout.CENTER);
@@ -97,34 +128,7 @@ public final class Ihm extends JFrame {
 
             labelHex = new JLabel("Data initialized with : ...");
 
-            filteredTree = new FilteredTree();
-            a2lTree = filteredTree.getTree();
-            a2lTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-            a2lTree.addTreeSelectionListener(new TreeSelectionListener() {
-
-                @Override
-                public void valueChanged(TreeSelectionEvent treeEvent) {
-                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeEvent.getPath().getLastPathComponent();
-                    updateSelection(node);
-                }
-            });
-
-            a2lTree.addTreeWillExpandListener(new TreeWillExpandListener() {
-
-                @Override
-                public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
-                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
-                    if (!(node.getUserObject() instanceof String)) {
-                        updateSelection(node);
-                    }
-
-                }
-
-                @Override
-                public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {
-                }
-            });
-            container.add(filteredTree, BorderLayout.WEST);
+            
 
             btOpenA2L = new JButton(new AbstractAction("Open A2L") {
 
@@ -265,49 +269,6 @@ public final class Ihm extends JFrame {
             });
             add(btComparA2L);
         }
-
-        private final void updateSelection(DefaultMutableTreeNode selectedNode) {
-
-            if (selectedNode != null) {
-                Object userObject = selectedNode.getUserObject();
-
-                if (userObject instanceof String && selectedNode.getParent().toString().endsWith("MEASUREMENT")) {
-                    Enumeration<Measurement> enumMeasurment = a2l.getListMeasurement().elements();
-                    Measurement measurement;
-                    while (enumMeasurment.hasMoreElements()) {
-                        measurement = enumMeasurment.nextElement();
-                        if (userObject.toString().equals(measurement.toString())) {
-                            userObject = measurement;
-                            break;
-                        }
-                    }
-                } else {
-                    panelView.textPane.setText("...");
-                }
-
-                if (userObject instanceof A2lObject) {
-                    panelView.displayObject((A2lObject) userObject);
-
-                    if (userObject instanceof Characteristic) {
-                        Characteristic characteristic = (Characteristic) userObject;
-                        if (characteristic.hasData() && (characteristic.getType().compareTo(CharacteristicType.MAP) == 0
-                                || characteristic.getType().compareTo(CharacteristicType.CURVE) == 0)) {
-                            panelView.updateChart((Characteristic) userObject);
-                            panelView.surfaceChart.setVisible(true);
-                        } else {
-                            panelView.surfaceChart.setVisible(false);
-                        }
-
-                    }
-
-                    if (userObject instanceof Function) {
-                        Function function = (Function) userObject;
-                        filteredTree.addChildToFunction(selectedNode, function);
-                    }
-                }
-
-            }
-        }
     }
 
     private final class PanelView extends JPanel {
@@ -444,6 +405,49 @@ public final class Ihm extends JFrame {
 
         }
     }
+    
+    private final void updateSelection(DefaultMutableTreeNode selectedNode) {
+
+        if (selectedNode != null) {
+            Object userObject = selectedNode.getUserObject();
+
+            if (userObject instanceof String && selectedNode.getParent().toString().endsWith("MEASUREMENT")) {
+                Enumeration<Measurement> enumMeasurment = a2l.getListMeasurement().elements();
+                Measurement measurement;
+                while (enumMeasurment.hasMoreElements()) {
+                    measurement = enumMeasurment.nextElement();
+                    if (userObject.toString().equals(measurement.toString())) {
+                        userObject = measurement;
+                        break;
+                    }
+                }
+            } else {
+                panelView.textPane.setText("...");
+            }
+
+            if (userObject instanceof A2lObject) {
+                panelView.displayObject((A2lObject) userObject);
+
+                if (userObject instanceof Characteristic) {
+                    Characteristic characteristic = (Characteristic) userObject;
+                    if (characteristic.hasData() && (characteristic.getType().compareTo(CharacteristicType.MAP) == 0
+                            || characteristic.getType().compareTo(CharacteristicType.CURVE) == 0)) {
+                        panelView.updateChart((Characteristic) userObject);
+                        panelView.surfaceChart.setVisible(true);
+                    } else {
+                        panelView.surfaceChart.setVisible(false);
+                    }
+
+                }
+
+                if (userObject instanceof Function) {
+                    Function function = (Function) userObject;
+                    filteredTree.addChildToFunction(selectedNode, function);
+                }
+            }
+
+        }
+    }
 
     private final class A2lWorker extends SwingWorker<Void, Void> {
         private File a2lFile;
@@ -468,5 +472,11 @@ public final class Ihm extends JFrame {
         }
 
     }
+
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
