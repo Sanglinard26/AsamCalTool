@@ -63,6 +63,7 @@ public final class Ihm extends JFrame {
     private final Container container;
     private FilteredTree filteredTree;
     private JTree a2lTree;
+    private JLabel labelHex;
     private final PanelView panelView;
 
     private A2l a2l;
@@ -89,15 +90,41 @@ public final class Ihm extends JFrame {
         private JButton btOpenA2L;
         private JButton btOpenHex;
         private JButton btComparA2L;
-        private JLabel labelHex;
-
-        private final StringBuilder sb = new StringBuilder();
 
         public PanelBt() {
             super();
             ((FlowLayout) getLayout()).setAlignment(FlowLayout.LEFT);
 
             labelHex = new JLabel("Data initialized with : ...");
+
+            filteredTree = new FilteredTree();
+            a2lTree = filteredTree.getTree();
+            a2lTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+            a2lTree.addTreeSelectionListener(new TreeSelectionListener() {
+
+                @Override
+                public void valueChanged(TreeSelectionEvent treeEvent) {
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeEvent.getPath().getLastPathComponent();
+                    updateSelection(node);
+                }
+            });
+
+            a2lTree.addTreeWillExpandListener(new TreeWillExpandListener() {
+
+                @Override
+                public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
+                    DefaultMutableTreeNode node = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
+                    if (!(node.getUserObject() instanceof String)) {
+                        updateSelection(node);
+                    }
+
+                }
+
+                @Override
+                public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {
+                }
+            });
+            container.add(filteredTree, BorderLayout.WEST);
 
             btOpenA2L = new JButton(new AbstractAction("Open A2L") {
 
@@ -124,59 +151,9 @@ public final class Ihm extends JFrame {
 
                     if (rep == JFileChooser.APPROVE_OPTION) {
 
-                        long start = System.currentTimeMillis();
-
                         A2lWorker worker = new A2lWorker(chooser.getSelectedFile());
 
                         worker.execute();
-
-                        while (!worker.isDone()) {
-
-                        }
-
-                        // a2l = new A2l(chooser.getSelectedFile());
-
-                        sb.append("A2L parsing time : " + (System.currentTimeMillis() - start) + "ms\n");
-
-                        if (filteredTree != null) {
-                            container.remove(filteredTree);
-                            labelHex.setText("Data initialized with : ...");
-                            panelView.textPane.setText("<html><br>");
-                            panelView.tableView.getModel().setData(null);
-                        }
-
-                        filteredTree = new FilteredTree(a2l);
-
-                        a2lTree = filteredTree.getTree();
-                        a2lTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-                        a2lTree.addTreeSelectionListener(new TreeSelectionListener() {
-
-                            @Override
-                            public void valueChanged(TreeSelectionEvent treeEvent) {
-                                DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeEvent.getPath().getLastPathComponent();
-                                updateSelection(node);
-                            }
-                        });
-
-                        a2lTree.addTreeWillExpandListener(new TreeWillExpandListener() {
-
-                            @Override
-                            public void treeWillExpand(TreeExpansionEvent event) throws ExpandVetoException {
-                                DefaultMutableTreeNode node = (DefaultMutableTreeNode) event.getPath().getLastPathComponent();
-                                if (!(node.getUserObject() instanceof String)) {
-                                    updateSelection(node);
-                                }
-
-                            }
-
-                            @Override
-                            public void treeWillCollapse(TreeExpansionEvent event) throws ExpandVetoException {
-                            }
-                        });
-
-                        container.add(filteredTree, BorderLayout.WEST);
-
-                        container.revalidate();
                     }
 
                 }
@@ -210,7 +187,6 @@ public final class Ihm extends JFrame {
 
                         labelHex.setText("Hex file : ...");
 
-                        long lStartTime = System.nanoTime();
                         IntelHex pHex = null;
                         try {
                             pHex = new IntelHex(chooser.getSelectedFile().getAbsolutePath());
@@ -220,27 +196,14 @@ public final class Ihm extends JFrame {
                             e1.printStackTrace();
                         }
 
-                        long lEndTime = System.nanoTime();
-                        long output = lEndTime - lStartTime;
-                        sb.append("Hex parsing time : " + output / 1000000 + "ms\n");
-
-                        lStartTime = System.nanoTime();
-
                         HexDecoder hexDecoder = new HexDecoder(a2l, pHex);
 
                         if (hexDecoder.readDataFromHex()) {
-                            lEndTime = System.nanoTime();
-                            output = lEndTime - lStartTime;
                             labelHex.setText("<html>Data initialized with : " + "<b>" + chooser.getSelectedFile().getName() + "</b></html>");
-                            sb.append("Reading hex data : " + output / 1000000 + "ms\n");
-                            JOptionPane.showMessageDialog(Ihm.this, sb.toString());
-
                         } else {
                             JOptionPane.showMessageDialog(null, "EEPROM identifier doesn't match, reading aborted.", "Error",
                                     JOptionPane.ERROR_MESSAGE);
                         }
-
-                        sb.setLength(0);
                     }
 
                 }
@@ -493,6 +456,15 @@ public final class Ihm extends JFrame {
         protected Void doInBackground() throws Exception {
             a2l = new A2l(a2lFile);
             return null;
+        }
+
+        @Override
+        protected void done() {
+            labelHex.setText("Data initialized with : ...");
+            panelView.textPane.setText("<html><br>");
+            panelView.tableView.getModel().setData(null);
+            filteredTree.addA2l(a2l);
+            container.revalidate();
         }
 
     }

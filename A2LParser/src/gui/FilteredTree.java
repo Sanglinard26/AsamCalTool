@@ -54,13 +54,55 @@ public class FilteredTree extends JPanel {
     private final JTree tree = new JTree();
     private DefaultMutableTreeNode originalRoot;
 
-    public FilteredTree(A2l a2l) {
-        this.originalRoot = new DefaultMutableTreeNode(a2l);
+    public FilteredTree() {
+        this.originalRoot = new DefaultMutableTreeNode("ROOT");
         tree.setRowHeight(18);
         tree.setExpandsSelectedPaths(true);
-        buildTree(a2l);
-        guiLayout();
+        // buildTree(a2l);
+        // guiLayout();
 
+        tree.addMouseListener(new NodeMouseListener());
+        tree.setCellRenderer(new Renderer());
+
+        final JTextField field = new JTextField(10);
+
+        field.getDocument().addDocumentListener(new DocumentListener() {
+
+            @Override
+            public void removeUpdate(DocumentEvent paramDocumentEvent) {
+                filterTree(field.getText());
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent paramDocumentEvent) {
+                filterTree(field.getText());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent paramDocumentEvent) {
+                filterTree(field.getText());
+            }
+        });
+
+        originalTreeModel = new DefaultTreeModel(originalRoot);
+
+        tree.setModel(originalTreeModel);
+
+        this.setLayout(new BorderLayout());
+
+        add(field, BorderLayout.NORTH);
+        add(new JScrollPane(tree), BorderLayout.CENTER);
+
+        originalRoot = (DefaultMutableTreeNode) originalTreeModel.getRoot();
+
+    }
+
+    public final void addA2l(A2l a2l) {
+        this.originalRoot = new DefaultMutableTreeNode(a2l);
+        originalTreeModel = new DefaultTreeModel(this.originalRoot);
+        tree.setModel(originalTreeModel);
+        buildTree(a2l);
+        tree.expandRow(0);
     }
 
     private final void buildTree(A2l a2l) {
@@ -121,44 +163,6 @@ public class FilteredTree extends JPanel {
         childNode = new DefaultMutableTreeNode("OUT_MEASUREMENT");
         functionNode.add(childNode);
         DynamicUtilTreeNode.createChildren(childNode, function.getOutMeasurement());
-
-    }
-
-    private void guiLayout() {
-
-        tree.addMouseListener(new NodeMouseListener());
-        tree.setCellRenderer(new Renderer());
-
-        final JTextField field = new JTextField(10);
-
-        field.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void removeUpdate(DocumentEvent paramDocumentEvent) {
-                filterTree(field.getText());
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent paramDocumentEvent) {
-                filterTree(field.getText());
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent paramDocumentEvent) {
-                filterTree(field.getText());
-            }
-        });
-
-        originalTreeModel = new DefaultTreeModel(originalRoot);
-
-        tree.setModel(originalTreeModel);
-
-        this.setLayout(new BorderLayout());
-
-        add(field, BorderLayout.NORTH);
-        add(new JScrollPane(tree), BorderLayout.CENTER);
-
-        originalRoot = (DefaultMutableTreeNode) originalTreeModel.getRoot();
 
     }
 
@@ -282,6 +286,10 @@ public class FilteredTree extends JPanel {
             JLabel c = (JLabel) super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasfocus);
 
             Object userObject = ((DefaultMutableTreeNode) value).getUserObject();
+
+            if ("ROOT".equals(userObject)) {
+                return c;
+            }
 
             if (userObject instanceof A2l) {
                 c.setIcon(icons[7]);
