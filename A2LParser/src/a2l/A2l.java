@@ -19,6 +19,8 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.event.EventListenerList;
+
 import utils.ParserUtils;
 
 public final class A2l {
@@ -38,10 +40,22 @@ public final class A2l {
     private static int beginLine;
     private static int endLine;
 
+    private EventListenerList listeners;
+
     private String state = "";
 
-    public A2l(final File a2lFile) {
-        parse(a2lFile);
+    public A2l() {
+
+        adjustableObjects = new HashMap<String, AdjustableObject>();
+        compuMethods = new HashMap<String, CompuMethod>();
+        conversionTables = new HashMap<String, ConversionTable>();
+        measurements = new HashMap<String, Measurement>();
+        recordLayouts = new HashMap<String, RecordLayout>();
+        functions = new HashMap<String, Function>();
+        units = new HashMap<String, Unit>();
+
+        listeners = new EventListenerList();
+
     }
 
     @Override
@@ -105,20 +119,20 @@ public final class A2l {
         return v;
     }
 
-    private final String parse(File a2lFile) {
-        final String BEGIN = "/begin";
+    public final void addA2lStateListener(A2lStateListener a2lStateListener) {
+        this.listeners.add(A2lStateListener.class, a2lStateListener);
+    }
 
-        state = "Init";
+    public final void removeA2lStateListener(A2lStateListener a2lStateListener) {
+        this.listeners.remove(A2lStateListener.class, a2lStateListener);
+    }
+
+    public final String parse(File a2lFile) {
+        final String BEGIN = "/begin";
 
         this.name = a2lFile.getName().substring(0, a2lFile.getName().length() - 4);
 
-        adjustableObjects = new HashMap<String, AdjustableObject>();
-        compuMethods = new HashMap<String, CompuMethod>();
-        conversionTables = new HashMap<String, ConversionTable>();
-        measurements = new HashMap<String, Measurement>();
-        recordLayouts = new HashMap<String, RecordLayout>();
-        functions = new HashMap<String, Function>();
-        units = new HashMap<String, Unit>();
+        fireStateChanged("Start of parsing");
 
         try (BufferedReader buf = new BufferedReader(new FileReader(a2lFile))) {
 
@@ -129,7 +143,7 @@ public final class A2l {
 
             numLine = 0;
 
-            state = "Parsing in progress";
+            fireStateChanged("Parsing in progress");
 
             while ((line = buf.readLine()) != null) {
 
@@ -244,8 +258,10 @@ public final class A2l {
 
             objectParameters.clear();
 
+            fireStateChanged("Linking A2l object");
             assignLinkedObject(mergeDefCharacteristic);
-            state = "Completed";
+
+            fireStateChanged("Parsing finished");
 
             mergeDefCharacteristic.clear();
 
@@ -258,8 +274,10 @@ public final class A2l {
         return state;
     }
 
-    public String getSTATE() {
-        return state;
+    private void fireStateChanged(String state) {
+        for (A2lStateListener listener : listeners.getListeners(A2lStateListener.class)) {
+            listener.stateChange(state);
+        }
     }
 
     private final List<String> fillParameters(BufferedReader buf, String line, List<String> objectParameters, String keyword) throws IOException {
@@ -392,7 +410,7 @@ public final class A2l {
         return listByFunction;
     }
 
-    public static StringBuilder compareA2L(final A2l first, final A2l second) {
+    public static StringBuilder compareA2L(final File firstFile, final File secondFile) {
 
         final StringBuilder sb = new StringBuilder();
 
@@ -400,6 +418,12 @@ public final class A2l {
 
             @Override
             public void run() {
+
+                A2l first = new A2l();
+                first.parse(firstFile);
+
+                A2l second = new A2l();
+                second.parse(secondFile);
 
                 Set<String> missingObjects = new HashSet<>(first.getAdjustableObjects().keySet());
                 Set<String> newObjects = new HashSet<>(second.getAdjustableObjects().keySet());

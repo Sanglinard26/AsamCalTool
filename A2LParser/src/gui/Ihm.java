@@ -17,8 +17,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -34,6 +32,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -48,6 +47,7 @@ import javax.swing.tree.TreeSelectionModel;
 
 import a2l.A2l;
 import a2l.A2lObject;
+import a2l.A2lStateListener;
 import a2l.AdjustableObject;
 import a2l.Characteristic;
 import a2l.Characteristic.CharacteristicType;
@@ -58,7 +58,7 @@ import hex.HexDecoder;
 import hex.IntelHex;
 import net.ericaro.surfaceplotter.surface.JSurface;
 
-public final class Ihm extends JFrame implements Observer {
+public final class Ihm extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
@@ -67,6 +67,7 @@ public final class Ihm extends JFrame implements Observer {
     private JTree a2lTree;
     private JLabel labelHex;
     private final PanelView panelView;
+    private final JLabel labelStatus;
 
     private A2l a2l;
 
@@ -77,7 +78,7 @@ public final class Ihm extends JFrame implements Observer {
         container = getContentPane();
         container.setLayout(new BorderLayout());
         container.add(new PanelBt(), BorderLayout.NORTH);
-        
+
         filteredTree = new FilteredTree();
         a2lTree = filteredTree.getTree();
         a2lTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -110,6 +111,10 @@ public final class Ihm extends JFrame implements Observer {
         panelView = new PanelView();
         container.add(panelView, BorderLayout.CENTER);
 
+        labelStatus = new JLabel("Status : ");
+        labelStatus.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 0));
+        container.add(labelStatus, BorderLayout.SOUTH);
+
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
@@ -127,8 +132,6 @@ public final class Ihm extends JFrame implements Observer {
             ((FlowLayout) getLayout()).setAlignment(FlowLayout.LEFT);
 
             labelHex = new JLabel("Data initialized with : ...");
-
-            
 
             btOpenA2L = new JButton(new AbstractAction("Open A2L") {
 
@@ -248,9 +251,8 @@ public final class Ihm extends JFrame implements Observer {
                     if (rep == JFileChooser.APPROVE_OPTION) {
                         File[] a2lFiles = chooser.getSelectedFiles();
                         if (a2lFiles.length == 2) {
-                            A2l first = new A2l(a2lFiles[0]);
-                            A2l second = new A2l(a2lFiles[1]);
-                            StringBuilder sb = A2l.compareA2L(first, second);
+
+                            StringBuilder sb = A2l.compareA2L(a2lFiles[0], a2lFiles[1]);
 
                             JTextArea textArea = new JTextArea(sb.toString());
                             JScrollPane scrollPane = new JScrollPane(textArea);
@@ -405,7 +407,7 @@ public final class Ihm extends JFrame implements Observer {
 
         }
     }
-    
+
     private final void updateSelection(DefaultMutableTreeNode selectedNode) {
 
         if (selectedNode != null) {
@@ -458,7 +460,20 @@ public final class Ihm extends JFrame implements Observer {
 
         @Override
         protected Void doInBackground() throws Exception {
-            a2l = new A2l(a2lFile);
+            a2l = new A2l();
+            a2l.addA2lStateListener(new A2lStateListener() {
+
+                @Override
+                public void stateChange(final String state) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        public void run() {
+                            labelStatus.setText("Status : " + state);
+                        }
+                    });
+
+                }
+            });
+            a2l.parse(a2lFile);
             return null;
         }
 
@@ -472,11 +487,4 @@ public final class Ihm extends JFrame implements Observer {
         }
 
     }
-
-	@Override
-	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }
