@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import constante.DataType;
-import hex.IntelHex;
+import data.IntelHex;
 
 public final class Converter {
 

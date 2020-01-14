@@ -54,8 +54,8 @@ import a2l.Characteristic.CharacteristicType;
 import a2l.Function;
 import a2l.Measurement;
 import a2l.TableModelView;
-import hex.HexDecoder;
-import hex.IntelHex;
+import data.HexDecoder;
+import data.IntelHex;
 import net.ericaro.surfaceplotter.surface.JSurface;
 
 public final class Ihm extends JFrame {
@@ -167,7 +167,7 @@ public final class Ihm extends JFrame {
             });
             add(btOpenA2L);
 
-            btOpenHex = new JButton(new AbstractAction("Open HEX") {
+            btOpenHex = new JButton(new AbstractAction("Open data file") {
 
                 private static final long serialVersionUID = 1L;
 
@@ -178,14 +178,14 @@ public final class Ihm extends JFrame {
 
                         @Override
                         public String getDescription() {
-                            return "Hex files (*.hex)";
+                            return "Data files (*.hex, *.s19)";
                         }
 
                         @Override
                         public boolean accept(File paramFile) {
                             if (paramFile.isDirectory())
                                 return true;
-                            return paramFile.getName().toLowerCase().endsWith("hex");
+                            return paramFile.getName().toLowerCase().endsWith("hex") || paramFile.getName().toLowerCase().endsWith("s19");
                         }
                     });
                     int rep = chooser.showOpenDialog(null);

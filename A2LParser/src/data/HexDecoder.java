@@ -1,7 +1,7 @@
 /*
  * Creation : 6 mars 2019
  */
-package hex;
+package data;
 
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -95,9 +95,6 @@ public final class HexDecoder {
                 final CompuMethod compuMethod = characteristic.getCompuMethod();
 
                 long adress = characteristic.getAdress();
-
-                // if (characteristic.toString().equals("ASAM.C.CURVE.RES_AXIS"))
-                // System.out.println(characteristic);
 
                 switch (characteristic.getType()) {
                 case VALUE:
