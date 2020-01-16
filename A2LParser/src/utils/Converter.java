@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 import constante.DataType;
-import data.IntelHex;
+import data.DataCalibration;
 
 public final class Converter {
 
@@ -43,11 +43,11 @@ public final class Converter {
         return bb.getDouble();
     }
 
-    public static final double readHexValue(IntelHex hex, long adress, DataType dataType, ByteOrder byteOrder) {
+    public static final double readHexValue(DataCalibration hex, long adress, DataType dataType, ByteOrder byteOrder) {
         return readHexValues(hex, adress, dataType, byteOrder, 1)[0];
     }
 
-    public static final double[] readHexValues(IntelHex hex, long adress, DataType dataType, ByteOrder byteOrder, int nbValue) {
+    public static final double[] readHexValues(DataCalibration hex, long adress, DataType dataType, ByteOrder byteOrder, int nbValue) {
 
         byte[] byteValues;
         final double[] hexValues = new double[nbValue];

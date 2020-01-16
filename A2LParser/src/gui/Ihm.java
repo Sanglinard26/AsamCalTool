@@ -54,8 +54,10 @@ import a2l.Characteristic.CharacteristicType;
 import a2l.Function;
 import a2l.Measurement;
 import a2l.TableModelView;
-import data.HexDecoder;
+import data.DataCalibration;
+import data.DataDecoder;
 import data.IntelHex;
+import data.MotorolaS19;
 import net.ericaro.surfaceplotter.surface.JSurface;
 
 public final class Ihm extends JFrame {
@@ -65,7 +67,7 @@ public final class Ihm extends JFrame {
     private final Container container;
     private FilteredTree filteredTree;
     private JTree a2lTree;
-    private JLabel labelHex;
+    private JLabel labelData;
     private final PanelView panelView;
     private final JLabel labelStatus;
 
@@ -124,14 +126,14 @@ public final class Ihm extends JFrame {
 
         private static final long serialVersionUID = 1L;
         private JButton btOpenA2L;
-        private JButton btOpenHex;
+        private JButton btOpenDataFile;
         private JButton btComparA2L;
 
         public PanelBt() {
             super();
             ((FlowLayout) getLayout()).setAlignment(FlowLayout.LEFT);
 
-            labelHex = new JLabel("Data initialized with : ...");
+            labelData = new JLabel("Data initialized with : ...");
 
             btOpenA2L = new JButton(new AbstractAction("Open A2L") {
 
@@ -167,7 +169,7 @@ public final class Ihm extends JFrame {
             });
             add(btOpenA2L);
 
-            btOpenHex = new JButton(new AbstractAction("Open data file") {
+            btOpenDataFile = new JButton(new AbstractAction("Open data file") {
 
                 private static final long serialVersionUID = 1L;
 
@@ -192,21 +194,32 @@ public final class Ihm extends JFrame {
 
                     if (rep == JFileChooser.APPROVE_OPTION) {
 
-                        labelHex.setText("Hex file : ...");
+                        labelData.setText("Data file : ...");
 
-                        IntelHex pHex = null;
-                        try {
-                            pHex = new IntelHex(chooser.getSelectedFile().getAbsolutePath());
-                        } catch (FileNotFoundException e1) {
-                            e1.printStackTrace();
-                        } catch (IOException e1) {
-                            e1.printStackTrace();
+                        DataCalibration dataCalibration = null;
+
+                        if (chooser.getSelectedFile().getName().toLowerCase().endsWith("hex")) {
+                            try {
+                                dataCalibration = new IntelHex(chooser.getSelectedFile().getAbsolutePath());
+                            } catch (FileNotFoundException e1) {
+                                e1.printStackTrace();
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                        } else if (chooser.getSelectedFile().getName().toLowerCase().endsWith("s19")) {
+                            try {
+                                dataCalibration = new MotorolaS19(chooser.getSelectedFile().getAbsolutePath());
+                            } catch (FileNotFoundException e1) {
+                                e1.printStackTrace();
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
                         }
 
-                        HexDecoder hexDecoder = new HexDecoder(a2l, pHex);
+                        DataDecoder dataDecoder = new DataDecoder(a2l, dataCalibration);
 
-                        if (hexDecoder.readDataFromHex()) {
-                            labelHex.setText("<html>Data initialized with : " + "<b>" + chooser.getSelectedFile().getName() + "</b></html>");
+                        if (dataDecoder.readDataFromFile()) {
+                            labelData.setText("<html>Data initialized with : " + "<b>" + chooser.getSelectedFile().getName() + "</b></html>");
                         } else {
                             JOptionPane.showMessageDialog(null, "EEPROM identifier doesn't match, reading aborted.", "Error",
                                     JOptionPane.ERROR_MESSAGE);
@@ -215,9 +228,9 @@ public final class Ihm extends JFrame {
 
                 }
             });
-            add(btOpenHex);
+            add(btOpenDataFile);
 
-            add(labelHex);
+            add(labelData);
 
             final JSeparator sep = new JSeparator(SwingConstants.VERTICAL);
             sep.setPreferredSize(new Dimension(20, 20));
@@ -479,7 +492,7 @@ public final class Ihm extends JFrame {
 
         @Override
         protected void done() {
-            labelHex.setText("Data initialized with : ...");
+            labelData.setText("Data initialized with : ...");
             panelView.textPane.setText("<html><br>");
             panelView.tableView.getModel().setData(null);
             filteredTree.addA2l(a2l);

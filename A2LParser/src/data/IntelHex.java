@@ -5,15 +5,12 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author albert_kurucz
  */
-public final class IntelHex {
+public final class IntelHex extends DataCalibration {
 
-    private final List<Memory> memorySegments = new ArrayList<Memory>();
     @SuppressWarnings("unused")
     private Long startAddress = null;
     private Memory last = null;
@@ -22,34 +19,6 @@ public final class IntelHex {
 
     private final static byte parseHexByte(String str, int beginIndex) {
         return (byte) Integer.parseInt(str.substring(beginIndex, beginIndex + 2), 16);
-    }
-
-    public final byte[] readBytes(long address, int len) {
-        for (Memory mem : memorySegments) {
-            if (address >= mem.address && (address + len) <= (mem.address + mem.listByte.size())) {
-                byte[] retval = new byte[len];
-                for (int i = 0; i < len; i++) {
-                    retval[i] = mem.listByte.get((int) (i + address - mem.address));
-                }
-                return retval;
-            }
-        }
-        return new byte[0];
-    }
-
-    public final String readString(long address, int nByte) {
-        long _address = address;
-        for (Memory mem : memorySegments) {
-            if (_address >= mem.address && _address < mem.address + mem.listByte.size()) {
-                StringBuilder retval = new StringBuilder(nByte);
-                while (_address < mem.address + mem.listByte.size() && retval.length() < nByte) {
-                    retval.append((char) mem.listByte.get((int) (_address - mem.address)).byteValue());
-                    _address++;
-                }
-                return retval.toString();
-            }
-        }
-        return null;
     }
 
     public IntelHex(String fileName) throws FileNotFoundException, IOException {

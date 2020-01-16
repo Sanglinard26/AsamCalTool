@@ -40,15 +40,15 @@ import constante.IndexOrder;
 import constante.SecondaryKeywords;
 import utils.Converter;
 
-public final class HexDecoder {
+public final class DataDecoder {
 
     private final A2l a2l;
-    private final IntelHex hex;
+    private final DataCalibration hex;
     private final ModCommon modCommon;
 
     private static long tmpAdress = 0;
 
-    public HexDecoder(A2l a2l, IntelHex hex) {
+    public DataDecoder(A2l a2l, DataCalibration hex) {
         this.a2l = a2l;
         this.hex = hex;
 
@@ -70,7 +70,7 @@ public final class HexDecoder {
         return true;
     }
 
-    public final boolean readDataFromHex() {
+    public final boolean readDataFromFile() {
 
         if (!checkEPK()) {
             return false;
@@ -80,7 +80,6 @@ public final class HexDecoder {
 
         for (Entry<String, AdjustableObject> entries : a2l.getAdjustableObjects().entrySet()) {
             if (entries.getValue() instanceof AxisPts) {
-                // System.out.println(entries.getValue());
                 readAxisPts(byteOrder, (AxisPts) entries.getValue());
             }
         }
