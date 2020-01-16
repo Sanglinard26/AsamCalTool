@@ -97,29 +97,37 @@ public final class MotorolaS19 extends DataCalibration {
         if (line.charAt(0) != 'S') {
             throw new IllegalArgumentException("s19File line does not start with colon: " + line);
         }
+
         byte length = (byte) (parseHexByte(line, 2) - 5);
-        byte sum = (byte) (length + 5);
 
         long lineAddress = Long.parseLong(line.substring(4, 12), 16);
-        sum += (byte) lineAddress;
-        sum += (byte) (lineAddress >> 8);
 
         byte[] hexLineDataBytes = new byte[length];
 
         byte i;
         for (i = 0; i < length; i++) {
             hexLineDataBytes[i] = parseHexByte(line, 12 + 2 * i);
-            sum += hexLineDataBytes[i];
         }
 
-        // checksum
-        sum += parseHexByte(line, 12 + 2 * i);
-
-        if (sum != 0) {
-            // throw new IllegalArgumentException("HexFile Data Record line checksum error");
+        if (!isValidChecksum(line)) {
+            throw new IllegalArgumentException("s19File Data Record line checksum error : " + line);
         }
 
         return new Memory(lineAddress, hexLineDataBytes);
+    }
+
+    private static boolean isValidChecksum(String line) {
+        int sum = 0;
+
+        byte checksum = parseHexByte(line, line.length() - 2);
+
+        for (int i = 2; i < line.length() - 2; i += 2) {
+            sum += Integer.parseInt(line.substring(i, i + 2), 16);
+        }
+
+        byte calcChecksum = (byte) ~(sum & 0xFF);
+
+        return calcChecksum == checksum;
     }
 
 }

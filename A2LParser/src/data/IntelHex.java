@@ -130,7 +130,7 @@ public final class IntelHex extends DataCalibration {
         sum += parseHexByte(line, 9 + 2 * i);
 
         if (sum != 0) {
-            throw new IllegalArgumentException("HexFile Data Record line checksum error");
+            throw new IllegalArgumentException("HexFile Data Record line checksum error : " + line);
         }
 
         return new Memory(lineAddress, hexLineDataBytes);
