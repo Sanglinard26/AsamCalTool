@@ -214,22 +214,18 @@ public final class Characteristic extends AdjustableObject {
         case CURVE:
             unit = new String[2];
             AxisDescr axisDescr = this.axisDescrs.get(0);
-            if(axisDescr.getPhysUnit().length() > 0)
-            {
-            	unit[0] = axisDescr.getPhysUnit().length() > 0 ? axisDescr.getPhysUnit()
-                    : axisDescr.getCompuMethod().getUnit();
-            }else{
-            	if(axisDescr.getCompuMethod() != null)
-            	{
-            		unit[0] = axisDescr.getCompuMethod().getUnit();
-            	}else{
-            		if(axisDescr.getAttribute().compareTo(Attribute.CURVE_AXIS)==0)
-            		{
-            			unit[0] = "";
-            		}
-            	}
+            if (axisDescr.getPhysUnit().length() > 0) {
+                unit[0] = axisDescr.getPhysUnit().length() > 0 ? axisDescr.getPhysUnit() : axisDescr.getCompuMethod().getUnit();
+            } else {
+                if (axisDescr.getCompuMethod() != null) {
+                    unit[0] = axisDescr.getCompuMethod().getUnit();
+                } else {
+                    if (axisDescr.getAttribute().compareTo(Attribute.CURVE_AXIS) == 0) {
+                        unit[0] = "";
+                    }
+                }
             }
-            
+
             unit[1] = this.compuMethod.getUnit();
             break;
         case MAP:
@@ -248,6 +244,11 @@ public final class Characteristic extends AdjustableObject {
             break;
         }
         return unit;
+    }
+
+    @Override
+    public boolean isValid() {
+        return validParsing;
     }
 
     @Override
@@ -346,11 +347,15 @@ public final class Characteristic extends AdjustableObject {
                 }
 
             } else {
+                validParsing = false;
                 throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
             }
         } catch (IllegalArgumentException e) {
+            validParsing = false;
             throw new A2lObjectParsingException("Parsing error on " + this.name, beginLine, endLine);
         }
+
+        validParsing = true;
 
     }
 
@@ -408,13 +413,12 @@ public final class Characteristic extends AdjustableObject {
             tabResol = new Double[2];
 
             cmX = this.axisDescrs.get(0).getCompuMethod();
-            if(cmX != null)
-            {
-            	val0 = formatValue(cmX.compute(1), this.axisDescrs.get(0).getNbDecimal());
+            if (cmX != null) {
+                val0 = formatValue(cmX.compute(1), this.axisDescrs.get(0).getNbDecimal());
                 val1 = formatValue(cmX.compute(2), this.axisDescrs.get(0).getNbDecimal());
                 tabResol[0] = ConversionType.TAB_VERB.compareTo(cmX.getConversionType()) != 0 ? val1 - val0 : Double.NaN;
-            }else{
-            	tabResol[0] = Double.NaN;
+            } else {
+                tabResol[0] = Double.NaN;
             }
 
             val0 = formatValue(this.compuMethod.compute(1), getNbDecimal());

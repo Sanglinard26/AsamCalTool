@@ -6,5 +6,7 @@ public interface A2lObject {
 
     void build(List<String> parameters, int beginLine, int endLine) throws A2lObjectParsingException;
 
+    boolean isValid();
+
     String getProperties();
 }

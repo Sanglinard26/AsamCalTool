@@ -440,7 +440,7 @@ public final class Ihm extends JFrame {
                 panelView.textPane.setText("...");
             }
 
-            if (userObject instanceof A2lObject) {
+            if (userObject instanceof A2lObject && ((A2lObject) userObject).isValid()) {
                 panelView.displayObject((A2lObject) userObject);
 
                 if (userObject instanceof Characteristic) {

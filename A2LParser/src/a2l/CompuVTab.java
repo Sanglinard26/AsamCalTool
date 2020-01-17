@@ -27,6 +27,11 @@ public final class CompuVTab extends ConversionTable {
     }
 
     @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
     public void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
 
         final int nbParams = parameters.size();
@@ -61,10 +66,10 @@ public final class CompuVTab extends ConversionTable {
 
     }
 
-	@Override
-	public String getProperties() {
-		
-		StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
+    @Override
+    public String getProperties() {
+
+        StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
 
         sb.append("<ul><li><b>Name: </b>" + name + "\n");
         sb.append("<li><b>Long identifier: </b>" + longIdentifier + "\n");
@@ -72,14 +77,13 @@ public final class CompuVTab extends ConversionTable {
         sb.append("<li><b>Number of value pairs: </b>" + numberValuePairs + "\n");
         sb.append("<li><b>Value pairs: </b>");
         sb.append("<ul>");
-        for(Entry<Float, String> entry : valuePairs.entrySet())
-        {
-        	sb.append("<li>" + entry.getKey() + " => " + entry.getValue() + "\n");
+        for (Entry<Float, String> entry : valuePairs.entrySet()) {
+            sb.append("<li>" + entry.getKey() + " => " + entry.getValue() + "\n");
         }
         sb.append("</ul>");
         sb.append("<li><b>Default value: </b>" + defaultValue + "\n");
         sb.append("</u></html>");
 
         return sb.toString();
-	}
+    }
 }

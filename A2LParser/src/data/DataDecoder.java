@@ -79,14 +79,14 @@ public final class DataDecoder {
         final ByteOrder byteOrder = modCommon.getByteOrder();
 
         for (Entry<String, AdjustableObject> entries : a2l.getAdjustableObjects().entrySet()) {
-            if (entries.getValue() instanceof AxisPts) {
+            if (entries.getValue() instanceof AxisPts && entries.getValue().isValid()) {
                 readAxisPts(byteOrder, (AxisPts) entries.getValue());
             }
         }
 
         for (Entry<String, AdjustableObject> entries : a2l.getAdjustableObjects().entrySet()) {
 
-            if (entries.getValue() instanceof Characteristic) {
+            if (entries.getValue() instanceof Characteristic && entries.getValue().isValid()) {
 
                 Characteristic characteristic = (Characteristic) entries.getValue();
 

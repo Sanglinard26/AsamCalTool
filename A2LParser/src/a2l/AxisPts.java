@@ -161,9 +161,10 @@ public final class AxisPts extends AdjustableObject {
             }
 
         } else {
+            validParsing = false;
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }
-
+        validParsing = true;
     }
 
     @Override
@@ -221,6 +222,11 @@ public final class AxisPts extends AdjustableObject {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean isValid() {
+        return true;
     }
 
 }

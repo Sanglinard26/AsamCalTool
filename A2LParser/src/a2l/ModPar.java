@@ -60,6 +60,11 @@ public final class ModPar implements A2lObject {
     }
 
     @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
     public void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
 
         final int nbParams = parameters.size();

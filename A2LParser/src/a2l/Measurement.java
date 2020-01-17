@@ -31,23 +31,23 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
     private String dataType;
     private String conversion;
     @SuppressWarnings("unused")
-	private int resolution;
+    private int resolution;
     @SuppressWarnings("unused")
     private float accuracy;
     private float lowerLimit;
     private float upperLimit;
 
     private CompuMethod compuMethod;
-    
+
     private Map<SecondaryKeywords, Object> optionalsParameters;
 
     public Measurement(List<String> parameters, int beginLine, int endLine) {
-    	
-    	initOptionalsParameters();
+
+        initOptionalsParameters();
 
         build(parameters, beginLine, endLine);
     }
-    
+
     private final void initOptionalsParameters() {
         optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
         optionalsParameters.put(ANNOTATION, null);
@@ -69,9 +69,14 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
     }
 
     @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
     public void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
-    	
-    	final int nbParams = parameters.size();
+
+        final int nbParams = parameters.size();
 
         if (nbParams >= 8) {
             this.name = parameters.get(2);
@@ -86,8 +91,7 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
             } else {
                 this.upperLimit = Float.parseFloat(parameters.get(9));
             }
-            
-            
+
             int n = 10;
 
             Set<SecondaryKeywords> keys = optionalsParameters.keySet();
@@ -151,16 +155,15 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
         }
     }
-    
+
     public final void assignComputMethod(HashMap<String, CompuMethod> compuMethods) {
         this.compuMethod = compuMethods.get(this.conversion);
     }
-    
-    public final String getUnit()
-    {
-    	Object oPhysUnit = optionalsParameters.get(PHYS_UNIT);
 
-    	return (oPhysUnit != null && "NO_COMPU_METHOD".equals(conversion)) ? oPhysUnit.toString() : compuMethod.getUnit();
+    public final String getUnit() {
+        Object oPhysUnit = optionalsParameters.get(PHYS_UNIT);
+
+        return (oPhysUnit != null && "NO_COMPU_METHOD".equals(conversion)) ? oPhysUnit.toString() : compuMethod.getUnit();
     }
 
     @Override

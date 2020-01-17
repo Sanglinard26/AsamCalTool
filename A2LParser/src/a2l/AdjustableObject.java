@@ -29,6 +29,8 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     protected double upperLimit;
     protected boolean dataRead;
 
+    protected boolean validParsing;
+
     protected String functionRef;
 
     protected Values values;

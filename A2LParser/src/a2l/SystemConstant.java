@@ -35,6 +35,11 @@ public final class SystemConstant implements A2lObject, Comparable<SystemConstan
     }
 
     @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
     public void build(List<String> parameters, int beginLine, int endLine) throws A2lObjectParsingException {
         this.name = parameters.get(0);
         this.value = parameters.get(1);

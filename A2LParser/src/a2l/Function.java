@@ -92,6 +92,11 @@ public final class Function implements A2lObject, Comparable<Function> {
     }
 
     @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
     public void build(List<String> parameters, int beginLine, int endLine) throws IllegalArgumentException {
 
         final int nbParams = parameters.size();
