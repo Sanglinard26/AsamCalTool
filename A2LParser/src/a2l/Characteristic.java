@@ -429,14 +429,26 @@ public final class Characteristic extends AdjustableObject {
             tabResol = new Double[3];
 
             cmX = this.axisDescrs.get(0).getCompuMethod();
-            val0 = formatValue(cmX.compute(1), this.axisDescrs.get(0).getNbDecimal());
-            val1 = formatValue(cmX.compute(2), this.axisDescrs.get(0).getNbDecimal());
-            tabResol[0] = ConversionType.TAB_VERB.compareTo(cmX.getConversionType()) != 0 ? val1 - val0 : Double.NaN;
+            if(cmX!= null)
+            {
+            	val0 = formatValue(cmX.compute(1), this.axisDescrs.get(0).getNbDecimal());
+                val1 = formatValue(cmX.compute(2), this.axisDescrs.get(0).getNbDecimal());
+                tabResol[0] = ConversionType.TAB_VERB.compareTo(cmX.getConversionType()) != 0 ? val1 - val0 : Double.NaN;
+            }else{
+            	tabResol[0] = Double.NaN;
+            }
+            
 
             cmY = this.axisDescrs.get(1).getCompuMethod();
-            val0 = formatValue(cmY.compute(1), this.axisDescrs.get(1).getNbDecimal());
-            val1 = formatValue(cmY.compute(2), this.axisDescrs.get(1).getNbDecimal());
-            tabResol[1] = ConversionType.TAB_VERB.compareTo(cmY.getConversionType()) != 0 ? val1 - val0 : Double.NaN;
+            if(cmY!= null)
+            {
+            	val0 = formatValue(cmY.compute(1), this.axisDescrs.get(1).getNbDecimal());
+                val1 = formatValue(cmY.compute(2), this.axisDescrs.get(1).getNbDecimal());
+                tabResol[1] = ConversionType.TAB_VERB.compareTo(cmY.getConversionType()) != 0 ? val1 - val0 : Double.NaN;
+            }else{
+            	tabResol[1] = Double.NaN;
+            }
+            
 
             val0 = formatValue(this.compuMethod.compute(1), getNbDecimal());
             val1 = formatValue(this.compuMethod.compute(2), getNbDecimal());

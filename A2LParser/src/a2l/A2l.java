@@ -130,7 +130,7 @@ public final class A2l {
 
         this.name = a2lFile.getName().substring(0, a2lFile.getName().length() - 4);
 
-        fireStateChanged("Start of parsing");
+        fireStateChanged("Loading file : " + a2lFile.getAbsolutePath());
 
         try (BufferedReader buf = new BufferedReader(new FileReader(a2lFile))) {
 
@@ -321,7 +321,7 @@ public final class A2l {
         final String lineWoutComment;
 
         if (line.indexOf("/*") > -1 || line.indexOf("*/") > -1 || line.indexOf("//") > -1) {
-            lineWoutComment = ParserUtils.LINE_COMMENT.matcher(line).replaceAll("");
+            lineWoutComment = ParserUtils.LINE_COMMENT.matcher(line).replaceAll("").trim();
             if (lineWoutComment.length() == 0) {
                 return listWord;
             }
