@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Enumeration;
 
@@ -69,7 +70,7 @@ public final class Ihm extends JFrame {
     private JTree a2lTree;
     private JLabel labelData;
     private final PanelView panelView;
-    private final JLabel labelStatus;
+    private final JTextArea textLog;
 
     private A2l a2l;
 
@@ -113,9 +114,10 @@ public final class Ihm extends JFrame {
         panelView = new PanelView();
         container.add(panelView, BorderLayout.CENTER);
 
-        labelStatus = new JLabel("Status : ");
-        labelStatus.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 0));
-        container.add(labelStatus, BorderLayout.SOUTH);
+        textLog = new JTextArea(5,100);
+        JScrollPane jScrollPane = new JScrollPane(new JScrollPane(textLog));
+        jScrollPane.setBorder(BorderFactory.createEmptyBorder(0,5,0,5));
+        container.add(jScrollPane, BorderLayout.SOUTH);
 
         pack();
         setLocationRelativeTo(null);
@@ -466,9 +468,11 @@ public final class Ihm extends JFrame {
 
     private final class A2lWorker extends SwingWorker<Void, Void> {
         private File a2lFile;
+        private SimpleDateFormat sdf;
 
         public A2lWorker(File file) {
             this.a2lFile = file;
+            sdf = new SimpleDateFormat("HH:mm:ss");
         }
 
         @Override
@@ -480,7 +484,7 @@ public final class Ihm extends JFrame {
                 public void stateChange(final String state) {
                     SwingUtilities.invokeLater(new Runnable() {
                         public void run() {
-                            labelStatus.setText("Status : " + state);
+                            textLog.append(sdf.format(System.currentTimeMillis()) +  " : " +  state + "\n");
                         }
                     });
 

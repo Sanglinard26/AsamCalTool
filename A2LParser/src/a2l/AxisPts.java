@@ -226,7 +226,7 @@ public final class AxisPts extends AdjustableObject {
 
     @Override
     public boolean isValid() {
-        return true;
+        return validParsing;
     }
 
 }

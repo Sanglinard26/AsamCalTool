@@ -42,8 +42,6 @@ public final class A2l {
 
     private EventListenerList listeners;
 
-    private String state = "";
-
     public A2l() {
 
         adjustableObjects = new HashMap<String, AdjustableObject>();
@@ -127,7 +125,7 @@ public final class A2l {
         this.listeners.remove(A2lStateListener.class, a2lStateListener);
     }
 
-    public final String parse(File a2lFile) {
+    public final void parse(File a2lFile) {
         final String BEGIN = "/begin";
 
         this.name = a2lFile.getName().substring(0, a2lFile.getName().length() - 4);
@@ -250,7 +248,7 @@ public final class A2l {
                             break;
                         }
                     } catch (A2lObjectParsingException e) {
-                        System.out.println(e.getMessage());
+                    	fireStateChanged(e.getMessage());
                     }
 
                 }
@@ -265,13 +263,9 @@ public final class A2l {
 
             mergeDefCharacteristic.clear();
 
-            return state;
-
         } catch (IOException e) {
-            state = "Error";
             e.printStackTrace();
         }
-        return state;
     }
 
     private void fireStateChanged(String state) {
