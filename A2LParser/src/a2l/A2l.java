@@ -131,6 +131,8 @@ public final class A2l {
         this.name = a2lFile.getName().substring(0, a2lFile.getName().length() - 4);
 
         fireStateChanged("Loading file : " + a2lFile.getAbsolutePath());
+        
+        long startParsing = System.currentTimeMillis();
 
         try (BufferedReader buf = new BufferedReader(new FileReader(a2lFile))) {
 
@@ -259,7 +261,7 @@ public final class A2l {
             fireStateChanged("Linking A2l object");
             assignLinkedObject(mergeDefCharacteristic);
 
-            fireStateChanged("Parsing finished");
+            fireStateChanged("Parsing finished in " + (System.currentTimeMillis()-startParsing) + "ms");
 
             mergeDefCharacteristic.clear();
 

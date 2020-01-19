@@ -5,6 +5,8 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -21,8 +23,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.JTree.DynamicUtilTreeNode;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -53,6 +54,7 @@ public class FilteredTree extends JPanel {
     private DefaultTreeModel originalTreeModel;
     private final JTree tree = new JTree();
     private DefaultMutableTreeNode originalRoot;
+    private final JTextField field;
 
     public FilteredTree() {
         this.originalRoot = new DefaultMutableTreeNode();
@@ -62,25 +64,9 @@ public class FilteredTree extends JPanel {
         tree.addMouseListener(new NodeMouseListener());
         tree.setCellRenderer(new Renderer());
 
-        final JTextField field = new JTextField(50);
-
-        field.getDocument().addDocumentListener(new DocumentListener() {
-
-            @Override
-            public void removeUpdate(DocumentEvent paramDocumentEvent) {
-                filterTree(field.getText());
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent paramDocumentEvent) {
-                filterTree(field.getText());
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent paramDocumentEvent) {
-                filterTree(field.getText());
-            }
-        });
+        field = new JTextField(50);
+        
+        field.addKeyListener(new FilterKeyListener());
 
         originalTreeModel = new DefaultTreeModel(originalRoot);
 
@@ -95,6 +81,23 @@ public class FilteredTree extends JPanel {
 
         originalRoot = (DefaultMutableTreeNode) originalTreeModel.getRoot();
 
+    }
+    
+    private final class FilterKeyListener extends KeyAdapter
+    {
+    	
+    	@Override
+    	public void keyReleased(KeyEvent e) {
+
+    		SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					filterTree(field.getText());
+					
+				}
+			});
+    	}
     }
 
     public final void addA2l(A2l a2l) {

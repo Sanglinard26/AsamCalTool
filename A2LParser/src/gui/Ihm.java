@@ -85,9 +85,9 @@ public final class Ihm extends JFrame {
 		gc.gridy = 0;
 		gc.gridwidth = 2;
 		gc.gridheight = 1;
-		gc.weightx = 0;
+		gc.weightx = 1;
 		gc.weighty = 0;
-		gc.fill = GridBagConstraints.NONE;
+		gc.fill = GridBagConstraints.HORIZONTAL;
 		gc.anchor = GridBagConstraints.FIRST_LINE_START;
 		container.add(new PanelBt(), gc);
 
