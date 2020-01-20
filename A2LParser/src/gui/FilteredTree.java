@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -65,7 +66,7 @@ public class FilteredTree extends JPanel {
         tree.setCellRenderer(new Renderer());
 
         field = new JTextField(50);
-        
+
         field.addKeyListener(new FilterKeyListener());
 
         originalTreeModel = new DefaultTreeModel(originalRoot);
@@ -82,22 +83,21 @@ public class FilteredTree extends JPanel {
         originalRoot = (DefaultMutableTreeNode) originalTreeModel.getRoot();
 
     }
-    
-    private final class FilterKeyListener extends KeyAdapter
-    {
-    	
-    	@Override
-    	public void keyReleased(KeyEvent e) {
 
-    		SwingUtilities.invokeLater(new Runnable() {
-				
-				@Override
-				public void run() {
-					filterTree(field.getText());
-					
-				}
-			});
-    	}
+    private final class FilterKeyListener extends KeyAdapter {
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+
+            SwingUtilities.invokeLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    filterTree(field.getText());
+
+                }
+            });
+        }
     }
 
     public final void addA2l(A2l a2l) {
@@ -207,7 +207,7 @@ public class FilteredTree extends JPanel {
 
         filteredText = text.toLowerCase();
 
-        if (text.trim().length() == 0) {
+        if (text.trim().length() == 0 || "*".equals(text.trim())) {
 
             // reset with the original root
             originalTreeModel.setRoot(originalRoot);
@@ -365,6 +365,9 @@ public class FilteredTree extends JPanel {
 
             c.setFont(newFont);
 
+            setBackgroundSelectionColor(Color.LIGHT_GRAY);
+            setTextSelectionColor(Color.BLACK);
+
             return c;
         }
     }
@@ -514,15 +517,28 @@ public class FilteredTree extends JPanel {
                 DefaultMutableTreeNode nextLeaf = leaf.getNextLeaf();
 
                 // if it does not start with the text then snip it off its parent
-                if (!leaf.getUserObject().toString().toLowerCase().startsWith(textToMatch)) {
-                    DefaultMutableTreeNode parent = (DefaultMutableTreeNode) leaf.getParent();
+                if (textToMatch.charAt(0) == '*') {
+                    if (!leaf.getUserObject().toString().toLowerCase().contains(textToMatch.substring(1))) {
+                        DefaultMutableTreeNode parent = (DefaultMutableTreeNode) leaf.getParent();
 
-                    if (parent != null)
-                        parent.remove(leaf);
+                        if (parent != null)
+                            parent.remove(leaf);
 
-                    badLeaves = true;
+                        badLeaves = true;
+                    }
+                    leaf = nextLeaf;
+                } else {
+                    if (!leaf.getUserObject().toString().toLowerCase().startsWith(textToMatch)) {
+                        DefaultMutableTreeNode parent = (DefaultMutableTreeNode) leaf.getParent();
+
+                        if (parent != null)
+                            parent.remove(leaf);
+
+                        badLeaves = true;
+                    }
+                    leaf = nextLeaf;
                 }
-                leaf = nextLeaf;
+
             }
             return badLeaves;
         }

@@ -25,6 +25,7 @@ import utils.ParserUtils;
 
 public final class A2l {
 
+    private File path;
     private String name;
     private ModPar modPar;
     private ModCommon modCommon;
@@ -59,6 +60,24 @@ public final class A2l {
     @Override
     public String toString() {
         return getName();
+    }
+
+    public final File getPath() {
+        return path;
+    }
+
+    public final String getA2lText() {
+        try (BufferedReader buf = new BufferedReader(new FileReader(this.path))) {
+            String line;
+            StringBuilder sb = new StringBuilder((int) this.path.length());
+            while ((line = buf.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+            return sb.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     public final String getName() {
@@ -128,10 +147,11 @@ public final class A2l {
     public final void parse(File a2lFile) {
         final String BEGIN = "/begin";
 
+        this.path = a2lFile;
         this.name = a2lFile.getName().substring(0, a2lFile.getName().length() - 4);
 
         fireStateChanged("Loading file : " + a2lFile.getAbsolutePath());
-        
+
         long startParsing = System.currentTimeMillis();
 
         try (BufferedReader buf = new BufferedReader(new FileReader(a2lFile))) {
@@ -250,7 +270,7 @@ public final class A2l {
                             break;
                         }
                     } catch (A2lObjectParsingException e) {
-                    	fireStateChanged(e.getMessage());
+                        fireStateChanged(e.getMessage());
                     }
 
                 }
@@ -261,7 +281,7 @@ public final class A2l {
             fireStateChanged("Linking A2l object");
             assignLinkedObject(mergeDefCharacteristic);
 
-            fireStateChanged("Parsing finished in " + (System.currentTimeMillis()-startParsing) + "ms");
+            fireStateChanged("Parsing finished in " + (System.currentTimeMillis() - startParsing) + "ms");
 
             mergeDefCharacteristic.clear();
 
