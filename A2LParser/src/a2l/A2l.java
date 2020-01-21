@@ -66,14 +66,17 @@ public final class A2l {
         return path;
     }
 
-    public final String getA2lText() {
+    public final String getPartOfRawFile() {
+        long start = System.currentTimeMillis();
         try (BufferedReader buf = new BufferedReader(new FileReader(this.path))) {
-            String line;
-            StringBuilder sb = new StringBuilder((int) this.path.length());
-            while ((line = buf.readLine()) != null) {
-                sb.append(line + "\n");
+            int len = 0;
+            List<String> lines = new ArrayList<String>(numLine);
+            char[] text = new char[(int) this.path.length()];
+            while ((len = buf.read(text)) != -1) {
+                lines.add(new String(text) + "\n");
             }
-            return sb.toString();
+            System.out.println(System.currentTimeMillis() - start + "ms");
+            return "";
         } catch (IOException e) {
             e.printStackTrace();
         }

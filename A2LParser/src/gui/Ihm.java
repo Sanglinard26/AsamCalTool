@@ -580,14 +580,7 @@ public final class Ihm extends JFrame {
             panelView.tableView.getModel().setData(null);
             filteredTree.addA2l(a2l);
             container.revalidate();
-
-            // Test
-            JTextArea textArea = new JTextArea(a2l.getA2lText());
-            JScrollPane scrollPane = new JScrollPane(textArea);
-            textArea.setLineWrap(true);
-            textArea.setWrapStyleWord(true);
-            scrollPane.setPreferredSize(new Dimension(1000, 500));
-            JOptionPane.showMessageDialog(null, scrollPane);
+            a2l.getPartOfRawFile();
         }
 
     }
