@@ -580,7 +580,6 @@ public final class Ihm extends JFrame {
             panelView.tableView.getModel().setData(null);
             filteredTree.addA2l(a2l);
             container.revalidate();
-            a2l.getPartOfRawFile();
         }
 
     }
