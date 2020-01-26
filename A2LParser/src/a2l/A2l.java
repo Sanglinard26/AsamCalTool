@@ -130,7 +130,7 @@ public final class A2l {
         this.listeners.remove(A2lStateListener.class, a2lStateListener);
     }
 
-    public final void parse(File a2lFile) {
+    public final boolean parse(File a2lFile) {
         final String BEGIN = "/begin";
 
         this.path = a2lFile;
@@ -270,9 +270,13 @@ public final class A2l {
             fireStateChanged("Parsing finished in " + (System.currentTimeMillis() - startParsing) + "ms");
 
             mergeDefCharacteristic.clear();
+            
+            return true;
 
         } catch (IOException e) {
             e.printStackTrace();
+            
+            return false;
         }
     }
 

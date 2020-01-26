@@ -7,16 +7,17 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -31,11 +32,10 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
+import javax.swing.JToolBar;
 import javax.swing.JTree;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.HyperlinkEvent;
@@ -100,7 +100,20 @@ public final class Ihm extends JFrame {
         gc.weighty = 0;
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        container.add(new PanelBt(), gc);
+        container.add(createToolBar(), gc);
+        
+        labelData = new JLabel("Data initialized with : ...");
+        gc.gridx = 0;
+        gc.gridy = 1;
+        gc.gridwidth = 2;
+        gc.gridheight = 1;
+        gc.weightx = 1;
+        gc.weighty = 0;
+        gc.insets = new Insets(5, 5, 5, 0);
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.anchor = GridBagConstraints.FIRST_LINE_START;
+        container.add(labelData, gc);
+        
 
         filteredTree = new FilteredTree();
         a2lTree = filteredTree.getTree();
@@ -130,7 +143,7 @@ public final class Ihm extends JFrame {
             }
         });
         gc.gridx = 0;
-        gc.gridy = 1;
+        gc.gridy = 2;
         gc.gridwidth = 1;
         gc.gridheight = 2;
         gc.weightx = 0.2;
@@ -140,7 +153,7 @@ public final class Ihm extends JFrame {
 
         panelView = new PanelView();
         gc.gridx = 1;
-        gc.gridy = 1;
+        gc.gridy = 2;
         gc.gridwidth = 1;
         gc.gridheight = 1;
         gc.weightx = 0.8;
@@ -195,7 +208,7 @@ public final class Ihm extends JFrame {
         });
         JScrollPane jScrollPane = new JScrollPane(listLog);
         gc.gridx = 1;
-        gc.gridy = 2;
+        gc.gridy = 3;
         gc.gridwidth = 1;
         gc.gridheight = 1;
         gc.weightx = 1;
@@ -209,164 +222,170 @@ public final class Ihm extends JFrame {
         setVisible(true);
     }
 
-    private final class PanelBt extends JPanel {
+    private final JToolBar createToolBar()
+    {
+    	
+    	final String A2L = "/OPEN_A2L_24.png";
+    	final String DATA = "/OPEN_DATA_24.png";
+    	final String COMPAR = "/COMPAR_A2L_24.png";
+    	
+    	final JToolBar bar = new JToolBar();
+    	final JButton btOpenDataFile = new JButton("Open data file", new ImageIcon(getClass().getResource(DATA)));
+    	
+    	bar.setFloatable(false);
+    	bar.setBorder(BorderFactory.createEtchedBorder());
+    	
+    	final JButton btOpenA2L = new JButton(new AbstractAction("Open A2L", new ImageIcon(getClass().getResource(A2L))) {
 
-        private static final long serialVersionUID = 1L;
-        private JButton btOpenA2L;
-        private JButton btOpenDataFile;
-        private JButton btComparA2L;
+            private static final long serialVersionUID = 1L;
 
-        public PanelBt() {
-            super();
-            ((FlowLayout) getLayout()).setAlignment(FlowLayout.LEFT);
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                final JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
+                chooser.setFileFilter(new FileFilter() {
 
-            labelData = new JLabel("Data initialized with : ...");
+                    @Override
+                    public String getDescription() {
+                        return "A2L files (*.a2l)";
+                    }
 
-            btOpenA2L = new JButton(new AbstractAction("Open A2L") {
+                    @Override
+                    public boolean accept(File paramFile) {
+                        if (paramFile.isDirectory())
+                            return true;
+                        return paramFile.getName().toLowerCase().endsWith("a2l");
+                    }
+                });
+                int rep = chooser.showOpenDialog(null);
 
-                private static final long serialVersionUID = 1L;
+                if (rep == JFileChooser.APPROVE_OPTION) {
 
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    final JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
-                    chooser.setFileFilter(new FileFilter() {
+                    A2lWorker worker = new A2lWorker(chooser.getSelectedFile());
 
-                        @Override
-                        public String getDescription() {
-                            return "A2L files (*.a2l)";
+                    worker.execute();
+                    
+                    try {
+						btOpenDataFile.setEnabled(worker.get());
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					} catch (ExecutionException e1) {
+						e1.printStackTrace();
+					}
+                }
+
+            }
+        });
+        bar.add(btOpenA2L);
+        
+        bar.addSeparator();
+        
+        btOpenDataFile.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
+                chooser.setFileFilter(new FileFilter() {
+
+                    @Override
+                    public String getDescription() {
+                        return "Data files (*.hex, *.s19)";
+                    }
+
+                    @Override
+                    public boolean accept(File paramFile) {
+                        if (paramFile.isDirectory())
+                            return true;
+                        return paramFile.getName().toLowerCase().endsWith("hex") || paramFile.getName().toLowerCase().endsWith("s19");
+                    }
+                });
+                int rep = chooser.showOpenDialog(null);
+
+                if (rep == JFileChooser.APPROVE_OPTION) {
+
+                    labelData.setText("Data file : ...");
+
+                    DataCalibration dataCalibration = null;
+
+                    try {
+                        String fileExtension = chooser.getSelectedFile().getName().toLowerCase();
+
+                        if (fileExtension.endsWith("hex")) {
+                            dataCalibration = new IntelHex(chooser.getSelectedFile().getAbsolutePath());
+                        } else if (fileExtension.endsWith("s19")) {
+                            dataCalibration = new MotorolaS19(chooser.getSelectedFile().getAbsolutePath());
                         }
+                    } catch (IOException io) {
+                        listModel.addElement(io.getMessage());
+                    }
 
-                        @Override
-                        public boolean accept(File paramFile) {
-                            if (paramFile.isDirectory())
-                                return true;
-                            return paramFile.getName().toLowerCase().endsWith("a2l");
-                        }
-                    });
-                    int rep = chooser.showOpenDialog(null);
+                    final DataDecoder dataDecoder = new DataDecoder(a2l, dataCalibration);
 
-                    if (rep == JFileChooser.APPROVE_OPTION) {
+                    if (dataDecoder.readDataFromFile()) {
+                        labelData.setText("<html>Data initialized with : " + "<b>" + chooser.getSelectedFile().getName() + "</b></html>");
+                        listModel.addElement(
+                                sdf.format(System.currentTimeMillis()) + " : " + chooser.getSelectedFile().getName() + " read succesfully");
+                    } else {
+                        JOptionPane.showMessageDialog(null, "EEPROM identifier doesn't match, reading aborted.", "Error",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+				
+			}
+		});
+        btOpenDataFile.setEnabled(false);
+        bar.add(btOpenDataFile);
+        
+        bar.addSeparator();
+        
+        final JButton btComparA2L = new JButton(new AbstractAction("Compare A2L", new ImageIcon(getClass().getResource(COMPAR))) {
 
-                        A2lWorker worker = new A2lWorker(chooser.getSelectedFile());
+            private static final long serialVersionUID = 1L;
 
-                        worker.execute();
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
+                chooser.setMultiSelectionEnabled(true);
+                chooser.setFileFilter(new FileFilter() {
+
+                    @Override
+                    public String getDescription() {
+                        return "A2L files (*.a2l)";
+                    }
+
+                    @Override
+                    public boolean accept(File paramFile) {
+                        if (paramFile.isDirectory())
+                            return true;
+                        return paramFile.getName().toLowerCase().endsWith("a2l");
+                    }
+                });
+                int rep = chooser.showOpenDialog(null);
+
+                if (rep == JFileChooser.APPROVE_OPTION) {
+                    File[] a2lFiles = chooser.getSelectedFiles();
+                    if (a2lFiles.length == 2) {
+
+                        StringBuilder sb = A2l.compareA2L(a2lFiles[0], a2lFiles[1]);
+
+                        JTextArea textArea = new JTextArea(sb.toString());
+                        JScrollPane scrollPane = new JScrollPane(textArea);
+                        textArea.setLineWrap(true);
+                        textArea.setWrapStyleWord(true);
+                        scrollPane.setPreferredSize(new Dimension(500, 500));
+                        JOptionPane.showMessageDialog(null, scrollPane);
+
+                    } else {
+                        JOptionPane.showMessageDialog(Ihm.this, "Two files are required !");
                     }
 
                 }
-            });
-            add(btOpenA2L);
 
-            btOpenDataFile = new JButton(new AbstractAction("Open data file") {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
-                    chooser.setFileFilter(new FileFilter() {
-
-                        @Override
-                        public String getDescription() {
-                            return "Data files (*.hex, *.s19)";
-                        }
-
-                        @Override
-                        public boolean accept(File paramFile) {
-                            if (paramFile.isDirectory())
-                                return true;
-                            return paramFile.getName().toLowerCase().endsWith("hex") || paramFile.getName().toLowerCase().endsWith("s19");
-                        }
-                    });
-                    int rep = chooser.showOpenDialog(null);
-
-                    if (rep == JFileChooser.APPROVE_OPTION) {
-
-                        labelData.setText("Data file : ...");
-
-                        DataCalibration dataCalibration = null;
-
-                        try {
-                            String fileExtension = chooser.getSelectedFile().getName().toLowerCase();
-
-                            if (fileExtension.endsWith("hex")) {
-                                dataCalibration = new IntelHex(chooser.getSelectedFile().getAbsolutePath());
-                            } else if (fileExtension.endsWith("s19")) {
-                                dataCalibration = new MotorolaS19(chooser.getSelectedFile().getAbsolutePath());
-                            }
-                        } catch (IOException io) {
-                            listModel.addElement(io.getMessage());
-                        }
-
-                        final DataDecoder dataDecoder = new DataDecoder(a2l, dataCalibration);
-
-                        if (dataDecoder.readDataFromFile()) {
-                            labelData.setText("<html>Data initialized with : " + "<b>" + chooser.getSelectedFile().getName() + "</b></html>");
-                            listModel.addElement(
-                                    sdf.format(System.currentTimeMillis()) + " : " + chooser.getSelectedFile().getName() + " read succesfully");
-                        } else {
-                            JOptionPane.showMessageDialog(null, "EEPROM identifier doesn't match, reading aborted.", "Error",
-                                    JOptionPane.ERROR_MESSAGE);
-                        }
-                    }
-
-                }
-            });
-            add(btOpenDataFile);
-
-            add(labelData);
-
-            final JSeparator sep = new JSeparator(SwingConstants.VERTICAL);
-            sep.setPreferredSize(new Dimension(20, 20));
-            add(sep);
-
-            btComparA2L = new JButton(new AbstractAction("Compare A2L") {
-
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-
-                    JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
-                    chooser.setMultiSelectionEnabled(true);
-                    chooser.setFileFilter(new FileFilter() {
-
-                        @Override
-                        public String getDescription() {
-                            return "A2L files (*.a2l)";
-                        }
-
-                        @Override
-                        public boolean accept(File paramFile) {
-                            if (paramFile.isDirectory())
-                                return true;
-                            return paramFile.getName().toLowerCase().endsWith("a2l");
-                        }
-                    });
-                    int rep = chooser.showOpenDialog(null);
-
-                    if (rep == JFileChooser.APPROVE_OPTION) {
-                        File[] a2lFiles = chooser.getSelectedFiles();
-                        if (a2lFiles.length == 2) {
-
-                            StringBuilder sb = A2l.compareA2L(a2lFiles[0], a2lFiles[1]);
-
-                            JTextArea textArea = new JTextArea(sb.toString());
-                            JScrollPane scrollPane = new JScrollPane(textArea);
-                            textArea.setLineWrap(true);
-                            textArea.setWrapStyleWord(true);
-                            scrollPane.setPreferredSize(new Dimension(500, 500));
-                            JOptionPane.showMessageDialog(null, scrollPane);
-
-                        } else {
-                            JOptionPane.showMessageDialog(Ihm.this, "Two files are required !");
-                        }
-
-                    }
-
-                }
-            });
-            add(btComparA2L);
-        }
+            }
+        });
+        bar.add(btComparA2L);
+    	
+    	return bar;
     }
 
     private final class PanelView extends JPanel {
@@ -547,7 +566,7 @@ public final class Ihm extends JFrame {
         }
     }
 
-    private final class A2lWorker extends SwingWorker<Void, Void> {
+    private final class A2lWorker extends SwingWorker<Boolean, Void> {
         private File a2lFile;
 
         public A2lWorker(File file) {
@@ -555,7 +574,7 @@ public final class Ihm extends JFrame {
         }
 
         @Override
-        protected Void doInBackground() throws Exception {
+        protected Boolean doInBackground() throws Exception {
             a2l = new A2l();
             a2l.addA2lStateListener(new A2lStateListener() {
 
@@ -569,8 +588,8 @@ public final class Ihm extends JFrame {
 
                 }
             });
-            a2l.parse(a2lFile);
-            return null;
+            
+            return a2l.parse(a2lFile);
         }
 
         @Override
