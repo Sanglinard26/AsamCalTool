@@ -5,12 +5,9 @@ package gui;
 
 import java.awt.Adjustable;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
@@ -18,30 +15,18 @@ import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-import java.util.concurrent.ExecutionException;
 
-import javax.print.Doc;
-import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.ListModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
+import javax.swing.text.Segment;
 
 public final class A2lDisplayer extends JFrame {
-
-    //private static final String NAME = "C:\\User\\U354706\\Perso\\WorkInProgress\\64_00_42_(A520).a2l";
-    private static final String NAME = "D:\\tramp\\Documents\\Tmp\\A2L\\WorkInProgress\\64_00_42_(A520).a2l";
-    static int END_OF_TEXT = 10000;
 
     private static final long serialVersionUID = 1L;
 
@@ -52,6 +37,11 @@ public final class A2lDisplayer extends JFrame {
     static JTextArea textArea;
     static JScrollPane scrollPane;
     static PlainDocument doc;
+
+    public A2lDisplayer(File a2lFile) {
+        DisplayWorker displayWorker = new DisplayWorker(a2lFile);
+        displayWorker.execute();
+    }
 
     private static class DisplayWorker extends SwingWorker<PlainDocument, String> {
 
@@ -66,7 +56,7 @@ public final class A2lDisplayer extends JFrame {
         protected PlainDocument doInBackground() {
 
             try {
-            	
+
                 sbc = Files.newByteChannel(file.toPath(), StandardOpenOption.READ);
                 fileLength = (int) sbc.size();
                 mappedByteBuffer = ((FileChannel) sbc).map(FileChannel.MapMode.READ_ONLY, 0, sbc.size());
@@ -78,16 +68,16 @@ public final class A2lDisplayer extends JFrame {
                 sbc.close();
 
                 doc = new PlainDocument();
-                
-                doc.insertString(0, new String(b, 0, fileLength/2, Charset.defaultCharset()), null);
-            	
-            	return doc;
+
+                doc.insertString(0, new String(b, 0, fileLength / 2, Charset.defaultCharset()), null);
+
+                return doc;
 
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (BadLocationException e) {
-				e.printStackTrace();
-			}
+                e.printStackTrace();
+            }
 
             return null;
         }
@@ -96,55 +86,55 @@ public final class A2lDisplayer extends JFrame {
         protected void done() {
             JFrame frame = new JFrame("A2L");
             textArea = new JTextArea(doc);
-            textArea.setRows(50);
-			scrollPane = new JScrollPane(textArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-			        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-			scrollPane.getVerticalScrollBar().addAdjustmentListener(new MyAdjustmentListener());
-			scrollPane.getHorizontalScrollBar().addAdjustmentListener(new MyAdjustmentListener());
+            textArea.setRows(30);
+            textArea.setColumns(50);
+            scrollPane = new JScrollPane(textArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+            scrollPane.getVerticalScrollBar().addAdjustmentListener(new MyAdjustmentListener());
 
-			frame.add(scrollPane);
-			System.out.println(scrollPane.getVerticalScrollBar().getMaximum());
-			frame.pack();
-			frame.setVisible(true);
+            frame.setSize(new Dimension(1000, 500));
+            frame.add(scrollPane);
+
+            frame.setVisible(true);
+
+            int nleft = doc.getLength();
+            Segment text = new Segment();
+            int offs = 0;
+            text.setPartialReturn(true);
+            while (nleft > 0) {
+                try {
+                    doc.getText(offs, nleft, text);
+
+                } catch (BadLocationException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                // do something with text
+                nleft -= text.count;
+                offs += text.count;
+            }
+
         }
 
     }
 
     static class MyAdjustmentListener implements AdjustmentListener {
+
+        boolean secondPart = false;
+
         public void adjustmentValueChanged(AdjustmentEvent evt) {
             Adjustable source = evt.getAdjustable();
             JScrollBar bar = (JScrollBar) source;
-            System.out.println("Bar min : " + bar.getMinimum());
-            System.out.println("Bar max : " + bar.getMaximum());
-            System.out.println("Bar value : " + bar.getValue());
 
             int value = evt.getValue();
-            
-            if (value > 0) {
-                int offset = Math.min(0 + value * 10, fileLength - 1);
-                int length = Math.min(END_OF_TEXT + value * 10, fileLength - 1);
-                if (offset + length > fileLength - 1) {
-                    length = fileLength - 1 - offset;
-                }
-                // textArea.setText(new String(b, offset, length, Charset.defaultCharset()));
 
+            if (!secondPart && value > bar.getMaximum() / 2) {
+                int offset = Math.min(fileLength / 2, fileLength - 1);
+                int length = fileLength - offset;
+                textArea.replaceRange(new String(b, offset, length, Charset.defaultCharset()), 0, doc.getLength());
+                secondPart = true;
             }
 
         }
-    }
-
-    public static void main(String[] args) {
-
-        EventQueue.invokeLater(new Runnable() {
-
-            @Override
-            public void run() {
-                DisplayWorker displayWorker = new DisplayWorker(new File(NAME));
-                displayWorker.execute();
-
-            }
-        });
-
     }
 
 }

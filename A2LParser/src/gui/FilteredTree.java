@@ -209,12 +209,10 @@ public class FilteredTree extends JPanel {
 
         if (text.trim().length() == 0 || "*".equals(text.trim())) {
 
-            // reset with the original root
             originalTreeModel.setRoot(originalRoot);
 
             tree.setModel(originalTreeModel);
             tree.updateUI();
-            // scrollpane.getViewport().setView(tree);
 
             return;
         }
@@ -227,7 +225,6 @@ public class FilteredTree extends JPanel {
 
         tree.setModel(originalTreeModel);
         tree.updateUI();
-        // scrollpane.getViewport().setView(tree);
 
         for (int i = 0; i < tree.getRowCount(); i++) {
             tree.expandRow(i);
@@ -386,6 +383,26 @@ public class FilteredTree extends JPanel {
             }
 
             final Object object = ((DefaultMutableTreeNode) treePath.getLastPathComponent()).getUserObject();
+
+            if (e.isPopupTrigger() && (object instanceof A2l)) {
+                tree.setSelectionPath(treePath);
+
+                final JPopupMenu menu = new JPopupMenu();
+
+                final JMenuItem menuItem = new JMenuItem("Show in text format");
+                menuItem.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent paramActionEvent) {
+
+                        new A2lDisplayer(((A2l) object).getPath());
+
+                    }
+                });
+                menu.add(menuItem);
+
+                menu.show(e.getComponent(), e.getX(), e.getY());
+            }
 
             if (e.isPopupTrigger() && (object instanceof Function)) {
 

@@ -80,6 +80,7 @@ public final class Ihm extends JFrame {
     private final PanelView panelView;
     private final JList<String> listLog;
     private final DefaultListModel<String> listModel;
+    private JButton btOpenDataFile;
 
     private static final GridBagConstraints gc = new GridBagConstraints();
     private static final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");;
@@ -101,7 +102,7 @@ public final class Ihm extends JFrame {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         container.add(createToolBar(), gc);
-        
+
         labelData = new JLabel("Data initialized with : ...");
         gc.gridx = 0;
         gc.gridy = 1;
@@ -113,7 +114,6 @@ public final class Ihm extends JFrame {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.anchor = GridBagConstraints.FIRST_LINE_START;
         container.add(labelData, gc);
-        
 
         filteredTree = new FilteredTree();
         a2lTree = filteredTree.getTree();
@@ -222,20 +222,19 @@ public final class Ihm extends JFrame {
         setVisible(true);
     }
 
-    private final JToolBar createToolBar()
-    {
-    	
-    	final String A2L = "/OPEN_A2L_24.png";
-    	final String DATA = "/OPEN_DATA_24.png";
-    	final String COMPAR = "/COMPAR_A2L_24.png";
-    	
-    	final JToolBar bar = new JToolBar();
-    	final JButton btOpenDataFile = new JButton("Open data file", new ImageIcon(getClass().getResource(DATA)));
-    	
-    	bar.setFloatable(false);
-    	bar.setBorder(BorderFactory.createEtchedBorder());
-    	
-    	final JButton btOpenA2L = new JButton(new AbstractAction("Open A2L", new ImageIcon(getClass().getResource(A2L))) {
+    private final JToolBar createToolBar() {
+
+        final String A2L = "/OPEN_A2L_24.png";
+        final String DATA = "/OPEN_DATA_24.png";
+        final String COMPAR = "/COMPAR_A2L_24.png";
+
+        final JToolBar bar = new JToolBar();
+        btOpenDataFile = new JButton("Open data file", new ImageIcon(getClass().getResource(DATA)));
+
+        bar.setFloatable(false);
+        bar.setBorder(BorderFactory.createEtchedBorder());
+
+        final JButton btOpenA2L = new JButton(new AbstractAction("Open A2L", new ImageIcon(getClass().getResource(A2L))) {
 
             private static final long serialVersionUID = 1L;
 
@@ -263,27 +262,19 @@ public final class Ihm extends JFrame {
                     A2lWorker worker = new A2lWorker(chooser.getSelectedFile());
 
                     worker.execute();
-                    
-                    try {
-						btOpenDataFile.setEnabled(worker.get());
-					} catch (InterruptedException e1) {
-						e1.printStackTrace();
-					} catch (ExecutionException e1) {
-						e1.printStackTrace();
-					}
                 }
 
             }
         });
         bar.add(btOpenA2L);
-        
+
         bar.addSeparator();
-        
+
         btOpenDataFile.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser chooser = new JFileChooser("C:\\User\\U354706\\Perso\\WorkInProgress");
                 chooser.setFileFilter(new FileFilter() {
 
                     @Override
@@ -325,18 +316,17 @@ public final class Ihm extends JFrame {
                         listModel.addElement(
                                 sdf.format(System.currentTimeMillis()) + " : " + chooser.getSelectedFile().getName() + " read succesfully");
                     } else {
-                        JOptionPane.showMessageDialog(null, "EEPROM identifier doesn't match, reading aborted.", "Error",
-                                JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "EEPROM identifier doesn't match, reading aborted.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
-				
-			}
-		});
+
+            }
+        });
         btOpenDataFile.setEnabled(false);
         bar.add(btOpenDataFile);
-        
+
         bar.addSeparator();
-        
+
         final JButton btComparA2L = new JButton(new AbstractAction("Compare A2L", new ImageIcon(getClass().getResource(COMPAR))) {
 
             private static final long serialVersionUID = 1L;
@@ -384,8 +374,8 @@ public final class Ihm extends JFrame {
             }
         });
         bar.add(btComparA2L);
-    	
-    	return bar;
+
+        return bar;
     }
 
     private final class PanelView extends JPanel {
@@ -588,17 +578,24 @@ public final class Ihm extends JFrame {
 
                 }
             });
-            
+
             return a2l.parse(a2lFile);
         }
 
         @Override
         protected void done() {
+
+            try {
+                btOpenDataFile.setEnabled(get());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
             labelData.setText("Data initialized with : ...");
             panelView.textPane.setText("<html><br>");
             panelView.tableView.getModel().setData(null);
             filteredTree.addA2l(a2l);
-            container.revalidate();
         }
 
     }
