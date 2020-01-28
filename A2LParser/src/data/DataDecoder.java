@@ -43,14 +43,14 @@ import utils.Converter;
 public final class DataDecoder {
 
     private final A2l a2l;
-    private final DataCalibration hex;
+    private final DataCalibration dataFile;
     private final ModCommon modCommon;
 
     private static long tmpAdress = 0;
 
     public DataDecoder(A2l a2l, DataCalibration hex) {
         this.a2l = a2l;
-        this.hex = hex;
+        this.dataFile = hex;
 
         this.modCommon = a2l.getModCommon();
     }
@@ -63,7 +63,7 @@ public final class DataDecoder {
         if (adressEPK > 0) {
 
             String mEPK = modPar.getEPK();
-            String data = hex.readString(adressEPK, mEPK.length());
+            String data = dataFile.readString(adressEPK, mEPK.length());
 
             return mEPK.equals(data);
         }
@@ -163,26 +163,26 @@ public final class DataDecoder {
 
             if (noAxisPtsX != null) {
                 adress = setAlignment(adress, noAxisPtsX.getDataType());
-                nbValue = (int) Converter.readHexValue(hex, adress, noAxisPtsX.getDataType(), byteOrder);
+                nbValue = (int) Converter.readHexValue(dataFile, adress, noAxisPtsX.getDataType(), byteOrder);
                 adress += noAxisPtsX.getDataType().getNbByte();
             }
 
             adress = setAlignment(adress, axisPtsX.getDataType());
-            hexValuesAxisPts = Converter.readHexValues(hex, adress, axisPtsX.getDataType(), byteOrder, nbValue);
+            hexValuesAxisPts = Converter.readHexValues(dataFile, adress, axisPtsX.getDataType(), byteOrder, nbValue);
 
         } else {
 
             indexOrder = axisRescaleX.getIndexOrder();
 
             adress = setAlignment(adress, noRescaleX.getDataType());
-            nbValue = (int) Converter.readHexValue(hex, adress, noRescaleX.getDataType(), byteOrder);
+            nbValue = (int) Converter.readHexValue(dataFile, adress, noRescaleX.getDataType(), byteOrder);
             adress += noRescaleX.getDataType().getNbByte();
 
             // Skip reserved
             adress += (reserved.getDataSize().getNbBits() / 8);
 
             adress = setAlignment(adress, axisRescaleX.getDataType());
-            hexValuesAxisPts = Converter.readHexValues(hex, adress, axisRescaleX.getDataType(), byteOrder, nbValue);
+            hexValuesAxisPts = Converter.readHexValues(dataFile, adress, axisRescaleX.getDataType(), byteOrder, nbValue);
         }
 
         values = new Values(nbValue, 1);
@@ -214,7 +214,7 @@ public final class DataDecoder {
 
         final ByteOrder byteOrder = characteristic.getByteOrder() != null ? characteristic.getByteOrder() : commonByteOrder;
         final long _adress = setAlignment(adress, fncValues.getDataType());
-        double hexValue = Converter.readHexValue(hex, _adress, fncValues.getDataType(), byteOrder);
+        double hexValue = Converter.readHexValue(dataFile, _adress, fncValues.getDataType(), byteOrder);
         double physValue;
 
         final Values values = new Values(1, 1);
@@ -245,7 +245,7 @@ public final class DataDecoder {
 
         final Values values = new Values(1, 1);
 
-        final String ascii = hex.readString(adress, nByte);
+        final String ascii = dataFile.readString(adress, nByte);
         if (ascii != null) {
             values.setValue(0, 0, ascii);
             characteristic.setValues(values);
@@ -309,7 +309,7 @@ public final class DataDecoder {
                 }
 
                 adress = setAlignment(adress, noAxisPtsX.getDataType());
-                nbValue = (int) Converter.readHexValue(hex, adress, noAxisPtsX.getDataType(), byteOrder);
+                nbValue = (int) Converter.readHexValue(dataFile, adress, noAxisPtsX.getDataType(), byteOrder);
                 adress += noAxisPtsX.getDataType().getNbByte();
 
                 NoAxisPtsY noAxisPtsY = characteristic.getRecordLayout().getNoAxisPtsY();
@@ -328,7 +328,7 @@ public final class DataDecoder {
                     adress += characteristic.getRecordLayout().getSrcAddrX().getDataType().getNbByte();
                 }
                 adress = setAlignment(adress, noAxisPtsX.getDataType());
-                int nbValueX = (int) Converter.readHexValue(hex, adress, noAxisPtsX.getDataType(), byteOrder);
+                int nbValueX = (int) Converter.readHexValue(dataFile, adress, noAxisPtsX.getDataType(), byteOrder);
                 adress += noAxisPtsX.getDataType().getNbByte();
 
                 NoAxisPtsY noAxisPtsY = characteristic.getRecordLayout().getNoAxisPtsY();
@@ -336,7 +336,7 @@ public final class DataDecoder {
                     adress += characteristic.getRecordLayout().getSrcAddrY().getDataType().getNbByte();
                 }
                 adress = setAlignment(adress, noAxisPtsY.getDataType());
-                nbValue = (int) Converter.readHexValue(hex, adress, noAxisPtsY.getDataType(), byteOrder);
+                nbValue = (int) Converter.readHexValue(dataFile, adress, noAxisPtsY.getDataType(), byteOrder);
                 adress += noAxisPtsY.getDataType().getNbByte();
 
                 AxisPtsX axisPtsXStdAxis = characteristic.getRecordLayout().getAxisPtsX();
@@ -358,14 +358,14 @@ public final class DataDecoder {
             }
 
             adress = setAlignment(adress, noAxisPts.getDataType());
-            nbValue = (int) Converter.readHexValue(hex, adress, noAxisPts.getDataType(), byteOrder);
+            nbValue = (int) Converter.readHexValue(dataFile, adress, noAxisPts.getDataType(), byteOrder);
             adress += noAxisPts.getDataType().getNbByte();
         }
 
         strValues = new String[nbValue];
 
         adress = setAlignment(adress, axisDataType);
-        double[] hexValues = Converter.readHexValues(hex, adress, axisDataType, byteOrder, nbValue);
+        double[] hexValues = Converter.readHexValues(dataFile, adress, axisDataType, byteOrder, nbValue);
         adress += axisDataType.getNbByte() * nbValue;
 
         tmpAdress = adress;
@@ -495,7 +495,7 @@ public final class DataDecoder {
         }
 
         adress = setAlignment(adress, fncValues.getDataType());
-        double[] hexValues = Converter.readHexValues(hex, adress, fncValues.getDataType(), byteOrder, nbValue);
+        double[] hexValues = Converter.readHexValues(dataFile, adress, fncValues.getDataType(), byteOrder, nbValue);
         double physValue = 0;
 
         if (!compuMethod.isVerbal()) {
@@ -552,7 +552,7 @@ public final class DataDecoder {
         if (dim.length < 2 || dim[1] == 1) {
 
             adress = setAlignment(adress, fncValues.getDataType());
-            hexValuesValBlk = Converter.readHexValues(hex, adress, fncValues.getDataType(), byteOrder, dim[0]);
+            hexValuesValBlk = Converter.readHexValues(dataFile, adress, fncValues.getDataType(), byteOrder, dim[0]);
 
             values.setValue(1, 0, "Z");
 
@@ -578,7 +578,7 @@ public final class DataDecoder {
             final int nbValue = dim[0] * dim[1];
 
             adress = setAlignment(adress, fncValues.getDataType());
-            hexValuesValBlk = Converter.readHexValues(hex, adress, fncValues.getDataType(), byteOrder, nbValue);
+            hexValuesValBlk = Converter.readHexValues(dataFile, adress, fncValues.getDataType(), byteOrder, nbValue);
 
             if (!compuMethod.isVerbal()) {
 
@@ -704,7 +704,7 @@ public final class DataDecoder {
             final IndexMode indexModeMap = fncValues.getIndexMode();
 
             adress = setAlignment(adress, fncValues.getDataType());
-            double[] hexValues = Converter.readHexValues(hex, adress, fncValues.getDataType(), byteOrder, nbValueMap);
+            double[] hexValues = Converter.readHexValues(dataFile, adress, fncValues.getDataType(), byteOrder, nbValueMap);
 
             if (!compuMethod.isVerbal()) {
 

@@ -395,7 +395,8 @@ public class FilteredTree extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent paramActionEvent) {
 
-                        new A2lDisplayer(((A2l) object).getPath());
+                        // new A2lDisplayer(((A2l) object).getPath());
+                        TextSearchTest.createAndShowGUI(((A2l) object).getPath());
 
                     }
                 });

@@ -270,12 +270,12 @@ public final class A2l {
             fireStateChanged("Parsing finished in " + (System.currentTimeMillis() - startParsing) + "ms");
 
             mergeDefCharacteristic.clear();
-            
+
             return true;
 
         } catch (IOException e) {
             e.printStackTrace();
-            
+
             return false;
         }
     }

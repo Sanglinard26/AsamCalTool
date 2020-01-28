@@ -9,6 +9,14 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -17,6 +25,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -26,6 +35,7 @@ import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.Highlighter;
+import javax.swing.text.PlainDocument;
 import javax.swing.text.Segment;
 
 public class TextSearchTest {
@@ -98,33 +108,53 @@ public class TextSearchTest {
 
         private static final long serialVersionUID = 1L;
 
-        private String text = "This little line had some data,\n" + "And this little line had none.\n" + "Chorus:\n" + "data data data data";
-
         JTextField textField;
         JTextArea textArea;
 
-        public TextSearchPanel() {
+        public TextSearchPanel(File file) {
             super(new GridBagLayout());
 
-            textField = new JTextField(20);
-            textArea = new JTextArea(5, 20);
+            try {
 
-            textField.addActionListener(this);
-            textField.setText("data");
-            textArea.setEditable(true);
-            textArea.setText(text);
-            JScrollPane scrollPane = new JScrollPane(textArea);
+                SeekableByteChannel sbc = Files.newByteChannel(file.toPath(), StandardOpenOption.READ);
+                int fileLength = (int) sbc.size();
+                MappedByteBuffer mappedByteBuffer = ((FileChannel) sbc).map(FileChannel.MapMode.READ_ONLY, 0, sbc.size());
 
-            GridBagConstraints c = new GridBagConstraints();
-            c.gridwidth = GridBagConstraints.REMAINDER;
+                byte[] b = new byte[(int) sbc.size()];
+                mappedByteBuffer.get(b);
 
-            c.fill = GridBagConstraints.HORIZONTAL;
-            add(textField, c);
+                mappedByteBuffer.clear();
+                sbc.close();
 
-            c.fill = GridBagConstraints.BOTH;
-            c.weightx = 1.0;
-            c.weighty = 1.0;
-            add(scrollPane, c);
+                PlainDocument doc = new PlainDocument();
+
+                doc.insertString(0, new String(b, 0, fileLength / 4, Charset.defaultCharset()), null);
+                textField = new JTextField(20);
+                textArea = new JTextArea(40, 100);
+
+                textField.addActionListener(this);
+                textField.setText("data");
+                textArea.setEditable(true);
+                textArea.setDocument(doc);
+                JScrollPane scrollPane = new JScrollPane(textArea);
+
+                GridBagConstraints c = new GridBagConstraints();
+                c.gridwidth = GridBagConstraints.REMAINDER;
+
+                c.fill = GridBagConstraints.HORIZONTAL;
+                add(textField, c);
+
+                c.fill = GridBagConstraints.BOTH;
+                c.weightx = 1.0;
+                c.weighty = 1.0;
+                add(scrollPane, c);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (BadLocationException e) {
+                e.printStackTrace();
+            }
+
         }
 
         @SuppressWarnings("boxing")
@@ -153,14 +183,17 @@ public class TextSearchTest {
 
             textArea.setEditable(true);
             textArea.setCursor(startCursor);
+
+            textArea.setCaretPosition(highlighter.getHighlights()[0].getStartOffset());
+
+            JOptionPane.showMessageDialog(this, "Search done!\nResult are highlighted.");
         }
     }
 
-    private static void createAndShowGUI() {
+    public static void createAndShowGUI(File file) {
 
         JFrame frame = new JFrame("TextSearchTest");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(new TextSearchPanel());
+        frame.add(new TextSearchPanel(file));
         frame.setLocationByPlatform(true);
         frame.pack();
         frame.setVisible(true);
@@ -170,7 +203,7 @@ public class TextSearchTest {
 
         EventQueue.invokeLater(new Runnable() {
             public void run() {
-                createAndShowGUI();
+                createAndShowGUI(null);
             }
         });
     }

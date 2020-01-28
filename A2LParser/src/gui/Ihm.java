@@ -259,6 +259,8 @@ public final class Ihm extends JFrame {
 
                 if (rep == JFileChooser.APPROVE_OPTION) {
 
+                    a2lTree.setModel(null); // Test for memory
+
                     A2lWorker worker = new A2lWorker(chooser.getSelectedFile());
 
                     worker.execute();
@@ -309,7 +311,7 @@ public final class Ihm extends JFrame {
                         listModel.addElement(io.getMessage());
                     }
 
-                    final DataDecoder dataDecoder = new DataDecoder(a2l, dataCalibration);
+                    DataDecoder dataDecoder = new DataDecoder(a2l, dataCalibration);
 
                     if (dataDecoder.readDataFromFile()) {
                         labelData.setText("<html>Data initialized with : " + "<b>" + chooser.getSelectedFile().getName() + "</b></html>");
@@ -318,6 +320,9 @@ public final class Ihm extends JFrame {
                     } else {
                         JOptionPane.showMessageDialog(null, "EEPROM identifier doesn't match, reading aborted.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
+
+                    dataCalibration = null;
+                    dataDecoder = null;
                 }
 
             }
