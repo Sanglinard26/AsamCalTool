@@ -79,22 +79,24 @@ public final class ModPar implements A2lObject {
                     break;
                 default: // Cas de parametres optionels
                     Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+                    SecondaryKeywords keyWord;
                     for (int nPar = n; nPar < nbParams; nPar++) {
-                        if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-                            switch (parameters.get(nPar)) {
-                            case "ADDR_EPK":
+                        keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
+                        if (keys.contains(keyWord)) {
+                            switch (keyWord) {
+                            case ADDR_EPK:
                                 optionalsParameters.put(ADDR_EPK, parameters.get(nPar + 1));
                                 nPar += 1;
                                 break;
-                            case "ECU_CALIBRATION_OFFSET":
+                            case ECU_CALIBRATION_OFFSET:
                                 optionalsParameters.put(ECU_CALIBRATION_OFFSET, parameters.get(nPar + 1));
                                 nPar += 1;
                                 break;
-                            case "EPK":
+                            case EPK:
                                 optionalsParameters.put(EPK, parameters.get(nPar + 1));
                                 nPar += 1;
                                 break;
-                            case "SYSTEM_CONSTANT":
+                            case SYSTEM_CONSTANT:
                                 if (systemConstant.isEmpty()) {
                                     optionalsParameters.put(SYSTEM_CONSTANT, systemConstant);
                                 }

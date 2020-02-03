@@ -90,17 +90,17 @@ public final class Characteristic extends AdjustableObject {
         return type;
     }
 
-    public final int getDim() {
+    public final short getDim() {
         Object oByte = optionalsParameters.get(NUMBER);
 
         if (oByte == null) {
             oByte = optionalsParameters.get(MATRIX_DIM);
-            return (int) ((Object[]) oByte)[0];
+            return (short) ((Object[]) oByte)[0];
         }
-        return (int) oByte;
+        return (short) oByte;
     }
 
-    public final int[] getDimArray() {
+    public final short[] getDimArray() {
         Object numberParam = optionalsParameters.get(NUMBER);
         Object matrixDimParam = optionalsParameters.get(MATRIX_DIM);
 
@@ -109,16 +109,16 @@ public final class Characteristic extends AdjustableObject {
 
             switch (arrMatrixDim.length) {
             case 1:
-                return new int[] { (int) arrMatrixDim[0] };
+                return new short[] { (short) arrMatrixDim[0] };
             case 2:
-                return new int[] { (int) arrMatrixDim[0], (int) arrMatrixDim[1] };
+                return new short[] { (short) arrMatrixDim[0], (short) arrMatrixDim[1] };
             case 3:
-                return new int[] { (int) arrMatrixDim[0], (int) arrMatrixDim[1], (int) arrMatrixDim[2] };
+                return new short[] { (short) arrMatrixDim[0], (short) arrMatrixDim[1], (short) arrMatrixDim[2] };
             default:
-                return new int[] { 0 };
+                return new short[] { 0 };
             }
         }
-        return new int[] { (int) numberParam };
+        return new short[] { (short) numberParam };
     }
 
     public final boolean hasBitMask() {
@@ -191,7 +191,7 @@ public final class Characteristic extends AdjustableObject {
             }
         }
 
-        private static int getNbAxis(CharacteristicType type) {
+        private static byte getNbAxis(CharacteristicType type) {
             switch (type) {
             case ASCII:
                 return 0;
@@ -217,8 +217,8 @@ public final class Characteristic extends AdjustableObject {
     }
 
     @Override
-    public final void assignComputMethod(HashMap<String, CompuMethod> compuMethods) {
-        this.compuMethod = compuMethods.get(this.conversion);
+    public final void assignComputMethod(HashMap<Integer, CompuMethod> compuMethods) {
+        this.compuMethod = compuMethods.get(this.conversionId);
         if (axisDescrs != null) {
             for (AxisDescr axisDescr : axisDescrs) {
                 axisDescr.setCompuMethod(compuMethods.get(axisDescr.getConversion()));
@@ -285,38 +285,40 @@ public final class Characteristic extends AdjustableObject {
                 this.name = parameters.get(2);
                 this.longIdentifier = parameters.get(3);
                 this.type = CharacteristicType.getCharacteristicType(parameters.get(4));
-                this.adress = parameters.get(5);
-                this.deposit = parameters.get(6);
-                this.maxDiff = Double.parseDouble(parameters.get(7));
-                this.conversion = parameters.get(8);
+                this.adress = Long.parseLong(parameters.get(5).substring(2), 16);
+                this.depositId = parameters.get(6).hashCode();
+                this.maxDiff = Float.parseFloat(parameters.get(7));
+                this.conversionId = parameters.get(8).hashCode();
                 this.lowerLimit = Double.parseDouble(parameters.get(9));
                 this.upperLimit = Double.parseDouble(parameters.get(10));
 
                 int n = 11;
 
                 Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+                SecondaryKeywords keyWord;
                 for (int nPar = n; nPar < nbParams; nPar++) {
-                    if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-                        switch (parameters.get(nPar)) {
-                        case "ANNOTATION":
+                    keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
+                    if (keys.contains(keyWord)) {
+                        switch (keyWord) {
+                        case ANNOTATION:
                             n = nPar + 1;
                             do {
-                            } while (!parameters.get(++nPar).equals("ANNOTATION"));
+                            } while (!parameters.get(++nPar).equals(ANNOTATION.name()));
                             optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3)));
                             n = nPar + 1;
                             break;
-                        case "AXIS_DESCR":
+                        case AXIS_DESCR:
                             if (axisDescrs == null) {
                                 axisDescrs = new ArrayList<AxisDescr>(CharacteristicType.getNbAxis(type));
                                 optionalsParameters.put(AXIS_DESCR, axisDescrs);
                             }
                             n = nPar + 1;
                             do {
-                            } while (!parameters.get(++nPar).equals("AXIS_DESCR"));
+                            } while (!parameters.get(++nPar).equals(AXIS_DESCR.name()));
                             axisDescrs.add(new AxisDescr(parameters.subList(n, nPar - 1)));
                             n = nPar + 1;
                             break;
-                        case "BIT_MASK":
+                        case BIT_MASK:
                             String bitMask = parameters.get(nPar + 1);
                             if (bitMask.startsWith("0x")) {
                                 optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask.substring(2), 16));
@@ -325,25 +327,25 @@ public final class Characteristic extends AdjustableObject {
                             }
                             nPar += 1;
                             break;
-                        case "BYTE_ORDER":
+                        case BYTE_ORDER:
                             optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
                             nPar += 1;
                             break;
-                        case "DISPLAY_IDENTIFIER":
+                        case DISPLAY_IDENTIFIER:
                             optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1));
                             nPar += 1;
                             break;
-                        case "FORMAT":
+                        case FORMAT:
                             optionalsParameters.put(FORMAT, parameters.get(nPar + 1));
                             nPar += 1;
                             break;
-                        case "MATRIX_DIM":
-                            List<Integer> dim = new ArrayList<Integer>();
+                        case MATRIX_DIM:
+                            List<Short> dim = new ArrayList<Short>();
 
                             try {
                                 nPar += 1;
                                 do {
-                                    dim.add(Integer.parseInt(parameters.get(nPar)));
+                                    dim.add(Short.parseShort(parameters.get(nPar)));
                                     nPar += 1;
                                 } while (nPar < parameters.size());
                             } catch (NumberFormatException nfe) {
@@ -352,15 +354,15 @@ public final class Characteristic extends AdjustableObject {
                             optionalsParameters.put(MATRIX_DIM, dim.toArray());
                             dim.clear();
                             break;
-                        case "NUMBER":
-                            optionalsParameters.put(NUMBER, Integer.parseInt(parameters.get(nPar + 1)));
+                        case NUMBER:
+                            optionalsParameters.put(NUMBER, Short.parseShort(parameters.get(nPar + 1)));
                             nPar += 1;
                             break;
-                        case "PHYS_UNIT":
+                        case PHYS_UNIT:
                             optionalsParameters.put(PHYS_UNIT, parameters.get(nPar + 1));
                             nPar += 1;
                             break;
-                        case "READ_ONLY":
+                        case READ_ONLY:
                             optionalsParameters.put(READ_ONLY, true);
                             break;
                         default:
@@ -496,7 +498,7 @@ public final class Characteristic extends AdjustableObject {
         if ((obj != null) && (getClass() == obj.getClass())) {
             Characteristic characteristic = (Characteristic) obj;
 
-            boolean genericTest = conversion.equals(characteristic.conversion) && Double.compare(lowerLimit, characteristic.lowerLimit) == 0
+            boolean genericTest = conversionId == characteristic.conversionId && Double.compare(lowerLimit, characteristic.lowerLimit) == 0
                     && Double.compare(upperLimit, characteristic.upperLimit) == 0;
 
             return genericTest && getType().compareTo(characteristic.getType()) == 0 && Arrays.deepEquals(getUnit(), characteristic.getUnit())

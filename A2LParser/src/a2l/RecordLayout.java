@@ -307,14 +307,14 @@ public final class RecordLayout implements A2lObject, Comparable<RecordLayout> {
     public final class AxisRescaleX extends OptionalParameterRL {
 
         private final DataType dataType;
-        private final int maxNumberOfRescalePairs;
+        private final short maxNumberOfRescalePairs;
         private final IndexOrder indexOrder;
         private final AdressType adressType;
 
         public AxisRescaleX(List<String> parameters) {
             this.position = (byte) Integer.parseInt(parameters.get(0));
             this.dataType = DataType.getDataType(parameters.get(1));
-            this.maxNumberOfRescalePairs = Integer.parseInt(parameters.get(2));
+            this.maxNumberOfRescalePairs = (short) Integer.parseInt(parameters.get(2));
             this.indexOrder = IndexOrder.getIndexOrder(parameters.get(3));
             this.adressType = AdressType.getAdressType(parameters.get(4));
         }
@@ -323,7 +323,7 @@ public final class RecordLayout implements A2lObject, Comparable<RecordLayout> {
             return dataType;
         }
 
-        public final int getMaxNumberOfRescalePairs() {
+        public final short getMaxNumberOfRescalePairs() {
             return maxNumberOfRescalePairs;
         }
 

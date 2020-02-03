@@ -21,17 +21,17 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
 
     protected String name;
     protected String longIdentifier;
-    protected String adress;
-    protected String deposit;
-    protected double maxDiff;
-    protected String conversion;
+    protected long adress;
+    protected int depositId;
+    protected float maxDiff;
+    protected int conversionId;
     protected double lowerLimit;
     protected double upperLimit;
     protected boolean dataRead;
 
     protected boolean validParsing;
 
-    protected String functionRef;
+    protected int functionRefId;
 
     protected Values values;
 
@@ -46,11 +46,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     }
 
     public final long getAdress() {
-        return Long.parseLong(adress.substring(2), 16);
-    }
-
-    public final String getConversion() {
-        return conversion;
+        return adress;
     }
 
     public final CompuMethod getCompuMethod() {
@@ -61,12 +57,12 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         return recordLayout;
     }
 
-    public final String getFunction() {
-        return this.functionRef;
+    public final int getFunction() {
+        return this.functionRefId;
     }
 
-    public final void assignRecordLayout(HashMap<String, RecordLayout> recordLayouts) {
-        this.recordLayout = recordLayouts.get(this.deposit);
+    public final void assignRecordLayout(HashMap<Integer, RecordLayout> recordLayouts) {
+        this.recordLayout = recordLayouts.get(this.depositId);
     }
 
     public final byte getNbDecimal() {
@@ -173,10 +169,10 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     }
 
     public final void setFunction(String function) {
-        this.functionRef = function == null ? "" : function;
+        this.functionRefId = function == null ? 0 : function.hashCode();
     }
 
-    public abstract void assignComputMethod(HashMap<String, CompuMethod> compuMethods);
+    public abstract void assignComputMethod(HashMap<Integer, CompuMethod> compuMethods);
 
     public abstract String[] getUnit();
 
@@ -187,7 +183,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
 
         sb.append("<ul><li><b>Name: </b>" + name + "\n");
         sb.append("<li><b>Long identifier: </b>" + longIdentifier + "\n");
-        sb.append("<li><b>Function: </b><a href=" + functionRef + ">" + functionRef + "</a>\n");
+        sb.append("<li><b>Function: </b><a href=" + functionRefId + ">" + functionRefId + "</a>\n");
         sb.append("<li><b>Unit: </b>");
         for (String unit : getUnit()) {
             sb.append("[" + unit + "]");
@@ -200,9 +196,9 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         sb.append("<li><b>Lower limit: </b>" + lowerLimit + "\n");
         sb.append("<li><b>Upper limit: </b>" + upperLimit + "\n");
         sb.append("<li><b>Max diff: </b>" + maxDiff + "\n");
-        sb.append("<li><b>Adress: </b>" + adress + "\n");
-        sb.append("<li><b>Deposit: </b><a href=" + deposit + ">" + deposit + "</a>\n");
-        sb.append("<li><b>Conversion: </b><a href=" + conversion + ">" + conversion + "</a>\n");
+        sb.append("<li><b>Adress: </b>" + "0x" + Long.toHexString(adress) + "\n");
+        sb.append("<li><b>Deposit: </b><a href=" + depositId + ">" + depositId + "</a>\n");
+        sb.append("<li><b>Conversion: </b><a href=" + conversionId + ">" + conversionId + "</a>\n");
         sb.append("<li><b>Dimensions [X x Y]: </b>" + getDimension() + "\n");
 
         if (this instanceof Characteristic) {

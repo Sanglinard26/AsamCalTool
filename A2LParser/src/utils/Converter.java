@@ -51,7 +51,7 @@ public final class Converter {
 
         byte[] byteValues;
         final double[] hexValues = new double[nbValue];
-        final int nbByte = dataType.getNbByte();
+        final byte nbByte = dataType.getNbByte();
 
         final ByteBuffer bb = ByteBuffer.allocateDirect(nbByte);
         bb.order(byteOrder);

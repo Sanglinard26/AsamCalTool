@@ -252,24 +252,26 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
             int n = 7;
 
             Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+            SecondaryKeywords keyWord;
             for (int nPar = n; nPar < nbParams; nPar++) {
-                if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-                    switch (parameters.get(nPar)) {
-                    case "COEFFS": // 6 coeffs
+                keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
+                if (keys.contains(keyWord)) {
+                    switch (keyWord) {
+                    case COEFFS: // 6 coeffs
                         optionalsParameters.put(COEFFS, new Coeffs(parameters.subList(nPar + 1, nPar + 7)));
                         nPar += 6;
                         break;
-                    case "COEFFS_LINEAR": // 2 coeffs
+                    case COEFFS_LINEAR: // 2 coeffs
                         optionalsParameters.put(COEFFS_LINEAR, new CoeffsLinear(parameters.subList(nPar + 1, nPar + 3)));
                         nPar += 2;
                         break;
-                    case "COMPU_TAB_REF":
+                    case COMPU_TAB_REF:
                         optionalsParameters.put(COMPU_TAB_REF, parameters.get(nPar + 1));
                         nPar += 1;
                         break;
-                    case "FORMULA":
+                    case FORMULA:
                         break;
-                    case "REF_UNIT":
+                    case REF_UNIT:
                         break;
 
                     default:

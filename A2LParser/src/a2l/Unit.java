@@ -54,18 +54,20 @@ public final class Unit implements A2lObject, Comparable<Unit> {
             int n = 6;
 
             Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+            SecondaryKeywords keyWord;
             for (int nPar = n; nPar < nbParams; nPar++) {
-                if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-                    switch (parameters.get(nPar)) {
-                    case "REF_UNIT":
+                keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
+                if (keys.contains(keyWord)) {
+                    switch (keyWord) {
+                    case REF_UNIT:
                         optionalsParameters.put(REF_UNIT, parameters.get(nPar + 1));
                         nPar += 1;
                         break;
-                    case "SI_EXPONENTS":
+                    case SI_EXPONENTS:
                         optionalsParameters.put(SI_EXPONENTS, new SiExponents(parameters.subList(nPar + 1, nPar + 8)));
                         nPar += 7;
                         break;
-                    case "UNIT_CONVERSION":
+                    case UNIT_CONVERSION:
                         optionalsParameters.put(UNIT_CONVERSION, new UnitConversion(parameters.subList(nPar + 1, nPar + 3)));
                         nPar += 2;
                         break;
@@ -98,28 +100,28 @@ public final class Unit implements A2lObject, Comparable<Unit> {
 
     private final class SiExponents {
         @SuppressWarnings("unused")
-        private final int length;
+        private final byte length;
         @SuppressWarnings("unused")
-        private final int mass;
+        private final byte mass;
         @SuppressWarnings("unused")
-        private final int time;
+        private final byte time;
         @SuppressWarnings("unused")
-        private final int electricCurrent;
+        private final byte electricCurrent;
         @SuppressWarnings("unused")
-        private final int temperature;
+        private final byte temperature;
         @SuppressWarnings("unused")
-        private final int amountOfSubstance;
+        private final byte amountOfSubstance;
         @SuppressWarnings("unused")
-        private final int luminousIntensity;
+        private final byte luminousIntensity;
 
         public SiExponents(List<String> params) {
-            this.length = Integer.parseInt(params.get(0));
-            this.mass = Integer.parseInt(params.get(1));
-            this.time = Integer.parseInt(params.get(2));
-            this.electricCurrent = Integer.parseInt(params.get(3));
-            this.temperature = Integer.parseInt(params.get(4));
-            this.amountOfSubstance = Integer.parseInt(params.get(5));
-            this.luminousIntensity = Integer.parseInt(params.get(6));
+            this.length = Byte.parseByte(params.get(0));
+            this.mass = Byte.parseByte(params.get(1));
+            this.time = Byte.parseByte(params.get(2));
+            this.electricCurrent = Byte.parseByte(params.get(3));
+            this.temperature = Byte.parseByte(params.get(4));
+            this.amountOfSubstance = Byte.parseByte(params.get(5));
+            this.luminousIntensity = Byte.parseByte(params.get(6));
         }
     }
 

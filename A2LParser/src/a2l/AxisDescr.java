@@ -26,7 +26,7 @@ public final class AxisDescr {
     private Attribute attribute;
     @SuppressWarnings("unused")
     private String inputQuantity;
-    private String conversion;
+    private int conversionId;
     private short maxAxisPoints;
     @SuppressWarnings("unused")
     private float lowerLimit;
@@ -84,8 +84,8 @@ public final class AxisDescr {
         return curveAxis;
     }
 
-    public final String getConversion() {
-        return conversion;
+    public final int getConversion() {
+        return conversionId;
     }
 
     public final CompuMethod getCompuMethod() {
@@ -154,7 +154,7 @@ public final class AxisDescr {
             // NPE si par exemple "%8"
             int idxPoint = displayFormat.indexOf(".");
             if (idxPoint > -1) {
-                return (byte) Integer.parseInt(displayFormat.substring(idxPoint + 1, displayFormat.length()));
+                return Byte.parseByte(displayFormat.substring(idxPoint + 1, displayFormat.length()));
             }
         }
         return 0;
@@ -194,7 +194,7 @@ public final class AxisDescr {
 
             this.attribute = Attribute.getAttribute(parameters.get(0));
             this.inputQuantity = parameters.get(1);
-            this.conversion = parameters.get(2);
+            this.conversionId = parameters.get(2).hashCode();
             this.maxAxisPoints = (short) Integer.parseInt(parameters.get(3));
             this.lowerLimit = Float.parseFloat(parameters.get(4));
             this.upperLimit = Float.parseFloat(parameters.get(5));

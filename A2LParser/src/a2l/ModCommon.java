@@ -110,37 +110,39 @@ public final class ModCommon implements A2lObject {
                     break;
                 default: // Cas de parametres optionels
                     Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+                    SecondaryKeywords keyWord;
                     for (int nPar = n; nPar < nbParams; nPar++) {
-                        if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-                            switch (parameters.get(nPar)) {
-                            case "ALIGNMENT_BYTE":
+                        keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
+                        if (keys.contains(keyWord)) {
+                            switch (keyWord) {
+                            case ALIGNMENT_BYTE:
                                 optionalsParameters.put(ALIGNMENT_BYTE, Integer.parseInt(parameters.get(nPar + 1)));
                                 break;
-                            case "ALIGNMENT_FLOAT16_IEEE":
+                            case ALIGNMENT_FLOAT16_IEEE:
                                 optionalsParameters.put(ALIGNMENT_FLOAT16_IEEE, Integer.parseInt(parameters.get(nPar + 1)));
                                 break;
-                            case "ALIGNMENT_FLOAT32_IEEE":
+                            case ALIGNMENT_FLOAT32_IEEE:
                                 optionalsParameters.put(ALIGNMENT_FLOAT32_IEEE, Integer.parseInt(parameters.get(nPar + 1)));
                                 break;
-                            case "ALIGNMENT_FLOAT64_IEEE":
+                            case ALIGNMENT_FLOAT64_IEEE:
                                 optionalsParameters.put(ALIGNMENT_FLOAT64_IEEE, Integer.parseInt(parameters.get(nPar + 1)));
                                 break;
-                            case "ALIGNMENT_INT64":
+                            case ALIGNMENT_INT64:
                                 optionalsParameters.put(ALIGNMENT_INT64, Integer.parseInt(parameters.get(nPar + 1)));
                                 break;
-                            case "ALIGNMENT_LONG":
+                            case ALIGNMENT_LONG:
                                 optionalsParameters.put(ALIGNMENT_LONG, Integer.parseInt(parameters.get(nPar + 1)));
                                 break;
-                            case "ALIGNMENT_WORD":
+                            case ALIGNMENT_WORD:
                                 optionalsParameters.put(ALIGNMENT_WORD, Integer.parseInt(parameters.get(nPar + 1)));
                                 break;
-                            case "BYTE_ORDER":
+                            case BYTE_ORDER:
                                 optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
                                 break;
-                            case "DATA_SIZE":
+                            case DATA_SIZE:
                                 optionalsParameters.put(DATA_SIZE, Integer.parseInt(parameters.get(nPar + 1)));
                                 break;
-                            case "DEPOSIT":
+                            case DEPOSIT:
                                 optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));
                                 break;
                             default:

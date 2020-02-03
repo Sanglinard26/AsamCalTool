@@ -8,14 +8,14 @@ public enum DataType {
     UBYTE(1), SBYTE(1), UWORD(2), SWORD(2), ULONG(4), SLONG(4), FLOAT16_IEEE(2), FLOAT32_IEEE(4), FLOAT64_IEEE(8), A_UINT64(8), A_INT64(8), UNKNOWN(
             0);
 
-    private int nbByte;
+    private byte nbByte;
 
     // Constructeur
     DataType(int nbByte) {
-        this.nbByte = nbByte;
+        this.nbByte = (byte) nbByte;
     }
 
-    public final int getNbByte() {
+    public final byte getNbByte() {
         return nbByte;
     }
 

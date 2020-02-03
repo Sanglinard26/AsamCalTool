@@ -85,8 +85,8 @@ public final class AxisPts extends AdjustableObject {
     }
 
     @Override
-    public final void assignComputMethod(HashMap<String, CompuMethod> compuMethods) {
-        this.compuMethod = compuMethods.get(this.conversion);
+    public final void assignComputMethod(HashMap<Integer, CompuMethod> compuMethods) {
+        this.compuMethod = compuMethods.get(this.conversionId);
     }
 
     public final void assignCharacteristic(Characteristic characteristic) {
@@ -111,11 +111,11 @@ public final class AxisPts extends AdjustableObject {
 
             this.name = parameters.get(2);
             this.longIdentifier = parameters.get(3);
-            this.adress = parameters.get(4);
+            this.adress = Long.parseLong(parameters.get(4).substring(2), 16);
             this.inputQuantity = parameters.get(5);
-            this.deposit = parameters.get(6);
-            this.maxDiff = Double.parseDouble(parameters.get(7));
-            this.conversion = parameters.get(8);
+            this.depositId = parameters.get(6).hashCode();
+            this.maxDiff = Float.parseFloat(parameters.get(7));
+            this.conversionId = parameters.get(8).hashCode();
             this.maxAxisPoints = (short) Integer.parseInt(parameters.get(9));
             this.lowerLimit = Double.parseDouble(parameters.get(10));
             this.upperLimit = Double.parseDouble(parameters.get(11));
@@ -123,35 +123,37 @@ public final class AxisPts extends AdjustableObject {
             int n = 12;
 
             Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+            SecondaryKeywords keyWord;
             for (int nPar = n; nPar < nbParams; nPar++) {
-                if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-                    switch (parameters.get(nPar)) {
-                    case "ANNOTATION":
+                keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
+                if (keys.contains(keyWord)) {
+                    switch (keyWord) {
+                    case ANNOTATION:
                         n = nPar + 1;
                         do {
-                        } while (!parameters.get(++nPar).equals("ANNOTATION"));
+                        } while (!parameters.get(++nPar).equals(ANNOTATION.name()));
                         optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3)));
                         n = nPar + 1;
                         break;
-                    case "BYTE_ORDER":
+                    case BYTE_ORDER:
                         optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
                         nPar += 1;
                         break;
-                    case "DEPOSIT":
+                    case DEPOSIT:
                         optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));
                         nPar += 1;
                         break;
-                    case "DISPLAY_IDENTIFIER":
+                    case DISPLAY_IDENTIFIER:
                         optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1));
                         nPar += 1;
                         break;
-                    case "FORMAT":
+                    case FORMAT:
                         optionalsParameters.put(FORMAT, parameters.get(nPar + 1));
                         nPar += 1;
                         break;
-                    case "PHYS_UNIT":
+                    case PHYS_UNIT:
                         break;
-                    case "READ_ONLY":
+                    case READ_ONLY:
                         optionalsParameters.put(READ_ONLY, true);
                         break;
                     default:
@@ -214,7 +216,7 @@ public final class AxisPts extends AdjustableObject {
         if ((obj != null) && (getClass() == obj.getClass())) {
             AxisPts axisPts = (AxisPts) obj;
 
-            boolean genericTest = conversion.equals(axisPts.conversion) && Double.compare(lowerLimit, axisPts.lowerLimit) == 0
+            boolean genericTest = conversionId == axisPts.conversionId && Double.compare(lowerLimit, axisPts.lowerLimit) == 0
                     && Double.compare(upperLimit, axisPts.upperLimit) == 0;
 
             return genericTest && maxAxisPoints == axisPts.maxAxisPoints && Arrays.deepEquals(getUnit(), axisPts.getUnit())

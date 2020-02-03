@@ -109,10 +109,12 @@ public final class Function implements A2lObject, Comparable<Function> {
             int n = 4;
 
             Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+            SecondaryKeywords keyWord;
             for (int nPar = n; nPar < nbParams; nPar++) {
-                if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-                    switch (parameters.get(nPar)) {
-                    case "DEF_CHARACTERISTIC":
+                keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
+                if (keys.contains(keyWord)) {
+                    switch (keyWord) {
+                    case DEF_CHARACTERISTIC:
                         Map<String, String> defCharacteristic = new HashMap<String, String>();
                         optionalsParameters.put(DEF_CHARACTERISTIC, defCharacteristic);
                         nPar++;
@@ -122,11 +124,11 @@ public final class Function implements A2lObject, Comparable<Function> {
                         } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
                         nPar++;
                         break;
-                    case "FUNCTION_VERSION":
+                    case FUNCTION_VERSION:
                         optionalsParameters.put(FUNCTION_VERSION, parameters.get(++nPar));
                         nPar++;
                         break;
-                    case "IN_MEASUREMENT":
+                    case IN_MEASUREMENT:
                         Set<String> inMeasurement = new HashSet<String>();
                         optionalsParameters.put(IN_MEASUREMENT, inMeasurement);
 
@@ -137,7 +139,7 @@ public final class Function implements A2lObject, Comparable<Function> {
                         } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
                         nPar++;
                         break;
-                    case "LOC_MEASUREMENT":
+                    case LOC_MEASUREMENT:
                         Set<String> locMeasurement = new HashSet<String>();
                         optionalsParameters.put(LOC_MEASUREMENT, locMeasurement);
                         nPar++;
@@ -147,7 +149,7 @@ public final class Function implements A2lObject, Comparable<Function> {
                         } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
                         nPar++;
                         break;
-                    case "OUT_MEASUREMENT":
+                    case OUT_MEASUREMENT:
                         Set<String> outMeasurement = new HashSet<String>();
                         optionalsParameters.put(OUT_MEASUREMENT, outMeasurement);
 
@@ -158,7 +160,7 @@ public final class Function implements A2lObject, Comparable<Function> {
                         } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
                         nPar++;
                         break;
-                    case "SUB_FUNCTION":
+                    case SUB_FUNCTION:
                         Set<String> subFunction = new HashSet<String>();
                         optionalsParameters.put(SUB_FUNCTION, subFunction);
                         nPar++;

@@ -30,11 +30,11 @@ public final class A2l {
     private ModPar modPar;
     private ModCommon modCommon;
     private HashMap<String, AdjustableObject> adjustableObjects;
-    private HashMap<String, CompuMethod> compuMethods;
+    private HashMap<Integer, CompuMethod> compuMethods;
     private HashMap<String, ConversionTable> conversionTables;
     private HashMap<String, Measurement> measurements;
-    private HashMap<String, RecordLayout> recordLayouts;
-    private HashMap<String, Function> functions;
+    private HashMap<Integer, RecordLayout> recordLayouts;
+    private HashMap<Integer, Function> functions;
     private HashMap<String, Unit> units;
 
     private static int numLine;
@@ -46,11 +46,11 @@ public final class A2l {
     public A2l() {
 
         adjustableObjects = new HashMap<String, AdjustableObject>();
-        compuMethods = new HashMap<String, CompuMethod>();
+        compuMethods = new HashMap<Integer, CompuMethod>();
         conversionTables = new HashMap<String, ConversionTable>();
         measurements = new HashMap<String, Measurement>();
-        recordLayouts = new HashMap<String, RecordLayout>();
-        functions = new HashMap<String, Function>();
+        recordLayouts = new HashMap<Integer, RecordLayout>();
+        functions = new HashMap<Integer, Function>();
         units = new HashMap<String, Unit>();
 
         listeners = new EventListenerList();
@@ -198,7 +198,7 @@ public final class A2l {
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             CompuMethod compuMethod = new CompuMethod(objectParameters, beginLine, endLine);
-                            compuMethods.put(compuMethod.toString(), compuMethod);
+                            compuMethods.put(compuMethod.toString().hashCode(), compuMethod);
                             break;
                         case "COMPU_TAB":
                             beginLine = numLine;
@@ -233,7 +233,7 @@ public final class A2l {
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             RecordLayout recordLayout = new RecordLayout(objectParameters, beginLine, endLine);
-                            recordLayouts.put(recordLayout.toString(), recordLayout);
+                            recordLayouts.put(recordLayout.toString().hashCode(), recordLayout);
                             break;
                         case "FUNCTION":
                             beginLine = numLine;
@@ -243,7 +243,7 @@ public final class A2l {
                             if (function.getDefCharacteristic() != null) {
                                 mergeDefCharacteristic.putAll(function.getDefCharacteristic());
                             }
-                            functions.put(function.toString(), function);
+                            functions.put(function.toString().hashCode(), function);
                             break;
                         case "UNIT":
                             beginLine = numLine;
@@ -377,7 +377,7 @@ public final class A2l {
             adjustableObject.setFunction(defCharacteristic.get(adjustableObject.toString()));
         }
 
-        for (Entry<String, CompuMethod> entry : compuMethods.entrySet()) {
+        for (Entry<Integer, CompuMethod> entry : compuMethods.entrySet()) {
             CompuMethod compuMethod = entry.getValue();
             if (compuMethod.hasCompuTabRef()) {
                 compuMethod.assignConversionTable(conversionTables);
@@ -402,11 +402,11 @@ public final class A2l {
 
         final Vector<AdjustableObject> listByFunction = new Vector<AdjustableObject>();
 
-        String functionRef;
+        int functionRef;
 
         for (Entry<String, AdjustableObject> entry : adjustableObjects.entrySet()) {
             functionRef = entry.getValue().getFunction();
-            if (functionRef != null && functionRef.equals(function)) {
+            if (functionRef != 0 && functionRef == function.hashCode()) {
                 listByFunction.add(entry.getValue());
             }
         }
