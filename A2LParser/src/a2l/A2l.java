@@ -31,8 +31,8 @@ public final class A2l {
     private ModCommon modCommon;
     private HashMap<String, AdjustableObject> adjustableObjects;
     private HashMap<Integer, CompuMethod> compuMethods;
-    private HashMap<String, ConversionTable> conversionTables;
-    private HashMap<String, Measurement> measurements;
+    private HashMap<Integer, ConversionTable> conversionTables;
+    private HashMap<Integer, Measurement> measurements;
     private HashMap<Integer, RecordLayout> recordLayouts;
     private HashMap<Integer, Function> functions;
     private HashMap<String, Unit> units;
@@ -47,8 +47,8 @@ public final class A2l {
 
         adjustableObjects = new HashMap<String, AdjustableObject>();
         compuMethods = new HashMap<Integer, CompuMethod>();
-        conversionTables = new HashMap<String, ConversionTable>();
-        measurements = new HashMap<String, Measurement>();
+        conversionTables = new HashMap<Integer, ConversionTable>();
+        measurements = new HashMap<Integer, Measurement>();
         recordLayouts = new HashMap<Integer, RecordLayout>();
         functions = new HashMap<Integer, Function>();
         units = new HashMap<String, Unit>();
@@ -205,28 +205,28 @@ public final class A2l {
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             CompuTab compuTab = new CompuTab(objectParameters, beginLine, endLine);
-                            conversionTables.put(compuTab.toString(), compuTab);
+                            conversionTables.put(compuTab.toString().hashCode(), compuTab);
                             break;
                         case "COMPU_VTAB":
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             CompuVTab compuVTab = new CompuVTab(objectParameters, beginLine, endLine);
-                            conversionTables.put(compuVTab.toString(), compuVTab);
+                            conversionTables.put(compuVTab.toString().hashCode(), compuVTab);
                             break;
                         case "COMPU_VTAB_RANGE":
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             CompuVTabRange compuVTabRange = new CompuVTabRange(objectParameters, beginLine, endLine);
-                            conversionTables.put(compuVTabRange.toString(), compuVTabRange);
+                            conversionTables.put(compuVTabRange.toString().hashCode(), compuVTabRange);
                             break;
                         case "MEASUREMENT":
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             Measurement measurement = new Measurement(objectParameters, beginLine, endLine);
-                            measurements.put(measurement.toString(), measurement);
+                            measurements.put(measurement.toString().hashCode(), measurement);
                             break;
                         case "RECORD_LAYOUT":
                             beginLine = numLine;
@@ -384,7 +384,7 @@ public final class A2l {
             }
         }
 
-        for (Entry<String, Measurement> entry : measurements.entrySet()) {
+        for (Entry<Integer, Measurement> entry : measurements.entrySet()) {
             Measurement measurement = entry.getValue();
             measurement.assignComputMethod(compuMethods);
         }
@@ -402,11 +402,11 @@ public final class A2l {
 
         final Vector<AdjustableObject> listByFunction = new Vector<AdjustableObject>();
 
-        int functionRef;
+        String functionRef;
 
         for (Entry<String, AdjustableObject> entry : adjustableObjects.entrySet()) {
             functionRef = entry.getValue().getFunction();
-            if (functionRef != 0 && functionRef == function.hashCode()) {
+            if (functionRef != null && functionRef.equals(function)) {
                 listByFunction.add(entry.getValue());
             }
         }

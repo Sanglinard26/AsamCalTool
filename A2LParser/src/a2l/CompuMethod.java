@@ -52,9 +52,9 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
         return this.name;
     }
 
-    public final void assignConversionTable(HashMap<String, ConversionTable> conversionTables) {
+    public final void assignConversionTable(HashMap<Integer, ConversionTable> conversionTables) {
 
-        String compuTabRef = (String) this.optionalsParameters.get(COMPU_TAB_REF);
+        int compuTabRef = (int) this.optionalsParameters.get(COMPU_TAB_REF);
         this.optionalsParameters.put(COMPU_TAB_REF, conversionTables.get(compuTabRef));
     }
 
@@ -266,7 +266,7 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
                         nPar += 2;
                         break;
                     case COMPU_TAB_REF:
-                        optionalsParameters.put(COMPU_TAB_REF, parameters.get(nPar + 1));
+                        optionalsParameters.put(COMPU_TAB_REF, parameters.get(nPar + 1).hashCode());
                         nPar += 1;
                         break;
                     case FORMULA:

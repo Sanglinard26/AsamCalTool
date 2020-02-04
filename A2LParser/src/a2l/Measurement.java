@@ -29,9 +29,9 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
     private String name;
     private String longIdentifier;
     private String dataType;
-    private String conversion;
+    private int conversionId;
     @SuppressWarnings("unused")
-    private int resolution;
+    private byte resolution;
     @SuppressWarnings("unused")
     private float accuracy;
     private float lowerLimit;
@@ -83,8 +83,8 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
                 this.name = parameters.get(2);
                 this.longIdentifier = parameters.get(3);
                 this.dataType = parameters.get(4);
-                this.conversion = parameters.get(5);
-                this.resolution = Integer.parseInt(parameters.get(6));
+                this.conversionId = parameters.get(5).hashCode();
+                this.resolution = (byte) Integer.parseInt(parameters.get(6));
                 this.accuracy = Float.parseFloat(parameters.get(7));
                 this.lowerLimit = Float.parseFloat(parameters.get(8));
                 if (parameters.get(9).startsWith("0x")) { // Test pour A2L AW
@@ -104,7 +104,7 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
                         case ANNOTATION:
                             n = nPar + 1;
                             do {
-                            } while (!parameters.get(++nPar).equals("ANNOTATION"));
+                            } while (!parameters.get(++nPar).equals(ANNOTATION.name()));
                             optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3)));
                             n = nPar + 1;
                             break;
@@ -130,12 +130,12 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
                             nPar += 1;
                             break;
                         case MATRIX_DIM:
-                            List<Integer> dim = new ArrayList<Integer>();
+                            List<Short> dim = new ArrayList<Short>();
 
                             try {
                                 nPar += 1;
                                 do {
-                                    dim.add(Integer.parseInt(parameters.get(nPar)));
+                                    dim.add((short) Integer.parseInt(parameters.get(nPar)));
                                     nPar += 1;
                                 } while (nPar < parameters.size());
                             } catch (NumberFormatException nfe) {
@@ -164,13 +164,13 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
     }
 
     public final void assignComputMethod(HashMap<Integer, CompuMethod> compuMethods) {
-        this.compuMethod = compuMethods.get(this.conversion);
+        this.compuMethod = compuMethods.get(this.conversionId);
     }
 
     public final String getUnit() {
         Object oPhysUnit = optionalsParameters.get(PHYS_UNIT);
 
-        return (oPhysUnit != null && "NO_COMPU_METHOD".equals(conversion)) ? oPhysUnit.toString() : compuMethod.getUnit();
+        return (oPhysUnit != null && "NO_COMPU_METHOD".equals(conversionId)) ? oPhysUnit.toString() : compuMethod.getUnit();
     }
 
     @Override
@@ -180,7 +180,7 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
         sb.append("<ul><li><b>Name: </b>" + name + "\n");
         sb.append("<li><b>Long identifier: </b>" + longIdentifier + "\n");
         sb.append("<li><b>Data type: </b>" + dataType + "\n");
-        sb.append("<li><b>Conversion: </b><a href=" + conversion + ">" + conversion + "</a>\n");
+        sb.append("<li><b>Conversion: </b><a href=" + compuMethod.toString() + ">" + compuMethod.toString() + "</a>\n");
         sb.append("<li><b>Unit: </b>" + "[" + getUnit() + "]\n");
         sb.append("<li><b>Lower limit: </b>" + lowerLimit + "\n");
         sb.append("<li><b>Upper limit: </b>" + upperLimit + "\n");

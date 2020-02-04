@@ -12,7 +12,7 @@ import java.util.Set;
 
 public final class CompuVTabRange extends ConversionTable {
 
-    private int numberValueTriples;
+    private short numberValueTriples;
     private Map<Range, String> valueTriples;
     private String defaultValue; // DEFAULT_VALUE
 
@@ -48,7 +48,7 @@ public final class CompuVTabRange extends ConversionTable {
 
             this.name = parameters.get(2);
             this.longIdentifier = parameters.get(3);
-            this.numberValueTriples = Integer.parseInt(parameters.get(4));
+            this.numberValueTriples = (short) Integer.parseInt(parameters.get(4));
 
             this.valueTriples = new LinkedHashMap<Range, String>();
 

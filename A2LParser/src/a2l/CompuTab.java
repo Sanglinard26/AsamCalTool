@@ -12,7 +12,7 @@ import constante.ConversionType;
 
 public final class CompuTab extends ConversionTable {
 
-    private int numberValuePairs;
+    private short numberValuePairs;
     private Map<Float, Float> valuePairs;
     private String defaultValue; // DEFAULT_VALUE
     private float defaultValueNumeric = Float.NaN; // DEFAULT_VALUE_NUMERIC
@@ -23,7 +23,7 @@ public final class CompuTab extends ConversionTable {
 
     }
 
-    public final int getNumberValuePairs() {
+    public final short getNumberValuePairs() {
         return numberValuePairs;
     }
 
@@ -46,7 +46,7 @@ public final class CompuTab extends ConversionTable {
             this.name = parameters.get(2);
             this.longIdentifier = parameters.get(3);
             this.conversionType = ConversionType.getConversionType(parameters.get(4));
-            this.numberValuePairs = Integer.parseInt(parameters.get(5));
+            this.numberValuePairs = (short) Integer.parseInt(parameters.get(5));
 
             this.valuePairs = new LinkedHashMap<Float, Float>();
 

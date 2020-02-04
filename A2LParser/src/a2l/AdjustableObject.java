@@ -31,7 +31,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
 
     protected boolean validParsing;
 
-    protected int functionRefId;
+    protected String functionRef;
 
     protected Values values;
 
@@ -57,8 +57,8 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         return recordLayout;
     }
 
-    public final int getFunction() {
-        return this.functionRefId;
+    public final String getFunction() {
+        return this.functionRef;
     }
 
     public final void assignRecordLayout(HashMap<Integer, RecordLayout> recordLayouts) {
@@ -169,7 +169,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     }
 
     public final void setFunction(String function) {
-        this.functionRefId = function == null ? 0 : function.hashCode();
+        this.functionRef = function == null ? "" : function;
     }
 
     public abstract void assignComputMethod(HashMap<Integer, CompuMethod> compuMethods);
@@ -183,7 +183,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
 
         sb.append("<ul><li><b>Name: </b>" + name + "\n");
         sb.append("<li><b>Long identifier: </b>" + longIdentifier + "\n");
-        sb.append("<li><b>Function: </b><a href=" + functionRefId + ">" + functionRefId + "</a>\n");
+        sb.append("<li><b>Function: </b><a href=" + functionRef + ">" + functionRef + "</a>\n");
         sb.append("<li><b>Unit: </b>");
         for (String unit : getUnit()) {
             sb.append("[" + unit + "]");
@@ -197,8 +197,8 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         sb.append("<li><b>Upper limit: </b>" + upperLimit + "\n");
         sb.append("<li><b>Max diff: </b>" + maxDiff + "\n");
         sb.append("<li><b>Adress: </b>" + "0x" + Long.toHexString(adress) + "\n");
-        sb.append("<li><b>Deposit: </b><a href=" + depositId + ">" + depositId + "</a>\n");
-        sb.append("<li><b>Conversion: </b><a href=" + conversionId + ">" + conversionId + "</a>\n");
+        sb.append("<li><b>Deposit: </b><a href=" + recordLayout.toString() + ">" + recordLayout.toString() + "</a>\n");
+        sb.append("<li><b>Conversion: </b><a href=" + compuMethod.toString() + ">" + compuMethod.toString() + "</a>\n");
         sb.append("<li><b>Dimensions [X x Y]: </b>" + getDimension() + "\n");
 
         if (this instanceof Characteristic) {
