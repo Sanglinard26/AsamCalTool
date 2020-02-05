@@ -169,7 +169,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     }
 
     public final void setFunction(String function) {
-        this.functionRef = function == null ? "" : function;
+        this.functionRef = function == null ? "" : function.intern();
     }
 
     public abstract void assignComputMethod(HashMap<Integer, CompuMethod> compuMethods);

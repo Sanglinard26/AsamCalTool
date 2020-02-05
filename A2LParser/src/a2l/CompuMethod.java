@@ -53,7 +53,9 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
     }
 
     public final void assignConversionTable(HashMap<Integer, ConversionTable> conversionTables) {
-
+        if (!hasCompuTabRef()) {
+            return;
+        }
         int compuTabRef = (int) this.optionalsParameters.get(COMPU_TAB_REF);
         this.optionalsParameters.put(COMPU_TAB_REF, conversionTables.get(compuTabRef));
     }

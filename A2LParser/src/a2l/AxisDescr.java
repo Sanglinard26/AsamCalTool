@@ -202,47 +202,49 @@ public final class AxisDescr {
             int n = 6;
 
             Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+            SecondaryKeywords keyWord;
             for (int nPar = n; nPar < nbParams; nPar++) {
-                if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-                    switch (parameters.get(nPar)) {
-                    case "AXIS_PTS_REF":
+                keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
+                if (keys.contains(keyWord)) {
+                    switch (keyWord) {
+                    case AXIS_PTS_REF:
                         optionalsParameters.put(AXIS_PTS_REF, parameters.get(nPar + 1));
                         nPar += 1;
                         break;
-                    case "BYTE_ORDER":
+                    case BYTE_ORDER:
                         optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
                         nPar += 1;
                         break;
-                    case "CURVE_AXIS_REF":
+                    case CURVE_AXIS_REF:
                         optionalsParameters.put(CURVE_AXIS_REF, parameters.get(nPar + 1));
                         nPar += 1;
                         break;
-                    case "DEPOSIT":
+                    case DEPOSIT:
                         optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));
                         nPar += 1;
                         break;
-                    case "FIX_AXIS_PAR":
+                    case FIX_AXIS_PAR:
                         n = nPar + 1;
                         optionalsParameters.put(FIX_AXIS_PAR, new FixAxisPar(parameters.subList(n, n + 3)));
                         nPar += 3;
                         break;
-                    case "FIX_AXIS_PAR_DIST":
+                    case FIX_AXIS_PAR_DIST:
                         n = nPar + 1;
                         optionalsParameters.put(FIX_AXIS_PAR_DIST, new FixAxisParDist(parameters.subList(n, n + 3)));
                         nPar += 3;
                         break;
-                    case "FIX_AXIS_PAR_LIST":
+                    case FIX_AXIS_PAR_LIST:
                         n = nPar + 1;
                         do {
-                        } while (!parameters.get(++nPar).equals("FIX_AXIS_PAR_LIST"));
+                        } while (!parameters.get(++nPar).equals(FIX_AXIS_PAR_LIST.name()));
                         optionalsParameters.put(FIX_AXIS_PAR_LIST, new FixAxisParList(parameters.subList(n, nPar - 1)));
                         n = nPar + 1;
                         break;
-                    case "FORMAT":
+                    case FORMAT:
                         optionalsParameters.put(FORMAT, parameters.get(nPar + 1));
                         nPar += 1;
                         break;
-                    case "PHYS_UNIT":
+                    case PHYS_UNIT:
                         optionalsParameters.put(PHYS_UNIT, parameters.get(nPar + 1));
                         nPar += 1;
                         break;

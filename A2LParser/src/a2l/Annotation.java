@@ -37,16 +37,18 @@ public final class Annotation {
         final int nbParams = parameters.size();
 
         Set<SecondaryKeywords> keys = optionalsParameters.keySet();
+        SecondaryKeywords keyWord;
         for (int nPar = 0; nPar < nbParams; nPar++) {
-            if (keys.contains(SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar)))) {
-                switch (parameters.get(nPar)) {
-                case "ANNOTATION_LABEL":
+            keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
+            if (keys.contains(keyWord)) {
+                switch (keyWord) {
+                case ANNOTATION_LABEL:
                     optionalsParameters.put(ANNOTATION_LABEL, parameters.get(nPar + 1));
                     break;
-                case "ANNOTATION_ORIGIN":
+                case ANNOTATION_ORIGIN:
                     optionalsParameters.put(ANNOTATION_ORIGIN, parameters.get(nPar + 1));
                     break;
-                case "ANNOTATION_TEXT":
+                case ANNOTATION_TEXT:
                     optionalsParameters.put(ANNOTATION_TEXT, parameters.get(nPar + 1));
                     break;
                 default:

@@ -103,7 +103,7 @@ public final class Function implements A2lObject, Comparable<Function> {
 
         if (nbParams >= 2) {
 
-            this.name = parameters.get(2);
+            this.name = parameters.get(2).intern();
             this.longIdentifier = parameters.get(3);
 
             int n = 4;

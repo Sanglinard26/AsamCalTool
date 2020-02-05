@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -21,6 +20,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.event.EventListenerList;
 
+import constante.PrimaryKeywords;
 import utils.ParserUtils;
 
 public final class A2l {
@@ -163,79 +163,79 @@ public final class A2l {
 
                     line = line.trim();
 
-                    String keyword = getKeyword(line);
+                    PrimaryKeywords keyword = PrimaryKeywords.getPrimaryKeyWords(getKeyword(line));
 
                     try {
                         switch (keyword) {
-                        case "MOD_PAR":
+                        case MOD_PAR:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             modPar = new ModPar(objectParameters, beginLine, endLine);
                             break;
-                        case "MOD_COMMON":
+                        case MOD_COMMON:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             modCommon = new ModCommon(objectParameters, beginLine, endLine);
                             break;
-                        case "AXIS_PTS":
+                        case AXIS_PTS:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             AxisPts axisPt = new AxisPts(objectParameters, beginLine, endLine);
                             adjustableObjects.put(axisPt.toString(), axisPt);
                             break;
-                        case "CHARACTERISTIC":
+                        case CHARACTERISTIC:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             Characteristic characteristic = new Characteristic(objectParameters, beginLine, endLine);
                             adjustableObjects.put(characteristic.toString(), characteristic);
                             break;
-                        case "COMPU_METHOD":
+                        case COMPU_METHOD:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             CompuMethod compuMethod = new CompuMethod(objectParameters, beginLine, endLine);
                             compuMethods.put(compuMethod.toString().hashCode(), compuMethod);
                             break;
-                        case "COMPU_TAB":
+                        case COMPU_TAB:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             CompuTab compuTab = new CompuTab(objectParameters, beginLine, endLine);
                             conversionTables.put(compuTab.toString().hashCode(), compuTab);
                             break;
-                        case "COMPU_VTAB":
+                        case COMPU_VTAB:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             CompuVTab compuVTab = new CompuVTab(objectParameters, beginLine, endLine);
                             conversionTables.put(compuVTab.toString().hashCode(), compuVTab);
                             break;
-                        case "COMPU_VTAB_RANGE":
+                        case COMPU_VTAB_RANGE:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             CompuVTabRange compuVTabRange = new CompuVTabRange(objectParameters, beginLine, endLine);
                             conversionTables.put(compuVTabRange.toString().hashCode(), compuVTabRange);
                             break;
-                        case "MEASUREMENT":
+                        case MEASUREMENT:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             Measurement measurement = new Measurement(objectParameters, beginLine, endLine);
                             measurements.put(measurement.toString().hashCode(), measurement);
                             break;
-                        case "RECORD_LAYOUT":
+                        case RECORD_LAYOUT:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             RecordLayout recordLayout = new RecordLayout(objectParameters, beginLine, endLine);
                             recordLayouts.put(recordLayout.toString().hashCode(), recordLayout);
                             break;
-                        case "FUNCTION":
+                        case FUNCTION:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
@@ -243,9 +243,9 @@ public final class A2l {
                             if (function.getDefCharacteristic() != null) {
                                 mergeDefCharacteristic.putAll(function.getDefCharacteristic());
                             }
-                            functions.put(function.toString().hashCode(), function);
+                            functions.put(function.hashCode(), function);
                             break;
-                        case "UNIT":
+                        case UNIT:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
@@ -286,7 +286,8 @@ public final class A2l {
         }
     }
 
-    private final List<String> fillParameters(BufferedReader buf, String line, List<String> objectParameters, String keyword) throws IOException {
+    private final List<String> fillParameters(BufferedReader buf, String line, List<String> objectParameters, PrimaryKeywords keyword)
+            throws IOException {
 
         final Pattern regexQuote = ParserUtils.QUOTE;
         final String spaceKeyword = " " + keyword;
@@ -367,8 +368,7 @@ public final class A2l {
 
     private final void assignLinkedObject(Map<String, String> defCharacteristic) {
 
-        for (Entry<String, AdjustableObject> entry : adjustableObjects.entrySet()) {
-            AdjustableObject adjustableObject = entry.getValue();
+        for (AdjustableObject adjustableObject : adjustableObjects.values()) {
             adjustableObject.assignComputMethod(compuMethods);
             adjustableObject.assignRecordLayout(recordLayouts);
             if (adjustableObject instanceof Characteristic) {
@@ -377,15 +377,11 @@ public final class A2l {
             adjustableObject.setFunction(defCharacteristic.get(adjustableObject.toString()));
         }
 
-        for (Entry<Integer, CompuMethod> entry : compuMethods.entrySet()) {
-            CompuMethod compuMethod = entry.getValue();
-            if (compuMethod.hasCompuTabRef()) {
-                compuMethod.assignConversionTable(conversionTables);
-            }
+        for (CompuMethod compuMethod : compuMethods.values()) {
+            compuMethod.assignConversionTable(conversionTables);
         }
 
-        for (Entry<Integer, Measurement> entry : measurements.entrySet()) {
-            Measurement measurement = entry.getValue();
+        for (Measurement measurement : measurements.values()) {
             measurement.assignComputMethod(compuMethods);
         }
     }
@@ -404,10 +400,10 @@ public final class A2l {
 
         String functionRef;
 
-        for (Entry<String, AdjustableObject> entry : adjustableObjects.entrySet()) {
-            functionRef = entry.getValue().getFunction();
+        for (AdjustableObject adjustableObject : adjustableObjects.values()) {
+            functionRef = adjustableObject.getFunction();
             if (functionRef != null && functionRef.equals(function)) {
-                listByFunction.add(entry.getValue());
+                listByFunction.add(adjustableObject);
             }
         }
 
