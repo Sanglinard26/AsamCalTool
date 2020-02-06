@@ -27,7 +27,7 @@ import constante.SecondaryKeywords;
 public final class Measurement implements A2lObject, Comparable<Measurement> {
 
     private String name;
-    private String longIdentifier;
+    private char[] longIdentifier;
     private String dataType;
     private int conversionId;
     @SuppressWarnings("unused")
@@ -81,7 +81,7 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
         try {
             if (nbParams >= 8) {
                 this.name = parameters.get(2);
-                this.longIdentifier = parameters.get(3);
+                this.longIdentifier = parameters.get(3).toCharArray();
                 this.dataType = parameters.get(4);
                 this.conversionId = parameters.get(5).hashCode();
                 this.resolution = (byte) Integer.parseInt(parameters.get(6));
@@ -178,7 +178,7 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
         StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
 
         sb.append("<ul><li><b>Name: </b>" + name + "\n");
-        sb.append("<li><b>Long identifier: </b>" + longIdentifier + "\n");
+        sb.append("<li><b>Long identifier: </b>" + new String(longIdentifier) + "\n");
         sb.append("<li><b>Data type: </b>" + dataType + "\n");
         sb.append("<li><b>Conversion: </b><a href=" + compuMethod.toString() + ">" + compuMethod.toString() + "</a>\n");
         sb.append("<li><b>Unit: </b>" + "[" + getUnit() + "]\n");

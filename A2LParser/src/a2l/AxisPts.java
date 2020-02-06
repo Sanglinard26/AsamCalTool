@@ -110,7 +110,7 @@ public final class AxisPts extends AdjustableObject {
         if (nbParams >= 9) {
 
             this.name = parameters.get(2);
-            this.longIdentifier = parameters.get(3);
+            this.longIdentifier = parameters.get(3).toCharArray();
             this.adress = Long.parseLong(parameters.get(4).substring(2), 16);
             this.inputQuantity = parameters.get(5);
             this.depositId = parameters.get(6).hashCode();

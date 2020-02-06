@@ -23,10 +23,10 @@ import utils.Interpolation;
 public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
 
     private String name;
-    private String longIdentifier;
+    private char[] longIdentifier;
     private ConversionType conversionType;
-    private String format;
-    private String unit;
+    private char[] format;
+    private char[] unit;
 
     private Map<SecondaryKeywords, Object> optionalsParameters;
 
@@ -166,21 +166,21 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
     }
 
     public final String getFormat() {
-        return format;
+        return new String(format);
     }
 
     public final String getUnit() {
-        return this.unit;
+        return new String(this.unit);
     }
 
     public final String getProperties() {
         StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
 
         sb.append("<ul><li><b>Name: </b>" + name + "\n");
-        sb.append("<li><b>Long identifier: </b>" + longIdentifier + "\n");
+        sb.append("<li><b>Long identifier: </b>" + new String(longIdentifier) + "\n");
         sb.append("<li><b>Conversion type: </b>" + conversionType.name() + "\n");
-        sb.append("<li><b>Unit: </b>[" + unit + "]\n");
-        sb.append("<li><b>Format: </b>" + format + "\n");
+        sb.append("<li><b>Unit: </b>[" + getUnit() + "]\n");
+        sb.append("<li><b>Format: </b>" + getFormat() + "\n");
         if (hasCompuTabRef()) {
             String compuTabRef = optionalsParameters.get(COMPU_TAB_REF).toString();
             sb.append("<li><b>Ref conversion table: </b><a href=" + compuTabRef + ">" + compuTabRef + "</a>\n");
@@ -246,10 +246,10 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
         if (nbParams >= 5) {
 
             this.name = parameters.get(2);
-            this.longIdentifier = parameters.get(3);
+            this.longIdentifier = parameters.get(3).toCharArray();
             this.conversionType = ConversionType.getConversionType(parameters.get(4));
-            this.format = parameters.get(5);
-            this.unit = parameters.get(6);
+            this.format = parameters.get(5).toCharArray();
+            this.unit = parameters.get(6).toCharArray();
 
             int n = 7;
 

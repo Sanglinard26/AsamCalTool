@@ -39,7 +39,7 @@ public final class CompuVTab extends ConversionTable {
         if (nbParams >= 5) {
 
             this.name = parameters.get(2);
-            this.longIdentifier = parameters.get(3);
+            this.longIdentifier = parameters.get(3).toCharArray();
             this.conversionType = ConversionType.getConversionType(parameters.get(4));
             this.numberValuePairs = (short) Integer.parseInt(parameters.get(5));
 
@@ -72,7 +72,7 @@ public final class CompuVTab extends ConversionTable {
         StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
 
         sb.append("<ul><li><b>Name: </b>" + name + "\n");
-        sb.append("<li><b>Long identifier: </b>" + longIdentifier + "\n");
+        sb.append("<li><b>Long identifier: </b>" + new String(longIdentifier) + "\n");
         sb.append("<li><b>Conversion type: </b>" + conversionType.name() + "\n");
         sb.append("<li><b>Number of value pairs: </b>" + numberValuePairs + "\n");
         sb.append("<li><b>Value pairs: </b>");

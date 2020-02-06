@@ -15,8 +15,8 @@ import constante.UnitType;
 public final class Unit implements A2lObject, Comparable<Unit> {
 
     private String name;
-    private String longIdentifier;
-    private String display;
+    private char[] longIdentifier;
+    private char[] display;
     private UnitType unitType;
     private Map<SecondaryKeywords, Object> optionalsParameters;
 
@@ -47,8 +47,8 @@ public final class Unit implements A2lObject, Comparable<Unit> {
         if (nbParams >= 4) {
 
             this.name = parameters.get(2);
-            this.longIdentifier = parameters.get(3);
-            this.display = parameters.get(4);
+            this.longIdentifier = parameters.get(3).toCharArray();
+            this.display = parameters.get(4).toCharArray();
             this.unitType = UnitType.getUnitType(parameters.get(5));
 
             int n = 6;
@@ -135,8 +135,8 @@ public final class Unit implements A2lObject, Comparable<Unit> {
         StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
 
         sb.append("<ul><li><b>Name: </b>" + name + "\n");
-        sb.append("<li><b>Long identifier: </b>" + longIdentifier + "\n");
-        sb.append("<li><b>Display: </b>" + display + "\n");
+        sb.append("<li><b>Long identifier: </b>" + new String(longIdentifier) + "\n");
+        sb.append("<li><b>Display: </b>" + new String(display) + "\n");
         sb.append("<li><b>Unit type: </b>" + unitType.name() + "\n");
         sb.append("</u></html>");
 

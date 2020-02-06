@@ -18,7 +18,7 @@ import constante.SecondaryKeywords;
 
 public final class ModPar implements A2lObject {
 
-    private String comment;
+    private char[] comment;
 
     private Map<SecondaryKeywords, Object> optionalsParameters;
 
@@ -50,7 +50,7 @@ public final class ModPar implements A2lObject {
     }
 
     public final String getComment() {
-        return this.comment;
+        return new String(this.comment);
     }
 
     @SuppressWarnings("unchecked")
@@ -75,7 +75,7 @@ public final class ModPar implements A2lObject {
             for (int n = 2; n < nbParams; n++) {
                 switch (n) {
                 case 2:
-                    this.comment = parameters.get(n);
+                    this.comment = parameters.get(n).toCharArray();
                     break;
                 default: // Cas de parametres optionels
                     Set<SecondaryKeywords> keys = optionalsParameters.keySet();

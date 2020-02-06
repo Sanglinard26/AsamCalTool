@@ -288,7 +288,7 @@ public final class DataDecoder {
         return new String[] { "" };
     }
 
-    private final String[] readStdAxis(Characteristic characteristic, long adress, int idxAxis, ByteOrder commonByteOrder) {
+    private final String[] readStdAxis(Characteristic characteristic, long adress, byte idxAxis, ByteOrder commonByteOrder) {
 
         String[] strValues = null;
 
@@ -445,7 +445,7 @@ public final class DataDecoder {
             break;
 
         case STD_AXIS:
-            String[] stdAxisValues = readStdAxis(characteristic, adress, 0, byteOrder);
+            String[] stdAxisValues = readStdAxis(characteristic, adress, (byte) 0, byteOrder);
             nbValue = stdAxisValues.length;
             values = new Values(nbValue, 2);
             for (short i = 0; i < nbValue; i++) {

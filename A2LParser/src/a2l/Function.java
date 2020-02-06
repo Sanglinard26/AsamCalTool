@@ -21,7 +21,7 @@ import constante.SecondaryKeywords;
 public final class Function implements A2lObject, Comparable<Function> {
 
     private String name;
-    private String longIdentifier;
+    private char[] longIdentifier;
 
     private Map<SecondaryKeywords, Object> optionalsParameters;
 
@@ -104,7 +104,7 @@ public final class Function implements A2lObject, Comparable<Function> {
         if (nbParams >= 2) {
 
             this.name = parameters.get(2).intern();
-            this.longIdentifier = parameters.get(3);
+            this.longIdentifier = parameters.get(3).toCharArray();
 
             int n = 4;
 
@@ -195,7 +195,7 @@ public final class Function implements A2lObject, Comparable<Function> {
         StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
 
         sb.append("<ul><li><b>Name: </b>" + name + "\n");
-        sb.append("<li><b>Long identifier: </b>" + longIdentifier + "\n");
+        sb.append("<li><b>Long identifier: </b>" + new String(longIdentifier) + "\n");
 
         if (getSubFunction().size() > 0) {
             sb.append("<li><b>Sub Function: </b>");

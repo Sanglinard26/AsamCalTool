@@ -283,7 +283,7 @@ public final class Characteristic extends AdjustableObject {
             if (nbParams >= 9) {
 
                 this.name = parameters.get(2);
-                this.longIdentifier = parameters.get(3);
+                this.longIdentifier = parameters.get(3).toCharArray();
                 this.type = CharacteristicType.getCharacteristicType(parameters.get(4));
                 this.adress = Long.parseLong(parameters.get(5).substring(2), 16);
                 this.depositId = parameters.get(6).hashCode();

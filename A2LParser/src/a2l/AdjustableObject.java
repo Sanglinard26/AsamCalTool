@@ -20,7 +20,7 @@ import constante.SecondaryKeywords;
 public abstract class AdjustableObject implements A2lObject, Comparable<AdjustableObject> {
 
     protected String name;
-    protected String longIdentifier;
+    protected char[] longIdentifier;
     protected long adress;
     protected int depositId;
     protected float maxDiff;
@@ -182,7 +182,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
 
         sb.append("<ul><li><b>Name: </b>" + name + "\n");
-        sb.append("<li><b>Long identifier: </b>" + longIdentifier + "\n");
+        sb.append("<li><b>Long identifier: </b>" + new String(longIdentifier) + "\n");
         sb.append("<li><b>Function: </b><a href=" + functionRef + ">" + functionRef + "</a>\n");
         sb.append("<li><b>Unit: </b>");
         for (String unit : getUnit()) {
