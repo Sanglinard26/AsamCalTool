@@ -25,7 +25,7 @@ public final class AxisDescr {
 
     private Attribute attribute;
     @SuppressWarnings("unused")
-    private String inputQuantity;
+    private char[] inputQuantity;
     private int conversionId;
     private short maxAxisPoints;
     @SuppressWarnings("unused")
@@ -119,7 +119,7 @@ public final class AxisDescr {
         return null;
     }
 
-    public final String getAxisRef(Attribute type) {
+    public final int getAxisRef(Attribute type) {
         Object object = null;
         switch (type) {
         case COM_AXIS:
@@ -134,7 +134,7 @@ public final class AxisDescr {
         default:
             break;
         }
-        return object != null ? object.toString() : "";
+        return (int) (object != null ? object : 0);
     }
 
     public final Map<SecondaryKeywords, Object> getOptionalsParameters() {
@@ -149,7 +149,7 @@ public final class AxisDescr {
             if (objectDisplayFormat == null) {
                 displayFormat = compuMethod.getFormat();
             } else {
-                displayFormat = objectDisplayFormat.toString();
+                displayFormat = new String((char[]) objectDisplayFormat);
             }
             // NPE si par exemple "%8"
             int idxPoint = displayFormat.indexOf(".");
@@ -162,7 +162,7 @@ public final class AxisDescr {
 
     public final String getPhysUnit() {
         Object oPhysUnit = optionalsParameters.get(PHYS_UNIT);
-        return oPhysUnit != null ? oPhysUnit.toString() : "";
+        return oPhysUnit != null ? new String((char[]) oPhysUnit) : "";
     }
 
     public enum Attribute {
@@ -193,9 +193,9 @@ public final class AxisDescr {
         if (nbParams >= 6) {
 
             this.attribute = Attribute.getAttribute(parameters.get(0));
-            this.inputQuantity = parameters.get(1);
+            this.inputQuantity = parameters.get(1).toCharArray();
             this.conversionId = parameters.get(2).hashCode();
-            this.maxAxisPoints = (short) Integer.parseInt(parameters.get(3));
+            this.maxAxisPoints = Short.parseShort(parameters.get(3));
             this.lowerLimit = Float.parseFloat(parameters.get(4));
             this.upperLimit = Float.parseFloat(parameters.get(5));
 
@@ -208,7 +208,7 @@ public final class AxisDescr {
                 if (keys.contains(keyWord)) {
                     switch (keyWord) {
                     case AXIS_PTS_REF:
-                        optionalsParameters.put(AXIS_PTS_REF, parameters.get(nPar + 1));
+                        optionalsParameters.put(AXIS_PTS_REF, parameters.get(nPar + 1).hashCode());
                         nPar += 1;
                         break;
                     case BYTE_ORDER:
@@ -216,7 +216,7 @@ public final class AxisDescr {
                         nPar += 1;
                         break;
                     case CURVE_AXIS_REF:
-                        optionalsParameters.put(CURVE_AXIS_REF, parameters.get(nPar + 1));
+                        optionalsParameters.put(CURVE_AXIS_REF, parameters.get(nPar + 1).hashCode());
                         nPar += 1;
                         break;
                     case DEPOSIT:
@@ -241,11 +241,11 @@ public final class AxisDescr {
                         n = nPar + 1;
                         break;
                     case FORMAT:
-                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1));
+                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1).toCharArray());
                         nPar += 1;
                         break;
                     case PHYS_UNIT:
-                        optionalsParameters.put(PHYS_UNIT, parameters.get(nPar + 1));
+                        optionalsParameters.put(PHYS_UNIT, parameters.get(nPar + 1).toCharArray());
                         nPar += 1;
                         break;
                     default:

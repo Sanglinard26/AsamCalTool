@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
@@ -530,10 +529,7 @@ public final class Ihm extends JFrame {
             Object userObject = selectedNode.getUserObject();
 
             if (userObject instanceof String && selectedNode.getParent().toString().endsWith("MEASUREMENT")) {
-                Enumeration<Measurement> enumMeasurment = a2l.getListMeasurement().elements();
-                Measurement measurement;
-                while (enumMeasurment.hasMoreElements()) {
-                    measurement = enumMeasurment.nextElement();
+                for (Measurement measurement : a2l.getListMeasurement()) {
                     if (userObject.toString().equals(measurement.toString())) {
                         userObject = measurement;
                         break;

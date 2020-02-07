@@ -78,17 +78,17 @@ public final class DataDecoder {
 
         final ByteOrder byteOrder = modCommon.getByteOrder();
 
-        for (Entry<String, AdjustableObject> entries : a2l.getAdjustableObjects().entrySet()) {
-            if (entries.getValue() instanceof AxisPts && entries.getValue().isValid()) {
-                readAxisPts(byteOrder, (AxisPts) entries.getValue());
+        for (AdjustableObject adjustableObject : a2l.getAdjustableObjects().values()) {
+            if (adjustableObject instanceof AxisPts && adjustableObject.isValid()) {
+                readAxisPts(byteOrder, (AxisPts) adjustableObject);
             }
         }
 
-        for (Entry<String, AdjustableObject> entries : a2l.getAdjustableObjects().entrySet()) {
+        for (AdjustableObject adjustableObject : a2l.getAdjustableObjects().values()) {
 
-            if (entries.getValue() instanceof Characteristic && entries.getValue().isValid()) {
+            if (adjustableObject instanceof Characteristic && adjustableObject.isValid()) {
 
-                Characteristic characteristic = (Characteristic) entries.getValue();
+                Characteristic characteristic = (Characteristic) adjustableObject;
 
                 final FncValues fncValues = characteristic.getRecordLayout().getFncValues();
                 final CompuMethod compuMethod = characteristic.getCompuMethod();
@@ -292,7 +292,7 @@ public final class DataDecoder {
 
         String[] strValues = null;
 
-        final AxisDescr axisDescrStdAxis = characteristic.getAxisDescrs().get(idxAxis);
+        final AxisDescr axisDescrStdAxis = characteristic.getAxisDescrs()[idxAxis];
         final ByteOrder byteOrder = axisDescrStdAxis.getByteOrder() != null ? axisDescrStdAxis.getByteOrder() : commonByteOrder;
         final CompuMethod compuMethod = axisDescrStdAxis.getCompuMethod();
         final String depositMode = axisDescrStdAxis.getDepositMode();
@@ -427,7 +427,7 @@ public final class DataDecoder {
     private final void readCurve(ByteOrder commonByteOrder, Characteristic characteristic, long adress, CompuMethod compuMethod,
             FncValues fncValues) {
 
-        final AxisDescr axisDescr = characteristic.getAxisDescrs().get(0);
+        final AxisDescr axisDescr = characteristic.getAxisDescrs()[0];
         final ByteOrder byteOrder = axisDescr.getByteOrder() != null ? axisDescr.getByteOrder() : commonByteOrder;
 
         int nbValue = axisDescr.getMaxAxisPoints();
@@ -475,7 +475,7 @@ public final class DataDecoder {
             break;
         case CURVE_AXIS:
 
-            Characteristic curve = (Characteristic) characteristic.getAxisDescrs().get(0).getCurveAxis();
+            Characteristic curve = (Characteristic) characteristic.getAxisDescrs()[0].getCurveAxis();
 
             if (curve.getValues() == null) {
                 readCurve(byteOrder, curve, curve.getAdress(), curve.getCompuMethod(), curve.getRecordLayout().getFncValues());

@@ -439,8 +439,8 @@ public class FilteredTree extends JPanel {
                         final int rep = fileChooser.showSaveDialog(null);
 
                         if (rep == JFileChooser.APPROVE_OPTION) {
-                            LabUtils.writeCharacteristicLab(fileChooser.getSelectedFile(), (Function) object);
-                            JOptionPane.showInternalMessageDialog(null, "Export done !");
+                            LabUtils.writeCharacteristicLab(fileChooser.getSelectedFile(), (A2l) originalRoot.getUserObject(), (Function) object);
+                            JOptionPane.showMessageDialog(null, "Export done !");
                         }
 
                     }
@@ -476,7 +476,7 @@ public class FilteredTree extends JPanel {
 
                         if (rep == JFileChooser.APPROVE_OPTION) {
                             LabUtils.writeMeasurementLab(fileChooser.getSelectedFile(), (Function) object);
-                            JOptionPane.showInternalMessageDialog(null, "Export done !");
+                            JOptionPane.showMessageDialog(null, "Export done !");
                         }
 
                     }

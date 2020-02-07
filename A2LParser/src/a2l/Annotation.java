@@ -43,13 +43,13 @@ public final class Annotation {
             if (keys.contains(keyWord)) {
                 switch (keyWord) {
                 case ANNOTATION_LABEL:
-                    optionalsParameters.put(ANNOTATION_LABEL, parameters.get(nPar + 1));
+                    optionalsParameters.put(ANNOTATION_LABEL, parameters.get(nPar + 1).toCharArray());
                     break;
                 case ANNOTATION_ORIGIN:
-                    optionalsParameters.put(ANNOTATION_ORIGIN, parameters.get(nPar + 1));
+                    optionalsParameters.put(ANNOTATION_ORIGIN, parameters.get(nPar + 1).toCharArray());
                     break;
                 case ANNOTATION_TEXT:
-                    optionalsParameters.put(ANNOTATION_TEXT, parameters.get(nPar + 1));
+                    optionalsParameters.put(ANNOTATION_TEXT, parameters.get(nPar + 1).toCharArray());
                     break;
                 default:
                     break;

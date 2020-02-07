@@ -29,13 +29,14 @@ public final class A2l {
     private String name;
     private ModPar modPar;
     private ModCommon modCommon;
-    private HashMap<String, AdjustableObject> adjustableObjects;
+    private HashMap<Integer, AdjustableObject> adjustableObjects;
     private HashMap<Integer, CompuMethod> compuMethods;
     private HashMap<Integer, ConversionTable> conversionTables;
-    private HashMap<Integer, Measurement> measurements;
+    private List<Measurement> measurements;
     private HashMap<Integer, RecordLayout> recordLayouts;
-    private HashMap<Integer, Function> functions;
-    private HashMap<String, Unit> units;
+    private List<Function> functions;
+
+    private HashMap<Integer, Unit> units;
 
     private static int numLine;
     private static int beginLine;
@@ -45,13 +46,14 @@ public final class A2l {
 
     public A2l() {
 
-        adjustableObjects = new HashMap<String, AdjustableObject>();
+        adjustableObjects = new HashMap<Integer, AdjustableObject>();
         compuMethods = new HashMap<Integer, CompuMethod>();
         conversionTables = new HashMap<Integer, ConversionTable>();
-        measurements = new HashMap<Integer, Measurement>();
+        measurements = new ArrayList<Measurement>();
         recordLayouts = new HashMap<Integer, RecordLayout>();
-        functions = new HashMap<Integer, Function>();
-        units = new HashMap<String, Unit>();
+        units = new HashMap<Integer, Unit>();
+
+        functions = new ArrayList<Function>();
 
         listeners = new EventListenerList();
 
@@ -70,7 +72,7 @@ public final class A2l {
         return this.name;
     }
 
-    public final HashMap<String, AdjustableObject> getAdjustableObjects() {
+    public final HashMap<Integer, AdjustableObject> getAdjustableObjects() {
         return adjustableObjects;
     }
 
@@ -80,10 +82,9 @@ public final class A2l {
         return v;
     }
 
-    public final Vector<Function> getListFunction() {
-        Vector<Function> v = new Vector<>(functions.values());
-        Collections.sort(v);
-        return v;
+    public final Function[] getListFunction() {
+        Collections.sort(functions);
+        return functions.toArray(new Function[functions.size()]);
     }
 
     public final Vector<CompuMethod> getListCompuMethod() {
@@ -116,10 +117,9 @@ public final class A2l {
         return v;
     }
 
-    public final Vector<Measurement> getListMeasurement() {
-        Vector<Measurement> v = new Vector<>(measurements.values());
-        Collections.sort(v);
-        return v;
+    public final Measurement[] getListMeasurement() {
+        Collections.sort(measurements);
+        return measurements.toArray(new Measurement[measurements.size()]);
     }
 
     public final void addA2lStateListener(A2lStateListener a2lStateListener) {
@@ -145,7 +145,7 @@ public final class A2l {
             String line;
 
             final List<String> objectParameters = new ArrayList<String>();
-            final Map<String, String> mergeDefCharacteristic = new HashMap<String, String>();
+            final Map<Integer, String> mergeDefCharacteristic = new HashMap<Integer, String>();
 
             numLine = 0;
 
@@ -184,14 +184,14 @@ public final class A2l {
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             AxisPts axisPt = new AxisPts(objectParameters, beginLine, endLine);
-                            adjustableObjects.put(axisPt.toString(), axisPt);
+                            adjustableObjects.put(axisPt.toString().hashCode(), axisPt);
                             break;
                         case CHARACTERISTIC:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             Characteristic characteristic = new Characteristic(objectParameters, beginLine, endLine);
-                            adjustableObjects.put(characteristic.toString(), characteristic);
+                            adjustableObjects.put(characteristic.toString().hashCode(), characteristic);
                             break;
                         case COMPU_METHOD:
                             beginLine = numLine;
@@ -225,8 +225,7 @@ public final class A2l {
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
-                            Measurement measurement = new Measurement(objectParameters, beginLine, endLine);
-                            measurements.put(measurement.toString().hashCode(), measurement);
+                            measurements.add(new Measurement(objectParameters, beginLine, endLine));
                             break;
                         case RECORD_LAYOUT:
                             beginLine = numLine;
@@ -243,14 +242,14 @@ public final class A2l {
                             if (function.getDefCharacteristic() != null) {
                                 mergeDefCharacteristic.putAll(function.getDefCharacteristic());
                             }
-                            functions.put(function.hashCode(), function);
+                            functions.add(function);
                             break;
                         case UNIT:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             Unit unit = new Unit(objectParameters, beginLine, endLine);
-                            units.put(unit.toString(), unit);
+                            units.put(unit.toString().hashCode(), unit);
                             break;
                         default:
                             break;
@@ -366,7 +365,7 @@ public final class A2l {
         return listWord;
     }
 
-    private final void assignLinkedObject(Map<String, String> defCharacteristic) {
+    private final void assignLinkedObject(Map<Integer, String> defCharacteristic) {
 
         for (AdjustableObject adjustableObject : adjustableObjects.values()) {
             adjustableObject.assignComputMethod(compuMethods);
@@ -374,15 +373,16 @@ public final class A2l {
             if (adjustableObject instanceof Characteristic) {
                 ((Characteristic) adjustableObject).assignAxisPts(adjustableObjects);
             }
-            adjustableObject.setFunction(defCharacteristic.get(adjustableObject.toString()));
+            adjustableObject.setFunction(defCharacteristic.get(adjustableObject.getID()));
         }
 
         for (CompuMethod compuMethod : compuMethods.values()) {
             compuMethod.assignConversionTable(conversionTables);
         }
 
-        for (Measurement measurement : measurements.values()) {
-            measurement.assignComputMethod(compuMethods);
+        final int measurementSize = measurements.size();
+        for (int i = 0; i < measurementSize; i++) {
+            measurements.get(i).assignComputMethod(compuMethods);
         }
     }
 
@@ -427,16 +427,16 @@ public final class A2l {
                 A2l second = new A2l();
                 second.parse(secondFile);
 
-                Set<String> missingObjects = new HashSet<>(first.getAdjustableObjects().keySet());
-                Set<String> newObjects = new HashSet<>(second.getAdjustableObjects().keySet());
-                Set<String> compObjects = new HashSet<>(second.getAdjustableObjects().keySet());
+                Set<Integer> missingObjects = new HashSet<>(first.getAdjustableObjects().keySet());
+                Set<Integer> newObjects = new HashSet<>(second.getAdjustableObjects().keySet());
+                Set<Integer> compObjects = new HashSet<>(second.getAdjustableObjects().keySet());
 
                 newObjects.removeAll(first.getAdjustableObjects().keySet());
                 missingObjects.removeAll(second.getAdjustableObjects().keySet());
                 compObjects.retainAll(first.getAdjustableObjects().keySet());
 
-                HashMap<String, AdjustableObject> firstAdjObject = first.getAdjustableObjects();
-                HashMap<String, AdjustableObject> secondAdjObject = second.getAdjustableObjects();
+                HashMap<Integer, AdjustableObject> firstAdjObject = first.getAdjustableObjects();
+                HashMap<Integer, AdjustableObject> secondAdjObject = second.getAdjustableObjects();
 
                 AdjustableObject object1;
                 AdjustableObject object2;
@@ -448,12 +448,12 @@ public final class A2l {
 
                 sb.append("Different object :\n");
 
-                for (String objectName : compObjects) {
+                for (Integer objectName : compObjects) {
                     object1 = firstAdjObject.get(objectName);
                     object2 = secondAdjObject.get(objectName);
 
                     if (!object1.equals(object2))
-                        sb.append(objectName + " => isn't equal\n");
+                        sb.append(object1 + " => isn't equal\n");
                 }
 
                 sb.append("\n*** END ***");

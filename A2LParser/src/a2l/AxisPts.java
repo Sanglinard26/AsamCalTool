@@ -31,7 +31,7 @@ import constante.SecondaryKeywords;
 public final class AxisPts extends AdjustableObject {
 
     @SuppressWarnings("unused")
-    private String inputQuantity; // Reference to INPUT_QUANTITY
+    private char[] inputQuantity; // Reference to INPUT_QUANTITY
     private short maxAxisPoints;
 
     private List<Characteristic> characteristicsDependency;
@@ -112,13 +112,13 @@ public final class AxisPts extends AdjustableObject {
             this.name = parameters.get(2);
             this.longIdentifier = parameters.get(3).toCharArray();
             this.adress = Long.parseLong(parameters.get(4).substring(2), 16);
-            this.inputQuantity = parameters.get(5);
+            this.inputQuantity = parameters.get(5).toCharArray();
             this.depositId = parameters.get(6).hashCode();
             this.maxDiff = Float.parseFloat(parameters.get(7));
             this.conversionId = parameters.get(8).hashCode();
-            this.maxAxisPoints = (short) Integer.parseInt(parameters.get(9));
-            this.lowerLimit = Double.parseDouble(parameters.get(10));
-            this.upperLimit = Double.parseDouble(parameters.get(11));
+            this.maxAxisPoints = Short.parseShort(parameters.get(9));
+            this.lowerLimit = Float.parseFloat(parameters.get(10));
+            this.upperLimit = Float.parseFloat(parameters.get(11));
 
             int n = 12;
 
@@ -144,11 +144,11 @@ public final class AxisPts extends AdjustableObject {
                         nPar += 1;
                         break;
                     case DISPLAY_IDENTIFIER:
-                        optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1));
+                        optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1).toCharArray());
                         nPar += 1;
                         break;
                     case FORMAT:
-                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1));
+                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1).toCharArray());
                         nPar += 1;
                         break;
                     case PHYS_UNIT:

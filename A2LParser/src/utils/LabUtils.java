@@ -9,7 +9,10 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Vector;
 
+import a2l.A2l;
+import a2l.AdjustableObject;
 import a2l.Function;
 
 public final class LabUtils {
@@ -35,15 +38,15 @@ public final class LabUtils {
         }
     }
 
-    public static final void writeCharacteristicLab(File file, Function function) {
+    public static final void writeCharacteristicLab(File file, A2l a2l, Function function) {
 
         try (PrintWriter pw = new PrintWriter(file)) {
-            final List<String> listCharacteristic = new ArrayList<>(function.getDefCharacteristic().keySet());
+            final Vector<AdjustableObject> listCharacteristic = a2l.getAdjustableObjectByFunction(function.toString());
 
             Collections.sort(listCharacteristic);
 
             pw.println("[Label]");
-            for (String characteristicName : listCharacteristic) {
+            for (AdjustableObject characteristicName : listCharacteristic) {
                 pw.println(characteristicName);
             }
 

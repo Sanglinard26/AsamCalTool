@@ -41,7 +41,7 @@ public final class Characteristic extends AdjustableObject {
 
     private CharacteristicType type;
 
-    private List<AxisDescr> axisDescrs;
+    private AxisDescr[] axisDescrs;
 
     public Characteristic(List<String> parameters, int beginLine, int endLine) {
 
@@ -79,9 +79,9 @@ public final class Characteristic extends AdjustableObject {
         return this.name;
     }
 
-    public final List<AxisDescr> getAxisDescrs() {
+    public final AxisDescr[] getAxisDescrs() {
         if (axisDescrs == null) {
-            return new ArrayList<AxisDescr>();
+            return new AxisDescr[0];
         }
         return axisDescrs;
     }
@@ -145,7 +145,7 @@ public final class Characteristic extends AdjustableObject {
         return maskedValue >> shift;
     }
 
-    public final void assignAxisPts(HashMap<String, AdjustableObject> adjustableObjects) {
+    public final void assignAxisPts(HashMap<Integer, AdjustableObject> adjustableObjects) {
 
         AdjustableObject axisPts;
 
@@ -236,7 +236,7 @@ public final class Characteristic extends AdjustableObject {
             break;
         case CURVE:
             unit = new String[2];
-            AxisDescr axisDescr = this.axisDescrs.get(0);
+            AxisDescr axisDescr = this.axisDescrs[0];
             if (axisDescr.getPhysUnit().length() > 0) {
                 unit[0] = axisDescr.getPhysUnit().length() > 0 ? axisDescr.getPhysUnit() : axisDescr.getCompuMethod().getUnit();
             } else {
@@ -253,10 +253,10 @@ public final class Characteristic extends AdjustableObject {
             break;
         case MAP:
             unit = new String[3];
-            unit[0] = this.axisDescrs.get(0).getPhysUnit().length() > 0 ? this.axisDescrs.get(0).getPhysUnit()
-                    : this.axisDescrs.get(0).getCompuMethod().getUnit();
-            unit[1] = this.axisDescrs.get(1).getPhysUnit().length() > 0 ? this.axisDescrs.get(1).getPhysUnit()
-                    : this.axisDescrs.get(1).getCompuMethod().getUnit();
+            unit[0] = this.axisDescrs[0].getPhysUnit().length() > 0 ? this.axisDescrs[0].getPhysUnit()
+                    : this.axisDescrs[0].getCompuMethod().getUnit();
+            unit[1] = this.axisDescrs[1].getPhysUnit().length() > 0 ? this.axisDescrs[1].getPhysUnit()
+                    : this.axisDescrs[1].getCompuMethod().getUnit();
             unit[2] = this.compuMethod.getUnit();
             break;
         case VAL_BLK:
@@ -289,10 +289,12 @@ public final class Characteristic extends AdjustableObject {
                 this.depositId = parameters.get(6).hashCode();
                 this.maxDiff = Float.parseFloat(parameters.get(7));
                 this.conversionId = parameters.get(8).hashCode();
-                this.lowerLimit = Double.parseDouble(parameters.get(9));
-                this.upperLimit = Double.parseDouble(parameters.get(10));
+                this.lowerLimit = Float.parseFloat(parameters.get(9));
+                this.upperLimit = Float.parseFloat(parameters.get(10));
 
                 int n = 11;
+
+                byte cntAxis = 0;
 
                 Set<SecondaryKeywords> keys = optionalsParameters.keySet();
                 SecondaryKeywords keyWord;
@@ -309,13 +311,13 @@ public final class Characteristic extends AdjustableObject {
                             break;
                         case AXIS_DESCR:
                             if (axisDescrs == null) {
-                                axisDescrs = new ArrayList<AxisDescr>(CharacteristicType.getNbAxis(type));
+                                axisDescrs = new AxisDescr[CharacteristicType.getNbAxis(type)];
                                 optionalsParameters.put(AXIS_DESCR, axisDescrs);
                             }
                             n = nPar + 1;
                             do {
                             } while (!parameters.get(++nPar).equals(AXIS_DESCR.name()));
-                            axisDescrs.add(new AxisDescr(parameters.subList(n, nPar - 1)));
+                            axisDescrs[cntAxis++] = new AxisDescr(parameters.subList(n, nPar - 1));
                             n = nPar + 1;
                             break;
                         case BIT_MASK:
@@ -332,11 +334,11 @@ public final class Characteristic extends AdjustableObject {
                             nPar += 1;
                             break;
                         case DISPLAY_IDENTIFIER:
-                            optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1));
+                            optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1).toCharArray());
                             nPar += 1;
                             break;
                         case FORMAT:
-                            optionalsParameters.put(FORMAT, parameters.get(nPar + 1));
+                            optionalsParameters.put(FORMAT, parameters.get(nPar + 1).toCharArray());
                             nPar += 1;
                             break;
                         case MATRIX_DIM:
@@ -400,9 +402,9 @@ public final class Characteristic extends AdjustableObject {
                         double doubleValue = Double.parseDouble(values.getValue(y, x));
 
                         if (y == 0 && (type.compareTo(CharacteristicType.CURVE) == 0 || type.compareTo(CharacteristicType.MAP) == 0)) {
-                            df.setMaximumFractionDigits(axisDescrs.get(0).getNbDecimal());
+                            df.setMaximumFractionDigits(axisDescrs[0].getNbDecimal());
                         } else if (x == 0 && type.compareTo(CharacteristicType.MAP) == 0) {
-                            df.setMaximumFractionDigits(axisDescrs.get(1).getNbDecimal());
+                            df.setMaximumFractionDigits(axisDescrs[1].getNbDecimal());
                         } else {
                             df.setMaximumFractionDigits(getNbDecimal());
                         }
@@ -437,10 +439,10 @@ public final class Characteristic extends AdjustableObject {
         case CURVE:
             tabResol = new Double[2];
 
-            cmX = this.axisDescrs.get(0).getCompuMethod();
+            cmX = this.axisDescrs[0].getCompuMethod();
             if (cmX != null) {
-                val0 = formatValue(cmX.compute(1), this.axisDescrs.get(0).getNbDecimal());
-                val1 = formatValue(cmX.compute(2), this.axisDescrs.get(0).getNbDecimal());
+                val0 = formatValue(cmX.compute(1), this.axisDescrs[0].getNbDecimal());
+                val1 = formatValue(cmX.compute(2), this.axisDescrs[0].getNbDecimal());
                 tabResol[0] = ConversionType.TAB_VERB.compareTo(cmX.getConversionType()) != 0 ? val1 - val0 : Double.NaN;
             } else {
                 tabResol[0] = Double.NaN;
@@ -453,19 +455,19 @@ public final class Characteristic extends AdjustableObject {
         case MAP:
             tabResol = new Double[3];
 
-            cmX = this.axisDescrs.get(0).getCompuMethod();
+            cmX = this.axisDescrs[0].getCompuMethod();
             if (cmX != null) {
-                val0 = formatValue(cmX.compute(1), this.axisDescrs.get(0).getNbDecimal());
-                val1 = formatValue(cmX.compute(2), this.axisDescrs.get(0).getNbDecimal());
+                val0 = formatValue(cmX.compute(1), this.axisDescrs[0].getNbDecimal());
+                val1 = formatValue(cmX.compute(2), this.axisDescrs[0].getNbDecimal());
                 tabResol[0] = ConversionType.TAB_VERB.compareTo(cmX.getConversionType()) != 0 ? val1 - val0 : Double.NaN;
             } else {
                 tabResol[0] = Double.NaN;
             }
 
-            cmY = this.axisDescrs.get(1).getCompuMethod();
+            cmY = this.axisDescrs[1].getCompuMethod();
             if (cmY != null) {
-                val0 = formatValue(cmY.compute(1), this.axisDescrs.get(1).getNbDecimal());
-                val1 = formatValue(cmY.compute(2), this.axisDescrs.get(1).getNbDecimal());
+                val0 = formatValue(cmY.compute(1), this.axisDescrs[1].getNbDecimal());
+                val1 = formatValue(cmY.compute(2), this.axisDescrs[1].getNbDecimal());
                 tabResol[1] = ConversionType.TAB_VERB.compareTo(cmY.getConversionType()) != 0 ? val1 - val0 : Double.NaN;
             } else {
                 tabResol[1] = Double.NaN;

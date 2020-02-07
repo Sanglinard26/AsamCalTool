@@ -14,7 +14,7 @@ public final class CompuVTab extends ConversionTable {
 
     private short numberValuePairs;
     private Map<Float, String> valuePairs;
-    private String defaultValue; // DEFAULT_VALUE
+    private char[] defaultValue; // DEFAULT_VALUE
 
     public CompuVTab(List<String> parameters, int beginLine, int endLine) {
 
@@ -81,7 +81,7 @@ public final class CompuVTab extends ConversionTable {
             sb.append("<li>" + entry.getKey() + " => " + entry.getValue() + "\n");
         }
         sb.append("</ul>");
-        sb.append("<li><b>Default value: </b>" + defaultValue + "\n");
+        sb.append("<li><b>Default value: </b>" + new String(defaultValue) + "\n");
         sb.append("</u></html>");
 
         return sb.toString();

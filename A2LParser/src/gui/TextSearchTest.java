@@ -98,10 +98,6 @@ public class TextSearchTest {
             }
         }
 
-        public String getSearchString() {
-            return searchString;
-        }
-
     }
 
     private static class TextSearchPanel extends JPanel implements ActionListener {

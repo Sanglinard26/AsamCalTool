@@ -22,13 +22,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import constante.DataType;
 import constante.SecondaryKeywords;
 
 public final class Measurement implements A2lObject, Comparable<Measurement> {
 
     private String name;
     private char[] longIdentifier;
-    private String dataType;
+    private DataType dataType;
     private int conversionId;
     @SuppressWarnings("unused")
     private byte resolution;
@@ -82,7 +83,7 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
             if (nbParams >= 8) {
                 this.name = parameters.get(2);
                 this.longIdentifier = parameters.get(3).toCharArray();
-                this.dataType = parameters.get(4);
+                this.dataType = DataType.getDataType(parameters.get(4));
                 this.conversionId = parameters.get(5).hashCode();
                 this.resolution = (byte) Integer.parseInt(parameters.get(6));
                 this.accuracy = Float.parseFloat(parameters.get(7));
@@ -122,11 +123,11 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
                             nPar += 1;
                             break;
                         case DISPLAY_IDENTIFIER:
-                            optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1));
+                            optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1).toCharArray());
                             nPar += 1;
                             break;
                         case FORMAT:
-                            optionalsParameters.put(FORMAT, parameters.get(nPar + 1));
+                            optionalsParameters.put(FORMAT, parameters.get(nPar + 1).toCharArray());
                             nPar += 1;
                             break;
                         case MATRIX_DIM:
@@ -145,7 +146,7 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
                             dim.clear();
                             break;
                         case PHYS_UNIT:
-                            optionalsParameters.put(PHYS_UNIT, parameters.get(nPar + 1));
+                            optionalsParameters.put(PHYS_UNIT, parameters.get(nPar + 1).toCharArray());
                             nPar += 1;
                             break;
                         default:
@@ -170,7 +171,7 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
     public final String getUnit() {
         Object oPhysUnit = optionalsParameters.get(PHYS_UNIT);
 
-        return (oPhysUnit != null && "NO_COMPU_METHOD".equals(conversionId)) ? oPhysUnit.toString() : compuMethod.getUnit();
+        return (oPhysUnit != null && "NO_COMPU_METHOD".equals(conversionId)) ? new String((char[]) oPhysUnit) : compuMethod.getUnit();
     }
 
     @Override

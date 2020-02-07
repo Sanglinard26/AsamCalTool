@@ -25,13 +25,13 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     protected int depositId;
     protected float maxDiff;
     protected int conversionId;
-    protected double lowerLimit;
-    protected double upperLimit;
+    protected float lowerLimit;
+    protected float upperLimit;
     protected boolean dataRead;
 
     protected boolean validParsing;
 
-    protected String functionRef;
+    protected char[] functionRef;
 
     protected Values values;
 
@@ -43,6 +43,10 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     @Override
     public final int compareTo(AdjustableObject o) {
         return this.name.compareToIgnoreCase(o.toString());
+    }
+
+    public final int getID() {
+        return this.name.hashCode();
     }
 
     public final long getAdress() {
@@ -58,7 +62,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     }
 
     public final String getFunction() {
-        return this.functionRef;
+        return new String(this.functionRef);
     }
 
     public final void assignRecordLayout(HashMap<Integer, RecordLayout> recordLayouts) {
@@ -117,11 +121,11 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
             stringDimension.append("]");
 
             if (characteristic.getType().compareTo(CharacteristicType.CURVE) == 0) {
-                int dimMaxX = characteristic.getAxisDescrs().get(0).getMaxAxisPoints();
+                int dimMaxX = characteristic.getAxisDescrs()[0].getMaxAxisPoints();
                 stringDimension.append(" (Max : [" + dimMaxX + " x 2])");
             } else if (characteristic.getType().compareTo(CharacteristicType.MAP) == 0) {
-                int dimMaxX = characteristic.getAxisDescrs().get(0).getMaxAxisPoints();
-                int dimMaxY = characteristic.getAxisDescrs().get(1).getMaxAxisPoints();
+                int dimMaxX = characteristic.getAxisDescrs()[0].getMaxAxisPoints();
+                int dimMaxY = characteristic.getAxisDescrs()[1].getMaxAxisPoints();
                 stringDimension.append(" (Max : [" + dimMaxX + " x " + dimMaxY + "])");
             }
         }
@@ -130,7 +134,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
 
     public final String getFormat() {
         Object oFormat = optionalsParameters.get(FORMAT);
-        return oFormat != null ? oFormat.toString() : compuMethod.getFormat();
+        return oFormat != null ? new String((char[]) oFormat) : compuMethod.getFormat();
     }
 
     protected static double formatValue(double value, byte nbDecimal) {
@@ -169,7 +173,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     }
 
     public final void setFunction(String function) {
-        this.functionRef = function == null ? "" : function.intern();
+        this.functionRef = function == null ? new char[0] : function.toCharArray();
     }
 
     public abstract void assignComputMethod(HashMap<Integer, CompuMethod> compuMethods);
@@ -183,7 +187,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
 
         sb.append("<ul><li><b>Name: </b>" + name + "\n");
         sb.append("<li><b>Long identifier: </b>" + new String(longIdentifier) + "\n");
-        sb.append("<li><b>Function: </b><a href=" + functionRef + ">" + functionRef + "</a>\n");
+        sb.append("<li><b>Function: </b><a href=" + getFunction() + ">" + getFunction() + "</a>\n");
         sb.append("<li><b>Unit: </b>");
         for (String unit : getUnit()) {
             sb.append("[" + unit + "]");
@@ -204,9 +208,9 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         if (this instanceof Characteristic) {
             Characteristic characteristic = (Characteristic) this;
             AxisDescr axis;
-            for (int i = 0; i < characteristic.getAxisDescrs().size(); i++) {
+            for (int i = 0; i < characteristic.getAxisDescrs().length; i++) {
                 sb.append("<li><b>Axis " + (i + 1) + ": </b>");
-                axis = characteristic.getAxisDescrs().get(i);
+                axis = characteristic.getAxisDescrs()[i];
                 sb.append("<ul><li><b>Type: </b>" + axis.getAttribute().name());
                 if (axis.getAttribute().compareTo(Attribute.COM_AXIS) == 0) {
                     sb.append("<li><b>Axis Pts Ref: </b><a href=" + axis.getAxisPts() + ">" + axis.getAxisPts());

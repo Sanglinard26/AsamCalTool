@@ -14,7 +14,7 @@ public final class CompuTab extends ConversionTable {
 
     private short numberValuePairs;
     private Map<Float, Float> valuePairs;
-    private String defaultValue; // DEFAULT_VALUE
+    private char[] defaultValue; // DEFAULT_VALUE
     private float defaultValueNumeric = Float.NaN; // DEFAULT_VALUE_NUMERIC
 
     public CompuTab(List<String> parameters, int beginLine, int endLine) {
@@ -89,7 +89,7 @@ public final class CompuTab extends ConversionTable {
             sb.append("<li>" + entry.getKey() + " => " + entry.getValue() + "\n");
         }
         sb.append("</ul>");
-        sb.append("<li><b>Default value: </b>" + defaultValue + "\n");
+        sb.append("<li><b>Default value: </b>" + new String(defaultValue) + "\n");
         sb.append("<li><b>Default value numeric: </b>" + defaultValueNumeric + "\n");
         sb.append("</u></html>");
 

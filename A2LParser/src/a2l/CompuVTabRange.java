@@ -14,7 +14,7 @@ public final class CompuVTabRange extends ConversionTable {
 
     private short numberValueTriples;
     private Map<Range, String> valueTriples;
-    private String defaultValue; // DEFAULT_VALUE
+    private char[] defaultValue; // DEFAULT_VALUE
 
     public CompuVTabRange(List<String> parameters, int beginLine, int endLine) {
 
@@ -31,7 +31,7 @@ public final class CompuVTabRange extends ConversionTable {
                 return entry.getValue();
             }
         }
-        return defaultValue;
+        return new String(defaultValue);
     }
 
     @Override
@@ -87,7 +87,7 @@ public final class CompuVTabRange extends ConversionTable {
             sb.append("<li>" + entry.getKey() + " => " + entry.getValue() + "\n");
         }
         sb.append("</ul>");
-        sb.append("<li><b>Default value: </b>" + defaultValue + "\n");
+        sb.append("<li><b>Default value: </b>" + new String(defaultValue) + "\n");
         sb.append("</u></html>");
 
         return sb.toString();

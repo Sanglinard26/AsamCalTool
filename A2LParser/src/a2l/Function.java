@@ -48,9 +48,9 @@ public final class Function implements A2lObject, Comparable<Function> {
     }
 
     @SuppressWarnings("unchecked")
-    public final Map<String, String> getDefCharacteristic() {
+    public final Map<Integer, String> getDefCharacteristic() {
         Object object = optionalsParameters.get(DEF_CHARACTERISTIC);
-        return (Map<String, String>) (object != null ? object : new HashMap<String, String>());
+        return (Map<Integer, String>) (object != null ? object : new HashMap<Integer, String>());
     }
 
     public final Vector<String> getInMeasurement() {
@@ -115,11 +115,11 @@ public final class Function implements A2lObject, Comparable<Function> {
                 if (keys.contains(keyWord)) {
                     switch (keyWord) {
                     case DEF_CHARACTERISTIC:
-                        Map<String, String> defCharacteristic = new HashMap<String, String>();
+                        Map<Integer, String> defCharacteristic = new HashMap<Integer, String>();
                         optionalsParameters.put(DEF_CHARACTERISTIC, defCharacteristic);
                         nPar++;
                         do {
-                            defCharacteristic.put(parameters.get(nPar), this.name);
+                            defCharacteristic.put(parameters.get(nPar).hashCode(), this.name);
                             nPar++;
                         } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
                         nPar++;
