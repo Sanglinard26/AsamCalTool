@@ -170,7 +170,7 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
     }
 
     public final String getUnit() {
-        return new String(this.unit);
+        return new String(unit);
     }
 
     public final String getProperties() {

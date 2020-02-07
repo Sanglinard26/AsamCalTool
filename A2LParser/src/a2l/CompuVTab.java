@@ -41,9 +41,9 @@ public final class CompuVTab extends ConversionTable {
             this.name = parameters.get(2);
             this.longIdentifier = parameters.get(3).toCharArray();
             this.conversionType = ConversionType.getConversionType(parameters.get(4));
-            this.numberValuePairs = (short) Integer.parseInt(parameters.get(5));
+            this.numberValuePairs = Short.parseShort(parameters.get(5));
 
-            this.valuePairs = new LinkedHashMap<Float, String>();
+            this.valuePairs = new LinkedHashMap<Float, String>(numberValuePairs);
 
             int lastIdx = parameters.indexOf("DEFAULT_VALUE");
 
@@ -51,8 +51,10 @@ public final class CompuVTab extends ConversionTable {
 
             if (lastIdx > -1) {
                 listValuePairs = parameters.subList(6, lastIdx);
+                this.defaultValue = parameters.get(lastIdx+1).toCharArray();
             } else {
                 listValuePairs = parameters.subList(6, parameters.size());
+                this.defaultValue = new char[0];
             }
 
             for (int i = 0; i < listValuePairs.size(); i++) {

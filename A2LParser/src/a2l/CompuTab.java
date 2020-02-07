@@ -46,13 +46,15 @@ public final class CompuTab extends ConversionTable {
             this.name = parameters.get(2);
             this.longIdentifier = parameters.get(3).toCharArray();
             this.conversionType = ConversionType.getConversionType(parameters.get(4));
-            this.numberValuePairs = (short) Integer.parseInt(parameters.get(5));
+            this.numberValuePairs = Short.parseShort(parameters.get(5));
 
-            this.valuePairs = new LinkedHashMap<Float, Float>();
+            this.valuePairs = new LinkedHashMap<Float, Float>(this.numberValuePairs);
 
             int lastIdx = parameters.indexOf("DEFAULT_VALUE");
             if (lastIdx < 0) {
                 lastIdx = parameters.indexOf("DEFAULT_VALUE_NUMERIC");
+            }else{
+            	this.defaultValue = parameters.get(lastIdx+1).toCharArray();
             }
 
             final List<String> listValuePairs;

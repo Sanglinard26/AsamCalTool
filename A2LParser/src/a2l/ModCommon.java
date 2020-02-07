@@ -89,7 +89,7 @@ public final class ModCommon implements A2lObject {
     }
 
     public final String getComment() {
-        return new String(this.comment);
+        return new String(comment);
     }
 
     @Override

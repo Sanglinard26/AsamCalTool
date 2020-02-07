@@ -62,7 +62,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     }
 
     public final String getFunction() {
-        return new String(this.functionRef);
+        return new String(functionRef);
     }
 
     public final void assignRecordLayout(HashMap<Integer, RecordLayout> recordLayouts) {

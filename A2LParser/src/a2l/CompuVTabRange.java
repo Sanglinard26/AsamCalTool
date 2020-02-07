@@ -48,9 +48,9 @@ public final class CompuVTabRange extends ConversionTable {
 
             this.name = parameters.get(2);
             this.longIdentifier = parameters.get(3).toCharArray();
-            this.numberValueTriples = (short) Integer.parseInt(parameters.get(4));
+            this.numberValueTriples = Short.parseShort(parameters.get(4));
 
-            this.valueTriples = new LinkedHashMap<Range, String>();
+            this.valueTriples = new LinkedHashMap<Range, String>(numberValueTriples);
 
             int lastIdx = parameters.indexOf("DEFAULT_VALUE");
 
@@ -58,8 +58,10 @@ public final class CompuVTabRange extends ConversionTable {
 
             if (lastIdx > -1) {
                 listValuePairs = parameters.subList(5, lastIdx);
+                this.defaultValue = parameters.get(lastIdx+1).toCharArray();
             } else {
                 listValuePairs = parameters.subList(5, parameters.size());
+                this.defaultValue = new char[0];
             }
 
             for (int i = 0; i < listValuePairs.size(); i++) {
