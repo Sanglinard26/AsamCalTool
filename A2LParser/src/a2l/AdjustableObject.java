@@ -77,7 +77,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
             if (objectDisplayFormat == null) {
                 displayFormat = compuMethod.getFormat();
             } else {
-                displayFormat = objectDisplayFormat.toString();
+                displayFormat = new String((char[]) objectDisplayFormat);
             }
             int idxPoint = displayFormat.indexOf(".");
             if (idxPoint > -1) {
