@@ -9,10 +9,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import constante.ConversionType;
+import utils.NumeralString;
 
 public final class CompuVTab extends ConversionTable {
 
-    private short numberValuePairs;
+    private int numberValuePairs;
     private Map<Float, String> valuePairs;
     private char[] defaultValue; // DEFAULT_VALUE
 
@@ -41,7 +42,7 @@ public final class CompuVTab extends ConversionTable {
             this.name = parameters.get(2);
             this.longIdentifier = parameters.get(3).toCharArray();
             this.conversionType = ConversionType.getConversionType(parameters.get(4));
-            this.numberValuePairs = Short.parseShort(parameters.get(5));
+            this.numberValuePairs = Integer.parseInt(parameters.get(5));
 
             this.valuePairs = new LinkedHashMap<Float, String>(numberValuePairs);
 
@@ -51,16 +52,34 @@ public final class CompuVTab extends ConversionTable {
 
             if (lastIdx > -1) {
                 listValuePairs = parameters.subList(6, lastIdx);
-                this.defaultValue = parameters.get(lastIdx+1).toCharArray();
+                this.defaultValue = parameters.get(lastIdx + 1).toCharArray();
             } else {
                 listValuePairs = parameters.subList(6, parameters.size());
                 this.defaultValue = new char[0];
             }
 
-            for (int i = 0; i < listValuePairs.size(); i++) {
-                if (i % 2 == 0) {
-                    valuePairs.put(Float.parseFloat(listValuePairs.get(i)), listValuePairs.get(i + 1));
+            Float key = null;
+            String value;
+
+            for (int i = 0; i < listValuePairs.size() - 1; i++) {
+
+                try {
+                    key = Float.parseFloat(listValuePairs.get(i));
+                    value = listValuePairs.get(i + 1);
+                    valuePairs.put(key, value);
+                    i++;
+                } catch (NumberFormatException e) {
+
+                    String oldVal;
+
+                    do {
+                        oldVal = valuePairs.get(key);
+                        valuePairs.put(key, oldVal + " " + listValuePairs.get(i++));
+                    } while (!NumeralString.isNumber(listValuePairs.get(i)) && i < listValuePairs.size() - 1);
+
+                    i--;
                 }
+
             }
         } else {
             throw new IllegalArgumentException("Nombre de parametres inferieur au nombre requis");
