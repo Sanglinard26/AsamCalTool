@@ -360,14 +360,18 @@ public final class Ihm extends JFrame {
                     File[] a2lFiles = chooser.getSelectedFiles();
                     if (a2lFiles.length == 2) {
 
-                        StringBuilder sb = A2l.compareA2L(a2lFiles[0], a2lFiles[1]);
-
-                        JTextArea textArea = new JTextArea(sb.toString());
-                        JScrollPane scrollPane = new JScrollPane(textArea);
-                        textArea.setLineWrap(true);
-                        textArea.setWrapStyleWord(true);
-                        scrollPane.setPreferredSize(new Dimension(500, 500));
-                        JOptionPane.showMessageDialog(null, scrollPane);
+                        StringBuilder sb;
+                        try {
+                            sb = A2l.compareA2L(a2lFiles[0], a2lFiles[1]);
+                            JTextArea textArea = new JTextArea(sb.toString());
+                            JScrollPane scrollPane = new JScrollPane(textArea);
+                            textArea.setLineWrap(true);
+                            textArea.setWrapStyleWord(true);
+                            scrollPane.setPreferredSize(new Dimension(800, 500));
+                            JOptionPane.showMessageDialog(null, scrollPane);
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
 
                     } else {
                         JOptionPane.showMessageDialog(Ihm.this, "Two files are required !");

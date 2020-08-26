@@ -19,7 +19,6 @@ import static constante.SecondaryKeywords.READ_ONLY;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -194,36 +193,16 @@ public final class AxisPts extends AdjustableObject {
     }
 
     @Override
-    public Double[] getResolution() {
+    public double[] getResolution() {
 
         if (ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) != 0) {
-            double val0 = formatValue(this.compuMethod.compute(1), getNbDecimal());
-            double val1 = formatValue(this.compuMethod.compute(2), getNbDecimal());
+            double val0 = this.compuMethod.compute(1);
+            double val1 = this.compuMethod.compute(2);
             double resol = val1 - val0;
-            return new Double[] { resol };
+            return new double[] { resol };
         }
 
-        return new Double[] { Double.NaN };
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-
-        if (this == obj) {
-            return true;
-        }
-
-        if ((obj != null) && (getClass() == obj.getClass())) {
-            AxisPts axisPts = (AxisPts) obj;
-
-            boolean genericTest = conversionId == axisPts.conversionId && Double.compare(lowerLimit, axisPts.lowerLimit) == 0
-                    && Double.compare(upperLimit, axisPts.upperLimit) == 0;
-
-            return genericTest && maxAxisPoints == axisPts.maxAxisPoints && Arrays.deepEquals(getUnit(), axisPts.getUnit())
-                    && Arrays.deepEquals(getResolution(), axisPts.getResolution());
-        }
-
-        return false;
+        return new double[] { Double.NaN };
     }
 
     @Override

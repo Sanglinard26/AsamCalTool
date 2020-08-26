@@ -64,18 +64,34 @@ public final class Values {
 
     public final float[][] getZvalues() {
 
-        float[][] floatValues = new float[dimY - 1][dimX - 1];
+        float[][] floatValues;
 
-        for (short y = 1; y < dimY; y++) {
-            for (short x = 1; x < dimX; x++) {
+        if (values[0].equals("Y\\X")) {
+            floatValues = new float[dimY - 1][dimX - 1];
+            for (short y = 1; y < dimY; y++) {
+                for (short x = 1; x < dimX; x++) {
 
-                if (NumeralString.isNumber(getValue(y, x))) {
-                    floatValues[y - 1][x - 1] = Float.parseFloat(getValue(y, x));
-                } else {
-                    floatValues[y - 1][x - 1] = Float.NaN;
+                    if (NumeralString.isNumber(getValue(y, x))) {
+                        floatValues[y - 1][x - 1] = Float.parseFloat(getValue(y, x));
+                    } else {
+                        floatValues[y - 1][x - 1] = Float.NaN;
+                    }
+                }
+            }
+        } else {
+            floatValues = new float[dimY - 1][dimX];
+            for (short y = 1; y < dimY; y++) {
+                for (short x = 1; x < dimX; x++) {
+
+                    if (NumeralString.isNumber(getValue(y, x))) {
+                        floatValues[y - 1][x - 1] = Float.parseFloat(getValue(y, x));
+                    } else {
+                        floatValues[y - 1][x - 1] = Float.NaN;
+                    }
                 }
             }
         }
+
         return floatValues;
     }
 

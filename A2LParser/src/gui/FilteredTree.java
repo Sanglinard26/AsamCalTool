@@ -178,6 +178,9 @@ public class FilteredTree extends JPanel {
     }
 
     public final boolean followLink(String textLink) {
+
+        filterTree(""); // Remove filter in order to find the object
+
         final TreePath path = find((DefaultMutableTreeNode) this.tree.getModel().getRoot(), textLink);
         if (path == null) {
             return false;

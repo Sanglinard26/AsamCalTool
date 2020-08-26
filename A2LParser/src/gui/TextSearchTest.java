@@ -18,6 +18,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -28,8 +29,12 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
@@ -40,10 +45,12 @@ import javax.swing.text.Segment;
 
 public class TextSearchTest {
 
-    private static class Search implements Callable<List<Integer>> {
+    private static SpinnerNumberModel numberModel;
+
+    private static class Search implements Callable<HashMap<Integer, Integer>> {
 
         private Document document;
-        List<Integer> dataOffsets;
+        HashMap<Integer, Integer> dataOffsets;
         String searchString;
 
         public Search(Document document, String searchString) {
@@ -52,7 +59,7 @@ public class TextSearchTest {
         }
 
         @Override
-        public List<Integer> call() throws Exception {
+        public HashMap<Integer, Integer> call() throws Exception {
             search();
 
             return dataOffsets;
@@ -62,7 +69,7 @@ public class TextSearchTest {
         private void search() {
 
             List<Integer> lineOffsets = new ArrayList<Integer>();
-            dataOffsets = new ArrayList<Integer>();
+            dataOffsets = new HashMap<Integer, Integer>();
             Element element = document.getDefaultRootElement();
             int elementCount = element.getElementCount();
 
@@ -74,6 +81,7 @@ public class TextSearchTest {
             int count = 0;
             int lsOffset;
             int leOffset;
+            int keyCnt = 1;
 
             while (count < (lineOffsets.size() - 1)) {
 
@@ -92,10 +100,11 @@ public class TextSearchTest {
                 int mark = 0;
 
                 while ((mark = line.indexOf(searchString, mark)) > -1) {
-                    dataOffsets.add(lsOffset + mark);
+                    dataOffsets.put(keyCnt++, lsOffset + mark);
                     mark += searchString.length();
                 }
             }
+
         }
 
     }
@@ -106,6 +115,7 @@ public class TextSearchTest {
 
         JTextField textField;
         JTextArea textArea;
+        Highlighter highlighter;
 
         public TextSearchPanel(File file) {
             super(new GridBagLayout());
@@ -140,6 +150,24 @@ public class TextSearchTest {
                 c.fill = GridBagConstraints.HORIZONTAL;
                 add(textField, c);
 
+                numberModel = new SpinnerNumberModel();
+                JSpinner spinner = new JSpinner(numberModel);
+                add(spinner, c);
+
+                spinner.addChangeListener(new ChangeListener() {
+
+                    @Override
+                    public void stateChanged(ChangeEvent e) {
+                        if (highlighter != null && highlighter.getHighlights().length > 0) {
+                            int idx = numberModel.getNumber().intValue();
+                            textArea.setCaretPosition(highlighter.getHighlights()[idx].getStartOffset());
+                        } else {
+                            numberModel.setValue(0);
+                        }
+
+                    }
+                });
+
                 c.fill = GridBagConstraints.BOTH;
                 c.weightx = 1.0;
                 c.weighty = 1.0;
@@ -147,8 +175,9 @@ public class TextSearchTest {
 
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch (BadLocationException e) {
-                e.printStackTrace();
+            } catch (BadLocationException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
             }
 
         }
@@ -159,7 +188,7 @@ public class TextSearchTest {
 
             Cursor startCursor = textArea.getCursor();
             Cursor waitCursor = new Cursor(Cursor.WAIT_CURSOR);
-            Highlighter highlighter = textArea.getHighlighter();
+            highlighter = textArea.getHighlighter();
             String searchText = textField.getText();
             Search search = new Search(textArea.getDocument(), searchText);
 
@@ -168,10 +197,10 @@ public class TextSearchTest {
             highlighter.removeAllHighlights();
 
             ExecutorService service = Executors.newSingleThreadExecutor();
-            Future<List<Integer>> offsets = service.submit(search);
+            Future<HashMap<Integer, Integer>> offsets = service.submit(search);
 
             try {
-                for (Integer start : offsets.get()) {
+                for (Integer start : offsets.get().values()) {
                     highlighter.addHighlight(start, start + searchText.length(), DefaultHighlighter.DefaultPainter);
                 }
             } catch (Exception e) {
@@ -180,9 +209,18 @@ public class TextSearchTest {
             textArea.setEditable(true);
             textArea.setCursor(startCursor);
 
-            textArea.setCaretPosition(highlighter.getHighlights()[0].getStartOffset());
+            if (highlighter.getHighlights().length > 0) {
+                textArea.setCaretPosition(highlighter.getHighlights()[0].getStartOffset());
 
-            JOptionPane.showMessageDialog(this, "Search done!\nResult are highlighted.");
+                numberModel.setMinimum(0);
+                numberModel.setMaximum(highlighter.getHighlights().length - 1);
+                numberModel.setStepSize(1);
+
+                JOptionPane.showMessageDialog(this, "Search done!\nResult are highlighted.");
+            } else {
+                JOptionPane.showMessageDialog(this, "No result...");
+            }
+
         }
     }
 
@@ -193,13 +231,19 @@ public class TextSearchTest {
         frame.setLocationByPlatform(true);
         frame.pack();
         frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     public static void main(String args[]) {
 
         EventQueue.invokeLater(new Runnable() {
             public void run() {
-                createAndShowGUI(null);
+
+                long start = System.currentTimeMillis();
+
+                createAndShowGUI(new File("C:\\User\\U354706\\Perso\\WorkInProgress\\MG1CS032_D081C_VC2bis.a2l"));
+
+                System.out.println("Durée : " + (System.currentTimeMillis() - start) + "ms");
             }
         });
     }

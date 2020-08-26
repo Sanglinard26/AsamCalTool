@@ -298,7 +298,7 @@ public final class A2l {
         do {
             line = line.trim();
             if (line.length() > 0) {
-                objectParameters.addAll(parseLineWithRegex(regexQuote, line));
+                objectParameters.addAll(parseLineWithRegex(regexQuote, line, buf));
             }
             numLine++;
         } while ((line = buf.readLine()) != null
@@ -326,11 +326,13 @@ public final class A2l {
         return line.substring(idx, idx2);
     }
 
-    private final List<String> parseLineWithRegex(Pattern regexQuote, String line) {
+    private final List<String> parseLineWithRegex(Pattern regexQuote, String line, BufferedReader buf) throws IOException {
 
         final List<String> listWord = new ArrayList<String>();
 
         final String lineWoutComment;
+        String lineTmp;
+        StringBuilder sb = new StringBuilder();
 
         if (line.indexOf("/*") > -1 || line.indexOf("*/") > -1 || line.indexOf("//") > -1) {
             lineWoutComment = ParserUtils.LINE_COMMENT.matcher(line).replaceAll("").trim();
@@ -344,6 +346,24 @@ public final class A2l {
         if (lineWoutComment.charAt(0) == '"' && lineWoutComment.charAt(lineWoutComment.length() - 1) == '"'
                 && ParserUtils.isUniqueString(lineWoutComment)) {
             listWord.add(lineWoutComment.substring(1, lineWoutComment.length() - 1));
+            return listWord;
+        } else if (lineWoutComment.charAt(0) == '"' && !ParserUtils.isEvenQuote(lineWoutComment)) {
+
+            sb.append(lineWoutComment.substring(1));
+            do {
+
+                lineTmp = buf.readLine();
+
+                if (lineTmp == null) {
+                    break;
+                } else if (lineTmp.trim().startsWith("/end")) {
+                    break;
+                }
+                sb.append(" " + lineTmp.substring(0, lineTmp.length() - 1));
+            } while (lineTmp.charAt(lineTmp.length() - 1) != '"');
+
+            listWord.add(sb.toString());
+
             return listWord;
         }
 
@@ -412,20 +432,43 @@ public final class A2l {
         return listByFunction;
     }
 
-    public static StringBuilder compareA2L(final File firstFile, final File secondFile) {
+    public static StringBuilder compareA2L(final File firstFile, final File secondFile) throws InterruptedException {
 
         final StringBuilder sb = new StringBuilder();
+
+        long start = System.currentTimeMillis();
+
+        final A2l first = new A2l();
+
+        Thread threadA2l1 = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                first.parse(firstFile);
+            }
+        });
+
+        threadA2l1.start();
+
+        final A2l second = new A2l();
+
+        Thread threadA2l2 = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                second.parse(secondFile);
+            }
+        });
+
+        threadA2l2.start();
+
+        threadA2l1.join();
+        threadA2l2.join();
 
         Thread thread = new Thread(new Runnable() {
 
             @Override
             public void run() {
-
-                A2l first = new A2l();
-                first.parse(firstFile);
-
-                A2l second = new A2l();
-                second.parse(secondFile);
 
                 Set<Integer> missingObjects = new HashSet<>(first.getAdjustableObjects().keySet());
                 Set<Integer> newObjects = new HashSet<>(second.getAdjustableObjects().keySet());
@@ -441,22 +484,38 @@ public final class A2l {
                 AdjustableObject object1;
                 AdjustableObject object2;
 
-                sb.append("*** COMPARE REPORT ***\n\n");
+                sb.append("*** COMPARE REPORT ***\n");
 
-                sb.append("Missing objects : " + missingObjects + "\n");
-                sb.append("New objects : " + newObjects + "\n");
+                sb.append("\nMissing objects : " + "\n");
 
-                sb.append("Different object :\n");
-
-                for (Integer objectName : compObjects) {
+                for (Integer objectName : missingObjects) {
                     object1 = firstAdjObject.get(objectName);
-                    object2 = secondAdjObject.get(objectName);
-
-                    if (!object1.equals(object2))
-                        sb.append(object1 + " => isn't equal\n");
+                    sb.append(object1 + ", ");
                 }
 
-                sb.append("\n*** END ***");
+                sb.append("\n\nNew objects : " + "\n");
+
+                for (Integer objectName : newObjects) {
+                    object1 = secondAdjObject.get(objectName);
+                    sb.append(object1 + ", ");
+                }
+
+                HashMap<String, String> diff;
+
+                for (Integer objectId : compObjects) {
+                    object1 = firstAdjObject.get(objectId);
+                    object2 = secondAdjObject.get(objectId);
+
+                    diff = AdjustableObject.compar(object1, object2);
+
+                    if (diff.size() > 0) {
+                        sb.append("\n\n" + object1.name + "\n");
+                        sb.append(diff);
+                    }
+
+                }
+
+                sb.append("\n\n*** END ***");
 
             }
         });
@@ -465,6 +524,8 @@ public final class A2l {
 
         while (thread.isAlive()) {
         }
+
+        System.out.println("Finished in = " + (System.currentTimeMillis() - start) + "ms");
 
         return sb;
     }

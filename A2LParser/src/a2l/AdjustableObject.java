@@ -15,6 +15,7 @@ import java.util.Map;
 
 import a2l.AxisDescr.Attribute;
 import a2l.Characteristic.CharacteristicType;
+import constante.PrimaryKeywords;
 import constante.SecondaryKeywords;
 
 public abstract class AdjustableObject implements A2lObject, Comparable<AdjustableObject> {
@@ -180,7 +181,16 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
 
     public abstract String[] getUnit();
 
-    public abstract Double[] getResolution();
+    public abstract double[] getResolution();
+
+    public final String getTxtResolution() {
+        StringBuilder sb = new StringBuilder();
+
+        for (double resol : getResolution()) {
+            sb.append("[" + resol + "]");
+        }
+        return sb.toString();
+    }
 
     public String getProperties() {
         StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
@@ -236,6 +246,51 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         sb.append("</html>");
 
         return sb.toString();
+    }
+
+    public static final HashMap<String, String> compar(AdjustableObject oldObj, AdjustableObject newObj) {
+
+        HashMap<String, String> diff = new HashMap<String, String>();
+
+        if (oldObj.conversionId != newObj.conversionId) {
+            diff.put("\n\t" + PrimaryKeywords.COMPU_METHOD.name(), oldObj.compuMethod.toString() + " | " + newObj.compuMethod.toString());
+        }
+
+        if (Double.compare(oldObj.lowerLimit, newObj.lowerLimit) != 0) {
+            diff.put("\n\tLower limit", oldObj.lowerLimit + " | " + newObj.lowerLimit);
+        }
+
+        if (Double.compare(oldObj.upperLimit, newObj.upperLimit) != 0) {
+            diff.put("\n\tUpper limit", oldObj.upperLimit + " | " + newObj.upperLimit);
+        }
+
+        if (Double.compare(oldObj.maxDiff, newObj.maxDiff) != 0) {
+            diff.put("\n\tMax diff", oldObj.maxDiff + " | " + newObj.maxDiff);
+        }
+
+        if (!AdjustableObject.equalsDouble(oldObj.getResolution(), newObj.getResolution())) {
+            diff.put("\n\tResolution", oldObj.getTxtResolution() + " | " + newObj.getTxtResolution());
+        }
+
+        return diff;
+
+    }
+
+    public static boolean equalsDouble(double[] a, double[] a2) {
+        if (a == a2)
+            return true;
+        if (a == null || a2 == null)
+            return false;
+
+        int length = a.length;
+        if (a2.length != length)
+            return false;
+
+        for (int i = 0; i < length; i++)
+            if (Double.doubleToLongBits(a[i]) != Double.doubleToLongBits(a2[i]))
+                return false;
+
+        return true;
     }
 
 }
