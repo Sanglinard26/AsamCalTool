@@ -14,7 +14,6 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import constante.ConversionType;
 import constante.SecondaryKeywords;
@@ -253,11 +252,10 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
 
             int n = 7;
 
-            Set<SecondaryKeywords> keys = optionalsParameters.keySet();
             SecondaryKeywords keyWord;
             for (int nPar = n; nPar < nbParams; nPar++) {
                 keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
-                if (keys.contains(keyWord)) {
+                if (optionalsParameters.containsKey(keyWord)) {
                     switch (keyWord) {
                     case COEFFS: // 6 coeffs
                         optionalsParameters.put(COEFFS, new Coeffs(parameters.subList(nPar + 1, nPar + 7)));

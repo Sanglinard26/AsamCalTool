@@ -20,7 +20,6 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import constante.DataType;
 import constante.SecondaryKeywords;
@@ -96,11 +95,10 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
 
                 int n = 10;
 
-                Set<SecondaryKeywords> keys = optionalsParameters.keySet();
                 SecondaryKeywords keyWord;
                 for (int nPar = n; nPar < nbParams; nPar++) {
                     keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
-                    if (keys.contains(keyWord)) {
+                    if (optionalsParameters.containsKey(keyWord)) {
                         switch (keyWord) {
                         case ANNOTATION:
                             n = nPar + 1;

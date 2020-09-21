@@ -10,7 +10,6 @@ import static constante.SecondaryKeywords.ANNOTATION_TEXT;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import constante.SecondaryKeywords;
 
@@ -36,11 +35,10 @@ public final class Annotation {
 
         final int nbParams = parameters.size();
 
-        Set<SecondaryKeywords> keys = optionalsParameters.keySet();
         SecondaryKeywords keyWord;
         for (int nPar = 0; nPar < nbParams; nPar++) {
             keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
-            if (keys.contains(keyWord)) {
+            if (optionalsParameters.containsKey(keyWord)) {
                 switch (keyWord) {
                 case ANNOTATION_LABEL:
                     optionalsParameters.put(ANNOTATION_LABEL, parameters.get(nPar + 1).toCharArray());

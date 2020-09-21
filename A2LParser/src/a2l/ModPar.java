@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import constante.SecondaryKeywords;
 
@@ -78,11 +77,10 @@ public final class ModPar implements A2lObject {
                     this.comment = parameters.get(n).toCharArray();
                     break;
                 default: // Cas de parametres optionels
-                    Set<SecondaryKeywords> keys = optionalsParameters.keySet();
                     SecondaryKeywords keyWord;
                     for (int nPar = n; nPar < nbParams; nPar++) {
                         keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
-                        if (keys.contains(keyWord)) {
+                        if (optionalsParameters.containsKey(keyWord)) {
                             switch (keyWord) {
                             case ADDR_EPK:
                                 optionalsParameters.put(ADDR_EPK, parameters.get(nPar + 1));

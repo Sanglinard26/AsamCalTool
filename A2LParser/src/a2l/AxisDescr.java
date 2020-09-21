@@ -17,7 +17,6 @@ import java.nio.ByteOrder;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import constante.SecondaryKeywords;
 
@@ -201,11 +200,10 @@ public final class AxisDescr {
 
             int n = 6;
 
-            Set<SecondaryKeywords> keys = optionalsParameters.keySet();
             SecondaryKeywords keyWord;
             for (int nPar = n; nPar < nbParams; nPar++) {
                 keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
-                if (keys.contains(keyWord)) {
+                if (optionalsParameters.containsKey(keyWord)) {
                     switch (keyWord) {
                     case AXIS_PTS_REF:
                         optionalsParameters.put(AXIS_PTS_REF, parameters.get(nPar + 1).hashCode());

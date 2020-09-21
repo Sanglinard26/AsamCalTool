@@ -7,7 +7,6 @@ import static constante.SecondaryKeywords.UNIT_CONVERSION;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import constante.SecondaryKeywords;
 import constante.UnitType;
@@ -53,11 +52,10 @@ public final class Unit implements A2lObject, Comparable<Unit> {
 
             int n = 6;
 
-            Set<SecondaryKeywords> keys = optionalsParameters.keySet();
             SecondaryKeywords keyWord;
             for (int nPar = n; nPar < nbParams; nPar++) {
                 keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
-                if (keys.contains(keyWord)) {
+                if (optionalsParameters.containsKey(keyWord)) {
                     switch (keyWord) {
                     case REF_UNIT:
                         optionalsParameters.put(REF_UNIT, parameters.get(nPar + 1));

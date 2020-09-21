@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import constante.ConversionType;
 import constante.SecondaryKeywords;
@@ -40,8 +39,6 @@ public final class AxisPts extends AdjustableObject {
         initOptionalsParameters();
 
         build(parameters, beginLine, endLine);
-
-        characteristicsDependency = new ArrayList<Characteristic>();
     }
 
     private final void initOptionalsParameters() {
@@ -89,6 +86,9 @@ public final class AxisPts extends AdjustableObject {
     }
 
     public final void assignCharacteristic(Characteristic characteristic) {
+        if (characteristicsDependency == null) {
+            characteristicsDependency = new ArrayList<Characteristic>();
+        }
         characteristicsDependency.add(characteristic);
     }
 
@@ -121,11 +121,10 @@ public final class AxisPts extends AdjustableObject {
 
             int n = 12;
 
-            Set<SecondaryKeywords> keys = optionalsParameters.keySet();
             SecondaryKeywords keyWord;
             for (int nPar = n; nPar < nbParams; nPar++) {
                 keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
-                if (keys.contains(keyWord)) {
+                if (optionalsParameters.containsKey(keyWord)) {
                     switch (keyWord) {
                     case ANNOTATION:
                         n = nPar + 1;

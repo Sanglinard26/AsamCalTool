@@ -8,7 +8,7 @@ import java.util.List;
 public final class SystemConstant implements A2lObject, Comparable<SystemConstant> {
 
     private String name;
-    private String value;
+    private char[] value;
 
     public SystemConstant(List<String> parameters) {
 
@@ -21,7 +21,7 @@ public final class SystemConstant implements A2lObject, Comparable<SystemConstan
     }
 
     public final String getValue() {
-        return this.value;
+        return new String(this.value);
     }
 
     @Override
@@ -42,7 +42,7 @@ public final class SystemConstant implements A2lObject, Comparable<SystemConstan
     @Override
     public void build(List<String> parameters, int beginLine, int endLine) throws A2lObjectParsingException {
         this.name = parameters.get(0);
-        this.value = parameters.get(1);
+        this.value = parameters.get(1).toCharArray();
     }
 
     @Override
@@ -50,7 +50,7 @@ public final class SystemConstant implements A2lObject, Comparable<SystemConstan
         StringBuilder sb = new StringBuilder("<html><b><u>PROPERTIES :</u></b>");
 
         sb.append("<ul><li><b>Name: </b>" + name + "\n");
-        sb.append("<li><b>Value: </b>" + value + "\n");
+        sb.append("<li><b>Value: </b>" + getValue() + "\n");
         sb.append("</u></html>");
 
         return sb.toString();

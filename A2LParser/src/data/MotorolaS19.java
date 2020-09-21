@@ -32,13 +32,6 @@ public final class MotorolaS19 extends DataCalibration {
         char recordType = line.charAt(1);
 
         switch (recordType) {
-        case '0': // Entêt de bloc - 2 octets
-            // startAddress = processStartAddressRecord(line);
-        case '1': // Séquence de données - 2 octets
-
-            break;
-        case '2': // Séquence de données - 3 octets
-            break;
         case '3': // Séquence de données - 4 octets
             Memory memoryOfLine = processDataRecordLine(line, extendedAddress);
             if (last == null) {
@@ -53,20 +46,8 @@ public final class MotorolaS19 extends DataCalibration {
                 }
             }
             break;
-        case '5': // Nombre d'enregistrement - 2 octets
-
-            break;
         case '7': // Fin de bloc - 4 octets
-            // if (!":00000001FF".equals(line)) {
-            // throw new IllegalArgumentException("Illegal End-Of-Line record received");
-            // }
             endOfFile = true;
-            break;
-        case '8': // Fin de bloc - 3 octets
-
-            break;
-        case '9': // Fin de bloc - 2 octets
-
             break;
         default:
             break;

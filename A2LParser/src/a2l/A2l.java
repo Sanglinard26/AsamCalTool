@@ -32,9 +32,9 @@ public final class A2l {
     private HashMap<Integer, AdjustableObject> adjustableObjects;
     private HashMap<Integer, CompuMethod> compuMethods;
     private HashMap<Integer, ConversionTable> conversionTables;
-    private List<Measurement> measurements;
+    private Vector<Measurement> measurements;
     private HashMap<Integer, RecordLayout> recordLayouts;
-    private List<Function> functions;
+    private Vector<Function> functions;
 
     private HashMap<Integer, Unit> units;
 
@@ -49,11 +49,11 @@ public final class A2l {
         adjustableObjects = new HashMap<Integer, AdjustableObject>();
         compuMethods = new HashMap<Integer, CompuMethod>();
         conversionTables = new HashMap<Integer, ConversionTable>();
-        measurements = new ArrayList<Measurement>();
+        measurements = new Vector<Measurement>();
         recordLayouts = new HashMap<Integer, RecordLayout>();
         units = new HashMap<Integer, Unit>();
 
-        functions = new ArrayList<Function>();
+        functions = new Vector<Function>();
 
         listeners = new EventListenerList();
 
@@ -82,9 +82,9 @@ public final class A2l {
         return v;
     }
 
-    public final Function[] getListFunction() {
+    public final Vector<Function> getListFunction() {
         Collections.sort(functions);
-        return functions.toArray(new Function[functions.size()]);
+        return functions;
     }
 
     public final Vector<CompuMethod> getListCompuMethod() {
@@ -117,9 +117,9 @@ public final class A2l {
         return v;
     }
 
-    public final Measurement[] getListMeasurement() {
+    public final Vector<Measurement> getListMeasurement() {
         Collections.sort(measurements);
-        return measurements.toArray(new Measurement[measurements.size()]);
+        return measurements;
     }
 
     public final void addA2lStateListener(A2lStateListener a2lStateListener) {
@@ -151,6 +151,16 @@ public final class A2l {
 
             fireStateChanged("Parsing in progress");
 
+            AxisPts axisPt = null;
+            Characteristic characteristic = null;
+            CompuMethod compuMethod = null;
+            CompuTab compuTab = null;
+            CompuVTab compuVTab = null;
+            CompuVTabRange compuVTabRange = null;
+            RecordLayout recordLayout = null;
+            Function function = null;
+            Unit unit = null;
+
             while ((line = buf.readLine()) != null) {
 
                 numLine++;
@@ -163,7 +173,7 @@ public final class A2l {
 
                     line = line.trim();
 
-                    PrimaryKeywords keyword = PrimaryKeywords.getPrimaryKeyWords(getKeyword(line));
+                    PrimaryKeywords keyword = PrimaryKeywords.getPrimaryKeywords(getKeyword(line));
 
                     try {
                         switch (keyword) {
@@ -183,42 +193,42 @@ public final class A2l {
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
-                            AxisPts axisPt = new AxisPts(objectParameters, beginLine, endLine);
+                            axisPt = new AxisPts(objectParameters, beginLine, endLine);
                             adjustableObjects.put(axisPt.toString().hashCode(), axisPt);
                             break;
                         case CHARACTERISTIC:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
-                            Characteristic characteristic = new Characteristic(objectParameters, beginLine, endLine);
+                            characteristic = new Characteristic(objectParameters, beginLine, endLine);
                             adjustableObjects.put(characteristic.toString().hashCode(), characteristic);
                             break;
                         case COMPU_METHOD:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
-                            CompuMethod compuMethod = new CompuMethod(objectParameters, beginLine, endLine);
+                            compuMethod = new CompuMethod(objectParameters, beginLine, endLine);
                             compuMethods.put(compuMethod.toString().hashCode(), compuMethod);
                             break;
                         case COMPU_TAB:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
-                            CompuTab compuTab = new CompuTab(objectParameters, beginLine, endLine);
+                            compuTab = new CompuTab(objectParameters, beginLine, endLine);
                             conversionTables.put(compuTab.toString().hashCode(), compuTab);
                             break;
                         case COMPU_VTAB:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
-                            CompuVTab compuVTab = new CompuVTab(objectParameters, beginLine, endLine);
+                            compuVTab = new CompuVTab(objectParameters, beginLine, endLine);
                             conversionTables.put(compuVTab.toString().hashCode(), compuVTab);
                             break;
                         case COMPU_VTAB_RANGE:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
-                            CompuVTabRange compuVTabRange = new CompuVTabRange(objectParameters, beginLine, endLine);
+                            compuVTabRange = new CompuVTabRange(objectParameters, beginLine, endLine);
                             conversionTables.put(compuVTabRange.toString().hashCode(), compuVTabRange);
                             break;
                         case MEASUREMENT:
@@ -231,14 +241,14 @@ public final class A2l {
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
-                            RecordLayout recordLayout = new RecordLayout(objectParameters, beginLine, endLine);
+                            recordLayout = new RecordLayout(objectParameters, beginLine, endLine);
                             recordLayouts.put(recordLayout.toString().hashCode(), recordLayout);
                             break;
                         case FUNCTION:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
-                            Function function = new Function(objectParameters, beginLine, endLine);
+                            function = new Function(objectParameters, beginLine, endLine);
                             if (function.getDefCharacteristic() != null) {
                                 mergeDefCharacteristic.putAll(function.getDefCharacteristic());
                             }
@@ -248,7 +258,7 @@ public final class A2l {
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
-                            Unit unit = new Unit(objectParameters, beginLine, endLine);
+                            unit = new Unit(objectParameters, beginLine, endLine);
                             units.put(unit.toString().hashCode(), unit);
                             break;
                         default:
@@ -430,6 +440,36 @@ public final class A2l {
         Collections.sort(listByFunction);
 
         return listByFunction;
+    }
+
+    public Vector<String> getAdjustableObjectNameByFunction(String function) {
+
+        final Vector<String> listNameByFunction = new Vector<String>();
+
+        String functionRef;
+
+        for (AdjustableObject adjustableObject : adjustableObjects.values()) {
+            functionRef = adjustableObject.getFunction();
+            if (functionRef != null && functionRef.equals(function)) {
+                listNameByFunction.add(adjustableObject.name);
+            }
+        }
+
+        Collections.sort(listNameByFunction);
+
+        return listNameByFunction;
+    }
+
+    public Vector<AdjustableObject> getAdjustableObjectFromList(Vector<String> listNameAdjObj) {
+        final Vector<AdjustableObject> listByName = new Vector<AdjustableObject>();
+
+        for (String nameAdjObj : listNameAdjObj) {
+            listByName.add(adjustableObjects.get(nameAdjObj.hashCode()));
+        }
+
+        Collections.sort(listByName);
+
+        return listByName;
     }
 
     public static StringBuilder compareA2L(final File firstFile, final File secondFile) throws InterruptedException {

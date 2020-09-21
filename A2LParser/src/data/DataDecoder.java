@@ -112,17 +112,17 @@ public final class DataDecoder {
                     readMap(byteOrder, characteristic, adress, compuMethod, fncValues);
                     break;
                 case CUBOID:
-                    Values valuesCuboid = new Values(1, 1);
+                    Values valuesCuboid = new Values((short) 1, (short) 1);
                     valuesCuboid.setValue(0, 0, "Not implemented");
                     characteristic.setValues(valuesCuboid);
                     break;
                 case CUBE_4:
-                    Values valuesCube4 = new Values(1, 1);
+                    Values valuesCube4 = new Values((short) 1, (short) 1);
                     valuesCube4.setValue(0, 0, "Not implemented");
                     characteristic.setValues(valuesCube4);
                     break;
                 case CUBE_5:
-                    Values valuesCube5 = new Values(1, 1);
+                    Values valuesCube5 = new Values((short) 1, (short) 1);
                     valuesCube5.setValue(0, 0, "Not implemented");
                     characteristic.setValues(valuesCube5);
                     break;
@@ -185,7 +185,7 @@ public final class DataDecoder {
             hexValuesAxisPts = Converter.readHexValues(dataFile, adress, axisRescaleX.getDataType(), byteOrder, nbValue);
         }
 
-        values = new Values(nbValue, 1);
+        values = new Values(nbValue, (short) 1);
 
         if (!compuMethod.isVerbal()) {
 
@@ -217,7 +217,7 @@ public final class DataDecoder {
         double hexValue = Converter.readHexValue(dataFile, _adress, fncValues.getDataType(), byteOrder);
         double physValue;
 
-        final Values values = new Values(1, 1);
+        final Values values = new Values((short) 1, (short) 1);
 
         if (!compuMethod.isVerbal()) {
 
@@ -243,7 +243,7 @@ public final class DataDecoder {
 
         final short nByte = characteristic.getDim();
 
-        final Values values = new Values(1, 1);
+        final Values values = new Values((short) 1, (short) 1);
 
         final String ascii = dataFile.readString(adress, nByte);
         if (ascii != null) {
@@ -430,15 +430,15 @@ public final class DataDecoder {
         final AxisDescr axisDescr = characteristic.getAxisDescrs()[0];
         final ByteOrder byteOrder = axisDescr.getByteOrder() != null ? axisDescr.getByteOrder() : commonByteOrder;
 
-        int nbValue = axisDescr.getMaxAxisPoints();
+        short nbValue = axisDescr.getMaxAxisPoints();
 
         Values values = null;
 
         switch (axisDescr.getAttribute()) {
         case FIX_AXIS:
             String[] fixAxisValues = readFixAxis(axisDescr);
-            nbValue = fixAxisValues.length;
-            values = new Values(nbValue, 2);
+            nbValue = (short) fixAxisValues.length;
+            values = new Values(nbValue, (short) 2);
             for (short i = 0; i < nbValue; i++) {
                 values.setValue(0, i, fixAxisValues[i]);
             }
@@ -446,8 +446,8 @@ public final class DataDecoder {
 
         case STD_AXIS:
             String[] stdAxisValues = readStdAxis(characteristic, adress, (byte) 0, byteOrder);
-            nbValue = stdAxisValues.length;
-            values = new Values(nbValue, 2);
+            nbValue = (short) stdAxisValues.length;
+            values = new Values(nbValue, (short) 2);
             for (short i = 0; i < nbValue; i++) {
                 values.setValue(0, i, stdAxisValues[i]);
             }
@@ -457,18 +457,18 @@ public final class DataDecoder {
 
         case COM_AXIS:
             String[] comAxisValues = ((AxisPts) axisDescr.getAxisPts()).getStringValues();
-            nbValue = comAxisValues.length;
+            nbValue = (short) comAxisValues.length;
 
-            values = new Values(nbValue, 2);
+            values = new Values(nbValue, (short) 2);
             for (short i = 0; i < nbValue; i++) {
                 values.setValue(0, i, comAxisValues[i]);
             }
             break;
         case RES_AXIS:
             String[] resAxisValues = ((AxisPts) axisDescr.getAxisPts()).getStringValues();
-            nbValue = resAxisValues.length;
+            nbValue = (short) resAxisValues.length;
 
-            values = new Values(nbValue, 2);
+            values = new Values(nbValue, (short) 2);
             for (short i = 0; i < nbValue; i++) {
                 values.setValue(0, i, resAxisValues[i]);
             }
@@ -482,9 +482,9 @@ public final class DataDecoder {
             }
 
             String[] curveAxisValue = readCurveAxis(curve);
-            nbValue = curveAxisValue.length;
+            nbValue = (short) curveAxisValue.length;
 
-            values = new Values(nbValue, 2);
+            values = new Values(nbValue, (short) 2);
             for (short i = 0; i < nbValue; i++) {
                 values.setValue(0, i, curveAxisValue[i]);
             }
@@ -533,10 +533,10 @@ public final class DataDecoder {
         Values values;
 
         if (dim.length < 2 || dim[1] == 1) {
-            values = new Values(dim[0] + 1, 2);
+            values = new Values((short) (dim[0] + 1), (short) 2);
             values.setValue(0, 0, "X");
         } else {
-            values = new Values(dim[0] + 1, dim[1] + 1);
+            values = new Values((short) (dim[0] + 1), (short) (dim[1] + 1));
             values.setValue(0, 0, "Y\\X");
             for (short y = 0; y < dim[1]; y++) { // Patch pour les VAL_BLK qui n'ont qu'une colonne
                 values.setValue(y + 1, 0, Integer.toString(y));
@@ -683,7 +683,7 @@ public final class DataDecoder {
 
         nbValueMap = dimX * dimY;
 
-        Values values = new Values(dimX + 1, dimY + 1);
+        Values values = new Values((short) (dimX + 1), (short) (dimY + 1));
         values.setValue(0, 0, "Y\\X");
 
         for (byte i = 0; i < 2; i++) {

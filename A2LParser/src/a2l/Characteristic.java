@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import a2l.AxisDescr.Attribute;
 import constante.ConversionType;
@@ -149,15 +148,15 @@ public final class Characteristic extends AdjustableObject {
         AdjustableObject axisPts;
 
         if (axisDescrs != null) {
-            for (AxisDescr axisDescr : axisDescrs) {
-                Attribute axisType = axisDescr.getAttribute();
+            for (int idx = 0; idx < axisDescrs.length; idx++) {
+                Attribute axisType = axisDescrs[idx].getAttribute();
                 if (axisType.compareTo(Attribute.COM_AXIS) == 0 || axisType.compareTo(Attribute.RES_AXIS) == 0) {
-                    axisPts = adjustableObjects.get(axisDescr.getAxisRef(axisType));
-                    axisDescr.setAxisPts(axisPts);
+                    axisPts = adjustableObjects.get(axisDescrs[idx].getAxisRef(axisType));
+                    axisDescrs[idx].setAxisPts(axisPts);
                     ((AxisPts) axisPts).assignCharacteristic(this);
                 }
                 if (axisType.compareTo(Attribute.CURVE_AXIS) == 0) {
-                    axisDescr.setCurveAxis(adjustableObjects.get(axisDescr.getAxisRef(axisType)));
+                    axisDescrs[idx].setCurveAxis(adjustableObjects.get(axisDescrs[idx].getAxisRef(axisType)));
                 }
             }
         }
@@ -219,8 +218,8 @@ public final class Characteristic extends AdjustableObject {
     public final void assignComputMethod(HashMap<Integer, CompuMethod> compuMethods) {
         this.compuMethod = compuMethods.get(this.conversionId);
         if (axisDescrs != null) {
-            for (AxisDescr axisDescr : axisDescrs) {
-                axisDescr.setCompuMethod(compuMethods.get(axisDescr.getConversion()));
+            for (int idx = 0; idx < axisDescrs.length; idx++) {
+                axisDescrs[idx].setCompuMethod(compuMethods.get(axisDescrs[idx].getConversion()));
             }
         }
     }
@@ -295,11 +294,10 @@ public final class Characteristic extends AdjustableObject {
 
                 byte cntAxis = 0;
 
-                Set<SecondaryKeywords> keys = optionalsParameters.keySet();
                 SecondaryKeywords keyWord;
                 for (int nPar = n; nPar < nbParams; nPar++) {
                     keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
-                    if (keys.contains(keyWord)) {
+                    if (optionalsParameters.containsKey(keyWord)) {
                         switch (keyWord) {
                         case ANNOTATION:
                             n = nPar + 1;

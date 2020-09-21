@@ -5,6 +5,7 @@ import static constante.SecondaryKeywords.FUNCTION_VERSION;
 import static constante.SecondaryKeywords.IN_MEASUREMENT;
 import static constante.SecondaryKeywords.LOC_MEASUREMENT;
 import static constante.SecondaryKeywords.OUT_MEASUREMENT;
+import static constante.SecondaryKeywords.REF_CHARACTERISTIC;
 import static constante.SecondaryKeywords.SUB_FUNCTION;
 
 import java.util.Collections;
@@ -35,6 +36,7 @@ public final class Function implements A2lObject, Comparable<Function> {
     private final void initOptionalsParameters() {
         optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
         optionalsParameters.put(DEF_CHARACTERISTIC, null);
+        optionalsParameters.put(REF_CHARACTERISTIC, null);
         optionalsParameters.put(FUNCTION_VERSION, null);
         optionalsParameters.put(IN_MEASUREMENT, null);
         optionalsParameters.put(OUT_MEASUREMENT, null);
@@ -51,6 +53,17 @@ public final class Function implements A2lObject, Comparable<Function> {
     public final Map<Integer, String> getDefCharacteristic() {
         Object object = optionalsParameters.get(DEF_CHARACTERISTIC);
         return (Map<Integer, String>) (object != null ? object : new HashMap<Integer, String>());
+    }
+
+    public final Vector<String> getRefCharacteristic() {
+        Object object = optionalsParameters.get(REF_CHARACTERISTIC);
+        if (object != null) {
+            @SuppressWarnings("unchecked")
+            Vector<String> v = new Vector<String>(((Set<String>) object));
+            Collections.sort(v);
+            return v;
+        }
+        return new Vector<String>();
     }
 
     public final Vector<String> getInMeasurement() {
@@ -108,18 +121,33 @@ public final class Function implements A2lObject, Comparable<Function> {
 
             int n = 4;
 
-            Set<SecondaryKeywords> keys = optionalsParameters.keySet();
             SecondaryKeywords keyWord;
             for (int nPar = n; nPar < nbParams; nPar++) {
                 keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
-                if (keys.contains(keyWord)) {
+                if (optionalsParameters.containsKey(keyWord)) {
                     switch (keyWord) {
                     case DEF_CHARACTERISTIC:
                         Map<Integer, String> defCharacteristic = new HashMap<Integer, String>();
                         optionalsParameters.put(DEF_CHARACTERISTIC, defCharacteristic);
                         nPar++;
                         do {
+                            if (parameters.get(nPar).equals("/end")) {
+                                break;
+                            }
                             defCharacteristic.put(parameters.get(nPar).hashCode(), this.name);
+                            nPar++;
+                        } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
+                        nPar++;
+                        break;
+                    case REF_CHARACTERISTIC:
+                        Set<String> refCharacteristic = new HashSet<String>();
+                        optionalsParameters.put(REF_CHARACTERISTIC, refCharacteristic);
+                        nPar++;
+                        do {
+                            if (parameters.get(nPar).equals("/end")) {
+                                break;
+                            }
+                            refCharacteristic.add(parameters.get(nPar));
                             nPar++;
                         } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
                         nPar++;
@@ -131,9 +159,11 @@ public final class Function implements A2lObject, Comparable<Function> {
                     case IN_MEASUREMENT:
                         Set<String> inMeasurement = new HashSet<String>();
                         optionalsParameters.put(IN_MEASUREMENT, inMeasurement);
-
                         nPar++;
                         do {
+                            if (parameters.get(nPar).equals("/end")) {
+                                break;
+                            }
                             inMeasurement.add(parameters.get(nPar));
                             nPar++;
                         } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
@@ -144,6 +174,9 @@ public final class Function implements A2lObject, Comparable<Function> {
                         optionalsParameters.put(LOC_MEASUREMENT, locMeasurement);
                         nPar++;
                         do {
+                            if (parameters.get(nPar).equals("/end")) {
+                                break;
+                            }
                             locMeasurement.add(parameters.get(nPar));
                             nPar++;
                         } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
@@ -152,9 +185,11 @@ public final class Function implements A2lObject, Comparable<Function> {
                     case OUT_MEASUREMENT:
                         Set<String> outMeasurement = new HashSet<String>();
                         optionalsParameters.put(OUT_MEASUREMENT, outMeasurement);
-
                         nPar++;
                         do {
+                            if (parameters.get(nPar).equals("/end")) {
+                                break;
+                            }
                             outMeasurement.add(parameters.get(nPar));
                             nPar++;
                         } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
@@ -165,6 +200,9 @@ public final class Function implements A2lObject, Comparable<Function> {
                         optionalsParameters.put(SUB_FUNCTION, subFunction);
                         nPar++;
                         do {
+                            if (parameters.get(nPar).equals("/end")) {
+                                break;
+                            }
                             subFunction.add(parameters.get(nPar));
                             nPar++;
                         } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));

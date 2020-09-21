@@ -18,7 +18,6 @@ import java.nio.ByteOrder;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import constante.DataType;
 import constante.SecondaryKeywords;
@@ -109,11 +108,10 @@ public final class ModCommon implements A2lObject {
                     this.comment = parameters.get(n).toCharArray();
                     break;
                 default: // Cas de parametres optionels
-                    Set<SecondaryKeywords> keys = optionalsParameters.keySet();
                     SecondaryKeywords keyWord;
                     for (int nPar = n; nPar < nbParams; nPar++) {
                         keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
-                        if (keys.contains(keyWord)) {
+                        if (optionalsParameters.containsKey(keyWord)) {
                             switch (keyWord) {
                             case ALIGNMENT_BYTE:
                                 optionalsParameters.put(ALIGNMENT_BYTE, Integer.parseInt(parameters.get(nPar + 1)));

@@ -7,12 +7,12 @@ import utils.NumeralString;
 
 public final class Values {
 
-    private final int dimX;
-    private final int dimY;
+    private final short dimX;
+    private final short dimY;
     private final String[] values;
     private static int idx;
 
-    public Values(int dimX, int dimY) {
+    public Values(short dimX, short dimY) {
         this.dimX = dimX;
         this.dimY = dimY;
         this.values = new String[dimX * dimY];
@@ -37,15 +37,28 @@ public final class Values {
     }
 
     public final float[] getXAxis() {
-        float[] xAxis = new float[dimX - 1];
+        float[] xAxis;
 
-        for (int x = 1; x < dimX; x++) {
-            if (NumeralString.isNumber(getValue(0, x))) {
-                xAxis[x - 1] = Float.parseFloat(getValue(0, x));
-            } else {
-                xAxis[x - 1] = x;
+        if (values[0].equals("Y\\X")) {
+            xAxis = new float[dimX - 1];
+            for (int x = 1; x < dimX; x++) {
+                if (NumeralString.isNumber(getValue(0, x))) {
+                    xAxis[x - 1] = Float.parseFloat(getValue(0, x));
+                } else {
+                    xAxis[x - 1] = x;
+                }
+            }
+        } else {
+            xAxis = new float[dimX];
+            for (int x = 0; x < dimX; x++) {
+                if (NumeralString.isNumber(getValue(0, x))) {
+                    xAxis[x] = Float.parseFloat(getValue(0, x));
+                } else {
+                    xAxis[x] = x;
+                }
             }
         }
+
         return xAxis;
     }
 
@@ -79,16 +92,16 @@ public final class Values {
                 }
             }
         } else {
-            floatValues = new float[dimY - 1][dimX];
-            for (short y = 1; y < dimY; y++) {
-                for (short x = 1; x < dimX; x++) {
+            floatValues = new float[1][dimX];
 
-                    if (NumeralString.isNumber(getValue(y, x))) {
-                        floatValues[y - 1][x - 1] = Float.parseFloat(getValue(y, x));
-                    } else {
-                        floatValues[y - 1][x - 1] = Float.NaN;
-                    }
+            for (short x = 0; x < dimX; x++) {
+
+                if (NumeralString.isNumber(getValue(1, x))) {
+                    floatValues[0][x] = Float.parseFloat(getValue(1, x));
+                } else {
+                    floatValues[0][x] = Float.NaN;
                 }
+
             }
         }
 

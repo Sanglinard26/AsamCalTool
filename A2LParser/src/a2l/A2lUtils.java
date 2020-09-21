@@ -1,7 +1,7 @@
 /*
  * Creation : 8 janv. 2020
  */
-package utils;
+package a2l;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,11 +11,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
-import a2l.A2l;
-import a2l.AdjustableObject;
-import a2l.Function;
+public final class A2lUtils {
 
-public final class LabUtils {
+    private static final String RAMCELL = "[RAMCELL]";
+    private static final String LABEL = "[Label]";
 
     public static final void writeMeasurementLab(File file, Function function) {
 
@@ -28,7 +27,7 @@ public final class LabUtils {
 
             Collections.sort(listMeasurement);
 
-            pw.println("[RAMCELL]");
+            pw.println(RAMCELL);
             for (String measurementName : listMeasurement) {
                 pw.println(measurementName);
             }
@@ -41,18 +40,23 @@ public final class LabUtils {
     public static final void writeCharacteristicLab(File file, A2l a2l, Function function) {
 
         try (PrintWriter pw = new PrintWriter(file)) {
-            final Vector<AdjustableObject> listCharacteristic = a2l.getAdjustableObjectByFunction(function.toString());
+            final Vector<String> listCharacteristic = a2l.getAdjustableObjectNameByFunction(function.toString());
+            listCharacteristic.addAll(function.getRefCharacteristic());
 
             Collections.sort(listCharacteristic);
 
-            pw.println("[Label]");
-            for (AdjustableObject characteristicName : listCharacteristic) {
+            pw.println(LABEL);
+            for (String characteristicName : listCharacteristic) {
                 pw.println(characteristicName);
             }
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public static final void renameLabel(A2l a2l, Function function) {
+
     }
 
 }

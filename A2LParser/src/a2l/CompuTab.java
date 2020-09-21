@@ -15,7 +15,7 @@ public final class CompuTab extends ConversionTable {
     private short numberValuePairs;
     private Map<Float, Float> valuePairs;
     private char[] defaultValue; // DEFAULT_VALUE
-    private float defaultValueNumeric = Float.NaN; // DEFAULT_VALUE_NUMERIC
+    private static float defaultValueNumeric = Float.NaN; // DEFAULT_VALUE_NUMERIC
 
     public CompuTab(List<String> parameters, int beginLine, int endLine) {
 
@@ -53,8 +53,8 @@ public final class CompuTab extends ConversionTable {
             int lastIdx = parameters.indexOf("DEFAULT_VALUE");
             if (lastIdx < 0) {
                 lastIdx = parameters.indexOf("DEFAULT_VALUE_NUMERIC");
-            }else{
-            	this.defaultValue = parameters.get(lastIdx+1).toCharArray();
+            } else {
+                this.defaultValue = parameters.get(lastIdx + 1).toCharArray();
             }
 
             final List<String> listValuePairs;

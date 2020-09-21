@@ -11,7 +11,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -22,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.JTree;
 import javax.swing.JTree.DynamicUtilTreeNode;
 import javax.swing.SwingUtilities;
@@ -32,6 +36,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import a2l.A2l;
+import a2l.A2lUtils;
 import a2l.AdjustableObject;
 import a2l.AxisPts;
 import a2l.Characteristic;
@@ -40,7 +45,6 @@ import a2l.ConversionTable;
 import a2l.Function;
 import a2l.Measurement;
 import a2l.RecordLayout;
-import utils.LabUtils;
 
 /**
  * Tree widget which allows the tree to be filtered on keystroke time. Only nodes who's toString matches the search field will remain in the tree or
@@ -56,10 +60,19 @@ public class FilteredTree extends JPanel {
     private final JTree tree = new JTree();
     private DefaultMutableTreeNode originalRoot;
     private final JTextField field;
+    private final JToggleButton toggleReadOnly;
+
+    private final HashMap<String, Boolean> filter;
 
     public FilteredTree() {
+
+        this.filter = new HashMap<String, Boolean>();
+        this.filter.put("READ_ONLY", false);
+
         this.originalRoot = new DefaultMutableTreeNode();
         tree.setRowHeight(18);
+        tree.setLargeModel(true);
+
         tree.setExpandsSelectedPaths(true);
 
         tree.addMouseListener(new NodeMouseListener());
@@ -77,6 +90,18 @@ public class FilteredTree extends JPanel {
 
         add(field, BorderLayout.NORTH);
         add(new JScrollPane(tree), BorderLayout.CENTER);
+
+        toggleReadOnly = new JToggleButton("Read only Characteristic");
+        add(toggleReadOnly, BorderLayout.SOUTH);
+
+        toggleReadOnly.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                filter.put("READ_ONLY", toggleReadOnly.isSelected());
+                filterTree(field.getText());
+            }
+        });
 
         this.setVisible(false);
 
@@ -112,6 +137,7 @@ public class FilteredTree extends JPanel {
     }
 
     private final void buildTree(A2l a2l) {
+
         DefaultMutableTreeNode childNode = new DefaultMutableTreeNode("ADJUSTABLE OBJECT");
         this.originalRoot.add(childNode);
         DynamicUtilTreeNode.createChildren(childNode, a2l.getListAdjustableObjects());
@@ -153,27 +179,48 @@ public class FilteredTree extends JPanel {
 
     public final void addChildToFunction(DefaultMutableTreeNode functionNode, Function function) {
 
-        if (functionNode.getChildCount() > 1) {
+        if (functionNode.getChildCount() > 0) {
             return;
         }
 
         A2l a2l = (A2l) this.originalRoot.getUserObject();
+        DefaultMutableTreeNode childNode;
+        Vector<?> childs;
 
-        DefaultMutableTreeNode childNode = new DefaultMutableTreeNode("DEF_CHARACTERISTIC");
-        functionNode.add(childNode);
-        DynamicUtilTreeNode.createChildren(childNode, a2l.getAdjustableObjectByFunction(functionNode.toString()));
+        childs = a2l.getAdjustableObjectByFunction(functionNode.toString());
+        if (childs.size() > 0) {
+            childNode = new DefaultMutableTreeNode("DEF_CHARACTERISTIC");
+            functionNode.add(childNode);
+            DynamicUtilTreeNode.createChildren(childNode, childs);
+        }
 
-        childNode = new DefaultMutableTreeNode("IN_MEASUREMENT");
-        functionNode.add(childNode);
-        DynamicUtilTreeNode.createChildren(childNode, function.getInMeasurement());
+        childs = function.getInMeasurement();
+        if (childs.size() > 0) {
+            childNode = new DefaultMutableTreeNode("IN_MEASUREMENT");
+            functionNode.add(childNode);
+            DynamicUtilTreeNode.createChildren(childNode, childs);
+        }
 
-        childNode = new DefaultMutableTreeNode("LOC_MEASUREMENT");
-        functionNode.add(childNode);
-        DynamicUtilTreeNode.createChildren(childNode, function.getLocMeasurement());
+        childs = function.getLocMeasurement();
+        if (childs.size() > 0) {
+            childNode = new DefaultMutableTreeNode("LOC_MEASUREMENT");
+            functionNode.add(childNode);
+            DynamicUtilTreeNode.createChildren(childNode, childs);
+        }
 
-        childNode = new DefaultMutableTreeNode("OUT_MEASUREMENT");
-        functionNode.add(childNode);
-        DynamicUtilTreeNode.createChildren(childNode, function.getOutMeasurement());
+        childs = function.getOutMeasurement();
+        if (childs.size() > 0) {
+            childNode = new DefaultMutableTreeNode("OUT_MEASUREMENT");
+            functionNode.add(childNode);
+            DynamicUtilTreeNode.createChildren(childNode, childs);
+        }
+
+        childs = a2l.getAdjustableObjectFromList(function.getRefCharacteristic());
+        if (childs.size() > 0) {
+            childNode = new DefaultMutableTreeNode("REF_CHARACTERISTIC");
+            functionNode.add(childNode);
+            DynamicUtilTreeNode.createChildren(childNode, childs);
+        }
 
     }
 
@@ -193,8 +240,9 @@ public class FilteredTree extends JPanel {
     private TreePath find(DefaultMutableTreeNode root, String s) {
         @SuppressWarnings("unchecked")
         Enumeration<DefaultMutableTreeNode> e = root.depthFirstEnumeration();
+        DefaultMutableTreeNode node;
         while (e.hasMoreElements()) {
-            DefaultMutableTreeNode node = e.nextElement();
+            node = e.nextElement();
             if (node.toString().equalsIgnoreCase(s)) {
                 return new TreePath(node.getPath());
             }
@@ -210,28 +258,29 @@ public class FilteredTree extends JPanel {
 
         filteredText = text.toLowerCase();
 
-        if (text.trim().length() == 0 || "*".equals(text.trim())) {
+        int nbFilter = Collections.frequency(filter.values(), true);
+
+        if ((text.trim().length() == 0 || "*".equals(text.trim())) && nbFilter == 0) {
 
             originalTreeModel.setRoot(originalRoot);
 
             tree.setModel(originalTreeModel);
-            tree.updateUI();
 
             return;
         }
         // get a copy
         DefaultMutableTreeNode filteredRoot = copyNode(originalRoot);
-        TreeNodeBuilder b = new TreeNodeBuilder(text);
+        TreeNodeBuilder b = new TreeNodeBuilder(text, filter);
         filteredRoot = b.prune((DefaultMutableTreeNode) filteredRoot.getRoot());
 
         originalTreeModel.setRoot(filteredRoot);
 
         tree.setModel(originalTreeModel);
-        tree.updateUI();
 
         for (int i = 0; i < tree.getRowCount(); i++) {
             tree.expandRow(i);
         }
+
     }
 
     /**
@@ -240,16 +289,16 @@ public class FilteredTree extends JPanel {
      * @param orig to be cloned
      * @return cloned copy
      */
-    private DefaultMutableTreeNode copyNode(DefaultMutableTreeNode orig) {
+    private final DefaultMutableTreeNode copyNode(DefaultMutableTreeNode orig) {
 
-        DefaultMutableTreeNode newOne = new DefaultMutableTreeNode();
-        newOne.setUserObject(orig.getUserObject());
+        DefaultMutableTreeNode newOne = new DefaultMutableTreeNode(orig.getUserObject());
 
         Enumeration<?> enm = orig.children();
 
-        while (enm.hasMoreElements()) {
+        DefaultMutableTreeNode child;
 
-            DefaultMutableTreeNode child = (DefaultMutableTreeNode) enm.nextElement();
+        while (enm.hasMoreElements()) {
+            child = (DefaultMutableTreeNode) enm.nextElement();
             newOne.add(copyNode(child));
         }
         return newOne;
@@ -442,7 +491,7 @@ public class FilteredTree extends JPanel {
                         final int rep = fileChooser.showSaveDialog(null);
 
                         if (rep == JFileChooser.APPROVE_OPTION) {
-                            LabUtils.writeCharacteristicLab(fileChooser.getSelectedFile(), (A2l) originalRoot.getUserObject(), (Function) object);
+                            A2lUtils.writeCharacteristicLab(fileChooser.getSelectedFile(), (A2l) originalRoot.getUserObject(), (Function) object);
                             JOptionPane.showMessageDialog(null, "Export done !");
                         }
 
@@ -478,13 +527,23 @@ public class FilteredTree extends JPanel {
                         final int rep = fileChooser.showSaveDialog(null);
 
                         if (rep == JFileChooser.APPROVE_OPTION) {
-                            LabUtils.writeMeasurementLab(fileChooser.getSelectedFile(), (Function) object);
+                            A2lUtils.writeMeasurementLab(fileChooser.getSelectedFile(), (Function) object);
                             JOptionPane.showMessageDialog(null, "Export done !");
                         }
 
                     }
                 });
                 menu.add(menuMeasurement);
+
+                final JMenuItem menuTest = new JMenuItem("Test rename label");
+                menuTest.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        A2lUtils.renameLabel((A2l) originalRoot.getUserObject(), (Function) object);
+                    }
+                });
+                menu.add(menuTest);
 
                 menu.show(e.getComponent(), e.getX(), e.getY());
             }
@@ -500,9 +559,11 @@ public class FilteredTree extends JPanel {
     public class TreeNodeBuilder {
 
         private String textToMatch;
+        private HashMap<String, Boolean> filter;
 
-        public TreeNodeBuilder(String textToMatch) {
+        public TreeNodeBuilder(String textToMatch, HashMap<String, Boolean> filter) {
             this.textToMatch = textToMatch.toLowerCase();
+            this.filter = filter;
         }
 
         public DefaultMutableTreeNode prune(DefaultMutableTreeNode root) {
@@ -537,28 +598,35 @@ public class FilteredTree extends JPanel {
 
                 DefaultMutableTreeNode nextLeaf = leaf.getNextLeaf();
 
-                // if it does not start with the text then snip it off its parent
-                if (textToMatch.charAt(0) == '*') {
-                    if (!leaf.getUserObject().toString().toLowerCase().contains(textToMatch.substring(1))) {
-                        DefaultMutableTreeNode parent = (DefaultMutableTreeNode) leaf.getParent();
+                if (filter.get("READ_ONLY") && leaf.getUserObject() instanceof AdjustableObject
+                        && !((AdjustableObject) leaf.getUserObject()).isReadOnly()) {
 
-                        if (parent != null)
-                            parent.remove(leaf);
+                    leaf.removeFromParent();
+
+                    badLeaves = true;
+                } else if (filter.get("READ_ONLY") && !(leaf.getUserObject() instanceof AdjustableObject)) {
+                    leaf.removeFromParent();
+
+                    badLeaves = true;
+                }
+
+                // if it does not start with the text then snip it off its parent
+                if (textToMatch.length() > 0 && textToMatch.charAt(0) == '*') {
+                    if (!leaf.getUserObject().toString().toLowerCase().contains(textToMatch.substring(1))) {
+                        leaf.removeFromParent();
 
                         badLeaves = true;
                     }
-                    leaf = nextLeaf;
                 } else {
                     if (!leaf.getUserObject().toString().toLowerCase().startsWith(textToMatch)) {
-                        DefaultMutableTreeNode parent = (DefaultMutableTreeNode) leaf.getParent();
-
-                        if (parent != null)
-                            parent.remove(leaf);
+                        leaf.removeFromParent();
 
                         badLeaves = true;
                     }
-                    leaf = nextLeaf;
+
                 }
+
+                leaf = nextLeaf;
 
             }
             return badLeaves;
