@@ -173,7 +173,7 @@ public final class A2l {
 
                     line = line.trim();
 
-                    PrimaryKeywords keyword = PrimaryKeywords.getPrimaryKeywords(getKeyword(line));
+                    PrimaryKeywords keyword = PrimaryKeywords.getPrimaryKeywords(sumKeywordChar(line));
 
                     try {
                         switch (keyword) {
@@ -318,10 +318,11 @@ public final class A2l {
 
     }
 
-    private static final String getKeyword(String line) {
+    private static final int sumKeywordChar(String line) {
 
         byte idx = 6; // length of "/begin"
         final int lineSize = line.length();
+        int sum = 0;
 
         do {
             idx += 1;
@@ -330,10 +331,11 @@ public final class A2l {
         byte idx2 = idx;
 
         do {
+            sum += (line.charAt(idx2) * (idx2 - idx));
             idx2 += 1;
         } while (idx2 < lineSize && Character.isJavaIdentifierStart(line.charAt(idx2)));
 
-        return line.substring(idx, idx2);
+        return sum;
     }
 
     private final List<String> parseLineWithRegex(Pattern regexQuote, String line, BufferedReader buf) throws IOException {
