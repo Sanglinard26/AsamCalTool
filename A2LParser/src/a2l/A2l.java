@@ -36,7 +36,7 @@ public final class A2l {
     private HashMap<Integer, RecordLayout> recordLayouts;
     private Vector<Function> functions;
 
-    private HashMap<Integer, Unit> units;
+    private Vector<Unit> units;
 
     private static int numLine;
     private static int beginLine;
@@ -51,7 +51,7 @@ public final class A2l {
         conversionTables = new HashMap<Integer, ConversionTable>();
         measurements = new Vector<Measurement>();
         recordLayouts = new HashMap<Integer, RecordLayout>();
-        units = new HashMap<Integer, Unit>();
+        units = new Vector<Unit>();
 
         functions = new Vector<Function>();
 
@@ -106,9 +106,8 @@ public final class A2l {
     }
 
     public final Vector<Unit> getListUnit() {
-        Vector<Unit> v = new Vector<>(units.values());
-        Collections.sort(v);
-        return v;
+        Collections.sort(units);
+        return units;
     }
 
     public final Vector<SystemConstant> getListSystemConstant() {
@@ -159,7 +158,6 @@ public final class A2l {
             CompuVTabRange compuVTabRange = null;
             RecordLayout recordLayout = null;
             Function function = null;
-            Unit unit = null;
 
             while ((line = buf.readLine()) != null) {
 
@@ -258,8 +256,7 @@ public final class A2l {
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
-                            unit = new Unit(objectParameters, beginLine, endLine);
-                            units.put(unit.toString().hashCode(), unit);
+                            units.add(new Unit(objectParameters, beginLine, endLine));
                             break;
                         default:
                             break;

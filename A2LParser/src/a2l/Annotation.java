@@ -19,16 +19,9 @@ public final class Annotation {
 
     public Annotation(List<String> parameters) {
 
-        initOptionalsParameters();
+        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
 
         build(parameters);
-    }
-
-    private final void initOptionalsParameters() {
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
-        optionalsParameters.put(ANNOTATION_LABEL, null);
-        optionalsParameters.put(ANNOTATION_ORIGIN, null);
-        optionalsParameters.put(ANNOTATION_TEXT, null);
     }
 
     private void build(List<String> parameters) throws IllegalArgumentException {
@@ -38,20 +31,18 @@ public final class Annotation {
         SecondaryKeywords keyWord;
         for (int nPar = 0; nPar < nbParams; nPar++) {
             keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
-            if (optionalsParameters.containsKey(keyWord)) {
-                switch (keyWord) {
-                case ANNOTATION_LABEL:
-                    optionalsParameters.put(ANNOTATION_LABEL, parameters.get(nPar + 1).toCharArray());
-                    break;
-                case ANNOTATION_ORIGIN:
-                    optionalsParameters.put(ANNOTATION_ORIGIN, parameters.get(nPar + 1).toCharArray());
-                    break;
-                case ANNOTATION_TEXT:
-                    optionalsParameters.put(ANNOTATION_TEXT, parameters.get(nPar + 1).toCharArray());
-                    break;
-                default:
-                    break;
-                }
+            switch (keyWord) {
+            case ANNOTATION_LABEL:
+                optionalsParameters.put(ANNOTATION_LABEL, parameters.get(nPar + 1).toCharArray());
+                break;
+            case ANNOTATION_ORIGIN:
+                optionalsParameters.put(ANNOTATION_ORIGIN, parameters.get(nPar + 1).toCharArray());
+                break;
+            case ANNOTATION_TEXT:
+                optionalsParameters.put(ANNOTATION_TEXT, parameters.get(nPar + 1).toCharArray());
+                break;
+            default:
+                break;
             }
         }
     }

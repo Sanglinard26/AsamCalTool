@@ -28,7 +28,6 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     protected int conversionId;
     protected float lowerLimit;
     protected float upperLimit;
-    protected boolean dataRead;
 
     protected boolean validParsing;
 
@@ -161,16 +160,16 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     }
 
     public final boolean hasData() {
-        return this.dataRead;
+        return this.values != null;
     }
 
     public final boolean isReadOnly() {
-        return (boolean) optionalsParameters.get(READ_ONLY);
+        Object readOnly = optionalsParameters.get(READ_ONLY);
+        return readOnly != null ? (boolean) optionalsParameters.get(READ_ONLY) : false;
     }
 
     public final void setValues(Values values) {
         this.values = values;
-        this.dataRead = true;
     }
 
     public final void setFunction(String function) {

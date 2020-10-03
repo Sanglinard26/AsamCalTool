@@ -6,14 +6,10 @@ package a2l;
 import static constante.SecondaryKeywords.ANNOTATION;
 import static constante.SecondaryKeywords.BIT_MASK;
 import static constante.SecondaryKeywords.BYTE_ORDER;
-import static constante.SecondaryKeywords.DISCRETE;
 import static constante.SecondaryKeywords.DISPLAY_IDENTIFIER;
-import static constante.SecondaryKeywords.ECU_ADDRESS_EXTENSION;
 import static constante.SecondaryKeywords.FORMAT;
 import static constante.SecondaryKeywords.MATRIX_DIM;
-import static constante.SecondaryKeywords.MAX_REFRESH;
 import static constante.SecondaryKeywords.PHYS_UNIT;
-import static constante.SecondaryKeywords.REF_MEMORY_SEGMENT;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -43,24 +39,9 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
 
     public Measurement(List<String> parameters, int beginLine, int endLine) {
 
-        initOptionalsParameters();
+        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
 
         build(parameters, beginLine, endLine);
-    }
-
-    private final void initOptionalsParameters() {
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
-        optionalsParameters.put(ANNOTATION, null);
-        optionalsParameters.put(BIT_MASK, null);
-        optionalsParameters.put(BYTE_ORDER, null);
-        optionalsParameters.put(DISCRETE, null); // ToDo
-        optionalsParameters.put(DISPLAY_IDENTIFIER, null);
-        optionalsParameters.put(ECU_ADDRESS_EXTENSION, null); // ToDo
-        optionalsParameters.put(FORMAT, null);
-        optionalsParameters.put(MATRIX_DIM, null);
-        optionalsParameters.put(MAX_REFRESH, null);
-        optionalsParameters.put(PHYS_UNIT, null);
-        optionalsParameters.put(REF_MEMORY_SEGMENT, null);
     }
 
     @Override
@@ -98,58 +79,56 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
                 SecondaryKeywords keyWord;
                 for (int nPar = n; nPar < nbParams; nPar++) {
                     keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
-                    if (optionalsParameters.containsKey(keyWord)) {
-                        switch (keyWord) {
-                        case ANNOTATION:
-                            n = nPar + 1;
-                            do {
-                            } while (!parameters.get(++nPar).equals(ANNOTATION.name()));
-                            optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3)));
-                            n = nPar + 1;
-                            break;
-                        case BIT_MASK:
-                            String bitMask = parameters.get(nPar + 1);
-                            if (bitMask.startsWith("0x")) {
-                                optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask.substring(2), 16));
-                            } else {
-                                optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask));
-                            }
-                            nPar += 1;
-                            break;
-                        case BYTE_ORDER:
-                            optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
-                            nPar += 1;
-                            break;
-                        case DISPLAY_IDENTIFIER:
-                            optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1).toCharArray());
-                            nPar += 1;
-                            break;
-                        case FORMAT:
-                            optionalsParameters.put(FORMAT, parameters.get(nPar + 1).toCharArray());
-                            nPar += 1;
-                            break;
-                        case MATRIX_DIM:
-                            List<Short> dim = new ArrayList<Short>();
-
-                            try {
-                                nPar += 1;
-                                do {
-                                    dim.add((short) Integer.parseInt(parameters.get(nPar)));
-                                    nPar += 1;
-                                } while (nPar < parameters.size());
-                            } catch (NumberFormatException nfe) {
-                                nPar += 1;
-                            }
-                            optionalsParameters.put(MATRIX_DIM, dim.toArray());
-                            dim.clear();
-                            break;
-                        case PHYS_UNIT:
-                            optionalsParameters.put(PHYS_UNIT, parameters.get(nPar + 1).toCharArray());
-                            nPar += 1;
-                            break;
-                        default:
-                            break;
+                    switch (keyWord) {
+                    case ANNOTATION:
+                        n = nPar + 1;
+                        do {
+                        } while (!parameters.get(++nPar).equals(ANNOTATION.name()));
+                        optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3)));
+                        n = nPar + 1;
+                        break;
+                    case BIT_MASK:
+                        String bitMask = parameters.get(nPar + 1);
+                        if (bitMask.startsWith("0x")) {
+                            optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask.substring(2), 16));
+                        } else {
+                            optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask));
                         }
+                        nPar += 1;
+                        break;
+                    case BYTE_ORDER:
+                        optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
+                        nPar += 1;
+                        break;
+                    case DISPLAY_IDENTIFIER:
+                        optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1).toCharArray());
+                        nPar += 1;
+                        break;
+                    case FORMAT:
+                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1).toCharArray());
+                        nPar += 1;
+                        break;
+                    case MATRIX_DIM:
+                        List<Short> dim = new ArrayList<Short>();
+
+                        try {
+                            nPar += 1;
+                            do {
+                                dim.add((short) Integer.parseInt(parameters.get(nPar)));
+                                nPar += 1;
+                            } while (nPar < parameters.size());
+                        } catch (NumberFormatException nfe) {
+                            nPar += 1;
+                        }
+                        optionalsParameters.put(MATRIX_DIM, dim.toArray());
+                        dim.clear();
+                        break;
+                    case PHYS_UNIT:
+                        optionalsParameters.put(PHYS_UNIT, parameters.get(nPar + 1).toCharArray());
+                        nPar += 1;
+                        break;
+                    default:
+                        break;
                     }
                 }
 

@@ -28,20 +28,9 @@ public final class Function implements A2lObject, Comparable<Function> {
 
     public Function(List<String> parameters, int beginLine, int endLine) {
 
-        initOptionalsParameters();
+        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
 
         build(parameters, beginLine, endLine);
-    }
-
-    private final void initOptionalsParameters() {
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
-        optionalsParameters.put(DEF_CHARACTERISTIC, null);
-        optionalsParameters.put(REF_CHARACTERISTIC, null);
-        optionalsParameters.put(FUNCTION_VERSION, null);
-        optionalsParameters.put(IN_MEASUREMENT, null);
-        optionalsParameters.put(OUT_MEASUREMENT, null);
-        optionalsParameters.put(SUB_FUNCTION, null);
-        optionalsParameters.put(LOC_MEASUREMENT, null);
     }
 
     @Override
@@ -124,94 +113,92 @@ public final class Function implements A2lObject, Comparable<Function> {
             SecondaryKeywords keyWord;
             for (int nPar = n; nPar < nbParams; nPar++) {
                 keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
-                if (optionalsParameters.containsKey(keyWord)) {
-                    switch (keyWord) {
-                    case DEF_CHARACTERISTIC:
-                        Map<Integer, String> defCharacteristic = new HashMap<Integer, String>();
-                        optionalsParameters.put(DEF_CHARACTERISTIC, defCharacteristic);
+                switch (keyWord) {
+                case DEF_CHARACTERISTIC:
+                    Map<Integer, String> defCharacteristic = new HashMap<Integer, String>();
+                    optionalsParameters.put(DEF_CHARACTERISTIC, defCharacteristic);
+                    nPar++;
+                    do {
+                        if (parameters.get(nPar).equals("/end")) {
+                            break;
+                        }
+                        defCharacteristic.put(parameters.get(nPar).hashCode(), this.name);
                         nPar++;
-                        do {
-                            if (parameters.get(nPar).equals("/end")) {
-                                break;
-                            }
-                            defCharacteristic.put(parameters.get(nPar).hashCode(), this.name);
-                            nPar++;
-                        } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
+                    } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
+                    nPar++;
+                    break;
+                case REF_CHARACTERISTIC:
+                    Set<String> refCharacteristic = new HashSet<String>();
+                    optionalsParameters.put(REF_CHARACTERISTIC, refCharacteristic);
+                    nPar++;
+                    do {
+                        if (parameters.get(nPar).equals("/end")) {
+                            break;
+                        }
+                        refCharacteristic.add(parameters.get(nPar));
                         nPar++;
-                        break;
-                    case REF_CHARACTERISTIC:
-                        Set<String> refCharacteristic = new HashSet<String>();
-                        optionalsParameters.put(REF_CHARACTERISTIC, refCharacteristic);
+                    } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
+                    nPar++;
+                    break;
+                case FUNCTION_VERSION:
+                    optionalsParameters.put(FUNCTION_VERSION, parameters.get(++nPar));
+                    nPar++;
+                    break;
+                case IN_MEASUREMENT:
+                    Set<String> inMeasurement = new HashSet<String>();
+                    optionalsParameters.put(IN_MEASUREMENT, inMeasurement);
+                    nPar++;
+                    do {
+                        if (parameters.get(nPar).equals("/end")) {
+                            break;
+                        }
+                        inMeasurement.add(parameters.get(nPar));
                         nPar++;
-                        do {
-                            if (parameters.get(nPar).equals("/end")) {
-                                break;
-                            }
-                            refCharacteristic.add(parameters.get(nPar));
-                            nPar++;
-                        } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
+                    } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
+                    nPar++;
+                    break;
+                case LOC_MEASUREMENT:
+                    Set<String> locMeasurement = new HashSet<String>();
+                    optionalsParameters.put(LOC_MEASUREMENT, locMeasurement);
+                    nPar++;
+                    do {
+                        if (parameters.get(nPar).equals("/end")) {
+                            break;
+                        }
+                        locMeasurement.add(parameters.get(nPar));
                         nPar++;
-                        break;
-                    case FUNCTION_VERSION:
-                        optionalsParameters.put(FUNCTION_VERSION, parameters.get(++nPar));
+                    } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
+                    nPar++;
+                    break;
+                case OUT_MEASUREMENT:
+                    Set<String> outMeasurement = new HashSet<String>();
+                    optionalsParameters.put(OUT_MEASUREMENT, outMeasurement);
+                    nPar++;
+                    do {
+                        if (parameters.get(nPar).equals("/end")) {
+                            break;
+                        }
+                        outMeasurement.add(parameters.get(nPar));
                         nPar++;
-                        break;
-                    case IN_MEASUREMENT:
-                        Set<String> inMeasurement = new HashSet<String>();
-                        optionalsParameters.put(IN_MEASUREMENT, inMeasurement);
+                    } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
+                    nPar++;
+                    break;
+                case SUB_FUNCTION:
+                    Set<String> subFunction = new HashSet<String>();
+                    optionalsParameters.put(SUB_FUNCTION, subFunction);
+                    nPar++;
+                    do {
+                        if (parameters.get(nPar).equals("/end")) {
+                            break;
+                        }
+                        subFunction.add(parameters.get(nPar));
                         nPar++;
-                        do {
-                            if (parameters.get(nPar).equals("/end")) {
-                                break;
-                            }
-                            inMeasurement.add(parameters.get(nPar));
-                            nPar++;
-                        } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
-                        nPar++;
-                        break;
-                    case LOC_MEASUREMENT:
-                        Set<String> locMeasurement = new HashSet<String>();
-                        optionalsParameters.put(LOC_MEASUREMENT, locMeasurement);
-                        nPar++;
-                        do {
-                            if (parameters.get(nPar).equals("/end")) {
-                                break;
-                            }
-                            locMeasurement.add(parameters.get(nPar));
-                            nPar++;
-                        } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
-                        nPar++;
-                        break;
-                    case OUT_MEASUREMENT:
-                        Set<String> outMeasurement = new HashSet<String>();
-                        optionalsParameters.put(OUT_MEASUREMENT, outMeasurement);
-                        nPar++;
-                        do {
-                            if (parameters.get(nPar).equals("/end")) {
-                                break;
-                            }
-                            outMeasurement.add(parameters.get(nPar));
-                            nPar++;
-                        } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
-                        nPar++;
-                        break;
-                    case SUB_FUNCTION:
-                        Set<String> subFunction = new HashSet<String>();
-                        optionalsParameters.put(SUB_FUNCTION, subFunction);
-                        nPar++;
-                        do {
-                            if (parameters.get(nPar).equals("/end")) {
-                                break;
-                            }
-                            subFunction.add(parameters.get(nPar));
-                            nPar++;
-                        } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
-                        nPar++;
-                        break;
+                    } while (nPar < nbParams - 1 && !parameters.get(nPar).equals("/end"));
+                    nPar++;
+                    break;
 
-                    default:
-                        break;
-                    }
+                default:
+                    break;
                 }
             }
 

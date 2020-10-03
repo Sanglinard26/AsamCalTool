@@ -3,13 +3,6 @@
  */
 package a2l;
 
-import static constante.SecondaryKeywords.ALIGNMENT_BYTE;
-import static constante.SecondaryKeywords.ALIGNMENT_FLOAT16_IEEE;
-import static constante.SecondaryKeywords.ALIGNMENT_FLOAT32_IEEE;
-import static constante.SecondaryKeywords.ALIGNMENT_FLOAT64_IEEE;
-import static constante.SecondaryKeywords.ALIGNMENT_INT64;
-import static constante.SecondaryKeywords.ALIGNMENT_LONG;
-import static constante.SecondaryKeywords.ALIGNMENT_WORD;
 import static constante.SecondaryKeywords.AXIS_PTS_X;
 import static constante.SecondaryKeywords.AXIS_PTS_Y;
 import static constante.SecondaryKeywords.AXIS_RESCALE_X;
@@ -20,7 +13,6 @@ import static constante.SecondaryKeywords.NO_RESCALE_X;
 import static constante.SecondaryKeywords.RESERVED;
 import static constante.SecondaryKeywords.SRC_ADDR_X;
 import static constante.SecondaryKeywords.SRC_ADDR_Y;
-import static constante.SecondaryKeywords.STATIC_RECORD_LAYOUT;
 
 import java.util.Collections;
 import java.util.EnumMap;
@@ -44,31 +36,9 @@ public final class RecordLayout implements A2lObject, Comparable<RecordLayout> {
 
     public RecordLayout(List<String> parameters, int beginLine, int endLine) {
 
-        initOptionalsParameters();
+        optionalsParameters = new EnumMap<SecondaryKeywords, OptionalParameterRL>(SecondaryKeywords.class);
 
         build(parameters, beginLine, endLine);
-    }
-
-    private final void initOptionalsParameters() {
-        optionalsParameters = new EnumMap<SecondaryKeywords, OptionalParameterRL>(SecondaryKeywords.class);
-        optionalsParameters.put(ALIGNMENT_BYTE, null);
-        optionalsParameters.put(ALIGNMENT_FLOAT16_IEEE, null);
-        optionalsParameters.put(ALIGNMENT_FLOAT32_IEEE, null);
-        optionalsParameters.put(ALIGNMENT_FLOAT64_IEEE, null);
-        optionalsParameters.put(ALIGNMENT_INT64, null);
-        optionalsParameters.put(ALIGNMENT_LONG, null);
-        optionalsParameters.put(ALIGNMENT_WORD, null);
-        optionalsParameters.put(AXIS_PTS_X, null);
-        optionalsParameters.put(AXIS_PTS_Y, null);
-        optionalsParameters.put(AXIS_RESCALE_X, null);
-        optionalsParameters.put(FNC_VALUES, null);
-        optionalsParameters.put(NO_AXIS_PTS_X, null);
-        optionalsParameters.put(NO_AXIS_PTS_Y, null);
-        optionalsParameters.put(NO_RESCALE_X, null);
-        optionalsParameters.put(RESERVED, null);
-        optionalsParameters.put(SRC_ADDR_X, null);
-        optionalsParameters.put(SRC_ADDR_Y, null);
-        optionalsParameters.put(STATIC_RECORD_LAYOUT, null);
     }
 
     @Override

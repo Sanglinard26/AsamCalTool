@@ -11,11 +11,16 @@ public abstract class DataCalibration {
     protected final List<Memory> memorySegments = new ArrayList<Memory>();
 
     public final byte[] readBytes(long address, int len) {
-        for (Memory mem : memorySegments) {
+        byte[] retval;
+        final int memorySegmentsSize = memorySegments.size();
+        Memory mem = null;
+
+        for (int i = 0; i < memorySegmentsSize; i++) {
+            mem = memorySegments.get(i);
             if (address >= mem.address && (address + len) <= (mem.address + mem.listByte.size())) {
-                byte[] retval = new byte[len];
-                for (int i = 0; i < len; i++) {
-                    retval[i] = mem.listByte.get((int) (i + address - mem.address));
+                retval = new byte[len];
+                for (int j = 0; j < len; j++) {
+                    retval[j] = mem.listByte.get((int) (j + address - mem.address));
                 }
                 return retval;
             }
@@ -25,7 +30,11 @@ public abstract class DataCalibration {
 
     public final String readString(long address, int nByte) {
         long _address = address;
-        for (Memory mem : memorySegments) {
+        final int memorySegmentsSize = memorySegments.size();
+        Memory mem = null;
+
+        for (int i = 0; i < memorySegmentsSize; i++) {
+            mem = memorySegments.get(i);
             if (_address >= mem.address && _address < mem.address + mem.listByte.size()) {
                 StringBuilder retval = new StringBuilder(nByte);
                 while (_address < mem.address + mem.listByte.size() && retval.length() < nByte) {

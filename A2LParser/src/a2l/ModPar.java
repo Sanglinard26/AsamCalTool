@@ -23,17 +23,9 @@ public final class ModPar implements A2lObject {
 
     public ModPar(List<String> parameters, int beginLine, int endLine) {
 
-        initOptionalsParameters();
+        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
 
         build(parameters, beginLine, endLine);
-    }
-
-    private final void initOptionalsParameters() {
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
-        optionalsParameters.put(ADDR_EPK, null);
-        optionalsParameters.put(ECU_CALIBRATION_OFFSET, null);
-        optionalsParameters.put(EPK, null);
-        optionalsParameters.put(SYSTEM_CONSTANT, null);
     }
 
     public final long getEPKAdress() {
@@ -80,32 +72,29 @@ public final class ModPar implements A2lObject {
                     SecondaryKeywords keyWord;
                     for (int nPar = n; nPar < nbParams; nPar++) {
                         keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
-                        if (optionalsParameters.containsKey(keyWord)) {
-                            switch (keyWord) {
-                            case ADDR_EPK:
-                                optionalsParameters.put(ADDR_EPK, parameters.get(nPar + 1));
-                                nPar += 1;
-                                break;
-                            case ECU_CALIBRATION_OFFSET:
-                                optionalsParameters.put(ECU_CALIBRATION_OFFSET, parameters.get(nPar + 1));
-                                nPar += 1;
-                                break;
-                            case EPK:
-                                optionalsParameters.put(EPK, parameters.get(nPar + 1));
-                                nPar += 1;
-                                break;
-                            case SYSTEM_CONSTANT:
-                                if (systemConstant.isEmpty()) {
-                                    optionalsParameters.put(SYSTEM_CONSTANT, systemConstant);
-                                }
-                                systemConstant.add(new SystemConstant(parameters.subList(nPar + 1, nPar + 3)));
-                                nPar += 2;
-                                break;
-                            default:
-                                break;
+                        switch (keyWord) {
+                        case ADDR_EPK:
+                            optionalsParameters.put(ADDR_EPK, parameters.get(nPar + 1));
+                            nPar += 1;
+                            break;
+                        case ECU_CALIBRATION_OFFSET:
+                            optionalsParameters.put(ECU_CALIBRATION_OFFSET, parameters.get(nPar + 1));
+                            nPar += 1;
+                            break;
+                        case EPK:
+                            optionalsParameters.put(EPK, parameters.get(nPar + 1));
+                            nPar += 1;
+                            break;
+                        case SYSTEM_CONSTANT:
+                            if (systemConstant.isEmpty()) {
+                                optionalsParameters.put(SYSTEM_CONSTANT, systemConstant);
                             }
+                            systemConstant.add(new SystemConstant(parameters.subList(nPar + 1, nPar + 3)));
+                            nPar += 2;
+                            break;
+                        default:
+                            break;
                         }
-
                     }
                     n = nbParams;
                     break;

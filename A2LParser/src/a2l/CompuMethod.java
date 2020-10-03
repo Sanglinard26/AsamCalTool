@@ -6,9 +6,6 @@ package a2l;
 import static constante.SecondaryKeywords.COEFFS;
 import static constante.SecondaryKeywords.COEFFS_LINEAR;
 import static constante.SecondaryKeywords.COMPU_TAB_REF;
-import static constante.SecondaryKeywords.FORMULA;
-import static constante.SecondaryKeywords.REF_UNIT;
-import static constante.SecondaryKeywords.STATUS_STRING_REF;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -31,19 +28,9 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
 
     public CompuMethod(List<String> parameters, int beginLine, int endLine) {
 
-        initOptionalsParameters();
+        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
 
         build(parameters, beginLine, endLine);
-    }
-
-    private final void initOptionalsParameters() {
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
-        optionalsParameters.put(COEFFS, null);
-        optionalsParameters.put(COEFFS_LINEAR, null);
-        optionalsParameters.put(COMPU_TAB_REF, null);
-        optionalsParameters.put(FORMULA, null); // ToDo
-        optionalsParameters.put(REF_UNIT, null); // ToDo
-        optionalsParameters.put(STATUS_STRING_REF, null); // ToDo
     }
 
     @Override
@@ -89,16 +76,14 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
             Object compuTabRef = this.optionalsParameters.get(COMPU_TAB_REF);
             if (compuTabRef instanceof CompuTab) {
                 CompuTab compuTab = (CompuTab) compuTabRef;
-                Float key = new Float(hex);
-                Float result = compuTab.getValuePairs().get(key);
+                Float result = compuTab.getValuePairs().get((float) hex);
                 return result != null ? result : Double.NaN;
             }
         case TAB_INTP:
             Object compuTabRefBis = this.optionalsParameters.get(COMPU_TAB_REF);
             if (compuTabRefBis instanceof CompuTab) {
                 CompuTab compuTab = (CompuTab) compuTabRefBis;
-                Float key = new Float(hex);
-                Float value = compuTab.getValuePairs().get(key);
+                Float value = compuTab.getValuePairs().get((float) hex);
                 if (value == null) {
                     int nbValuePairs = compuTab.getNumberValuePairs();
                     Float[] keys = compuTab.getValuePairs().keySet().toArray(new Float[nbValuePairs]);
@@ -108,7 +93,7 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
                     float y1 = 0;
                     float y2 = 0;
                     for (float entryKey : keys) {
-                        if (entryKey > key) {
+                        if (entryKey > (float) hex) {
                             x1 = keys[cnt - 1];
                             x2 = keys[cnt];
                             y1 = compuTab.getValuePairs().get(new Float(x1));
@@ -117,7 +102,7 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
                         }
                         cnt++;
                     }
-                    return Interpolation.interpLinear(x1, x2, y1, y2, key);
+                    return Interpolation.interpLinear(x1, x2, y1, y2, (float) hex);
                 }
                 return value;
             }
@@ -134,8 +119,7 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
         case TAB_VERB:
             if (compuTabRef instanceof CompuVTab) {
                 CompuVTab compuVTab = (CompuVTab) compuTabRef;
-                Float key = new Float(hex);
-                return compuVTab.getValuePairs().get(key);
+                return compuVTab.getValuePairs().get((float) hex);
             }
             if (compuTabRef instanceof CompuVTabRange) {
                 CompuVTabRange compuVTabRange = (CompuVTabRange) compuTabRef;
@@ -156,7 +140,7 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
     }
 
     public final boolean isVerbal() {
-        return conversionType.compareTo(ConversionType.TAB_VERB) == 0;
+        return conversionType.equals(ConversionType.TAB_VERB);
     }
 
     @Override
@@ -255,28 +239,26 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
             SecondaryKeywords keyWord;
             for (int nPar = n; nPar < nbParams; nPar++) {
                 keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
-                if (optionalsParameters.containsKey(keyWord)) {
-                    switch (keyWord) {
-                    case COEFFS: // 6 coeffs
-                        optionalsParameters.put(COEFFS, new Coeffs(parameters.subList(nPar + 1, nPar + 7)));
-                        nPar += 6;
-                        break;
-                    case COEFFS_LINEAR: // 2 coeffs
-                        optionalsParameters.put(COEFFS_LINEAR, new CoeffsLinear(parameters.subList(nPar + 1, nPar + 3)));
-                        nPar += 2;
-                        break;
-                    case COMPU_TAB_REF:
-                        optionalsParameters.put(COMPU_TAB_REF, parameters.get(nPar + 1).hashCode());
-                        nPar += 1;
-                        break;
-                    case FORMULA:
-                        break;
-                    case REF_UNIT:
-                        break;
+                switch (keyWord) {
+                case COEFFS: // 6 coeffs
+                    optionalsParameters.put(COEFFS, new Coeffs(parameters.subList(nPar + 1, nPar + 7)));
+                    nPar += 6;
+                    break;
+                case COEFFS_LINEAR: // 2 coeffs
+                    optionalsParameters.put(COEFFS_LINEAR, new CoeffsLinear(parameters.subList(nPar + 1, nPar + 3)));
+                    nPar += 2;
+                    break;
+                case COMPU_TAB_REF:
+                    optionalsParameters.put(COMPU_TAB_REF, parameters.get(nPar + 1).hashCode());
+                    nPar += 1;
+                    break;
+                case FORMULA:
+                    break;
+                case REF_UNIT:
+                    break;
 
-                    default:
-                        break;
-                    }
+                default:
+                    break;
                 }
             }
 

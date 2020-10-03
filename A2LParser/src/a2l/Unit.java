@@ -21,16 +21,9 @@ public final class Unit implements A2lObject, Comparable<Unit> {
 
     public Unit(List<String> parameters, int beginLine, int endLine) {
 
-        initOptionalsParameters();
+        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
 
         build(parameters, beginLine, endLine);
-    }
-
-    private final void initOptionalsParameters() {
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
-        optionalsParameters.put(REF_UNIT, null);
-        optionalsParameters.put(SI_EXPONENTS, null);
-        optionalsParameters.put(UNIT_CONVERSION, null);
     }
 
     @Override
@@ -55,23 +48,21 @@ public final class Unit implements A2lObject, Comparable<Unit> {
             SecondaryKeywords keyWord;
             for (int nPar = n; nPar < nbParams; nPar++) {
                 keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
-                if (optionalsParameters.containsKey(keyWord)) {
-                    switch (keyWord) {
-                    case REF_UNIT:
-                        optionalsParameters.put(REF_UNIT, parameters.get(nPar + 1));
-                        nPar += 1;
-                        break;
-                    case SI_EXPONENTS:
-                        optionalsParameters.put(SI_EXPONENTS, new SiExponents(parameters.subList(nPar + 1, nPar + 8)));
-                        nPar += 7;
-                        break;
-                    case UNIT_CONVERSION:
-                        optionalsParameters.put(UNIT_CONVERSION, new UnitConversion(parameters.subList(nPar + 1, nPar + 3)));
-                        nPar += 2;
-                        break;
-                    default:
-                        break;
-                    }
+                switch (keyWord) {
+                case REF_UNIT:
+                    optionalsParameters.put(REF_UNIT, parameters.get(nPar + 1));
+                    nPar += 1;
+                    break;
+                case SI_EXPONENTS:
+                    optionalsParameters.put(SI_EXPONENTS, new SiExponents(parameters.subList(nPar + 1, nPar + 8)));
+                    nPar += 7;
+                    break;
+                case UNIT_CONVERSION:
+                    optionalsParameters.put(UNIT_CONVERSION, new UnitConversion(parameters.subList(nPar + 1, nPar + 3)));
+                    nPar += 2;
+                    break;
+                default:
+                    break;
                 }
             }
         } else {

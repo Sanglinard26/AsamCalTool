@@ -28,9 +28,9 @@ public final class ParserUtils {
         return counter == 2;
     }
 
-    public static final int countQuote(String line) {
+    public static final byte countQuote(String line) {
         final int nbChar = line.length();
-        int nbQuote = 0;
+        byte nbQuote = 0;
 
         for (int i = 0; i < nbChar; i++) {
             if (line.charAt(i) == '"') {
@@ -42,7 +42,7 @@ public final class ParserUtils {
     }
 
     public static final boolean isEvenQuote(String line) {
-        final int nbQuote = countQuote(line);
+        final byte nbQuote = countQuote(line);
         return (nbQuote & 1) != 1;
     }
 

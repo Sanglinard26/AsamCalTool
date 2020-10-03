@@ -84,14 +84,21 @@ public final class DataDecoder {
             }
         }
 
+        Characteristic characteristic;
+        FncValues fncValues;
+        CompuMethod compuMethod;
+
+        final Values notImplValues = new Values((short) 1, (short) 1);
+        notImplValues.setValue(0, 0, Double.NaN);
+
         for (AdjustableObject adjustableObject : a2l.getAdjustableObjects().values()) {
 
             if (adjustableObject instanceof Characteristic && adjustableObject.isValid()) {
 
-                Characteristic characteristic = (Characteristic) adjustableObject;
+                characteristic = (Characteristic) adjustableObject;
 
-                final FncValues fncValues = characteristic.getRecordLayout().getFncValues();
-                final CompuMethod compuMethod = characteristic.getCompuMethod();
+                fncValues = characteristic.getRecordLayout().getFncValues();
+                compuMethod = characteristic.getCompuMethod();
 
                 long adress = characteristic.getAdress();
 
@@ -112,19 +119,13 @@ public final class DataDecoder {
                     readMap(byteOrder, characteristic, adress, compuMethod, fncValues);
                     break;
                 case CUBOID:
-                    Values valuesCuboid = new Values((short) 1, (short) 1);
-                    valuesCuboid.setValue(0, 0, "Not implemented");
-                    characteristic.setValues(valuesCuboid);
+                    characteristic.setValues(notImplValues);
                     break;
                 case CUBE_4:
-                    Values valuesCube4 = new Values((short) 1, (short) 1);
-                    valuesCube4.setValue(0, 0, "Not implemented");
-                    characteristic.setValues(valuesCube4);
+                    characteristic.setValues(notImplValues);
                     break;
                 case CUBE_5:
-                    Values valuesCube5 = new Values((short) 1, (short) 1);
-                    valuesCube5.setValue(0, 0, "Not implemented");
-                    characteristic.setValues(valuesCube5);
+                    characteristic.setValues(notImplValues);
                     break;
                 default:
                     // Nothing
@@ -191,15 +192,15 @@ public final class DataDecoder {
 
             for (short n = 0; n < nbValue; n++) {
                 physValue = compuMethod.compute(hexValuesAxisPts[n]);
-                if (indexOrder.compareTo(IndexOrder.INDEX_INCR) == 0) {
-                    values.setValue(0, n, Double.toString(physValue));
+                if (indexOrder.equals(IndexOrder.INDEX_INCR)) {
+                    values.setValue(0, n, physValue);
                 } else {
-                    values.setValue(0, (nbValue - 1) - n, Double.toString(physValue));
+                    values.setValue(0, (nbValue - 1) - n, physValue);
                 }
             }
         } else {
             for (short n = 0; n < nbValue; n++) {
-                if (indexOrder.compareTo(IndexOrder.INDEX_INCR) == 0) {
+                if (indexOrder.equals(IndexOrder.INDEX_INCR)) {
                     values.setValue(0, n, compuMethod.computeString(hexValuesAxisPts[n]));
                 } else {
                     values.setValue(0, (nbValue - 1) - n, compuMethod.computeString(hexValuesAxisPts[n]));
@@ -226,7 +227,7 @@ public final class DataDecoder {
             }
 
             physValue = compuMethod.compute(hexValue);
-            values.setValue(0, 0, Double.toString(physValue));
+            values.setValue(0, 0, physValue);
 
         } else {
             if (characteristic.hasBitMask()) {
@@ -252,45 +253,45 @@ public final class DataDecoder {
         }
     }
 
-    private final String[] readFixAxis(AxisDescr axisDescr) {
+    private final Object[] readFixAxis(AxisDescr axisDescr) {
 
         final Set<Entry<SecondaryKeywords, Object>> entrySet = axisDescr.getOptionalsParameters().entrySet();
         final Iterator<Entry<SecondaryKeywords, Object>> it = entrySet.iterator();
 
-        String[] strValues = null;
+        Object[] values = null;
 
         while (it.hasNext()) {
             Map.Entry<SecondaryKeywords, Object> entry = it.next();
             if (entry.getValue() instanceof FixAxisParDist) {
                 FixAxisParDist axisDist = (FixAxisParDist) entry.getValue();
-                strValues = new String[axisDist.getNumberapo()];
+                values = new Object[axisDist.getNumberapo()];
                 for (short n = 0; n < axisDist.getNumberapo(); n++) {
-                    strValues[n] = Double.toString(axisDist.compute(n));
+                    values[n] = axisDist.compute(n);
                 }
-                return strValues;
+                return values;
             } else if (entry.getValue() instanceof FixAxisPar) {
                 FixAxisPar axisDist = (FixAxisPar) entry.getValue();
-                strValues = new String[axisDist.getNumberapo()];
+                values = new Object[axisDist.getNumberapo()];
                 for (short n = 0; n < axisDist.getNumberapo(); n++) {
-                    strValues[n] = Double.toString(axisDist.compute(n));
+                    values[n] = axisDist.compute(n);
                 }
-                return strValues;
+                return values;
             } else if (entry.getValue() instanceof FixAxisParList) {
                 FixAxisParList axisDist = (FixAxisParList) entry.getValue();
-                strValues = new String[axisDist.getNbValue()];
+                values = new Object[axisDist.getNbValue()];
                 for (short n = 0; n < axisDist.getNbValue(); n++) {
-                    strValues[n] = Double.toString(axisDist.compute(n));
+                    values[n] = axisDist.compute(n);
                 }
-                return strValues;
+                return values;
             }
         }
 
-        return new String[] { "" };
+        return new Object[] { Double.NaN };
     }
 
-    private final String[] readStdAxis(Characteristic characteristic, long adress, byte idxAxis, ByteOrder commonByteOrder) {
+    private final Object[] readStdAxis(Characteristic characteristic, long adress, byte idxAxis, ByteOrder commonByteOrder) {
 
-        String[] strValues = null;
+        Object[] values = null;
 
         final AxisDescr axisDescrStdAxis = characteristic.getAxisDescrs()[idxAxis];
         final ByteOrder byteOrder = axisDescrStdAxis.getByteOrder() != null ? axisDescrStdAxis.getByteOrder() : commonByteOrder;
@@ -301,7 +302,7 @@ public final class DataDecoder {
         DataType axisDataType;
         IndexOrder indexOrder;
 
-        if (characteristic.getType().compareTo(CharacteristicType.MAP) == 0) {
+        if (characteristic.getType().equals(CharacteristicType.MAP)) {
             if (idxAxis == 0) {
                 NoAxisPtsX noAxisPtsX = characteristic.getRecordLayout().getNoAxisPtsX();
                 if (characteristic.getRecordLayout().getSrcAddrX() != null) {
@@ -362,7 +363,7 @@ public final class DataDecoder {
             adress += noAxisPts.getDataType().getNbByte();
         }
 
-        strValues = new String[nbValue];
+        values = new Object[nbValue];
 
         adress = setAlignment(adress, axisDataType);
         double[] hexValues = Converter.readHexValues(dataFile, adress, axisDataType, byteOrder, nbValue);
@@ -392,30 +393,30 @@ public final class DataDecoder {
                         predValue = physValue;
                     }
                 }
-                if (indexOrder.compareTo(IndexOrder.INDEX_INCR) == 0) {
-                    strValues[n] = Double.toString(physValue);
+                if (indexOrder.equals(IndexOrder.INDEX_INCR)) {
+                    values[n] = physValue;
                 } else {
-                    strValues[(nbValue - 1) - n] = Double.toString(physValue);
+                    values[(nbValue - 1) - n] = physValue;
                 }
             }
         } else {
             for (short n = 0; n < nbValue; n++) {
-                if (indexOrder.compareTo(IndexOrder.INDEX_INCR) == 0) {
-                    strValues[n] = compuMethod.computeString(hexValues[n]);
+                if (indexOrder.equals(IndexOrder.INDEX_INCR)) {
+                    values[n] = compuMethod.computeString(hexValues[n]);
                 } else {
-                    strValues[(nbValue - 1) - n] = compuMethod.computeString(hexValues[n]);
+                    values[(nbValue - 1) - n] = compuMethod.computeString(hexValues[n]);
                 }
             }
         }
-        return strValues;
+        return values;
     }
 
-    private final String[] readCurveAxis(Characteristic characteristic) {
+    private final Object[] readCurveAxis(Characteristic characteristic) {
 
-        String[] strValues = null;
+        Object[] strValues = null;
 
         Values curveValues = characteristic.getValues();
-        strValues = new String[curveValues.getDimX()];
+        strValues = new Object[curveValues.getDimX()];
 
         for (short n = 0; n < strValues.length; n++) {
             strValues[n] = curveValues.getValue(0, n);
@@ -436,7 +437,7 @@ public final class DataDecoder {
 
         switch (axisDescr.getAttribute()) {
         case FIX_AXIS:
-            String[] fixAxisValues = readFixAxis(axisDescr);
+            Object[] fixAxisValues = readFixAxis(axisDescr);
             nbValue = (short) fixAxisValues.length;
             values = new Values(nbValue, (short) 2);
             for (short i = 0; i < nbValue; i++) {
@@ -445,7 +446,7 @@ public final class DataDecoder {
             break;
 
         case STD_AXIS:
-            String[] stdAxisValues = readStdAxis(characteristic, adress, (byte) 0, byteOrder);
+            Object[] stdAxisValues = readStdAxis(characteristic, adress, (byte) 0, byteOrder);
             nbValue = (short) stdAxisValues.length;
             values = new Values(nbValue, (short) 2);
             for (short i = 0; i < nbValue; i++) {
@@ -456,7 +457,7 @@ public final class DataDecoder {
             break;
 
         case COM_AXIS:
-            String[] comAxisValues = ((AxisPts) axisDescr.getAxisPts()).getStringValues();
+            Object[] comAxisValues = ((AxisPts) axisDescr.getAxisPts()).getStringValues();
             nbValue = (short) comAxisValues.length;
 
             values = new Values(nbValue, (short) 2);
@@ -465,7 +466,7 @@ public final class DataDecoder {
             }
             break;
         case RES_AXIS:
-            String[] resAxisValues = ((AxisPts) axisDescr.getAxisPts()).getStringValues();
+            Object[] resAxisValues = ((AxisPts) axisDescr.getAxisPts()).getStringValues();
             nbValue = (short) resAxisValues.length;
 
             values = new Values(nbValue, (short) 2);
@@ -481,7 +482,7 @@ public final class DataDecoder {
                 readCurve(byteOrder, curve, curve.getAdress(), curve.getCompuMethod(), curve.getRecordLayout().getFncValues());
             }
 
-            String[] curveAxisValue = readCurveAxis(curve);
+            Object[] curveAxisValue = readCurveAxis(curve);
             nbValue = (short) curveAxisValue.length;
 
             values = new Values(nbValue, (short) 2);
@@ -502,7 +503,7 @@ public final class DataDecoder {
 
             for (short n = 0; n < nbValue; n++) {
                 physValue = compuMethod.compute(hexValues[n]);
-                values.setValue(1, n, Double.toString(physValue));
+                values.setValue(1, n, physValue);
             }
 
         } else {
@@ -534,17 +535,17 @@ public final class DataDecoder {
 
         if (dim.length < 2 || dim[1] == 1) {
             values = new Values((short) (dim[0] + 1), (short) 2);
-            values.setValue(0, 0, "X");
+            values.setValue(0, 0, 'X');
         } else {
             values = new Values((short) (dim[0] + 1), (short) (dim[1] + 1));
             values.setValue(0, 0, "Y\\X");
             for (short y = 0; y < dim[1]; y++) { // Patch pour les VAL_BLK qui n'ont qu'une colonne
-                values.setValue(y + 1, 0, Integer.toString(y));
+                values.setValue(y + 1, 0, y);
             }
         }
 
         for (short x = 0; x < dim[0]; x++) {
-            values.setValue(0, x + 1, Integer.toString(x));
+            values.setValue(0, x + 1, x);
         }
 
         double[] hexValuesValBlk;
@@ -554,13 +555,13 @@ public final class DataDecoder {
             adress = setAlignment(adress, fncValues.getDataType());
             hexValuesValBlk = Converter.readHexValues(dataFile, adress, fncValues.getDataType(), byteOrder, dim[0]);
 
-            values.setValue(1, 0, "Z");
+            values.setValue(1, 0, 'Z');
 
             if (!compuMethod.isVerbal()) {
 
                 for (short n = 0; n < dim[0]; n++) {
                     physValue = compuMethod.compute(hexValuesValBlk[n]);
-                    values.setValue(1, n + 1, Double.toString(physValue));
+                    values.setValue(1, n + 1, physValue);
                 }
             } else {
                 if (characteristic.hasBitMask()) {
@@ -585,21 +586,21 @@ public final class DataDecoder {
                 int row = 0;
                 int col = 0;
                 for (short n = 0; n < nbValue; n++) {
-                    if (indexModeValBlk.compareTo(IndexMode.COLUMN_DIR) == 0) {
+                    if (indexModeValBlk.equals(IndexMode.COLUMN_DIR)) {
                         if (n % dim[1] == 0) {
                             row += 1;
                         }
                         col = n % dim[1];
                         physValue = compuMethod.compute(hexValuesValBlk[n]);
-                        values.setValue(col + 1, row, Double.toString(physValue));
+                        values.setValue(col + 1, row, physValue);
                     } else {
                         if (n % dim[0] == 0) { // => OK pour ROW_DIR
-                            values.setValue(row + 1, 0, Integer.toString(row));
+                            values.setValue(row + 1, 0, row);
                             row += 1;
                         }
                         col = n % dim[0];
                         physValue = compuMethod.compute(hexValuesValBlk[n]);
-                        values.setValue(row, col + 1, Double.toString(physValue));
+                        values.setValue(row, col + 1, physValue);
                     }
                 }
 
@@ -613,7 +614,7 @@ public final class DataDecoder {
                 int row = 0;
                 int col = 0;
                 for (short n = 0; n < nbValue; n++) {
-                    if (indexModeValBlk.compareTo(IndexMode.COLUMN_DIR) == 0) {
+                    if (indexModeValBlk.equals(IndexMode.COLUMN_DIR)) {
                         if (n % dim[1] == 0) {
                             row += 1;
                         }
@@ -621,7 +622,7 @@ public final class DataDecoder {
                         values.setValue(col + 1, row, compuMethod.computeString(hexValuesValBlk[n]));
                     } else {
                         if (n % dim[0] == 0) { // => OK pour ROW_DIR
-                            values.setValue(row + 1, 0, Integer.toString(row));
+                            values.setValue(row + 1, 0, row);
                             row += 1;
                         }
                         col = n % dim[0];
@@ -643,7 +644,7 @@ public final class DataDecoder {
         int dimX = 0;
         int dimY = 0;
 
-        final List<String[]> listAxisValues = new ArrayList<String[]>();
+        final List<Object[]> listAxisValues = new ArrayList<Object[]>(2);
 
         byte idxAxis = 0;
 
@@ -687,7 +688,7 @@ public final class DataDecoder {
         values.setValue(0, 0, "Y\\X");
 
         for (byte i = 0; i < 2; i++) {
-            String[] axisValues = listAxisValues.get(i);
+            Object[] axisValues = listAxisValues.get(i);
             for (short n = 0; n < axisValues.length; n++) {
                 if (i == 0) {
                     values.setValue(0, n + 1, axisValues[n]);
@@ -711,20 +712,20 @@ public final class DataDecoder {
                 int row = 0;
                 int col = 0;
                 for (short n = 0; n < nbValueMap; n++) {
-                    if (indexModeMap.compareTo(IndexMode.COLUMN_DIR) == 0) {
+                    if (indexModeMap.equals(IndexMode.COLUMN_DIR)) {
                         if (n % dimY == 0) {
                             row += 1;
                         }
                         col = n % dimY;
                         physValue = compuMethod.compute(hexValues[n]);
-                        values.setValue(col + 1, row, Double.toString(physValue));
+                        values.setValue(col + 1, row, physValue);
                     } else {
                         if (n % dimX == 0) {
                             row += 1;
                         }
                         col = n % dimX;
                         physValue = compuMethod.compute(hexValues[n]);
-                        values.setValue(row, col + 1, Double.toString(physValue));
+                        values.setValue(row, col + 1, physValue);
                     }
 
                 }
@@ -739,7 +740,7 @@ public final class DataDecoder {
                 int row = 0;
                 int col = 0;
                 for (short n = 0; n < nbValueMap; n++) {
-                    if (indexModeMap.compareTo(IndexMode.COLUMN_DIR) == 0) {
+                    if (indexModeMap.equals(IndexMode.COLUMN_DIR)) {
                         if (n % dimY == 0) {
                             row += 1;
                         }

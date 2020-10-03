@@ -7,22 +7,12 @@ import static constante.SecondaryKeywords.ANNOTATION;
 import static constante.SecondaryKeywords.AXIS_DESCR;
 import static constante.SecondaryKeywords.BIT_MASK;
 import static constante.SecondaryKeywords.BYTE_ORDER;
-import static constante.SecondaryKeywords.CALIBRATION_ACCESS;
-import static constante.SecondaryKeywords.COMPARISON_QUANTITY;
-import static constante.SecondaryKeywords.DEPENDENT_CHARACTERISTIC;
-import static constante.SecondaryKeywords.DISCRETE;
 import static constante.SecondaryKeywords.DISPLAY_IDENTIFIER;
-import static constante.SecondaryKeywords.ECU_ADDRESS_EXTENSION;
-import static constante.SecondaryKeywords.EXTENDED_LIMITS;
 import static constante.SecondaryKeywords.FORMAT;
 import static constante.SecondaryKeywords.MATRIX_DIM;
-import static constante.SecondaryKeywords.MAX_REFRESH;
 import static constante.SecondaryKeywords.NUMBER;
 import static constante.SecondaryKeywords.PHYS_UNIT;
 import static constante.SecondaryKeywords.READ_ONLY;
-import static constante.SecondaryKeywords.REF_MEMORY_SEGMENT;
-import static constante.SecondaryKeywords.STEP_SIZE;
-import static constante.SecondaryKeywords.VIRTUAL_CHARACTERISTIC;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -43,33 +33,9 @@ public final class Characteristic extends AdjustableObject {
 
     public Characteristic(List<String> parameters, int beginLine, int endLine) {
 
-        initOptionalsParameters();
+        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
 
         build(parameters, beginLine, endLine);
-    }
-
-    private final void initOptionalsParameters() {
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
-        optionalsParameters.put(ANNOTATION, null);
-        optionalsParameters.put(AXIS_DESCR, null);
-        optionalsParameters.put(BIT_MASK, null);
-        optionalsParameters.put(BYTE_ORDER, null);
-        optionalsParameters.put(CALIBRATION_ACCESS, null); // ToDo
-        optionalsParameters.put(COMPARISON_QUANTITY, null); // ToDo
-        optionalsParameters.put(DEPENDENT_CHARACTERISTIC, null); // ToDo
-        optionalsParameters.put(DISCRETE, null); // ToDo
-        optionalsParameters.put(DISPLAY_IDENTIFIER, null);
-        optionalsParameters.put(ECU_ADDRESS_EXTENSION, null); // ToDo
-        optionalsParameters.put(EXTENDED_LIMITS, null); // ToDo
-        optionalsParameters.put(FORMAT, null);
-        optionalsParameters.put(MATRIX_DIM, null);
-        optionalsParameters.put(MAX_REFRESH, null);
-        optionalsParameters.put(NUMBER, null);
-        optionalsParameters.put(PHYS_UNIT, null);
-        optionalsParameters.put(READ_ONLY, false); // Par defaut
-        optionalsParameters.put(REF_MEMORY_SEGMENT, null);
-        optionalsParameters.put(STEP_SIZE, null);
-        optionalsParameters.put(VIRTUAL_CHARACTERISTIC, null);
     }
 
     @Override
@@ -150,12 +116,12 @@ public final class Characteristic extends AdjustableObject {
         if (axisDescrs != null) {
             for (int idx = 0; idx < axisDescrs.length; idx++) {
                 Attribute axisType = axisDescrs[idx].getAttribute();
-                if (axisType.compareTo(Attribute.COM_AXIS) == 0 || axisType.compareTo(Attribute.RES_AXIS) == 0) {
+                if (axisType.equals(Attribute.COM_AXIS) || axisType.equals(Attribute.RES_AXIS)) {
                     axisPts = adjustableObjects.get(axisDescrs[idx].getAxisRef(axisType));
                     axisDescrs[idx].setAxisPts(axisPts);
                     ((AxisPts) axisPts).assignCharacteristic(this);
                 }
-                if (axisType.compareTo(Attribute.CURVE_AXIS) == 0) {
+                if (axisType.equals(Attribute.CURVE_AXIS)) {
                     axisDescrs[idx].setCurveAxis(adjustableObjects.get(axisDescrs[idx].getAxisRef(axisType)));
                 }
             }
@@ -297,76 +263,74 @@ public final class Characteristic extends AdjustableObject {
                 SecondaryKeywords keyWord;
                 for (int nPar = n; nPar < nbParams; nPar++) {
                     keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
-                    if (optionalsParameters.containsKey(keyWord)) {
-                        switch (keyWord) {
-                        case ANNOTATION:
-                            n = nPar + 1;
-                            do {
-                            } while (!parameters.get(++nPar).equals(ANNOTATION.name()));
-                            optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3)));
-                            n = nPar + 1;
-                            break;
-                        case AXIS_DESCR:
-                            if (axisDescrs == null) {
-                                axisDescrs = new AxisDescr[CharacteristicType.getNbAxis(type)];
-                                optionalsParameters.put(AXIS_DESCR, axisDescrs);
-                            }
-                            n = nPar + 1;
-                            do {
-                            } while (!parameters.get(++nPar).equals(AXIS_DESCR.name()));
-                            axisDescrs[cntAxis++] = new AxisDescr(parameters.subList(n, nPar - 1));
-                            n = nPar + 1;
-                            break;
-                        case BIT_MASK:
-                            String bitMask = parameters.get(nPar + 1);
-                            if (bitMask.startsWith("0x")) {
-                                optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask.substring(2), 16));
-                            } else {
-                                optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask));
-                            }
-                            nPar += 1;
-                            break;
-                        case BYTE_ORDER:
-                            optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
-                            nPar += 1;
-                            break;
-                        case DISPLAY_IDENTIFIER:
-                            optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1).toCharArray());
-                            nPar += 1;
-                            break;
-                        case FORMAT:
-                            optionalsParameters.put(FORMAT, parameters.get(nPar + 1).toCharArray());
-                            nPar += 1;
-                            break;
-                        case MATRIX_DIM:
-                            List<Short> dim = new ArrayList<Short>();
-
-                            try {
-                                nPar += 1;
-                                do {
-                                    dim.add(Short.parseShort(parameters.get(nPar)));
-                                    nPar += 1;
-                                } while (nPar < parameters.size());
-                            } catch (NumberFormatException nfe) {
-                                nPar += 1;
-                            }
-                            optionalsParameters.put(MATRIX_DIM, dim.toArray());
-                            dim.clear();
-                            break;
-                        case NUMBER:
-                            optionalsParameters.put(NUMBER, Short.parseShort(parameters.get(nPar + 1)));
-                            nPar += 1;
-                            break;
-                        case PHYS_UNIT:
-                            optionalsParameters.put(PHYS_UNIT, parameters.get(nPar + 1));
-                            nPar += 1;
-                            break;
-                        case READ_ONLY:
-                            optionalsParameters.put(READ_ONLY, true);
-                            break;
-                        default:
-                            break;
+                    switch (keyWord) {
+                    case ANNOTATION:
+                        n = nPar + 1;
+                        do {
+                        } while (!parameters.get(++nPar).equals(ANNOTATION.name()));
+                        optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3)));
+                        n = nPar + 1;
+                        break;
+                    case AXIS_DESCR:
+                        if (axisDescrs == null) {
+                            axisDescrs = new AxisDescr[CharacteristicType.getNbAxis(type)];
+                            optionalsParameters.put(AXIS_DESCR, axisDescrs);
                         }
+                        n = nPar + 1;
+                        do {
+                        } while (!parameters.get(++nPar).equals(AXIS_DESCR.name()));
+                        axisDescrs[cntAxis++] = new AxisDescr(parameters.subList(n, nPar - 1));
+                        n = nPar + 1;
+                        break;
+                    case BIT_MASK:
+                        String bitMask = parameters.get(nPar + 1);
+                        if (bitMask.startsWith("0x")) {
+                            optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask.substring(2), 16));
+                        } else {
+                            optionalsParameters.put(BIT_MASK, Long.parseLong(bitMask));
+                        }
+                        nPar += 1;
+                        break;
+                    case BYTE_ORDER:
+                        optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
+                        nPar += 1;
+                        break;
+                    case DISPLAY_IDENTIFIER:
+                        optionalsParameters.put(DISPLAY_IDENTIFIER, parameters.get(nPar + 1).toCharArray());
+                        nPar += 1;
+                        break;
+                    case FORMAT:
+                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1).toCharArray());
+                        nPar += 1;
+                        break;
+                    case MATRIX_DIM:
+                        List<Short> dim = new ArrayList<Short>();
+
+                        try {
+                            nPar += 1;
+                            do {
+                                dim.add(Short.parseShort(parameters.get(nPar)));
+                                nPar += 1;
+                            } while (nPar < parameters.size());
+                        } catch (NumberFormatException nfe) {
+                            nPar += 1;
+                        }
+                        optionalsParameters.put(MATRIX_DIM, dim.toArray());
+                        dim.clear();
+                        break;
+                    case NUMBER:
+                        optionalsParameters.put(NUMBER, Short.parseShort(parameters.get(nPar + 1)));
+                        nPar += 1;
+                        break;
+                    case PHYS_UNIT:
+                        optionalsParameters.put(PHYS_UNIT, parameters.get(nPar + 1));
+                        nPar += 1;
+                        break;
+                    case READ_ONLY:
+                        optionalsParameters.put(READ_ONLY, true);
+                        break;
+                    default:
+                        break;
                     }
                 }
 
@@ -396,11 +360,11 @@ public final class Characteristic extends AdjustableObject {
             for (short y = 0; y < values.getDimY(); y++) {
                 for (short x = 0; x < values.getDimX(); x++) {
                     try {
-                        double doubleValue = Double.parseDouble(values.getValue(y, x));
+                        double doubleValue = Double.parseDouble(values.getValue(y, x).toString());
 
-                        if (y == 0 && (type.compareTo(CharacteristicType.CURVE) == 0 || type.compareTo(CharacteristicType.MAP) == 0)) {
+                        if (y == 0 && (type.equals(CharacteristicType.CURVE) || type.equals(CharacteristicType.MAP))) {
                             df.setMaximumFractionDigits(axisDescrs[0].getNbDecimal());
-                        } else if (x == 0 && type.compareTo(CharacteristicType.MAP) == 0) {
+                        } else if (x == 0 && type.equals(CharacteristicType.MAP)) {
                             df.setMaximumFractionDigits(axisDescrs[1].getNbDecimal());
                         } else {
                             df.setMaximumFractionDigits(getNbDecimal());

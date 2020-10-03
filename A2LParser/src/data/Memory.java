@@ -18,8 +18,8 @@ public final class Memory {
     public Memory(long address, byte[] data) {
         this.address = address;
         listByte = new ArrayList<Byte>();
-        for (byte b : data) {
-            listByte.add(b);
+        for (int i = 0; i < data.length; i++) {
+            listByte.add(data[i]);
         }
     }
 

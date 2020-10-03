@@ -41,22 +41,9 @@ public final class AxisDescr {
 
     public AxisDescr(List<String> parameters) {
 
-        initOptionalsParameters();
+        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
 
         build(parameters);
-    }
-
-    private final void initOptionalsParameters() {
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
-        optionalsParameters.put(AXIS_PTS_REF, null);
-        optionalsParameters.put(CURVE_AXIS_REF, null);
-        optionalsParameters.put(DEPOSIT, null);
-        optionalsParameters.put(BYTE_ORDER, null);
-        optionalsParameters.put(FIX_AXIS_PAR, null);
-        optionalsParameters.put(FIX_AXIS_PAR_DIST, null);
-        optionalsParameters.put(FIX_AXIS_PAR_LIST, null);
-        optionalsParameters.put(FORMAT, null);
-        optionalsParameters.put(PHYS_UNIT, null);
     }
 
     public final Attribute getAttribute() {
@@ -96,7 +83,7 @@ public final class AxisDescr {
     }
 
     public final short getMaxAxisPoints() {
-        if (attribute.compareTo(Attribute.COM_AXIS) == 0) {
+        if (attribute.equals(Attribute.COM_AXIS)) {
             return ((AxisPts) getAxisPts()).getMaxAxisPoints();
         }
         return maxAxisPoints;
@@ -203,52 +190,50 @@ public final class AxisDescr {
             SecondaryKeywords keyWord;
             for (int nPar = n; nPar < nbParams; nPar++) {
                 keyWord = SecondaryKeywords.getSecondaryKeyWords(parameters.get(nPar));
-                if (optionalsParameters.containsKey(keyWord)) {
-                    switch (keyWord) {
-                    case AXIS_PTS_REF:
-                        optionalsParameters.put(AXIS_PTS_REF, parameters.get(nPar + 1).hashCode());
-                        nPar += 1;
-                        break;
-                    case BYTE_ORDER:
-                        optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
-                        nPar += 1;
-                        break;
-                    case CURVE_AXIS_REF:
-                        optionalsParameters.put(CURVE_AXIS_REF, parameters.get(nPar + 1).hashCode());
-                        nPar += 1;
-                        break;
-                    case DEPOSIT:
-                        optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));
-                        nPar += 1;
-                        break;
-                    case FIX_AXIS_PAR:
-                        n = nPar + 1;
-                        optionalsParameters.put(FIX_AXIS_PAR, new FixAxisPar(parameters.subList(n, n + 3)));
-                        nPar += 3;
-                        break;
-                    case FIX_AXIS_PAR_DIST:
-                        n = nPar + 1;
-                        optionalsParameters.put(FIX_AXIS_PAR_DIST, new FixAxisParDist(parameters.subList(n, n + 3)));
-                        nPar += 3;
-                        break;
-                    case FIX_AXIS_PAR_LIST:
-                        n = nPar + 1;
-                        do {
-                        } while (!parameters.get(++nPar).equals(FIX_AXIS_PAR_LIST.name()));
-                        optionalsParameters.put(FIX_AXIS_PAR_LIST, new FixAxisParList(parameters.subList(n, nPar - 1)));
-                        n = nPar + 1;
-                        break;
-                    case FORMAT:
-                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1).toCharArray());
-                        nPar += 1;
-                        break;
-                    case PHYS_UNIT:
-                        optionalsParameters.put(PHYS_UNIT, parameters.get(nPar + 1).toCharArray());
-                        nPar += 1;
-                        break;
-                    default:
-                        break;
-                    }
+                switch (keyWord) {
+                case AXIS_PTS_REF:
+                    optionalsParameters.put(AXIS_PTS_REF, parameters.get(nPar + 1).hashCode());
+                    nPar += 1;
+                    break;
+                case BYTE_ORDER:
+                    optionalsParameters.put(BYTE_ORDER, parameters.get(nPar + 1));
+                    nPar += 1;
+                    break;
+                case CURVE_AXIS_REF:
+                    optionalsParameters.put(CURVE_AXIS_REF, parameters.get(nPar + 1).hashCode());
+                    nPar += 1;
+                    break;
+                case DEPOSIT:
+                    optionalsParameters.put(DEPOSIT, parameters.get(nPar + 1));
+                    nPar += 1;
+                    break;
+                case FIX_AXIS_PAR:
+                    n = nPar + 1;
+                    optionalsParameters.put(FIX_AXIS_PAR, new FixAxisPar(parameters.subList(n, n + 3)));
+                    nPar += 3;
+                    break;
+                case FIX_AXIS_PAR_DIST:
+                    n = nPar + 1;
+                    optionalsParameters.put(FIX_AXIS_PAR_DIST, new FixAxisParDist(parameters.subList(n, n + 3)));
+                    nPar += 3;
+                    break;
+                case FIX_AXIS_PAR_LIST:
+                    n = nPar + 1;
+                    do {
+                    } while (!parameters.get(++nPar).equals(FIX_AXIS_PAR_LIST.name()));
+                    optionalsParameters.put(FIX_AXIS_PAR_LIST, new FixAxisParList(parameters.subList(n, nPar - 1)));
+                    n = nPar + 1;
+                    break;
+                case FORMAT:
+                    optionalsParameters.put(FORMAT, parameters.get(nPar + 1).toCharArray());
+                    nPar += 1;
+                    break;
+                case PHYS_UNIT:
+                    optionalsParameters.put(PHYS_UNIT, parameters.get(nPar + 1).toCharArray());
+                    nPar += 1;
+                    break;
+                default:
+                    break;
                 }
             }
 
