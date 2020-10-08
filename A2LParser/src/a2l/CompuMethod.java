@@ -7,7 +7,6 @@ import static constante.SecondaryKeywords.COEFFS;
 import static constante.SecondaryKeywords.COEFFS_LINEAR;
 import static constante.SecondaryKeywords.COMPU_TAB_REF;
 
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,7 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
 
     public CompuMethod(List<String> parameters, int beginLine, int endLine) {
 
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
+        optionalsParameters = new HashMap<SecondaryKeywords, Object>();
 
         build(parameters, beginLine, endLine);
     }

@@ -9,7 +9,6 @@ import static constante.SecondaryKeywords.REF_CHARACTERISTIC;
 import static constante.SecondaryKeywords.SUB_FUNCTION;
 
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -28,7 +27,7 @@ public final class Function implements A2lObject, Comparable<Function> {
 
     public Function(List<String> parameters, int beginLine, int endLine) {
 
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
+        optionalsParameters = new HashMap<SecondaryKeywords, Object>();
 
         build(parameters, beginLine, endLine);
     }

@@ -13,7 +13,6 @@ import static constante.SecondaryKeywords.READ_ONLY;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public final class AxisPts extends AdjustableObject {
 
     public AxisPts(List<String> parameters, int beginLine, int endLine) {
 
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
+        optionalsParameters = new HashMap<SecondaryKeywords, Object>();
 
         build(parameters, beginLine, endLine);
     }
@@ -106,7 +105,7 @@ public final class AxisPts extends AdjustableObject {
                 case ANNOTATION:
                     n = nPar + 1;
                     do {
-                    } while (!parameters.get(++nPar).equals(ANNOTATION.name()));
+                    } while (!parameters.get(++nPar).equals(ANNOTATION));
                     optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3)));
                     n = nPar + 1;
                     break;
@@ -159,7 +158,7 @@ public final class AxisPts extends AdjustableObject {
             for (int i = 0; i < nbValues; i++) {
                 try {
                     double doubleValue = Double.parseDouble(values.getValue(0, i).toString());
-                    values.setValue(0, i, df.format(doubleValue).replace(separator, ""));
+                    values.setValue(df.format(doubleValue).replace(separator, ""), 0, i);
                 } catch (Exception e) {
                     // Nothing
                 }

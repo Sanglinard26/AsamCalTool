@@ -31,9 +31,9 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
 
     protected boolean validParsing;
 
-    protected char[] functionRef;
+    protected String functionRef;
 
-    protected Values values;
+    protected DataValue values;
 
     protected Map<SecondaryKeywords, Object> optionalsParameters;
 
@@ -154,7 +154,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
 
     protected abstract void formatValues();
 
-    public final Values getValues() {
+    public final DataValue getValues() {
         formatValues();
         return this.values;
     }
@@ -168,12 +168,12 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         return readOnly != null ? (boolean) optionalsParameters.get(READ_ONLY) : false;
     }
 
-    public final void setValues(Values values) {
+    public final void setValues(DataValue values) {
         this.values = values;
     }
 
     public final void setFunction(String function) {
-        this.functionRef = function == null ? new char[0] : function.toCharArray();
+        this.functionRef = function == null ? "" : function;
     }
 
     public abstract void assignComputMethod(HashMap<Integer, CompuMethod> compuMethods);

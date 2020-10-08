@@ -7,7 +7,7 @@ import static constante.SecondaryKeywords.ANNOTATION_LABEL;
 import static constante.SecondaryKeywords.ANNOTATION_ORIGIN;
 import static constante.SecondaryKeywords.ANNOTATION_TEXT;
 
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +19,7 @@ public final class Annotation {
 
     public Annotation(List<String> parameters) {
 
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
+        optionalsParameters = new HashMap<SecondaryKeywords, Object>();
 
         build(parameters);
     }

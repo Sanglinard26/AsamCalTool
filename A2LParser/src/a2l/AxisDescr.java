@@ -14,7 +14,7 @@ import static constante.SecondaryKeywords.FORMAT;
 import static constante.SecondaryKeywords.PHYS_UNIT;
 
 import java.nio.ByteOrder;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +41,7 @@ public final class AxisDescr {
 
     public AxisDescr(List<String> parameters) {
 
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
+        optionalsParameters = new HashMap<SecondaryKeywords, Object>();
 
         build(parameters);
     }

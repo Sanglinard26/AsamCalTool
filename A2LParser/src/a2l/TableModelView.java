@@ -8,7 +8,7 @@ public final class TableModelView extends AbstractTableModel {
 
     private static final String EMPTY = "";
     private int nbCol = 0;
-    private Values values;
+    private DataValue values;
 
     @Override
     public String getColumnName(int column) {
@@ -27,7 +27,7 @@ public final class TableModelView extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return values!=null ? values.getDimY() : 0;
+        return values != null ? values.getDimY() : 0;
     }
 
     @Override
@@ -38,7 +38,7 @@ public final class TableModelView extends AbstractTableModel {
         return value != null ? value : EMPTY;
     }
 
-    public final void setData(Values data) {
+    public final void setData(DataValue data) {
         this.values = data;
         this.nbCol = values != null ? values.getDimX() : 0;
 

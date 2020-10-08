@@ -15,7 +15,7 @@ import static constante.SecondaryKeywords.SRC_ADDR_X;
 import static constante.SecondaryKeywords.SRC_ADDR_Y;
 
 import java.util.Collections;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +36,7 @@ public final class RecordLayout implements A2lObject, Comparable<RecordLayout> {
 
     public RecordLayout(List<String> parameters, int beginLine, int endLine) {
 
-        optionalsParameters = new EnumMap<SecondaryKeywords, OptionalParameterRL>(SecondaryKeywords.class);
+        optionalsParameters = new HashMap<SecondaryKeywords, OptionalParameterRL>();
 
         build(parameters, beginLine, endLine);
     }

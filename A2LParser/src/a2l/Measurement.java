@@ -12,7 +12,6 @@ import static constante.SecondaryKeywords.MATRIX_DIM;
 import static constante.SecondaryKeywords.PHYS_UNIT;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +38,7 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
 
     public Measurement(List<String> parameters, int beginLine, int endLine) {
 
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
+        optionalsParameters = new HashMap<SecondaryKeywords, Object>();
 
         build(parameters, beginLine, endLine);
     }

@@ -54,6 +54,7 @@ import a2l.A2l;
 import a2l.A2lObject;
 import a2l.A2lStateListener;
 import a2l.AdjustableObject;
+import a2l.ArrayValue;
 import a2l.Characteristic;
 import a2l.Characteristic.CharacteristicType;
 import a2l.Function;
@@ -497,15 +498,16 @@ public final class Ihm extends JFrame {
 
             JSurface jSurface = surfaceChart.getSurface();
 
+            ArrayValue values = (ArrayValue) characteristic.getValues();
+
             switch (characteristic.getType()) {
             case MAP:
-                surfaceChart.getArraySurfaceModel().setValues(characteristic.getValues().getXAxis(), characteristic.getValues().getYAxis(),
-                        characteristic.getValues().getZvalues());
+                surfaceChart.getArraySurfaceModel().setValues(values.getXAxis(), values.getYAxis(), values.getZvalues());
                 jSurface.setXLabel("X [" + characteristic.getUnit()[0] + "]");
                 jSurface.setYLabel("Y [" + characteristic.getUnit()[1] + "]");
                 break;
             case CURVE:
-                float[][] zValuesOrigin = characteristic.getValues().getZvalues();
+                float[][] zValuesOrigin = values.getZvalues();
 
                 int length = zValuesOrigin[0].length;
                 float[][] zValuesNew = new float[2][length];
@@ -513,7 +515,7 @@ public final class Ihm extends JFrame {
                 zValuesNew[0] = Arrays.copyOf(zValuesOrigin[0], length);
                 zValuesNew[1] = Arrays.copyOf(zValuesOrigin[0], length);
 
-                surfaceChart.getArraySurfaceModel().setValues(characteristic.getValues().getXAxis(), new float[] { 0, 1 }, zValuesNew);
+                surfaceChart.getArraySurfaceModel().setValues(values.getXAxis(), new float[] { 0, 1 }, zValuesNew);
                 jSurface.setXLabel("X [" + characteristic.getUnit()[0] + "]");
                 break;
             default:
@@ -549,8 +551,8 @@ public final class Ihm extends JFrame {
 
                 if (userObject instanceof Characteristic) {
                     Characteristic characteristic = (Characteristic) userObject;
-                    if (characteristic.hasData() && (characteristic.getType().compareTo(CharacteristicType.MAP) == 0
-                            || characteristic.getType().compareTo(CharacteristicType.CURVE) == 0)) {
+                    if (characteristic.hasData() && (characteristic.getType().equals(CharacteristicType.MAP)
+                            || characteristic.getType().equals(CharacteristicType.CURVE))) {
                         panelView.updateChart((Characteristic) userObject);
                     }
                 } else if (userObject instanceof Function) {

@@ -4,7 +4,7 @@ import static constante.SecondaryKeywords.REF_UNIT;
 import static constante.SecondaryKeywords.SI_EXPONENTS;
 import static constante.SecondaryKeywords.UNIT_CONVERSION;
 
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +21,7 @@ public final class Unit implements A2lObject, Comparable<Unit> {
 
     public Unit(List<String> parameters, int beginLine, int endLine) {
 
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
+        optionalsParameters = new HashMap<SecondaryKeywords, Object>();
 
         build(parameters, beginLine, endLine);
     }

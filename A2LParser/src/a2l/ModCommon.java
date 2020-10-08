@@ -15,7 +15,7 @@ import static constante.SecondaryKeywords.DATA_SIZE;
 import static constante.SecondaryKeywords.DEPOSIT;
 
 import java.nio.ByteOrder;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +36,7 @@ public final class ModCommon implements A2lObject {
     }
 
     private final void initOptionalsParameters() {
-        optionalsParameters = new EnumMap<SecondaryKeywords, Object>(SecondaryKeywords.class);
+        optionalsParameters = new HashMap<SecondaryKeywords, Object>();
         optionalsParameters.put(ALIGNMENT_BYTE, 1);
         optionalsParameters.put(ALIGNMENT_FLOAT16_IEEE, 2);
         optionalsParameters.put(ALIGNMENT_FLOAT32_IEEE, 4);
