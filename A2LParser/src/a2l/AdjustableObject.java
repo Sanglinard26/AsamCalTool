@@ -62,7 +62,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
     }
 
     public final String getFunction() {
-        return new String(functionRef);
+        return this.functionRef;
     }
 
     public final void assignRecordLayout(HashMap<Integer, RecordLayout> recordLayouts) {
@@ -71,19 +71,15 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
 
     public final byte getNbDecimal() {
         Object objectDisplayFormat = optionalsParameters.get(FORMAT);
-        String displayFormat;
+        Format displayFormat;
 
         if (!compuMethod.isVerbal()) {
             if (objectDisplayFormat == null) {
                 displayFormat = compuMethod.getFormat();
             } else {
-                displayFormat = new String((char[]) objectDisplayFormat);
+                displayFormat = (Format) objectDisplayFormat;
             }
-            int idxPoint = displayFormat.indexOf(".");
-            if (idxPoint > -1) {
-                return (byte) Integer.parseInt(displayFormat.substring(idxPoint + 1, displayFormat.length()));
-            }
-
+            return displayFormat.getDecimalesPlace();
         }
         return 0;
     }
@@ -132,9 +128,9 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         return stringDimension.toString();
     }
 
-    public final String getFormat() {
+    public final Format getFormat() {
         Object oFormat = optionalsParameters.get(FORMAT);
-        return oFormat != null ? new String((char[]) oFormat) : compuMethod.getFormat();
+        return oFormat != null ? (Format) oFormat : compuMethod.getFormat();
     }
 
     protected static double formatValue(double value, byte nbDecimal) {

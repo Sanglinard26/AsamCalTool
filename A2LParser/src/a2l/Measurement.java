@@ -43,6 +43,11 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
         build(parameters, beginLine, endLine);
     }
 
+    public final Annotation getAnnotation() {
+        Object object = optionalsParameters.get(ANNOTATION);
+        return object != null ? (Annotation) object : null;
+    }
+
     @Override
     public String toString() {
         return this.name;
@@ -104,7 +109,7 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
                         nPar += 1;
                         break;
                     case FORMAT:
-                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1).toCharArray());
+                        optionalsParameters.put(FORMAT, new Format(parameters.get(nPar + 1)));
                         nPar += 1;
                         break;
                     case MATRIX_DIM:
@@ -163,7 +168,15 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
         sb.append("<li><b>Upper limit: </b>" + upperLimit + "\n");
         sb.append("</ul>");
 
-        sb.append("<b><u>OPTIONALS PARAMETERS :\n</u></b>");
+        sb.append("<b><u>OPTIONALS PARAMETERS :</u></b>");
+        Annotation annotation = getAnnotation();
+        if (annotation != null) {
+            sb.append("<ul><li><b>Annotation : </b>");
+            sb.append("<ul>");
+            sb.append("<li>" + "Label : " + getAnnotation().getAnnotationParam(SecondaryKeywords.ANNOTATION_LABEL) + "\n");
+            sb.append("<li>" + "Text : " + getAnnotation().getAnnotationParam(SecondaryKeywords.ANNOTATION_TEXT) + "\n");
+            sb.append("<li>" + "Origine : " + getAnnotation().getAnnotationParam(SecondaryKeywords.ANNOTATION_ORIGIN) + "\n");
+        }
 
         sb.append("</html>");
 

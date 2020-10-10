@@ -46,8 +46,7 @@ public final class Function implements A2lObject, Comparable<Function> {
     public final Vector<String> getRefCharacteristic() {
         Object object = optionalsParameters.get(REF_CHARACTERISTIC);
         if (object != null) {
-            @SuppressWarnings("unchecked")
-            Vector<String> v = new Vector<String>(((Set<String>) object));
+            Vector<String> v = (Vector<String>) object;
             Collections.sort(v);
             return v;
         }
@@ -57,8 +56,7 @@ public final class Function implements A2lObject, Comparable<Function> {
     public final Vector<String> getInMeasurement() {
         Object object = optionalsParameters.get(IN_MEASUREMENT);
         if (object != null) {
-            @SuppressWarnings("unchecked")
-            Vector<String> v = new Vector<String>(((Set<String>) object));
+            Vector<String> v = (Vector<String>) object;
             Collections.sort(v);
             return v;
         }
@@ -68,8 +66,7 @@ public final class Function implements A2lObject, Comparable<Function> {
     public final Vector<String> getLocMeasurement() {
         Object object = optionalsParameters.get(LOC_MEASUREMENT);
         if (object != null) {
-            @SuppressWarnings("unchecked")
-            Vector<String> v = new Vector<String>(((Set<String>) object));
+            Vector<String> v = (Vector<String>) object;
             Collections.sort(v);
             return v;
         }
@@ -79,8 +76,7 @@ public final class Function implements A2lObject, Comparable<Function> {
     public final Vector<String> getOutMeasurement() {
         Object object = optionalsParameters.get(OUT_MEASUREMENT);
         if (object != null) {
-            @SuppressWarnings("unchecked")
-            Vector<String> v = new Vector<String>(((Set<String>) object));
+            Vector<String> v = (Vector<String>) object;
             Collections.sort(v);
             return v;
         }
@@ -127,7 +123,7 @@ public final class Function implements A2lObject, Comparable<Function> {
                     nPar++;
                     break;
                 case REF_CHARACTERISTIC:
-                    Set<String> refCharacteristic = new HashSet<String>();
+                    Vector<String> refCharacteristic = new Vector<String>();
                     optionalsParameters.put(REF_CHARACTERISTIC, refCharacteristic);
                     nPar++;
                     do {
@@ -144,7 +140,7 @@ public final class Function implements A2lObject, Comparable<Function> {
                     nPar++;
                     break;
                 case IN_MEASUREMENT:
-                    Set<String> inMeasurement = new HashSet<String>();
+                    Vector<String> inMeasurement = new Vector<String>();
                     optionalsParameters.put(IN_MEASUREMENT, inMeasurement);
                     nPar++;
                     do {
@@ -157,7 +153,7 @@ public final class Function implements A2lObject, Comparable<Function> {
                     nPar++;
                     break;
                 case LOC_MEASUREMENT:
-                    Set<String> locMeasurement = new HashSet<String>();
+                    Vector<String> locMeasurement = new Vector<String>();
                     optionalsParameters.put(LOC_MEASUREMENT, locMeasurement);
                     nPar++;
                     do {
@@ -170,7 +166,7 @@ public final class Function implements A2lObject, Comparable<Function> {
                     nPar++;
                     break;
                 case OUT_MEASUREMENT:
-                    Set<String> outMeasurement = new HashSet<String>();
+                    Vector<String> outMeasurement = new Vector<String>();
                     optionalsParameters.put(OUT_MEASUREMENT, outMeasurement);
                     nPar++;
                     do {
@@ -183,7 +179,7 @@ public final class Function implements A2lObject, Comparable<Function> {
                     nPar++;
                     break;
                 case SUB_FUNCTION:
-                    Set<String> subFunction = new HashSet<String>();
+                    Vector<String> subFunction = new Vector<String>();
                     optionalsParameters.put(SUB_FUNCTION, subFunction);
                     nPar++;
                     do {

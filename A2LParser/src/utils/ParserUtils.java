@@ -13,7 +13,7 @@ public final class ParserUtils {
     public static final boolean isUniqueString(String line) {
 
         final int nbChar = line.length();
-        int counter = 2;
+        byte counter = 2;
 
         for (int i = 1; i < nbChar - 1; i++) {
             if (line.charAt(i) == '"') {

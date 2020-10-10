@@ -48,13 +48,13 @@ public final class AxisPts extends AdjustableObject {
         return oDeposit != null ? oDeposit.toString() : "";
     }
 
-    public final String[] getStringValues() {
-        String[] strValues = new String[this.values.getDimX()];
-        for (short i = 0; i < strValues.length; i++) {
-            strValues[i] = this.values.getValue(0, i).toString();
+    public final Object[] getZValues() {
+        Object[] values = new Object[this.values.getDimX()];
+        for (short i = 0; i < values.length; i++) {
+            values[i] = this.values.getValue(0, i);
         }
 
-        return strValues;
+        return values;
     }
 
     @Override
@@ -122,7 +122,7 @@ public final class AxisPts extends AdjustableObject {
                     nPar += 1;
                     break;
                 case FORMAT:
-                    optionalsParameters.put(FORMAT, parameters.get(nPar + 1).toCharArray());
+                    optionalsParameters.put(FORMAT, new Format(parameters.get(nPar + 1)));
                     nPar += 1;
                     break;
                 case PHYS_UNIT:

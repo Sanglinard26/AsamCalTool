@@ -46,4 +46,9 @@ public final class Annotation {
             }
         }
     }
+
+    public final String getAnnotationParam(SecondaryKeywords keyword) {
+        Object oText = optionalsParameters.get(keyword);
+        return oText != null ? new String((char[]) oText) : "";
+    }
 }

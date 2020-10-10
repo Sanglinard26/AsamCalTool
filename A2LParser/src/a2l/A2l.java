@@ -192,14 +192,14 @@ public final class A2l {
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             axisPt = new AxisPts(objectParameters, beginLine, endLine);
-                            adjustableObjects.put(axisPt.toString().hashCode(), axisPt);
+                            adjustableObjects.put(axisPt.getID(), axisPt);
                             break;
                         case CHARACTERISTIC:
                             beginLine = numLine;
                             fillParameters(buf, line, objectParameters, keyword);
                             endLine = numLine;
                             characteristic = new Characteristic(objectParameters, beginLine, endLine);
-                            adjustableObjects.put(characteristic.toString().hashCode(), characteristic);
+                            adjustableObjects.put(characteristic.getID(), characteristic);
                             break;
                         case COMPU_METHOD:
                             beginLine = numLine;

@@ -19,6 +19,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import a2l.AxisDescr.Attribute;
 import constante.ConversionType;
@@ -26,7 +27,7 @@ import constante.SecondaryKeywords;
 
 public final class Characteristic extends AdjustableObject {
 
-    private CharacteristicType type;
+    private int type;
 
     private AxisDescr[] axisDescrs;
 
@@ -50,7 +51,7 @@ public final class Characteristic extends AdjustableObject {
     }
 
     public final CharacteristicType getType() {
-        return type;
+        return CharacteristicType.getCharacteristicType(type);
     }
 
     public final short getDim() {
@@ -129,7 +130,26 @@ public final class Characteristic extends AdjustableObject {
 
     public enum CharacteristicType {
 
-        ASCII, CURVE, MAP, CUBOID, CUBE_4, CUBE_5, VAL_BLK, VALUE, UNKNOWN;
+        ASCII(0), CURVE(1), MAP(2), CUBOID(3), CUBE_4(5), CUBE_5(6), VAL_BLK(7), VALUE(8), UNKNOWN(-1);
+
+        private int idx;
+
+        private CharacteristicType(int idx) {
+            this.idx = idx;
+        }
+
+        private static final Map<Integer, CharacteristicType> nameIndex = new HashMap<>(CharacteristicType.values().length);
+
+        static {
+            for (CharacteristicType characteristicType : CharacteristicType.values()) {
+                nameIndex.put(characteristicType.idx, characteristicType);
+            }
+        }
+
+        public static final CharacteristicType getCharacteristicType(int idx) {
+            CharacteristicType characteristicType = nameIndex.get(idx);
+            return characteristicType != null ? characteristicType : UNKNOWN;
+        }
 
         private static CharacteristicType getCharacteristicType(String name) {
             switch (name) {
@@ -193,7 +213,7 @@ public final class Characteristic extends AdjustableObject {
     public String[] getUnit() {
         String[] unit;
 
-        switch (this.type) {
+        switch (getType()) {
         case VALUE:
             unit = new String[] { this.compuMethod.getUnit() };
             break;
@@ -247,7 +267,7 @@ public final class Characteristic extends AdjustableObject {
 
                 this.name = parameters.get(2);
                 this.longIdentifier = parameters.get(3).toCharArray();
-                this.type = CharacteristicType.getCharacteristicType(parameters.get(4));
+                this.type = CharacteristicType.getCharacteristicType(parameters.get(4)).idx;
                 this.adress = Long.parseLong(parameters.get(5).substring(2), 16);
                 this.depositId = parameters.get(6).hashCode();
                 this.maxDiff = Float.parseFloat(parameters.get(7));
@@ -266,13 +286,13 @@ public final class Characteristic extends AdjustableObject {
                     case ANNOTATION:
                         n = nPar + 1;
                         do {
-                        } while (!parameters.get(++nPar).equals(ANNOTATION));
+                        } while (!parameters.get(++nPar).equals(ANNOTATION.name()));
                         optionalsParameters.put(ANNOTATION, new Annotation(parameters.subList(n, nPar - 3)));
                         n = nPar + 1;
                         break;
                     case AXIS_DESCR:
                         if (axisDescrs == null) {
-                            axisDescrs = new AxisDescr[CharacteristicType.getNbAxis(type)];
+                            axisDescrs = new AxisDescr[CharacteristicType.getNbAxis(getType())];
                             optionalsParameters.put(AXIS_DESCR, axisDescrs);
                         }
                         n = nPar + 1;
@@ -299,7 +319,7 @@ public final class Characteristic extends AdjustableObject {
                         nPar += 1;
                         break;
                     case FORMAT:
-                        optionalsParameters.put(FORMAT, parameters.get(nPar + 1).toCharArray());
+                        optionalsParameters.put(FORMAT, new Format(parameters.get(nPar + 1)));
                         nPar += 1;
                         break;
                     case MATRIX_DIM:
@@ -361,9 +381,9 @@ public final class Characteristic extends AdjustableObject {
                     try {
                         double doubleValue = Double.parseDouble(values.getValue(y, x).toString());
 
-                        if (y == 0 && (type.equals(CharacteristicType.CURVE) || type.equals(CharacteristicType.MAP))) {
+                        if (y == 0 && (getType().equals(CharacteristicType.CURVE) || getType().equals(CharacteristicType.MAP))) {
                             df.setMaximumFractionDigits(axisDescrs[0].getNbDecimal());
-                        } else if (x == 0 && type.equals(CharacteristicType.MAP)) {
+                        } else if (x == 0 && getType().equals(CharacteristicType.MAP)) {
                             df.setMaximumFractionDigits(axisDescrs[1].getNbDecimal());
                         } else {
                             df.setMaximumFractionDigits(getNbDecimal());
@@ -390,7 +410,7 @@ public final class Characteristic extends AdjustableObject {
         double val0 = 0;
         double val1 = 0;
 
-        switch (this.type) {
+        switch (getType()) {
         case VALUE:
             val0 = this.compuMethod.compute(1);
             val1 = this.compuMethod.compute(2);

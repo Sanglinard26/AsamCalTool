@@ -129,19 +129,15 @@ public final class AxisDescr {
 
     public final byte getNbDecimal() {
         Object objectDisplayFormat = optionalsParameters.get(FORMAT);
-        String displayFormat;
+        Format displayFormat;
 
         if (!compuMethod.isVerbal()) {
             if (objectDisplayFormat == null) {
                 displayFormat = compuMethod.getFormat();
             } else {
-                displayFormat = new String((char[]) objectDisplayFormat);
+                displayFormat = (Format) objectDisplayFormat;
             }
-            // NPE si par exemple "%8"
-            int idxPoint = displayFormat.indexOf(".");
-            if (idxPoint > -1) {
-                return Byte.parseByte(displayFormat.substring(idxPoint + 1, displayFormat.length()));
-            }
+            return displayFormat.getDecimalesPlace();
         }
         return 0;
     }
@@ -225,7 +221,7 @@ public final class AxisDescr {
                     n = nPar + 1;
                     break;
                 case FORMAT:
-                    optionalsParameters.put(FORMAT, parameters.get(nPar + 1).toCharArray());
+                    optionalsParameters.put(FORMAT, new Format(parameters.get(nPar + 1)));
                     nPar += 1;
                     break;
                 case PHYS_UNIT:

@@ -20,7 +20,7 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
     private String name;
     private char[] longIdentifier;
     private ConversionType conversionType;
-    private char[] format;
+    private Format format;
     private char[] unit;
 
     private Map<SecondaryKeywords, Object> optionalsParameters;
@@ -131,7 +131,7 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
     }
 
     public final ConversionType getConversionType() {
-        return conversionType;
+        return this.conversionType;
     }
 
     public final boolean hasCompuTabRef() {
@@ -139,7 +139,7 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
     }
 
     public final boolean isVerbal() {
-        return conversionType.equals(ConversionType.TAB_VERB);
+        return this.conversionType.equals(ConversionType.TAB_VERB);
     }
 
     @Override
@@ -147,8 +147,8 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
         return this.name.equals(obj.toString());
     }
 
-    public final String getFormat() {
-        return new String(format);
+    public final Format getFormat() {
+        return format;
     }
 
     public final String getUnit() {
@@ -160,7 +160,7 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
 
         sb.append("<ul><li><b>Name: </b>" + name + "\n");
         sb.append("<li><b>Long identifier: </b>" + new String(longIdentifier) + "\n");
-        sb.append("<li><b>Conversion type: </b>" + conversionType.name() + "\n");
+        sb.append("<li><b>Conversion type: </b>" + getConversionType().name() + "\n");
         sb.append("<li><b>Unit: </b>[" + getUnit() + "]\n");
         sb.append("<li><b>Format: </b>" + getFormat() + "\n");
         if (hasCompuTabRef()) {
@@ -181,20 +181,24 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
 
         // INT = f(PHYS), f(x) = (axx + bx + c) / (dxx + ex + f)
 
-        private final float[] coeffs;
+        private final float k1;
+        private final float k2;
+        private final float k3;
+        private final float k4;
+        private final float k5;
+        private final float k6;
 
         public Coeffs(List<String> params) {
-            this.coeffs = new float[6];
-            this.coeffs[0] = Float.parseFloat(params.get(0));
-            this.coeffs[1] = Float.parseFloat(params.get(1));
-            this.coeffs[2] = Float.parseFloat(params.get(2));
-            this.coeffs[3] = Float.parseFloat(params.get(3));
-            this.coeffs[4] = Float.parseFloat(params.get(4));
-            this.coeffs[5] = Float.parseFloat(params.get(5));
+            this.k1 = Float.parseFloat(params.get(0));
+            this.k2 = Float.parseFloat(params.get(1));
+            this.k3 = Float.parseFloat(params.get(2));
+            this.k4 = Float.parseFloat(params.get(3));
+            this.k5 = Float.parseFloat(params.get(4));
+            this.k6 = Float.parseFloat(params.get(5));
         }
 
         public final float[] getCoeffs() {
-            return coeffs;
+            return new float[] { k1, k2, k3, k4, k5, k6 };
         }
     }
 
@@ -202,16 +206,16 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
 
         // PHYS = f(INT), f(x) = ax + b
 
-        private final float[] coeffs;
+        private final float k1;
+        private final float k2;
 
         public CoeffsLinear(List<String> params) {
-            this.coeffs = new float[2];
-            this.coeffs[0] = Float.parseFloat(params.get(0));
-            this.coeffs[1] = Float.parseFloat(params.get(1));
+            this.k1 = Float.parseFloat(params.get(0));
+            this.k2 = Float.parseFloat(params.get(1));
         }
 
         public final float[] getCoeffs() {
-            return coeffs;
+            return new float[] { k1, k2 };
         }
     }
 
@@ -230,7 +234,7 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
             this.name = parameters.get(2);
             this.longIdentifier = parameters.get(3).toCharArray();
             this.conversionType = ConversionType.getConversionType(parameters.get(4));
-            this.format = parameters.get(5).toCharArray();
+            this.format = new Format(parameters.get(5));
             this.unit = parameters.get(6).toCharArray();
 
             int n = 7;

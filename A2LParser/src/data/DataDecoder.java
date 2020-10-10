@@ -456,7 +456,7 @@ public final class DataDecoder {
             break;
 
         case COM_AXIS:
-            Object[] comAxisValues = ((AxisPts) axisDescr.getAxisPts()).getStringValues();
+            Object[] comAxisValues = ((AxisPts) axisDescr.getAxisPts()).getZValues();
             nbValue = (short) comAxisValues.length;
 
             values = new ArrayValue(nbValue, (short) 2);
@@ -465,7 +465,7 @@ public final class DataDecoder {
             }
             break;
         case RES_AXIS:
-            Object[] resAxisValues = ((AxisPts) axisDescr.getAxisPts()).getStringValues();
+            Object[] resAxisValues = ((AxisPts) axisDescr.getAxisPts()).getZValues();
             nbValue = (short) resAxisValues.length;
 
             values = new ArrayValue(nbValue, (short) 2);
@@ -666,7 +666,7 @@ public final class DataDecoder {
             case COM_AXIS:
 
                 AxisPts axisPts = (AxisPts) axisDescr.getAxisPts();
-                listAxisValues.add(axisPts.getStringValues());
+                listAxisValues.add(axisPts.getZValues());
 
                 break;
             default:
