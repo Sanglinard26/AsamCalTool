@@ -166,7 +166,6 @@ public final class Ihm extends JFrame {
 
             @Override
             public void intervalRemoved(ListDataEvent e) {
-                // TODO Auto-generated method stub
 
             }
 
@@ -177,7 +176,6 @@ public final class Ihm extends JFrame {
 
             @Override
             public void contentsChanged(ListDataEvent e) {
-                // TODO Auto-generated method stub
 
             }
         });

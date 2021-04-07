@@ -82,6 +82,11 @@ public final class DataDecoder {
 
         for (AdjustableObject adjustableObject : a2l.getAdjustableObjects().values()) {
             if (adjustableObject instanceof AxisPts && adjustableObject.isValid()) {
+
+                if (((AxisPts) adjustableObject).toString().equals("TrbAct_tiFilDftlY_A")) {
+                    int i = 0;
+                }
+
                 readAxisPts(byteOrder, (AxisPts) adjustableObject);
             }
         }

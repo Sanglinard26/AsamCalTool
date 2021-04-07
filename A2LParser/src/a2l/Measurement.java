@@ -147,6 +147,9 @@ public final class Measurement implements A2lObject, Comparable<Measurement> {
 
     public final void assignComputMethod(HashMap<Integer, CompuMethod> compuMethods) {
         this.compuMethod = compuMethods.get(this.conversionId);
+        if (this.compuMethod == null) {
+            this.compuMethod = CompuMethod.createNoCompuMethod();
+        }
     }
 
     public final String getUnit() {

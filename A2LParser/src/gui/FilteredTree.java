@@ -441,7 +441,7 @@ public class FilteredTree extends JPanel {
 
                 final JPopupMenu menu = new JPopupMenu();
 
-                final JMenuItem menuItem = new JMenuItem("Show in text format");
+                JMenuItem menuItem = new JMenuItem("Show in text format");
                 menuItem.addActionListener(new ActionListener() {
 
                     @Override
@@ -450,6 +450,65 @@ public class FilteredTree extends JPanel {
                         // new A2lDisplayer(((A2l) object).getPath());
                         TextSearchTest.createAndShowGUI(((A2l) object).getPath());
 
+                    }
+                });
+                menu.add(menuItem);
+
+                menuItem = new JMenuItem("Link prototype axis");
+                menuItem.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent paramActionEvent) {
+                        final JFileChooser chooser = new JFileChooser();
+                        chooser.setFileFilter(new FileFilter() {
+
+                            @Override
+                            public String getDescription() {
+                                return "lab file (*.a2l)";
+                            }
+
+                            @Override
+                            public boolean accept(File paramFile) {
+                                if (paramFile.isDirectory())
+                                    return true;
+                                return paramFile.getName().toLowerCase().endsWith("lab");
+                            }
+                        });
+                        int rep = chooser.showOpenDialog(null);
+
+                        if (rep == JFileChooser.APPROVE_OPTION) {
+                            A2lUtils.linkPrototypeAxis(object, chooser.getSelectedFile());
+                        }
+                    }
+                });
+                menu.add(menuItem);
+
+                menuItem = new JMenuItem("Check MEI bloc");
+                menuItem.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent paramActionEvent) {
+                        final JFileChooser chooser = new JFileChooser();
+                        chooser.setFileFilter(new FileFilter() {
+
+                            @Override
+                            public String getDescription() {
+                                return "text file (*.txt)";
+                            }
+
+                            @Override
+                            public boolean accept(File paramFile) {
+                                if (paramFile.isDirectory())
+                                    return true;
+                                return paramFile.getName().toLowerCase().endsWith("txt");
+                            }
+                        });
+                        int rep = chooser.showOpenDialog(null);
+
+                        if (rep == JFileChooser.APPROVE_OPTION) {
+                            A2lUtils.checkMEIBloc(object, chooser.getSelectedFile());
+                            JOptionPane.showMessageDialog(null, "Done !");
+                        }
                     }
                 });
                 menu.add(menuItem);
@@ -534,16 +593,6 @@ public class FilteredTree extends JPanel {
                     }
                 });
                 menu.add(menuMeasurement);
-
-                final JMenuItem menuTest = new JMenuItem("Test rename label");
-                menuTest.addActionListener(new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        A2lUtils.renameLabel((A2l) originalRoot.getUserObject(), (Function) object);
-                    }
-                });
-                menu.add(menuTest);
 
                 menu.show(e.getComponent(), e.getX(), e.getY());
             }

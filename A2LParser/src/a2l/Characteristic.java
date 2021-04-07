@@ -202,6 +202,9 @@ public final class Characteristic extends AdjustableObject {
     @Override
     public final void assignComputMethod(HashMap<Integer, CompuMethod> compuMethods) {
         this.compuMethod = compuMethods.get(this.conversionId);
+        if (this.compuMethod == null) {
+            this.compuMethod = CompuMethod.createNoCompuMethod();
+        }
         if (axisDescrs != null) {
             for (int idx = 0; idx < axisDescrs.length; idx++) {
                 axisDescrs[idx].setCompuMethod(compuMethods.get(axisDescrs[idx].getConversion()));
@@ -215,7 +218,14 @@ public final class Characteristic extends AdjustableObject {
 
         switch (getType()) {
         case VALUE:
-            unit = new String[] { this.compuMethod.getUnit() };
+            unit = new String[1];
+
+            if (this.compuMethod != null) {
+                unit[0] = this.compuMethod.getUnit();
+            } else {
+                unit[0] = "";
+            }
+
             break;
         case CURVE:
             unit = new String[2];
@@ -228,22 +238,56 @@ public final class Characteristic extends AdjustableObject {
                 } else {
                     if (axisDescr.getAttribute().compareTo(Attribute.CURVE_AXIS) == 0) {
                         unit[0] = "";
+                    } else {
+                        unit[0] = "";
                     }
                 }
             }
 
-            unit[1] = this.compuMethod.getUnit();
+            if (this.compuMethod != null) {
+                unit[1] = this.compuMethod.getUnit();
+            } else {
+                unit[1] = "";
+            }
+
             break;
         case MAP:
             unit = new String[3];
-            unit[0] = this.axisDescrs[0].getPhysUnit().length() > 0 ? this.axisDescrs[0].getPhysUnit()
-                    : this.axisDescrs[0].getCompuMethod().getUnit();
-            unit[1] = this.axisDescrs[1].getPhysUnit().length() > 0 ? this.axisDescrs[1].getPhysUnit()
-                    : this.axisDescrs[1].getCompuMethod().getUnit();
-            unit[2] = this.compuMethod.getUnit();
+
+            if (this.axisDescrs[0].getPhysUnit().length() > 0) {
+                unit[0] = this.axisDescrs[0].getPhysUnit();
+            } else {
+                if (this.axisDescrs[0].getCompuMethod() != null) {
+                    unit[0] = this.axisDescrs[0].getCompuMethod().getUnit();
+                } else {
+                    unit[0] = "";
+                }
+            }
+
+            if (this.axisDescrs[1].getPhysUnit().length() > 0) {
+                unit[1] = this.axisDescrs[1].getPhysUnit();
+            } else {
+                if (this.axisDescrs[1].getCompuMethod() != null) {
+                    unit[1] = this.axisDescrs[1].getCompuMethod().getUnit();
+                } else {
+                    unit[1] = "";
+                }
+            }
+
+            if (this.compuMethod != null) {
+                unit[2] = this.compuMethod.getUnit();
+            } else {
+                unit[2] = "";
+            }
             break;
         case VAL_BLK:
-            unit = new String[] { this.compuMethod.getUnit() };
+            unit = new String[1];
+
+            if (this.compuMethod != null) {
+                unit[0] = this.compuMethod.getUnit();
+            } else {
+                unit[0] = "";
+            }
             break;
         default:
             unit = new String[] { "" };

@@ -17,7 +17,7 @@ public final class Memory {
 
     public Memory(long address, byte[] data) {
         this.address = address;
-        listByte = new ArrayList<Byte>();
+        listByte = new ArrayList<Byte>(data.length);
         for (int i = 0; i < data.length; i++) {
             listByte.add(data[i]);
         }

@@ -105,7 +105,6 @@ public final class A2lDisplayer extends JFrame {
                     doc.getText(offs, nleft, text);
 
                 } catch (BadLocationException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 // do something with text

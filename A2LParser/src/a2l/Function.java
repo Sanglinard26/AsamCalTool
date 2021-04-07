@@ -10,10 +10,8 @@ import static constante.SecondaryKeywords.SUB_FUNCTION;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 
 import constante.SecondaryKeywords;
@@ -204,10 +202,10 @@ public final class Function implements A2lObject, Comparable<Function> {
     }
 
     @SuppressWarnings("unchecked")
-    public final Set<String> getSubFunction() {
+    public final Vector<String> getSubFunction() {
         Object object = optionalsParameters.get(SUB_FUNCTION);
 
-        return object != null ? (Set<String>) object : new HashSet<String>();
+        return object != null ? (Vector<String>) object : new Vector<String>();
     }
 
     @Override

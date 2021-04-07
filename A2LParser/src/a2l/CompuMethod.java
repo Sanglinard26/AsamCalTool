@@ -32,9 +32,21 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
         build(parameters, beginLine, endLine);
     }
 
+    private CompuMethod() {
+        this.name = "NO_COMPU_METHOD";
+        this.longIdentifier = new char[] { ' ' };
+        this.conversionType = ConversionType.getConversionType("");
+        this.format = new Format("");
+        this.unit = new char[] { ' ' };
+    }
+
     @Override
     public String toString() {
         return this.name;
+    }
+
+    public static final CompuMethod createNoCompuMethod() {
+        return new CompuMethod();
     }
 
     public final void assignConversionTable(HashMap<Integer, ConversionTable> conversionTables) {

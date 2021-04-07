@@ -60,10 +60,8 @@ public class DisplayLog_Bis {
             try {
                 get();
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (ExecutionException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -74,7 +72,6 @@ public class DisplayLog_Bis {
                 try {
                     doc.insertString(doc.getLength(), text, null);
                 } catch (BadLocationException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }

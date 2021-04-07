@@ -173,6 +173,8 @@ public final class A2l {
 
                     PrimaryKeywords keyword = PrimaryKeywords.getPrimaryKeywords(sumKeywordChar(line));
 
+                    // System.out.println(numLine);
+
                     try {
                         switch (keyword) {
                         case MOD_PAR:
@@ -462,8 +464,47 @@ public final class A2l {
     public Vector<AdjustableObject> getAdjustableObjectFromList(Vector<String> listNameAdjObj) {
         final Vector<AdjustableObject> listByName = new Vector<AdjustableObject>();
 
+        AdjustableObject object;
+
         for (String nameAdjObj : listNameAdjObj) {
-            listByName.add(adjustableObjects.get(nameAdjObj.hashCode()));
+            object = adjustableObjects.get(nameAdjObj.hashCode());
+            if (object != null) {
+                listByName.add(object);
+            }
+        }
+
+        Collections.sort(listByName);
+
+        return listByName;
+    }
+
+    public Vector<String> getAdjustableObjectNameFromList(Vector<String> listNameAdjObj) {
+        final Vector<String> listByName = new Vector<String>();
+
+        AdjustableObject object;
+
+        for (String nameAdjObj : listNameAdjObj) {
+            object = adjustableObjects.get(nameAdjObj.hashCode());
+            if (object != null) {
+                listByName.add(object.toString());
+            }
+        }
+
+        Collections.sort(listByName);
+
+        return listByName;
+    }
+
+    public Vector<String> getMeasurementNameFromList(Vector<String> listNameMeasurement) {
+        final Vector<String> listByName = new Vector<String>();
+
+        for (String nameMeasurement : listNameMeasurement) {
+            for (Measurement measurement : measurements) {
+                if (nameMeasurement.equals(measurement.toString())) {
+                    listByName.add(nameMeasurement);
+                    break;
+                }
+            }
         }
 
         Collections.sort(listByName);
