@@ -52,6 +52,10 @@ public class ArrayValue extends DataValue {
         return xAxis;
     }
 
+    public final Object[] getValues() {
+        return this.values;
+    }
+
     public final float[] getYAxis() {
         float[] yAxis = new float[dimY - 1];
 
@@ -96,5 +100,39 @@ public class ArrayValue extends DataValue {
         }
 
         return floatValues;
+    }
+
+    public final float getDiffMinMaxZvalues() {
+
+        float min = Float.MAX_VALUE;
+        float max = Float.MIN_VALUE;
+
+        if (values[0].equals("Y\\X")) {
+            for (short y = 1; y < dimY; y++) {
+                for (short x = 1; x < dimX; x++) {
+
+                    if (NumeralString.isNumber(getValue(y, x).toString())) {
+                        min = Math.min(Float.parseFloat(getValue(y, x).toString()), min);
+                        max = Math.max(Float.parseFloat(getValue(y, x).toString()), max);
+                    } else {
+                        return Float.NaN;
+                    }
+                }
+            }
+        } else {
+            for (short y = 1; y < dimY; y++) {
+                for (short x = 1; x < dimX; x++) {
+
+                    if (NumeralString.isNumber(getValue(y, x).toString())) {
+                        min = Math.min(Float.parseFloat(getValue(y, x).toString()), min);
+                        max = Math.max(Float.parseFloat(getValue(y, x).toString()), max);
+                    } else {
+                        return Float.NaN;
+                    }
+                }
+            }
+        }
+
+        return max - min;
     }
 }

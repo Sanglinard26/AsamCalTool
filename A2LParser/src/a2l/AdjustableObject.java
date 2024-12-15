@@ -12,6 +12,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import a2l.AxisDescr.Attribute;
 import a2l.Characteristic.CharacteristicType;
@@ -178,6 +179,8 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
 
     public abstract double[] getResolution();
 
+    public abstract double getZResolution();
+
     public final String getTxtResolution() {
         StringBuilder sb = new StringBuilder();
 
@@ -268,6 +271,38 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         }
 
         return diff;
+
+    }
+
+    public static final String comparVTAB(AdjustableObject oldObj, AdjustableObject newObj) {
+
+        StringBuilder sb = new StringBuilder();
+
+        if (oldObj.conversionId != newObj.conversionId && oldObj.compuMethod.isVerbal()) {
+
+            CompuVTab compuVTabOld = oldObj.compuMethod.getCompuVTab();
+            CompuVTab compuVTabNew = newObj.compuMethod.getCompuVTab();
+
+            if (compuVTabOld != null && compuVTabNew != null) {
+                Map<Float, String> pairsOld = compuVTabOld.getValuePairs();
+                Map<Float, String> pairsNew = compuVTabNew.getValuePairs();
+
+                if (!pairsOld.equals(pairsNew)) {
+
+                    sb.append("\t" + compuVTabOld.name + " | " + compuVTabNew.name);
+                    sb.append("\n");
+
+                    for (Entry<Float, String> entry : pairsOld.entrySet()) {
+                        float key = entry.getKey();
+                        sb.append("\t\t" + key + "->" + entry.getValue() + " | " + pairsNew.get(key));
+                        sb.append("\n");
+                    }
+                }
+
+            }
+        }
+
+        return sb.toString();
 
     }
 

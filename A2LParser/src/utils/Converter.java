@@ -99,4 +99,56 @@ public final class Converter {
         return hexValues;
     }
 
+    public static final double[] readHexValuesPairs(DataCalibration hex, long adress, DataType dataType, ByteOrder byteOrder, int nbValue) {
+
+        byte[] byteValues;
+        final double[] hexValues = new double[nbValue];
+        final byte nbByte = dataType.getNbByte();
+
+        final ByteBuffer bb = ByteBuffer.allocateDirect(nbByte);
+        bb.order(byteOrder);
+
+        for (int nValue = 0; nValue < nbValue; nValue++) {
+            byteValues = hex.readBytes(adress + (nValue * 2 * nbByte), nbByte); // *2 : Patch pour ne lire une valeur par paire sur les axis_rescale
+            if (byteValues.length > 0) {
+
+                bb.put(byteValues);
+                bb.rewind();
+
+                switch (dataType) {
+                case UBYTE:
+                    hexValues[nValue] = readUBYTE(bb);
+                    break;
+                case SBYTE:
+                    hexValues[nValue] = readSBYTE(bb);
+                    break;
+                case UWORD:
+                    hexValues[nValue] = readUWORD(bb);
+                    break;
+                case SWORD:
+                    hexValues[nValue] = readSWORD(bb);
+                    break;
+                case ULONG:
+                    hexValues[nValue] = readULONG(bb);
+                    break;
+                case SLONG:
+                    hexValues[nValue] = readSLONG(bb);
+                    break;
+                case FLOAT32_IEEE:
+                    hexValues[nValue] = readFLOAT32IEEE(bb);
+                    break;
+                case FLOAT64_IEEE:
+                    hexValues[nValue] = readFLOAT64IEEE(bb);
+                    break;
+                default:
+                    // Nothing
+                    break;
+                }
+
+                bb.clear();
+            }
+        }
+        return hexValues;
+    }
+
 }

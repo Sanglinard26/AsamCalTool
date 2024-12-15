@@ -11,6 +11,7 @@ import static constante.SecondaryKeywords.FIX_AXIS_PAR;
 import static constante.SecondaryKeywords.FIX_AXIS_PAR_DIST;
 import static constante.SecondaryKeywords.FIX_AXIS_PAR_LIST;
 import static constante.SecondaryKeywords.FORMAT;
+import static constante.SecondaryKeywords.MONOTONY;
 import static constante.SecondaryKeywords.PHYS_UNIT;
 
 import java.nio.ByteOrder;
@@ -222,6 +223,10 @@ public final class AxisDescr {
                     break;
                 case FORMAT:
                     optionalsParameters.put(FORMAT, new Format(parameters.get(nPar + 1)));
+                    nPar += 1;
+                    break;
+                case MONOTONY:
+                    optionalsParameters.put(MONOTONY, parameters.get(nPar + 1).toCharArray());
                     nPar += 1;
                     break;
                 case PHYS_UNIT:

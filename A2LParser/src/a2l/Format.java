@@ -13,7 +13,12 @@ public final class Format {
         int idxDot = txtFormat.indexOf('.');
         if (idxDot > -1) {
             if (txtFormat.charAt(idxDot - 1) != '%') {
-                this.overallLength = Byte.parseByte(txtFormat.substring(1, idxDot));
+                if (idxDot > 1) {
+                    this.overallLength = Byte.parseByte(txtFormat.substring(1, idxDot));
+                } else {
+                    this.overallLength = Byte.parseByte(txtFormat.substring(0, idxDot));
+                }
+
             } else {
                 this.overallLength = -1;
             }

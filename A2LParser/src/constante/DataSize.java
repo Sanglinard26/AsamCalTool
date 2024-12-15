@@ -17,6 +17,10 @@ public enum DataSize {
         return nbBits;
     }
 
+    public final int getNbByte() {
+        return this.nbBits >> 3;
+    }
+
     public static DataSize getDataSize(String type) {
         switch (type) {
         case "BYTE":

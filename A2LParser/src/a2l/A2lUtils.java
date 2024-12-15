@@ -9,7 +9,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
@@ -32,6 +34,22 @@ public final class A2lUtils {
 
             pw.println(RAMCELL);
             for (String measurementName : listMeasurement) {
+                pw.println(measurementName);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static final void writeAllMeasurementLab(File file, A2l a2l) {
+
+        try (PrintWriter pw = new PrintWriter(file)) {
+
+            final Vector<Measurement> listMeasurement = a2l.getListMeasurement();
+
+            pw.println(RAMCELL);
+            for (Measurement measurementName : listMeasurement) {
                 pw.println(measurementName);
             }
 
@@ -99,6 +117,28 @@ public final class A2lUtils {
         }
     }
 
+    public static final List<String> searchFId(Object a2lObject, String FIdName) {
+        A2l a2l = (A2l) a2lObject;
+
+        Vector<AdjustableObject> objects = a2l.getListAdjustableObjects();
+        List<String> foundObject = new ArrayList<>();
+
+        for (AdjustableObject object : objects) {
+            if (object instanceof Characteristic) {
+                Characteristic characteristic = (Characteristic) object;
+                if (characteristic.hasData() && characteristic.name.startsWith("DINH_FId")) {
+                    ArrayValue values = (ArrayValue) characteristic.getValues();
+                    int idx = Arrays.binarySearch(values.getValues(), FIdName);
+                    if (idx > -1) {
+                        foundObject.add(characteristic.name);
+                    }
+                }
+            }
+        }
+
+        return foundObject;
+    }
+
     public static final void checkMEIBloc(Object a2lObject, File selectedFile) {
 
         A2l a2l = (A2l) a2lObject;
@@ -156,6 +196,36 @@ public final class A2lUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+    }
+
+    public static final File getZResolutionFromLab(Object a2lObject, File labFile) {
+        A2l a2l = (A2l) a2lObject;
+
+        try {
+            List<String> listLabel = Files.readAllLines(labFile.toPath());
+            Vector<String> v = new Vector<>(listLabel);
+            Vector<AdjustableObject> listObj = a2l.getAdjustableObjectFromList(v);
+
+            File newFile = new File(labFile.getAbsolutePath().replace(".lab", "_withResol.lab"));
+
+            try (PrintWriter pw = new PrintWriter(newFile)) {
+
+                for (AdjustableObject obj : listObj) {
+                    pw.println(obj.name + "\t" + obj.getZResolution());
+                }
+
+                return newFile;
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
 
     }
 

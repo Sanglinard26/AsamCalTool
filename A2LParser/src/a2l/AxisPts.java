@@ -184,4 +184,9 @@ public final class AxisPts extends AdjustableObject {
         return validParsing;
     }
 
+    @Override
+    public double getZResolution() {
+        return Double.NaN;
+    }
+
 }

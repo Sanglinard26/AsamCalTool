@@ -6,6 +6,8 @@ package gui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,9 +15,12 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.AbstractAction;
@@ -46,6 +51,7 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.event.TreeWillExpandListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreeSelectionModel;
@@ -81,6 +87,7 @@ public final class Ihm extends JFrame {
     private final JList<String> listLog;
     private final DefaultListModel<String> listModel;
     private JButton btOpenDataFile;
+    private JButton btFlatMap;
 
     private static final GridBagConstraints gc = new GridBagConstraints();
     private static final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");;
@@ -225,6 +232,8 @@ public final class Ihm extends JFrame {
         final String A2L = "/OPEN_A2L_24.png";
         final String DATA = "/OPEN_DATA_24.png";
         final String COMPAR = "/COMPAR_A2L_24.png";
+        final String COMPAR_VTAB = "/COMPAR_VTAB_24.png";
+        final String FLAT_MAP = "/FLAT_MAP_24.png";
 
         final JToolBar bar = new JToolBar();
         btOpenDataFile = new JButton("Open data file", new ImageIcon(getClass().getResource(DATA)));
@@ -312,11 +321,16 @@ public final class Ihm extends JFrame {
                     DataDecoder dataDecoder = new DataDecoder(a2l, dataCalibration);
 
                     if (dataDecoder.readDataFromFile()) {
+                        if (dataDecoder.checkEPK()) {
+                            listModel.addElement(
+                                    sdf.format(System.currentTimeMillis()) + " : " + chooser.getSelectedFile().getName() + " read succesfully");
+                        } else {
+                            listModel.addElement(sdf.format(System.currentTimeMillis()) + " : " + chooser.getSelectedFile().getName()
+                                    + " : EEPROM identifier doesn't match, data may be not initialized correctly.");
+                        }
+
                         labelData.setText("<html>Data initialized with : " + "<b>" + chooser.getSelectedFile().getName() + "</b></html>");
-                        listModel.addElement(
-                                sdf.format(System.currentTimeMillis()) + " : " + chooser.getSelectedFile().getName() + " read succesfully");
-                    } else {
-                        JOptionPane.showMessageDialog(null, "EEPROM identifier doesn't match, reading aborted.", "Error", JOptionPane.ERROR_MESSAGE);
+                        btFlatMap.setEnabled(true);
                     }
 
                     dataCalibration = null;
@@ -382,6 +396,131 @@ public final class Ihm extends JFrame {
         });
         bar.add(btComparA2L);
 
+        bar.addSeparator();
+
+        final JButton btComparVTAB = new JButton(new AbstractAction("Compare VTAB", new ImageIcon(getClass().getResource(COMPAR_VTAB))) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                JFileChooser chooser = new JFileChooser();
+                chooser.setMultiSelectionEnabled(true);
+                chooser.setFileFilter(new FileFilter() {
+
+                    @Override
+                    public String getDescription() {
+                        return "A2L files (*.a2l)";
+                    }
+
+                    @Override
+                    public boolean accept(File paramFile) {
+                        if (paramFile.isDirectory())
+                            return true;
+                        return paramFile.getName().toLowerCase().endsWith("a2l");
+                    }
+                });
+                int rep = chooser.showOpenDialog(null);
+
+                if (rep == JFileChooser.APPROVE_OPTION) {
+                    File[] a2lFiles = chooser.getSelectedFiles();
+                    if (a2lFiles.length == 2) {
+
+                        StringBuilder sb;
+                        try {
+
+                            Ihm.this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+
+                            sb = A2l.compareVTAB(a2lFiles[0], a2lFiles[1]);
+
+                            Ihm.this.setCursor(Cursor.getDefaultCursor());
+
+                            String pattern = "dd-MM-yyyy";
+                            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+                            String date = simpleDateFormat.format(new Date());
+
+                            final JFileChooser fileChooser = new JFileChooser();
+                            fileChooser.setDialogTitle("File saving");
+                            fileChooser.setFileFilter(new FileNameExtensionFilter("txt", "Text file (*.txt)"));
+                            fileChooser.setSelectedFile(new File("C:\\" + date + "_Compare_VTAB.txt"));
+                            final int rep2 = fileChooser.showSaveDialog(null);
+
+                            if (rep2 == JFileChooser.APPROVE_OPTION) {
+                                try (PrintWriter pw = new PrintWriter(fileChooser.getSelectedFile())) {
+                                    pw.append(sb);
+                                } catch (FileNotFoundException e1) {
+                                    JOptionPane.showMessageDialog(Ihm.this, "Error during file creation...", "Error", JOptionPane.ERROR_MESSAGE);
+                                }
+
+                                if (fileChooser.getSelectedFile().exists()) {
+                                    final int reponse2 = JOptionPane.showConfirmDialog(null,
+                                            "Comparison finished !\n" + fileChooser.getSelectedFile() + "\nWould you open the file?", null,
+                                            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                                    switch (reponse2) {
+                                    case JOptionPane.OK_OPTION:
+                                        try {
+                                            if (Desktop.isDesktopSupported()) {
+                                                Desktop.getDesktop().open(fileChooser.getSelectedFile());
+                                            }
+                                        } catch (IOException e1) {
+                                            JOptionPane.showMessageDialog(Ihm.this, "Error during file opening...", "Error",
+                                                    JOptionPane.ERROR_MESSAGE);
+                                        }
+                                        break;
+                                    case JOptionPane.NO_OPTION:
+                                        break;
+                                    default:
+                                        break;
+                                    }
+                                }
+                            }
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(Ihm.this, "Two files are required !");
+                    }
+                }
+            }
+        });
+        bar.add(btComparVTAB);
+
+        bar.addSeparator();
+
+        btFlatMap = new JButton(new AbstractAction("Flat Curve/Map", new ImageIcon(getClass().getResource(FLAT_MAP))) {
+
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultMutableTreeNode obj = (DefaultMutableTreeNode) a2lTree.getModel().getRoot();
+                A2l a2l = (A2l) obj.getUserObject();
+
+                ArrayValue arrayValue = null;
+                StringBuilder sb = new StringBuilder();
+
+                for (AdjustableObject adjObj : a2l.getListAdjustableObjects()) {
+                    if (adjObj.getValues() instanceof ArrayValue) {
+                        arrayValue = (ArrayValue) adjObj.getValues();
+                        if (arrayValue.getDiffMinMaxZvalues() == 0) {
+                            sb.append(adjObj.toString() + "\n");
+                        }
+                    }
+                }
+
+                JTextArea textArea = new JTextArea(sb.toString());
+                JScrollPane scrollPane = new JScrollPane(textArea);
+                textArea.setLineWrap(true);
+                textArea.setWrapStyleWord(true);
+                scrollPane.setPreferredSize(new Dimension(800, 500));
+                JOptionPane.showMessageDialog(null, scrollPane, "List of flat curve/map", JOptionPane.INFORMATION_MESSAGE);
+            }
+        });
+        btFlatMap.setEnabled(false);
+        bar.add(btFlatMap);
+
         return bar;
     }
 
@@ -417,7 +556,6 @@ public final class Ihm extends JFrame {
                             JOptionPane.showMessageDialog(null, "Object not found !", "Warning", JOptionPane.WARNING_MESSAGE);
                         }
                     }
-
                 }
             });
 

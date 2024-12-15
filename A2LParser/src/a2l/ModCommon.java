@@ -21,6 +21,8 @@ import java.util.Map;
 
 import constante.DataType;
 import constante.SecondaryKeywords;
+import data.DataCalibration;
+import data.MotorolaS19;
 
 public final class ModCommon implements A2lObject {
 
@@ -33,6 +35,14 @@ public final class ModCommon implements A2lObject {
         initOptionalsParameters();
 
         build(parameters, beginLine, endLine);
+    }
+
+    public ModCommon(DataCalibration data) {
+        initOptionalsParameters();
+
+        if (data instanceof MotorolaS19) {
+            optionalsParameters.put(BYTE_ORDER, "MSB_FIRST");
+        }
     }
 
     private final void initOptionalsParameters() {

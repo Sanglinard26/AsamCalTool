@@ -167,6 +167,10 @@ public final class A2l {
                     continue;
                 }
 
+                if (numLine == 2334211) {
+                    int stop = 0;
+                }
+
                 if (line.indexOf(BEGIN) > -1) {
 
                     line = line.trim();
@@ -606,6 +610,83 @@ public final class A2l {
         }
 
         System.out.println("Finished in = " + (System.currentTimeMillis() - start) + "ms");
+
+        return sb;
+    }
+
+    public static StringBuilder compareVTAB(final File firstFile, final File secondFile) throws InterruptedException {
+
+        final StringBuilder sb = new StringBuilder();
+
+        final A2l first = new A2l();
+
+        Thread threadA2l1 = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                first.parse(firstFile);
+            }
+        });
+
+        threadA2l1.start();
+
+        final A2l second = new A2l();
+
+        Thread threadA2l2 = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                second.parse(secondFile);
+            }
+        });
+
+        threadA2l2.start();
+
+        threadA2l1.join();
+        threadA2l2.join();
+
+        Thread thread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                Set<Integer> compObjects = new HashSet<>(second.getAdjustableObjects().keySet());
+
+                compObjects.retainAll(first.getAdjustableObjects().keySet());
+
+                HashMap<Integer, AdjustableObject> firstAdjObject = first.getAdjustableObjects();
+                HashMap<Integer, AdjustableObject> secondAdjObject = second.getAdjustableObjects();
+
+                AdjustableObject object1;
+                AdjustableObject object2;
+
+                sb.append("*** COMPARE REPORT ***\n");
+
+                sb.append("\n" + first.name + " | " + second.name);
+
+                String diff;
+
+                for (Integer objectId : compObjects) {
+                    object1 = firstAdjObject.get(objectId);
+                    object2 = secondAdjObject.get(objectId);
+
+                    diff = AdjustableObject.comparVTAB(object1, object2);
+
+                    if (!diff.isEmpty()) {
+                        sb.append("\n\n<" + object1.name + ">\n");
+                        sb.append(diff);
+                    }
+
+                }
+
+                sb.append("\n\n*** END ***");
+            }
+        });
+
+        thread.start();
+
+        while (thread.isAlive()) {
+        }
 
         return sb;
     }

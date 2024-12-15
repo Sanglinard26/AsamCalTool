@@ -3,40 +3,25 @@
  */
 package a2l;
 
-import static constante.SecondaryKeywords.AXIS_PTS_X;
-import static constante.SecondaryKeywords.AXIS_PTS_Y;
-import static constante.SecondaryKeywords.AXIS_RESCALE_X;
-import static constante.SecondaryKeywords.FNC_VALUES;
-import static constante.SecondaryKeywords.NO_AXIS_PTS_X;
-import static constante.SecondaryKeywords.NO_AXIS_PTS_Y;
-import static constante.SecondaryKeywords.NO_RESCALE_X;
-import static constante.SecondaryKeywords.RESERVED;
-import static constante.SecondaryKeywords.SRC_ADDR_X;
-import static constante.SecondaryKeywords.SRC_ADDR_Y;
-
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import constante.AdressType;
 import constante.DataSize;
 import constante.DataType;
 import constante.IndexMode;
 import constante.IndexOrder;
-import constante.SecondaryKeywords;
 
 public final class RecordLayout implements A2lObject, Comparable<RecordLayout> {
 
     private String name;
 
-    private Map<SecondaryKeywords, OptionalParameterRL> optionalsParameters;
+    private List<OptionalParameterRL> optionalsParameters;
 
     public RecordLayout(List<String> parameters, int beginLine, int endLine) {
 
-        optionalsParameters = new HashMap<SecondaryKeywords, OptionalParameterRL>();
+        optionalsParameters = new ArrayList<OptionalParameterRL>();
 
         build(parameters, beginLine, endLine);
     }
@@ -46,65 +31,97 @@ public final class RecordLayout implements A2lObject, Comparable<RecordLayout> {
         return this.name;
     }
 
-    public final Map<Byte, OptionalParameterRL> getSortedObject() {
-        TreeMap<Byte, OptionalParameterRL> treeMap = new TreeMap<Byte, OptionalParameterRL>();
-
-        Iterator<Map.Entry<SecondaryKeywords, OptionalParameterRL>> iter = optionalsParameters.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry<SecondaryKeywords, OptionalParameterRL> entry = iter.next();
-            treeMap.put(entry.getValue().getPosition(), entry.getValue());
-        }
-
-        return treeMap;
-    }
-
     public FncValues getFncValues() {
-        return (FncValues) optionalsParameters.get(FNC_VALUES);
+        for (OptionalParameterRL optParam : optionalsParameters) {
+            if (optParam instanceof FncValues) {
+                return (FncValues) optParam;
+            }
+        }
+        return null;
     }
 
     public NoAxisPtsX getNoAxisPtsX() {
-        Object object = optionalsParameters.get(NO_AXIS_PTS_X);
-        return object != null ? (NoAxisPtsX) object : null;
+        for (OptionalParameterRL optParam : optionalsParameters) {
+            if (optParam instanceof NoAxisPtsX) {
+                return (NoAxisPtsX) optParam;
+            }
+        }
+        return null;
     }
 
     public AxisPtsX getAxisPtsX() {
-        Object object = optionalsParameters.get(AXIS_PTS_X);
-        return object != null ? (AxisPtsX) object : null;
+        for (OptionalParameterRL optParam : optionalsParameters) {
+            if (optParam instanceof AxisPtsX) {
+                return (AxisPtsX) optParam;
+            }
+        }
+        return null;
     }
 
     public NoAxisPtsY getNoAxisPtsY() {
-        Object object = optionalsParameters.get(NO_AXIS_PTS_Y);
-        return object != null ? (NoAxisPtsY) object : null;
+        for (OptionalParameterRL optParam : optionalsParameters) {
+            if (optParam instanceof NoAxisPtsY) {
+                return (NoAxisPtsY) optParam;
+            }
+        }
+        return null;
     }
 
     public AxisPtsY getAxisPtsY() {
-        Object object = optionalsParameters.get(AXIS_PTS_Y);
-        return object != null ? (AxisPtsY) object : null;
+        for (OptionalParameterRL optParam : optionalsParameters) {
+            if (optParam instanceof AxisPtsY) {
+                return (AxisPtsY) optParam;
+            }
+        }
+        return null;
     }
 
     public SrcAddrX getSrcAddrX() {
-        Object object = optionalsParameters.get(SRC_ADDR_X);
-        return object != null ? (SrcAddrX) object : null;
+        for (OptionalParameterRL optParam : optionalsParameters) {
+            if (optParam instanceof SrcAddrX) {
+                return (SrcAddrX) optParam;
+            }
+        }
+        return null;
     }
 
     public SrcAddrY getSrcAddrY() {
-        Object object = optionalsParameters.get(SRC_ADDR_Y);
-        return object != null ? (SrcAddrY) object : null;
+        for (OptionalParameterRL optParam : optionalsParameters) {
+            if (optParam instanceof SrcAddrY) {
+                return (SrcAddrY) optParam;
+            }
+        }
+        return null;
     }
 
     public NoRescaleX getNoRescaleX() {
-        Object object = optionalsParameters.get(NO_RESCALE_X);
-        return object != null ? (NoRescaleX) object : null;
+        for (OptionalParameterRL optParam : optionalsParameters) {
+            if (optParam instanceof NoRescaleX) {
+                return (NoRescaleX) optParam;
+            }
+        }
+        return null;
     }
 
-    public Reserved getReserved() {
-        Object object = optionalsParameters.get(RESERVED);
-        return object != null ? (Reserved) object : null;
+    public List<Reserved> getReserved() {
+
+        ArrayList<Reserved> listReserved = new ArrayList<Reserved>();
+
+        for (OptionalParameterRL optParam : optionalsParameters) {
+            if (optParam instanceof Reserved) {
+                listReserved.add((Reserved) optParam);
+            }
+        }
+        return listReserved;
     }
 
     public AxisRescaleX getAxisRescaleX() {
-        Object object = optionalsParameters.get(AXIS_RESCALE_X);
-        return object != null ? (AxisRescaleX) object : null;
+        for (OptionalParameterRL optParam : optionalsParameters) {
+            if (optParam instanceof AxisRescaleX) {
+                return (AxisRescaleX) optParam;
+            }
+        }
+        return null;
     }
 
     public final class FncValues extends OptionalParameterRL {
@@ -328,57 +345,60 @@ public final class RecordLayout implements A2lObject, Comparable<RecordLayout> {
                 switch (n) {
                 case 2:
                     this.name = parameters.get(n);
+                    if ("CHRY_MK_3D_UWORD".equals(this.name)) {
+                        int stop = 0;
+                    }
                     break;
                 default: // Cas de parametres optionels
                     switch (parameters.get(n)) {
                     case "FNC_VALUES":
                         subList = parameters.subList(n + 1, n + 5);
-                        optionalsParameters.put(FNC_VALUES, new FncValues(subList));
+                        optionalsParameters.add(new FncValues(subList));
                         n += 4;
                         break;
                     case "AXIS_PTS_X":
                         subList = parameters.subList(n + 1, n + 5);
-                        optionalsParameters.put(AXIS_PTS_X, new AxisPtsX(subList));
+                        optionalsParameters.add(new AxisPtsX(subList));
                         n += 4;
                         break;
                     case "AXIS_PTS_Y":
                         subList = parameters.subList(n + 1, n + 5);
-                        optionalsParameters.put(AXIS_PTS_Y, new AxisPtsY(subList));
+                        optionalsParameters.add(new AxisPtsY(subList));
                         n += 4;
                         break;
                     case "NO_AXIS_PTS_X":
                         subList = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(NO_AXIS_PTS_X, new NoAxisPtsX(subList));
+                        optionalsParameters.add(new NoAxisPtsX(subList));
                         n += 2;
                         break;
                     case "NO_AXIS_PTS_Y":
                         subList = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(NO_AXIS_PTS_Y, new NoAxisPtsY(subList));
+                        optionalsParameters.add(new NoAxisPtsY(subList));
                         n += 2;
                         break;
                     case "AXIS_RESCALE_X":
                         subList = parameters.subList(n + 1, n + 6);
-                        optionalsParameters.put(AXIS_RESCALE_X, new AxisRescaleX(subList));
+                        optionalsParameters.add(new AxisRescaleX(subList));
                         n += 5;
                         break;
                     case "NO_RESCALE_X":
                         subList = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(NO_RESCALE_X, new NoRescaleX(subList));
+                        optionalsParameters.add(new NoRescaleX(subList));
                         n += 2;
                         break;
                     case "RESERVED":
                         subList = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(RESERVED, new Reserved(subList));
+                        optionalsParameters.add(new Reserved(subList));
                         n += 2;
                         break;
                     case "SRC_ADDR_X":
                         subList = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(SRC_ADDR_X, new SrcAddrX(subList));
+                        optionalsParameters.add(new SrcAddrX(subList));
                         n += 2;
                         break;
                     case "SRC_ADDR_Y":
                         subList = parameters.subList(n + 1, n + 3);
-                        optionalsParameters.put(SRC_ADDR_Y, new SrcAddrY(subList));
+                        optionalsParameters.add(new SrcAddrY(subList));
                         n += 2;
                         break;
                     default:

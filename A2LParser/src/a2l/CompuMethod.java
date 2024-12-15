@@ -142,6 +142,17 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
         }
     }
 
+    public final CompuVTab getCompuVTab() {
+        if (isVerbal()) {
+            Object compuTabRef = this.optionalsParameters.get(COMPU_TAB_REF);
+
+            if (compuTabRef instanceof CompuVTab) {
+                return (CompuVTab) compuTabRef;
+            }
+        }
+        return null;
+    }
+
     public final ConversionType getConversionType() {
         return this.conversionType;
     }

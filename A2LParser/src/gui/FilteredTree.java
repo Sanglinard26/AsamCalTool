@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -24,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JTree;
@@ -508,6 +510,100 @@ public class FilteredTree extends JPanel {
                         if (rep == JFileChooser.APPROVE_OPTION) {
                             A2lUtils.checkMEIBloc(object, chooser.getSelectedFile());
                             JOptionPane.showMessageDialog(null, "Done !");
+                        }
+                    }
+                });
+                menu.add(menuItem);
+
+                menuItem = new JMenuItem("Search FId");
+                menuItem.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent paramActionEvent) {
+                        String fidName = JOptionPane.showInputDialog("Enter FId name :", "");
+
+                        if (!fidName.isEmpty()) {
+                            List<String> result = A2lUtils.searchFId(object, fidName);
+                            JPanel panel = new JPanel();
+                            JTextArea area = new JTextArea();
+
+                            for (String s : result) {
+                                area.append(s + "\n");
+                            }
+
+                            panel.add(area);
+                            JOptionPane.showMessageDialog(null, panel, "Results", JOptionPane.INFORMATION_MESSAGE);
+                        }
+
+                    }
+                });
+                menu.add(menuItem);
+
+                menuItem = new JMenuItem("Export all measurement");
+                menuItem.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent paramActionEvent) {
+                        final JFileChooser fileChooser = new JFileChooser();
+                        fileChooser.setFileFilter(new FileFilter() {
+
+                            @Override
+                            public String getDescription() {
+                                return "Fichier Lab (*.lab)";
+                            }
+
+                            @Override
+                            public boolean accept(File f) {
+                                String fileName = f.getName();
+                                int lenght = fileName.length();
+                                if (lenght < 5) {
+                                    return false;
+                                }
+                                return f.getName().substring(lenght - 4, lenght - 1).equals("lab");
+                            }
+                        });
+                        fileChooser.setSelectedFile(new File(object.toString() + "_Measurements.lab"));
+                        final int rep = fileChooser.showSaveDialog(null);
+
+                        if (rep == JFileChooser.APPROVE_OPTION) {
+                            A2lUtils.writeAllMeasurementLab(fileChooser.getSelectedFile(), (A2l) FilteredTree.this.originalRoot.getUserObject());
+                            JOptionPane.showMessageDialog(null, "Export done !");
+                        }
+
+                    }
+                });
+                menu.add(menuItem);
+
+                menuItem = new JMenuItem("Get Z resolution from lab");
+                menuItem.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent paramActionEvent) {
+                        final JFileChooser chooser = new JFileChooser();
+                        chooser.setFileFilter(new FileFilter() {
+
+                            @Override
+                            public String getDescription() {
+                                return "lab file (*.a2l)";
+                            }
+
+                            @Override
+                            public boolean accept(File paramFile) {
+                                if (paramFile.isDirectory())
+                                    return true;
+                                return paramFile.getName().toLowerCase().endsWith("lab");
+                            }
+                        });
+                        int rep = chooser.showOpenDialog(null);
+
+                        if (rep == JFileChooser.APPROVE_OPTION) {
+                            File resFile = A2lUtils.getZResolutionFromLab(object, chooser.getSelectedFile());
+
+                            if (resFile != null) {
+                                JOptionPane.showMessageDialog(null, "File saved : " + resFile.getAbsolutePath());
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Error : No file created");
+                            }
                         }
                     }
                 });

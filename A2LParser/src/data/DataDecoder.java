@@ -54,10 +54,14 @@ public final class DataDecoder {
         this.a2l = a2l;
         this.dataFile = hex;
 
-        this.modCommon = a2l.getModCommon();
+        if (a2l.getModCommon() == null) { // Cas d'un A2l où le MOD_COMMUN n'est pas défini
+            this.modCommon = new ModCommon(hex);
+        } else {
+            this.modCommon = a2l.getModCommon();
+        }
     }
 
-    private final boolean checkEPK() {
+    public final boolean checkEPK() {
         // Check EPK
         final ModPar modPar = a2l.getModPar();
         final long adressEPK = modPar.getEPKAdress();
@@ -74,19 +78,10 @@ public final class DataDecoder {
 
     public final boolean readDataFromFile() {
 
-        if (!checkEPK()) {
-            return false;
-        }
-
         final ByteOrder byteOrder = modCommon.getByteOrder();
 
         for (AdjustableObject adjustableObject : a2l.getAdjustableObjects().values()) {
             if (adjustableObject instanceof AxisPts && adjustableObject.isValid()) {
-
-                if (((AxisPts) adjustableObject).toString().equals("TrbAct_tiFilDftlY_A")) {
-                    int i = 0;
-                }
-
                 readAxisPts(byteOrder, (AxisPts) adjustableObject);
             }
         }
@@ -120,7 +115,7 @@ public final class DataDecoder {
                     readValBlk(byteOrder, characteristic, adress, compuMethod, fncValues);
                     break;
                 case MAP:
-                    readMap(byteOrder, characteristic, adress, compuMethod, fncValues);
+                    readMap(byteOrder, characteristic, adress, compuMethod, characteristic.getRecordLayout());
                     break;
                 case CUBOID:
                     characteristic.setValues(new SingleValue("Not yet implemented"));
@@ -152,7 +147,7 @@ public final class DataDecoder {
         final AxisPtsX axisPtsX = recordLayout.getAxisPtsX();
 
         final NoRescaleX noRescaleX = recordLayout.getNoRescaleX();
-        final Reserved reserved = recordLayout.getReserved();
+        final List<Reserved> listReserved = recordLayout.getReserved();
         final AxisRescaleX axisRescaleX = recordLayout.getAxisRescaleX();
 
         IndexOrder indexOrder;
@@ -175,7 +170,7 @@ public final class DataDecoder {
             adress = setAlignment(adress, axisPtsX.getDataType());
             hexValuesAxisPts = Converter.readHexValues(dataFile, adress, axisPtsX.getDataType(), byteOrder, nbValue);
 
-        } else {
+        } else {// Axis rescale
 
             indexOrder = axisRescaleX.getIndexOrder();
 
@@ -184,10 +179,13 @@ public final class DataDecoder {
             adress += noRescaleX.getDataType().getNbByte();
 
             // Skip reserved
-            adress += (reserved.getDataSize().getNbBits() / 8);
+            for (Reserved reserved : listReserved) {
+                adress += (reserved.getDataSize().getNbByte());
+            }
 
             adress = setAlignment(adress, axisRescaleX.getDataType());
-            hexValuesAxisPts = Converter.readHexValues(dataFile, adress, axisRescaleX.getDataType(), byteOrder, nbValue);
+            hexValuesAxisPts = Converter.readHexValuesPairs(dataFile, adress, axisRescaleX.getDataType(), byteOrder, nbValue);
+
         }
 
         values = new ArrayValue(nbValue, (short) 1);
@@ -639,16 +637,20 @@ public final class DataDecoder {
         characteristic.setValues(values);
     }
 
-    private void readMap(ByteOrder commonByteOrder, Characteristic characteristic, long adress, CompuMethod compuMethod, FncValues fncValues) {
+    private void readMap(ByteOrder commonByteOrder, Characteristic characteristic, long adress, CompuMethod compuMethod, RecordLayout recordLayout) {
 
         final ByteOrder byteOrder = characteristic.getByteOrder() != null ? characteristic.getByteOrder() : commonByteOrder;
         double physValue;
+
+        FncValues fncValues = recordLayout.getFncValues();
 
         int nbValueMap = 0;
         int dimX = 0;
         int dimY = 0;
 
         final List<Object[]> listAxisValues = new ArrayList<Object[]>(2);
+
+        boolean stdAxis = false;
 
         byte idxAxis = 0;
 
@@ -661,6 +663,8 @@ public final class DataDecoder {
                 break;
             case STD_AXIS:
 
+                stdAxis = true;
+
                 listAxisValues.add(readStdAxis(characteristic, adress, idxAxis, byteOrder));
                 if (idxAxis > 0) {
                     adress = tmpAdress;
@@ -672,6 +676,13 @@ public final class DataDecoder {
 
                 AxisPts axisPts = (AxisPts) axisDescr.getAxisPts();
                 listAxisValues.add(axisPts.getZValues());
+
+                break;
+
+            case RES_AXIS:
+
+                AxisPts resAxis = (AxisPts) axisDescr.getAxisPts();
+                listAxisValues.add(resAxis.getZValues());
 
                 break;
             default:
@@ -707,6 +718,24 @@ public final class DataDecoder {
         if (nbValueMap > 0) {
 
             final IndexMode indexModeMap = fncValues.getIndexMode();
+            final NoAxisPtsY noAxisPtsY = recordLayout.getNoAxisPtsY();
+            final NoAxisPtsX noAxisPtsX = recordLayout.getNoAxisPtsX();
+            final List<Reserved> listReserved = recordLayout.getReserved();
+
+            if (!stdAxis) {
+                if (noAxisPtsY != null) {
+                    adress += noAxisPtsY.getDataType().getNbByte();
+                }
+
+                if (noAxisPtsX != null) {
+                    adress += noAxisPtsX.getDataType().getNbByte();
+                }
+
+                // Skip reserved
+                for (Reserved reserved : listReserved) {
+                    adress += (reserved.getDataSize().getNbByte());
+                }
+            }
 
             adress = setAlignment(adress, fncValues.getDataType());
             double[] hexValues = Converter.readHexValues(dataFile, adress, fncValues.getDataType(), byteOrder, nbValueMap);

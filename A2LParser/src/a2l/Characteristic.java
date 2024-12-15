@@ -514,4 +514,13 @@ public final class Characteristic extends AdjustableObject {
 
     }
 
+    @Override
+    public double getZResolution() {
+
+        double val0 = this.compuMethod.compute(1);
+        double val1 = this.compuMethod.compute(2);
+
+        return ConversionType.TAB_VERB.compareTo(this.compuMethod.getConversionType()) != 0 ? val1 - val0 : Double.NaN;
+    }
+
 }
