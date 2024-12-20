@@ -299,10 +299,15 @@ public final class DataDecoder {
         final ByteOrder byteOrder = axisDescrStdAxis.getByteOrder() != null ? axisDescrStdAxis.getByteOrder() : commonByteOrder;
         final CompuMethod compuMethod = axisDescrStdAxis.getCompuMethod();
         final String depositMode = axisDescrStdAxis.getDepositMode();
+        final IndexMode indexMode = characteristic.getRecordLayout().getFncValues().getIndexMode();
 
         short nbValue = 0;
         DataType axisDataType;
         IndexOrder indexOrder;
+
+        if ("A580_SHIFT_SCHED_TBL".equals(characteristic.toString())) {
+            int stop = 0;
+        }
 
         if (characteristic.getType().equals(CharacteristicType.MAP)) {
             if (idxAxis == 0) {
@@ -363,12 +368,23 @@ public final class DataDecoder {
             adress = setAlignment(adress, noAxisPts.getDataType());
             nbValue = (short) Converter.readHexValue(dataFile, adress, noAxisPts.getDataType(), byteOrder);
             adress += noAxisPts.getDataType().getNbByte();
+
+            for (Reserved reserved : characteristic.getRecordLayout().getReserved()) {
+                adress += reserved.getDataSize().getNbByte();
+            }
         }
 
         values = new Object[nbValue];
 
         adress = setAlignment(adress, axisDataType);
-        double[] hexValues = Converter.readHexValues(dataFile, adress, axisDataType, byteOrder, nbValue);
+        double[] hexValues;
+
+        if (indexMode == IndexMode.ALTERNATE_WITH_X) {
+            hexValues = Converter.readHexValuesPairs(dataFile, adress, axisDataType, byteOrder, nbValue);
+        } else {
+            hexValues = Converter.readHexValues(dataFile, adress, axisDataType, byteOrder, nbValue);
+        }
+
         adress += axisDataType.getNbByte() * nbValue;
 
         tmpAdress = adress;
@@ -498,7 +514,17 @@ public final class DataDecoder {
         }
 
         adress = setAlignment(adress, fncValues.getDataType());
-        double[] hexValues = Converter.readHexValues(dataFile, adress, fncValues.getDataType(), byteOrder, nbValue);
+
+        double[] hexValues;
+
+        if (fncValues.getIndexMode() == IndexMode.ALTERNATE_WITH_X) {
+            adress -= characteristic.getRecordLayout().getAxisPtsX().getDataType().getNbByte() * nbValue;
+            adress += characteristic.getRecordLayout().getAxisPtsX().getDataType().getNbByte();
+            hexValues = Converter.readHexValuesPairs(dataFile, adress, fncValues.getDataType(), byteOrder, nbValue);
+        } else {
+            hexValues = Converter.readHexValues(dataFile, adress, fncValues.getDataType(), byteOrder, nbValue);
+        }
+
         double physValue = 0;
 
         if (!compuMethod.isVerbal()) {

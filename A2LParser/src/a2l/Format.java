@@ -3,6 +3,8 @@
  */
 package a2l;
 
+import utils.NumeralString;
+
 public final class Format {
 
     private byte overallLength;
@@ -23,7 +25,13 @@ public final class Format {
                 this.overallLength = -1;
             }
 
-            this.decimalesPlace = Byte.parseByte(txtFormat.substring(idxDot + 1));
+            String tmpVal = txtFormat.substring(idxDot + 1);
+            if (NumeralString.isNumber(tmpVal)) {
+                this.decimalesPlace = Byte.parseByte(tmpVal);
+            } else {
+                // Default decimalesPlace
+                this.decimalesPlace = 2;
+            }
         } else {
             this.overallLength = 16;
             this.decimalesPlace = 16;

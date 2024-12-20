@@ -35,7 +35,7 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
     private CompuMethod() {
         this.name = "NO_COMPU_METHOD";
         this.longIdentifier = new char[] { ' ' };
-        this.conversionType = ConversionType.getConversionType("");
+        this.conversionType = ConversionType.getConversionType("NO_COMPU_METHOD");
         this.format = new Format("");
         this.unit = new char[] { ' ' };
     }
@@ -62,6 +62,8 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
         float[] _coeffs;
 
         switch (this.conversionType) {
+        case NO_COMPU_METHOD:
+            return hex;
         case IDENTICAL:
             return hex;
         case FORM:

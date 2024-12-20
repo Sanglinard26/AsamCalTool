@@ -28,13 +28,13 @@ import constante.IndexMode;
 import constante.IndexOrder;
 import constante.SecondaryKeywords;
 
-public final class RecordLayout implements A2lObject, Comparable<RecordLayout> {
+public final class RecordLayout_old implements A2lObject, Comparable<RecordLayout_old> {
 
     private String name;
 
     private Map<SecondaryKeywords, OptionalParameterRL> optionalsParameters;
 
-    public RecordLayout(List<String> parameters, int beginLine, int endLine) {
+    public RecordLayout_old(List<String> parameters, int beginLine, int endLine) {
 
         optionalsParameters = new HashMap<SecondaryKeywords, OptionalParameterRL>();
 
@@ -307,7 +307,7 @@ public final class RecordLayout implements A2lObject, Comparable<RecordLayout> {
     }
 
     @Override
-    public int compareTo(RecordLayout o) {
+    public int compareTo(RecordLayout_old o) {
         return this.name.compareTo(o.name);
     }
 

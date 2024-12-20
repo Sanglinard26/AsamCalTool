@@ -5,7 +5,7 @@ package constante;
 
 public enum ConversionType {
 
-    IDENTICAL, FORM, LINEAR, RAT_FUNC, TAB_INTP, TAB_NOINTP, TAB_VERB, UNKNOWN;
+    IDENTICAL, FORM, LINEAR, RAT_FUNC, TAB_INTP, TAB_NOINTP, TAB_VERB, NO_COMPU_METHOD, UNKNOWN;
 
     public static ConversionType getConversionType(String type) {
         switch (type) {
@@ -23,6 +23,8 @@ public enum ConversionType {
             return TAB_NOINTP;
         case "TAB_VERB":
             return TAB_VERB;
+        case "NO_COMPU_METHOD":
+            return NO_COMPU_METHOD;
         default:
             return UNKNOWN;
         }

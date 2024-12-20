@@ -404,7 +404,10 @@ public final class A2l {
 
         for (AdjustableObject adjustableObject : adjustableObjects.values()) {
             adjustableObject.assignComputMethod(compuMethods);
-            adjustableObject.assignRecordLayout(recordLayouts);
+            if (!adjustableObject.assignRecordLayout(recordLayouts)) {
+                fireStateChanged("RECORD_LAYOUT not defined for the object : " + adjustableObject.toString());
+                adjustableObject.setValidity(false);
+            }
             if (adjustableObject instanceof Characteristic) {
                 ((Characteristic) adjustableObject).assignAxisPts(adjustableObjects);
             }
