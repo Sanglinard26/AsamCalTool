@@ -167,10 +167,6 @@ public final class A2l {
                     continue;
                 }
 
-                if (numLine == 2334211) {
-                    int stop = 0;
-                }
-
                 if (line.indexOf(BEGIN) > -1) {
 
                     line = line.trim();

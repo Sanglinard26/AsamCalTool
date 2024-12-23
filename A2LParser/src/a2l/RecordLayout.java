@@ -115,6 +115,15 @@ public final class RecordLayout implements A2lObject, Comparable<RecordLayout> {
         return listReserved;
     }
 
+    public final Alignment getAlignment() {
+        for (OptionalParameterRL optParam : optionalsParameters) {
+            if (optParam instanceof Alignment) {
+                return (Alignment) optParam;
+            }
+        }
+        return null;
+    }
+
     public AxisRescaleX getAxisRescaleX() {
         for (OptionalParameterRL optParam : optionalsParameters) {
             if (optParam instanceof AxisRescaleX) {
@@ -323,6 +332,20 @@ public final class RecordLayout implements A2lObject, Comparable<RecordLayout> {
         }
     }
 
+    public final class Alignment extends OptionalParameterRL {
+        int byteAlignment;
+
+        public Alignment(List<String> parameters) {
+            this.byteAlignment = Byte.parseByte(parameters.get(0));
+            ;
+            this.position = -1;
+        }
+
+        public final int getByteAlignment() {
+            return byteAlignment;
+        }
+    }
+
     @Override
     public int compareTo(RecordLayout o) {
         return this.name.compareTo(o.name);
@@ -345,9 +368,6 @@ public final class RecordLayout implements A2lObject, Comparable<RecordLayout> {
                 switch (n) {
                 case 2:
                     this.name = parameters.get(n);
-                    if ("CHRY_MK_3D_UWORD".equals(this.name)) {
-                        int stop = 0;
-                    }
                     break;
                 default: // Cas de parametres optionels
                     switch (parameters.get(n)) {
@@ -400,6 +420,41 @@ public final class RecordLayout implements A2lObject, Comparable<RecordLayout> {
                         subList = parameters.subList(n + 1, n + 3);
                         optionalsParameters.add(new SrcAddrY(subList));
                         n += 2;
+                        break;
+                    case "ALIGNMENT_BYTE":
+                        subList = parameters.subList(n + 1, n + 2);
+                        optionalsParameters.add(new Alignment(subList));
+                        n += 1;
+                        break;
+                    case "ALIGNMENT_FLOAT16_IEEE":
+                        subList = parameters.subList(n + 1, n + 2);
+                        optionalsParameters.add(new Alignment(subList));
+                        n += 1;
+                        break;
+                    case "ALIGNMENT_FLOAT32_IEEE":
+                        subList = parameters.subList(n + 1, n + 2);
+                        optionalsParameters.add(new Alignment(subList));
+                        n += 1;
+                        break;
+                    case "ALIGNMENT_FLOAT64_IEEE":
+                        subList = parameters.subList(n + 1, n + 2);
+                        optionalsParameters.add(new Alignment(subList));
+                        n += 1;
+                        break;
+                    case "ALIGNMENT_INT64":
+                        subList = parameters.subList(n + 1, n + 2);
+                        optionalsParameters.add(new Alignment(subList));
+                        n += 1;
+                        break;
+                    case "ALIGNMENT_LONG":
+                        subList = parameters.subList(n + 1, n + 2);
+                        optionalsParameters.add(new Alignment(subList));
+                        n += 1;
+                        break;
+                    case "ALIGNMENT_WORD":
+                        subList = parameters.subList(n + 1, n + 2);
+                        optionalsParameters.add(new Alignment(subList));
+                        n += 1;
                         break;
                     default:
                         break;

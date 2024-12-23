@@ -41,6 +41,7 @@ public final class Function implements A2lObject, Comparable<Function> {
         return (Map<Integer, String>) (object != null ? object : new HashMap<Integer, String>());
     }
 
+    @SuppressWarnings("unchecked")
     public final Vector<String> getRefCharacteristic() {
         Object object = optionalsParameters.get(REF_CHARACTERISTIC);
         if (object != null) {
@@ -51,6 +52,7 @@ public final class Function implements A2lObject, Comparable<Function> {
         return new Vector<String>();
     }
 
+    @SuppressWarnings("unchecked")
     public final Vector<String> getInMeasurement() {
         Object object = optionalsParameters.get(IN_MEASUREMENT);
         if (object != null) {
@@ -61,6 +63,7 @@ public final class Function implements A2lObject, Comparable<Function> {
         return new Vector<String>();
     }
 
+    @SuppressWarnings("unchecked")
     public final Vector<String> getLocMeasurement() {
         Object object = optionalsParameters.get(LOC_MEASUREMENT);
         if (object != null) {
@@ -71,6 +74,7 @@ public final class Function implements A2lObject, Comparable<Function> {
         return new Vector<String>();
     }
 
+    @SuppressWarnings("unchecked")
     public final Vector<String> getOutMeasurement() {
         Object object = optionalsParameters.get(OUT_MEASUREMENT);
         if (object != null) {

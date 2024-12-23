@@ -92,21 +92,10 @@ public final class Characteristic extends AdjustableObject {
     public final double applyBitMask(long value) {
         long bitMask = (long) optionalsParameters.get(BIT_MASK);
 
-        long maskedValue = value & bitMask;
+        // Shift value
+        int shift = Long.numberOfTrailingZeros(bitMask);
 
-        String bits = Long.toBinaryString(maskedValue);
-
-        int shift = 0;
-
-        for (int i = 0; i < bits.length(); i++) {
-            int j = bits.length() - 1 - i;
-            if (bits.charAt(j) == '1') {
-                shift = i;
-                break;
-            }
-        }
-
-        return maskedValue >> shift;
+        return (value & bitMask) >> shift;
     }
 
     public final void assignAxisPts(HashMap<Integer, AdjustableObject> adjustableObjects) {

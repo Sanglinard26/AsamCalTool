@@ -95,7 +95,6 @@ public final class DataDecoder {
             if (adjustableObject instanceof Characteristic && adjustableObject.isValid()) {
 
                 characteristic = (Characteristic) adjustableObject;
-
                 fncValues = characteristic.getRecordLayout().getFncValues();
                 compuMethod = characteristic.getCompuMethod();
 
@@ -162,19 +161,19 @@ public final class DataDecoder {
             indexOrder = axisPtsX.getIndexOrder();
 
             if (noAxisPtsX != null) {
-                adress = setAlignment(adress, noAxisPtsX.getDataType());
+                adress = setAlignment(adress, noAxisPtsX.getDataType(), recordLayout);
                 nbValue = (short) Converter.readHexValue(dataFile, adress, noAxisPtsX.getDataType(), byteOrder);
                 adress += noAxisPtsX.getDataType().getNbByte();
             }
 
-            adress = setAlignment(adress, axisPtsX.getDataType());
+            adress = setAlignment(adress, axisPtsX.getDataType(), recordLayout);
             hexValuesAxisPts = Converter.readHexValues(dataFile, adress, axisPtsX.getDataType(), byteOrder, nbValue);
 
         } else {// Axis rescale
 
             indexOrder = axisRescaleX.getIndexOrder();
 
-            adress = setAlignment(adress, noRescaleX.getDataType());
+            adress = setAlignment(adress, noRescaleX.getDataType(), recordLayout);
             nbValue = (short) Converter.readHexValue(dataFile, adress, noRescaleX.getDataType(), byteOrder);
             adress += noRescaleX.getDataType().getNbByte();
 
@@ -183,7 +182,7 @@ public final class DataDecoder {
                 adress += (reserved.getDataSize().getNbByte());
             }
 
-            adress = setAlignment(adress, axisRescaleX.getDataType());
+            adress = setAlignment(adress, axisRescaleX.getDataType(), recordLayout);
             hexValuesAxisPts = Converter.readHexValuesPairs(dataFile, adress, axisRescaleX.getDataType(), byteOrder, nbValue);
 
         }
@@ -216,7 +215,7 @@ public final class DataDecoder {
             FncValues fncValues) {
 
         final ByteOrder byteOrder = characteristic.getByteOrder() != null ? characteristic.getByteOrder() : commonByteOrder;
-        final long _adress = setAlignment(adress, fncValues.getDataType());
+        final long _adress = setAlignment(adress, fncValues.getDataType(), characteristic.getRecordLayout());
         double hexValue = Converter.readHexValue(dataFile, _adress, fncValues.getDataType(), byteOrder);
         double physValue;
 
@@ -305,10 +304,6 @@ public final class DataDecoder {
         DataType axisDataType;
         IndexOrder indexOrder;
 
-        if ("A580_SHIFT_SCHED_TBL".equals(characteristic.toString())) {
-            int stop = 0;
-        }
-
         if (characteristic.getType().equals(CharacteristicType.MAP)) {
             if (idxAxis == 0) {
                 NoAxisPtsX noAxisPtsX = characteristic.getRecordLayout().getNoAxisPtsX();
@@ -316,7 +311,7 @@ public final class DataDecoder {
                     adress += characteristic.getRecordLayout().getSrcAddrX().getDataType().getNbByte();
                 }
 
-                adress = setAlignment(adress, noAxisPtsX.getDataType());
+                adress = setAlignment(adress, noAxisPtsX.getDataType(), characteristic.getRecordLayout());
                 nbValue = (short) Converter.readHexValue(dataFile, adress, noAxisPtsX.getDataType(), byteOrder);
                 adress += noAxisPtsX.getDataType().getNbByte();
 
@@ -335,7 +330,7 @@ public final class DataDecoder {
                 if (characteristic.getRecordLayout().getSrcAddrX() != null) {
                     adress += characteristic.getRecordLayout().getSrcAddrX().getDataType().getNbByte();
                 }
-                adress = setAlignment(adress, noAxisPtsX.getDataType());
+                adress = setAlignment(adress, noAxisPtsX.getDataType(), characteristic.getRecordLayout());
                 short nbValueX = (short) Converter.readHexValue(dataFile, adress, noAxisPtsX.getDataType(), byteOrder);
                 adress += noAxisPtsX.getDataType().getNbByte();
 
@@ -343,7 +338,7 @@ public final class DataDecoder {
                 if (characteristic.getRecordLayout().getSrcAddrY() != null) {
                     adress += characteristic.getRecordLayout().getSrcAddrY().getDataType().getNbByte();
                 }
-                adress = setAlignment(adress, noAxisPtsY.getDataType());
+                adress = setAlignment(adress, noAxisPtsY.getDataType(), characteristic.getRecordLayout());
                 nbValue = (short) Converter.readHexValue(dataFile, adress, noAxisPtsY.getDataType(), byteOrder);
                 adress += noAxisPtsY.getDataType().getNbByte();
 
@@ -365,7 +360,7 @@ public final class DataDecoder {
                 adress += characteristic.getRecordLayout().getSrcAddrX().getDataType().getNbByte();
             }
 
-            adress = setAlignment(adress, noAxisPts.getDataType());
+            adress = setAlignment(adress, noAxisPts.getDataType(), characteristic.getRecordLayout());
             nbValue = (short) Converter.readHexValue(dataFile, adress, noAxisPts.getDataType(), byteOrder);
             adress += noAxisPts.getDataType().getNbByte();
 
@@ -376,7 +371,7 @@ public final class DataDecoder {
 
         values = new Object[nbValue];
 
-        adress = setAlignment(adress, axisDataType);
+        adress = setAlignment(adress, axisDataType, characteristic.getRecordLayout());
         double[] hexValues;
 
         if (indexMode == IndexMode.ALTERNATE_WITH_X) {
@@ -513,7 +508,7 @@ public final class DataDecoder {
             return;
         }
 
-        adress = setAlignment(adress, fncValues.getDataType());
+        adress = setAlignment(adress, fncValues.getDataType(), characteristic.getRecordLayout());
 
         double[] hexValues;
 
@@ -567,8 +562,8 @@ public final class DataDecoder {
         } else {
             values = new ArrayValue((short) (dim[0] + 1), (short) (dim[1] + 1));
             values.setValue("Y\\X", 0, 0);
-            for (short y = 0; y < dim[1]; y++) { // Patch pour les VAL_BLK qui n'ont qu'une colonne
-                values.setValue(y + 1, 0, y);
+            for (short y = 0; y < dim[1]; y++) {
+                values.setValue(y, y + 1, 0);
             }
         }
 
@@ -580,7 +575,7 @@ public final class DataDecoder {
 
         if (dim.length < 2 || dim[1] == 1) {
 
-            adress = setAlignment(adress, fncValues.getDataType());
+            adress = setAlignment(adress, fncValues.getDataType(), characteristic.getRecordLayout());
             hexValuesValBlk = Converter.readHexValues(dataFile, adress, fncValues.getDataType(), byteOrder, dim[0]);
 
             values.setValue("Z", 1, 0);
@@ -606,7 +601,7 @@ public final class DataDecoder {
 
             final int nbValue = dim[0] * dim[1];
 
-            adress = setAlignment(adress, fncValues.getDataType());
+            adress = setAlignment(adress, fncValues.getDataType(), characteristic.getRecordLayout());
             hexValuesValBlk = Converter.readHexValues(dataFile, adress, fncValues.getDataType(), byteOrder, nbValue);
 
             if (!compuMethod.isVerbal()) {
@@ -763,7 +758,7 @@ public final class DataDecoder {
                 }
             }
 
-            adress = setAlignment(adress, fncValues.getDataType());
+            adress = setAlignment(adress, fncValues.getDataType(), recordLayout);
             double[] hexValues = Converter.readHexValues(dataFile, adress, fncValues.getDataType(), byteOrder, nbValueMap);
 
             if (!compuMethod.isVerbal()) {
@@ -818,8 +813,14 @@ public final class DataDecoder {
         characteristic.setValues(values);
     }
 
-    private final long setAlignment(long adress, DataType dataType) {
-        final int alignment = this.modCommon.getAlignment(dataType);
+    private final long setAlignment(long adress, DataType dataType, RecordLayout recordLayout) {
+        final int alignment;
+        if (recordLayout.getAlignment() == null) {
+            alignment = this.modCommon.getAlignment(dataType);
+        } else {
+            alignment = recordLayout.getAlignment().getByteAlignment();
+        }
+
         return alignment > 1 ? adress + (adress & (alignment - 1)) : adress;
     }
 
