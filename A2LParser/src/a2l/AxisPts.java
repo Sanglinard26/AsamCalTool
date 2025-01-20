@@ -60,6 +60,9 @@ public final class AxisPts extends AdjustableObject {
     @Override
     public final void assignComputMethod(HashMap<Integer, CompuMethod> compuMethods) {
         this.compuMethod = compuMethods.get(this.conversionId);
+        if (this.compuMethod == null) {
+            this.compuMethod = CompuMethod.createNoCompuMethod();
+        }
     }
 
     public final void assignCharacteristic(Characteristic characteristic) {
