@@ -27,8 +27,14 @@ public final class CompuVTabRange extends ConversionTable {
         while (it.hasNext()) {
             Entry<Range, String> entry = it.next();
             Range range = entry.getKey();
-            if (range.getMin() >= hex && hex < range.getMax()) {
-                return entry.getValue();
+            if (((int) hex) == hex) {
+                if (range.getMin() >= hex && hex <= range.getMax()) {
+                    return entry.getValue();
+                }
+            } else {
+                if (range.getMin() >= hex && hex < range.getMax()) {
+                    return entry.getValue();
+                }
             }
         }
         return new String(defaultValue);
@@ -58,7 +64,7 @@ public final class CompuVTabRange extends ConversionTable {
 
             if (lastIdx > -1) {
                 listValuePairs = parameters.subList(5, lastIdx);
-                this.defaultValue = parameters.get(lastIdx+1).toCharArray();
+                this.defaultValue = parameters.get(lastIdx + 1).toCharArray();
             } else {
                 listValuePairs = parameters.subList(5, parameters.size());
                 this.defaultValue = new char[0];
