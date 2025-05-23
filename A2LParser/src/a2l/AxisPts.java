@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import constante.ConversionType;
+import constante.DataType;
 import constante.SecondaryKeywords;
 
 public final class AxisPts extends AdjustableObject {
@@ -74,6 +75,16 @@ public final class AxisPts extends AdjustableObject {
 
     public final List<Characteristic> getCharacteristicsDependency() {
         return characteristicsDependency;
+    }
+
+    @Override
+    public DataType[] getDataType() {
+
+        DataType[] dataTypes = new DataType[1];
+
+        dataTypes[0] = getRecordLayout().getAxisPtsX().getDataType();
+
+        return dataTypes;
     }
 
     @Override

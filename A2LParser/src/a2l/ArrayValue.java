@@ -3,6 +3,8 @@
  */
 package a2l;
 
+import java.util.Arrays;
+
 import utils.NumeralString;
 
 public class ArrayValue extends DataValue {
@@ -15,6 +17,12 @@ public class ArrayValue extends DataValue {
         this.dimX = dimX;
         this.dimY = dimY;
         this.values = new Object[dimX * dimY];
+    }
+
+    public ArrayValue(ArrayValue physValues) {
+        this.dimX = physValues.getDimX();
+        this.dimY = physValues.getDimY();
+        this.values = Arrays.copyOf(physValues.getValues(), this.dimX * this.dimY);
     }
 
     @Override

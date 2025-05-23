@@ -28,6 +28,23 @@ public final class ParserUtils {
         return counter == 2;
     }
 
+    public static String replaceSlashDoubleQuote(String s) {
+        if ((s.indexOf('\\') == -1) && (s.indexOf('"') == -1))
+            return s;
+        StringBuilder sb = new StringBuilder();
+        char oldC = 0;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '\\' || (c == '\"' && oldC == '\\')) {
+                oldC = c;
+                continue;
+            }
+            oldC = c;
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+
     public static final byte countQuote(String line) {
         final int nbChar = line.length();
         byte nbQuote = 0;

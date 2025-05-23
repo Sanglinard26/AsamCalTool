@@ -177,6 +177,10 @@ public class FilteredTree extends JPanel {
         childNode = new DefaultMutableTreeNode("MEASUREMENT");
         this.originalRoot.add(childNode);
         DynamicUtilTreeNode.createChildren(childNode, a2l.getListMeasurement());
+
+        childNode = new DefaultMutableTreeNode("GROUP");
+        this.originalRoot.add(childNode);
+        DynamicUtilTreeNode.createChildren(childNode, a2l.getListGroup());
     }
 
     public final void addChildToFunction(DefaultMutableTreeNode functionNode, Function function) {
@@ -533,6 +537,38 @@ public class FilteredTree extends JPanel {
 
                             panel.add(area);
                             JOptionPane.showMessageDialog(null, panel, "Results", JOptionPane.INFORMATION_MESSAGE);
+                        }
+
+                    }
+                });
+                menu.add(menuItem);
+
+                menuItem = new JMenuItem("Check measurement from lab");
+                menuItem.addActionListener(new ActionListener() {
+
+                    @Override
+                    public void actionPerformed(ActionEvent paramActionEvent) {
+                        final JFileChooser fileChooser = new JFileChooser();
+                        fileChooser.setFileFilter(new FileFilter() {
+
+                            @Override
+                            public String getDescription() {
+                                return "Fichier Lab (*.lab)";
+                            }
+
+                            @Override
+                            public boolean accept(File f) {
+                                if (f.isDirectory())
+                                    return true;
+                                return f.getName().toLowerCase().endsWith("lab");
+                            }
+                        });
+
+                        final int rep = fileChooser.showOpenDialog(null);
+
+                        if (rep == JFileChooser.APPROVE_OPTION) {
+                            A2lUtils.checkMeasurementFromLab(object, fileChooser.getSelectedFile());
+                            JOptionPane.showMessageDialog(null, "Check done !");
                         }
 
                     }

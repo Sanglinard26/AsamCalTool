@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum PrimaryKeywords {
-    MOD_PAR, MOD_COMMON, AXIS_PTS, CHARACTERISTIC, COMPU_METHOD, COMPU_TAB, COMPU_VTAB, COMPU_VTAB_RANGE, MEASUREMENT, RECORD_LAYOUT, FUNCTION, UNIT, UNKNOWN;
+    MOD_PAR, MOD_COMMON, AXIS_PTS, CHARACTERISTIC, COMPU_METHOD, COMPU_TAB, COMPU_VTAB, COMPU_VTAB_RANGE, MEASUREMENT, RECORD_LAYOUT, FUNCTION, GROUP, UNIT, UNKNOWN;
 
     private static final Map<Integer, PrimaryKeywords> nameIndex = new HashMap<>(PrimaryKeywords.values().length);
 

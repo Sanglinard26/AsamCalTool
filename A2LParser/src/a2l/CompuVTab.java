@@ -107,4 +107,10 @@ public final class CompuVTab extends ConversionTable {
 
         return sb.toString();
     }
+
+    @Override
+    Map<?, ?> getMap() {
+        // TODO Auto-generated method stub
+        return valuePairs;
+    }
 }

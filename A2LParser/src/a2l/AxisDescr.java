@@ -34,7 +34,6 @@ public final class AxisDescr {
     private float upperLimit;
 
     private CompuMethod compuMethod;
-    private RecordLayout recordLayout;
     private AdjustableObject axisPts;
     private AdjustableObject curveAxis;
 
@@ -77,10 +76,6 @@ public final class AxisDescr {
 
     public final CompuMethod getCompuMethod() {
         return compuMethod;
-    }
-
-    public final RecordLayout getRecordLayout() {
-        return recordLayout;
     }
 
     public final short getMaxAxisPoints() {

@@ -18,7 +18,7 @@ public class SingleValue extends DataValue {
 
     @Override
     public void setValue(Object value, int... coord) {
-        this.value = value;
+        this.value = getStorageObject(value);
     }
 
     @Override

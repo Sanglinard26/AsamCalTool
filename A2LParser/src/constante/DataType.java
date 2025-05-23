@@ -5,18 +5,24 @@ package constante;
 
 public enum DataType {
 
-    UBYTE(1), SBYTE(1), UWORD(2), SWORD(2), ULONG(4), SLONG(4), FLOAT16_IEEE(2), FLOAT32_IEEE(4), FLOAT64_IEEE(8), A_UINT64(8), A_INT64(8), UNKNOWN(
-            0);
+    UBYTE(1, true), SBYTE(1, true), UWORD(2, true), SWORD(2, true), ULONG(4, true), SLONG(4, true), FLOAT16_IEEE(2, false), FLOAT32_IEEE(4,
+            false), FLOAT64_IEEE(8, false), A_UINT64(8, true), A_INT64(8, true), UNKNOWN(0, false);
 
     private byte nbByte;
+    private boolean integer;
 
     // Constructeur
-    DataType(int nbByte) {
+    DataType(int nbByte, boolean integer) {
         this.nbByte = (byte) nbByte;
+        this.integer = integer;
     }
 
     public final byte getNbByte() {
         return nbByte;
+    }
+
+    public boolean isInteger() {
+        return integer;
     }
 
     public static DataType getDataType(String type) {

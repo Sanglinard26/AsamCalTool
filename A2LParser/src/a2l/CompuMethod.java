@@ -10,6 +10,7 @@ import static constante.SecondaryKeywords.COMPU_TAB_REF;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import constante.ConversionType;
 import constante.SecondaryKeywords;
@@ -144,12 +145,62 @@ public final class CompuMethod implements A2lObject, Comparable<CompuMethod> {
         }
     }
 
+    public final double computeStringToRaw(String physValue) {
+        Object compuTabRef = this.optionalsParameters.get(COMPU_TAB_REF);
+
+        switch (this.conversionType) {
+        case TAB_VERB:
+            if (compuTabRef instanceof CompuVTab) {
+                CompuVTab compuVTab = (CompuVTab) compuTabRef;
+                for (Entry<Float, String> entry : compuVTab.getValuePairs().entrySet()) {
+                    if (entry.getValue().equals(physValue)) {
+                        return entry.getKey();
+                    }
+                }
+            }
+            return Double.NaN;
+        default:
+            return Double.NaN;
+        }
+    }
+
+    public final ConversionTable getConvTable() {
+
+        if (conversionType != ConversionType.NO_COMPU_METHOD) {
+            Object compuTabRef = this.optionalsParameters.get(COMPU_TAB_REF);
+
+            if (compuTabRef instanceof CompuVTab) {
+                return (CompuVTab) compuTabRef;
+            }
+
+            if (compuTabRef instanceof CompuVTabRange) {
+                return (CompuVTabRange) compuTabRef;
+            }
+
+            if (compuTabRef instanceof CompuTab) {
+                return (CompuTab) compuTabRef;
+            }
+        }
+        return null;
+    }
+
     public final CompuVTab getCompuVTab() {
         if (isVerbal()) {
             Object compuTabRef = this.optionalsParameters.get(COMPU_TAB_REF);
 
             if (compuTabRef instanceof CompuVTab) {
                 return (CompuVTab) compuTabRef;
+            }
+        }
+        return null;
+    }
+
+    public final CompuVTabRange getCompuVTabRange() {
+        if (isVerbal()) {
+            Object compuTabRef = this.optionalsParameters.get(COMPU_TAB_REF);
+
+            if (compuTabRef instanceof CompuVTabRange) {
+                return (CompuVTabRange) compuTabRef;
             }
         }
         return null;

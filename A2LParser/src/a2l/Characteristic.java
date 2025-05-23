@@ -23,6 +23,7 @@ import java.util.Map;
 
 import a2l.AxisDescr.Attribute;
 import constante.ConversionType;
+import constante.DataType;
 import constante.SecondaryKeywords;
 
 public final class Characteristic extends AdjustableObject {
@@ -199,6 +200,75 @@ public final class Characteristic extends AdjustableObject {
                 axisDescrs[idx].setCompuMethod(compuMethods.get(axisDescrs[idx].getConversion()));
             }
         }
+    }
+
+    @Override
+    public DataType[] getDataType() {
+
+        DataType[] dataTypes = null;
+
+        switch (getType()) {
+        case VALUE:
+            dataTypes = new DataType[] { getRecordLayout().getFncValues().getDataType() };
+            break;
+        case CURVE:
+            dataTypes = new DataType[2];
+
+            AxisDescr axisDescr = this.axisDescrs[0];
+            switch (axisDescr.getAttribute()) {
+            case STD_AXIS:
+                dataTypes[0] = getRecordLayout().getAxisPtsX().getDataType();
+                break;
+            case COM_AXIS:
+                dataTypes[0] = axisDescr.getAxisPts().getRecordLayout().getAxisPtsX().getDataType();
+                break;
+            case CURVE_AXIS:
+                dataTypes[0] = axisDescr.getCurveAxis().getRecordLayout().getAxisPtsX().getDataType();
+                break;
+            case RES_AXIS:
+
+                break;
+            default: // FIX_AXIS
+                dataTypes[0] = DataType.UNKNOWN;
+                break;
+            }
+
+            dataTypes[1] = getRecordLayout().getFncValues().getDataType();
+            break;
+        case MAP:
+            dataTypes = new DataType[3];
+
+            for (int nAxis = 0; nAxis < this.axisDescrs.length; nAxis++) {
+                switch (this.axisDescrs[nAxis].getAttribute()) {
+                case STD_AXIS:
+                    dataTypes[nAxis] = getRecordLayout().getAxisPtsX().getDataType();
+                    break;
+                case COM_AXIS:
+                    dataTypes[nAxis] = this.axisDescrs[nAxis].getAxisPts().getRecordLayout().getAxisPtsX().getDataType();
+                    break;
+                case CURVE_AXIS:
+                    dataTypes[nAxis] = this.axisDescrs[nAxis].getCurveAxis().getRecordLayout().getAxisPtsX().getDataType();
+                    break;
+                case RES_AXIS:
+
+                    break;
+                default: // FIX_AXIS
+                    dataTypes[nAxis] = DataType.UNKNOWN;
+                    break;
+                }
+            }
+
+            dataTypes[2] = getRecordLayout().getFncValues().getDataType();
+            break;
+        case VAL_BLK:
+            dataTypes = new DataType[] { getRecordLayout().getFncValues().getDataType() };
+            break;
+        default:
+            dataTypes = new DataType[] { DataType.UNKNOWN };
+            break;
+        }
+
+        return dataTypes;
     }
 
     @Override

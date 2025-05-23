@@ -4,6 +4,7 @@
 package a2l;
 
 import static constante.SecondaryKeywords.BYTE_ORDER;
+import static constante.SecondaryKeywords.DISPLAY_IDENTIFIER;
 import static constante.SecondaryKeywords.FORMAT;
 import static constante.SecondaryKeywords.READ_ONLY;
 
@@ -16,6 +17,7 @@ import java.util.Map.Entry;
 
 import a2l.AxisDescr.Attribute;
 import a2l.Characteristic.CharacteristicType;
+import constante.DataType;
 import constante.PrimaryKeywords;
 import constante.SecondaryKeywords;
 
@@ -58,6 +60,23 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         return compuMethod;
     }
 
+    public final String getConverionTable() {
+        ConversionTable convTable = compuMethod.getConvTable();
+
+        if (convTable != null) {
+            StringBuilder sb = new StringBuilder();
+
+            Map<?, ?> mapConv = convTable.getMap();
+
+            for (Entry<?, ?> entry : mapConv.entrySet()) {
+                sb.append("<li>" + entry.getKey() + " => " + entry.getValue() + "\n");
+            }
+
+            return sb.toString();
+        }
+        return "";
+    }
+
     public final RecordLayout getRecordLayout() {
         return recordLayout;
     }
@@ -98,6 +117,14 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
             return ByteOrder.BIG_ENDIAN;
         }
         return null;
+    }
+
+    public final String getDisplayIdentifier() {
+        char[] dispIdentifier = (char[]) optionalsParameters.get(DISPLAY_IDENTIFIER);
+        if (dispIdentifier != null) {
+            return String.valueOf(dispIdentifier);
+        }
+        return "";
     }
 
     public final String getDimension() {
@@ -160,6 +187,38 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         return this.values;
     }
 
+    public final DataValue getRawValues() {
+        DataValue rawValues = null;
+        DataValue physValues = getValues();
+
+        if (physValues instanceof SingleValue) {
+            rawValues = new SingleValue(physValues.getValue(1, 1));
+            if (compuMethod.isVerbal()) {
+                rawValues.setValue(compuMethod.computeStringToRaw(physValues.getValue(1, 1).toString()), null);
+                System.out.println(rawValues.getValue(null));
+                System.out.println(compuMethod.getCompuVTab().getValuePairs());
+            } else {
+
+            }
+        } else {
+            rawValues = new ArrayValue((ArrayValue) physValues);
+
+        }
+
+        return rawValues;
+    }
+
+    public final String getBinariesValues() {
+        DataValue rawValues = getRawValues();
+        if (rawValues instanceof SingleValue) {
+            DataType dataType = getDataType()[0];
+            if (dataType.isInteger()) {
+                System.out.println(Integer.toUnsignedString(((Number) rawValues.getValue(null)).intValue(), dataType.getNbByte() * 8));
+            }
+        }
+        return "NaN";
+    }
+
     public final boolean hasData() {
         return this.values != null;
     }
@@ -185,6 +244,8 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
 
     public abstract String[] getUnit();
 
+    public abstract DataType[] getDataType();
+
     public abstract double[] getResolution();
 
     public abstract double getZResolution();
@@ -203,6 +264,7 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
 
         sb.append("<ul><li><b>Name: </b>" + name + "\n");
         sb.append("<li><b>Long identifier: </b>" + new String(longIdentifier) + "\n");
+        sb.append("<li><b>Display identifier: </b>" + getDisplayIdentifier() + "\n");
         sb.append("<li><b>Function: </b><a href=" + getFunction() + ">" + getFunction() + "</a>\n");
         sb.append("<li><b>Unit: </b>");
         for (String unit : getUnit()) {
@@ -212,6 +274,10 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         for (double resol : getResolution()) {
             sb.append("[" + resol + "]");
         }
+        sb.append("<li><b>Data type: </b>");
+        for (DataType dataType : getDataType()) {
+            sb.append("[" + dataType + "]");
+        }
         sb.append("\n");
         sb.append("<li><b>Lower limit: </b>" + lowerLimit + "\n");
         sb.append("<li><b>Upper limit: </b>" + upperLimit + "\n");
@@ -219,6 +285,14 @@ public abstract class AdjustableObject implements A2lObject, Comparable<Adjustab
         sb.append("<li><b>Adress: </b>" + "0x" + Long.toHexString(adress) + "\n");
         sb.append("<li><b>Deposit: </b><a href=" + recordLayout.toString() + ">" + recordLayout.toString() + "</a>\n");
         sb.append("<li><b>Conversion: </b><a href=" + compuMethod.toString() + ">" + compuMethod.toString() + "</a>\n");
+
+        String convTableTxt = getConverionTable();
+        if (!convTableTxt.isEmpty()) {
+            sb.append("<ul>");
+            sb.append(convTableTxt);
+            sb.append("</ul>");
+        }
+
         sb.append("<li><b>Dimensions [X x Y]: </b>" + getDimension() + "\n");
 
         if (this instanceof Characteristic) {

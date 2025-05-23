@@ -229,4 +229,49 @@ public final class A2lUtils {
 
     }
 
+    public static void checkMeasurementFromLab(Object a2lObject, File selectedFile) {
+        A2l a2l = (A2l) a2lObject;
+
+        Vector<Measurement> measurements = a2l.getListMeasurement();
+        Vector<String> a2lsupp = new Vector<>();
+
+        for (Measurement measurement : measurements) {
+            a2lsupp.add(measurement.toString());
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(selectedFile))) {
+            String line;
+            Vector<String> slddMeasurements = new Vector<String>();
+
+            while ((line = br.readLine()) != null) {
+                if ("[RAMCELL]".equals(line)) {
+                    continue;
+                }
+                slddMeasurements.add(line);
+            }
+
+            // a2lsupp.removeAll(slddMeasurements);
+            slddMeasurements.removeAll(a2lsupp);
+
+            File newFile = new File(selectedFile.getAbsolutePath().replace(".lab", "_checked.txt"));
+
+            try (PrintWriter pw = new PrintWriter(newFile)) {
+
+                pw.println("Flux supplémentaires dans les SLDD:");
+                for (String measure : slddMeasurements) {
+                    pw.println(measure);
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }

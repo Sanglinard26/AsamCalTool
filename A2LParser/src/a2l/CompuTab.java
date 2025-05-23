@@ -98,4 +98,9 @@ public final class CompuTab extends ConversionTable {
         return sb.toString();
     }
 
+    @Override
+    Map<?, ?> getMap() {
+        return valuePairs;
+    }
+
 }

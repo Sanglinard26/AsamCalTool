@@ -691,6 +691,11 @@ public final class Ihm extends JFrame {
                             || characteristic.getType().equals(CharacteristicType.CURVE))) {
                         panelView.updateChart((Characteristic) userObject);
                     }
+                    // Test
+                    if (characteristic.hasData()) {
+                        // characteristic.getBinariesValues();
+                    }
+                    //
                 } else if (userObject instanceof Function) {
                     Function function = (Function) userObject;
                     filteredTree.addChildToFunction(selectedNode, function);

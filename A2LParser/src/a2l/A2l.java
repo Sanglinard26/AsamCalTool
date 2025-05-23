@@ -35,7 +35,7 @@ public final class A2l {
     private Vector<Measurement> measurements;
     private HashMap<Integer, RecordLayout> recordLayouts;
     private Vector<Function> functions;
-
+    private Vector<Group> groups;
     private Vector<Unit> units;
 
     private static int numLine;
@@ -52,8 +52,8 @@ public final class A2l {
         measurements = new Vector<Measurement>();
         recordLayouts = new HashMap<Integer, RecordLayout>();
         units = new Vector<Unit>();
-
         functions = new Vector<Function>();
+        groups = new Vector<Group>();
 
         listeners = new EventListenerList();
 
@@ -85,6 +85,11 @@ public final class A2l {
     public final Vector<Function> getListFunction() {
         Collections.sort(functions);
         return functions;
+    }
+
+    public final Vector<Group> getListGroup() {
+        // Collections.sort(groups);
+        return groups;
     }
 
     public final Vector<CompuMethod> getListCompuMethod() {
@@ -158,6 +163,7 @@ public final class A2l {
             CompuVTabRange compuVTabRange = null;
             RecordLayout recordLayout = null;
             Function function = null;
+            Group group = null;
 
             while ((line = buf.readLine()) != null) {
 
@@ -253,6 +259,13 @@ public final class A2l {
                                 mergeDefCharacteristic.putAll(function.getDefCharacteristic());
                             }
                             functions.add(function);
+                            break;
+                        case GROUP:
+                            beginLine = numLine;
+                            fillParameters(buf, line, objectParameters, keyword);
+                            endLine = numLine;
+                            group = new Group(objectParameters, beginLine, endLine);
+                            groups.add(group);
                             break;
                         case UNIT:
                             beginLine = numLine;
@@ -351,7 +364,8 @@ public final class A2l {
                 return listWord;
             }
         } else {
-            lineWoutComment = line;
+            lineWoutComment = ParserUtils.replaceSlashDoubleQuote(line);
+            // lineWoutComment = line;
         }
 
         if (lineWoutComment.charAt(0) == '"' && lineWoutComment.charAt(lineWoutComment.length() - 1) == '"'
